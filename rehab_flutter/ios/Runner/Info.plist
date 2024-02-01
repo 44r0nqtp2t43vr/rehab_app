@@ -45,5 +45,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Need Bluetooth access to connect to devices</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Need Bluetooth access to connect to devices</string>
+
 </dict>
 </plist>
