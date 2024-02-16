@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:rehab_flutter/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/screens/actuator_therapy_screen.dart';
+import 'package:rehab_flutter/screens/pattern_therapy_screen.dart';
+import 'package:rehab_flutter/screens/texture_therapy_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   final BluetoothCharacteristic targetCharacteristic;
@@ -40,12 +42,24 @@ class MenuScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () =>
-                  sendTherapyPattern("<205205205205205205205205205205>"),
+                  // go to actuactor therapy screen
+                  Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PatternTherapyScreen(
+                      targetCharacteristic: targetCharacteristic),
+                ),
+              ),
               child: Text('Pattern Therapy'),
             ),
             ElevatedButton(
-              onPressed: () =>
-                  sendTherapyPattern("<088088088088088088088088088088>"),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TextureTherapyScreen(
+                      targetCharacteristic: targetCharacteristic),
+                ),
+              ),
               child: Text('Texture Therapy'),
             ),
             ElevatedButton(
