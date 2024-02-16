@@ -115,8 +115,20 @@ class _MyAppState extends State<MyApp> {
     String moduleValueString = moduleValue.toString().padLeft(3, '0');
     String data = "<" + List.filled(10, moduleValueString).join() + ">";
 
-    targetCharacteristic!.write(data.codeUnits);
+    // Write the data without waiting for a response
+    targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
     print("Pattern sent: $data");
+  }
+
+  void toggleActiveValue(int value) {
+    setState(() {
+      if (activeValues.contains(value)) {
+        activeValues.remove(value);
+      } else {
+        activeValues.add(value);
+      }
+      updateModuleValue(); // Update the module value based on active values
+    });
   }
 
   @override
@@ -158,10 +170,12 @@ class _MyAppState extends State<MyApp> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
+          onDoubleTap: () => toggleActiveValue(value),
           onLongPressStart: (_) => addActiveValue(value),
           onLongPressEnd: (_) => removeActiveValue(value),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed:
+                () {}, // Empty function, we are using GestureDetector instead
             child: Text(value.toString()),
             style: ElevatedButton.styleFrom(
               shape: CircleBorder(),

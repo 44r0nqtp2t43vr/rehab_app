@@ -90,6 +90,7 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
     if (targetDevice == null) return;
 
     services = await targetDevice!.discoverServices();
+    //  for service.length
     setState(() {}); // Update UI to display services
   }
 
