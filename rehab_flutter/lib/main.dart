@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/routes/routes.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/injection_container.dart';
 import 'screens/bluetooth_screen.dart'; // Make sure this import path matches your file structure
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDependencies();
   runApp(MyApp());
 }
 

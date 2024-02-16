@@ -1,10 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/note.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_divider.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class PlayGame extends StatefulWidget {
   final Song song;
@@ -75,8 +78,8 @@ class _PlayGameState extends State<PlayGame>
 
   @override
   void dispose() {
-    // sl<RemoteServicesBloc>()
-    //     .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
     player.dispose();
     super.dispose();
@@ -132,7 +135,7 @@ class _PlayGameState extends State<PlayGame>
         default:
           data = "<000000000000000000000000000000>";
       }
-      // sl<RemoteServicesBloc>().add(WriteDataEvent(data));
+      sl<BluetoothBloc>().add(WriteDataEvent(data));
     }
   }
 
@@ -151,8 +154,8 @@ class _PlayGameState extends State<PlayGame>
 
   void _onEnd() {
     player.stop();
-    // sl<RemoteServicesBloc>()
-    //     .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     showDialog(
       context: context,
       builder: (context) {

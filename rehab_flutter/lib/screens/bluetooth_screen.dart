@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart'; // Adjust the import path as necessary
-import 'package:rehab_flutter/screens/menu_screen.dart'; // Adjust the import path as necessary
+import 'package:rehab_flutter/screens/menu_screen.dart';
+
+import '../injection_container.dart'; // Adjust the import path as necessary
 
 class BluetoothScreen extends StatefulWidget {
   @override
@@ -96,6 +100,7 @@ class ServiceScreen extends StatelessWidget {
               return ListTile(
                 title: Text('Characteristic UUID: ${characteristic.uuid}'),
                 onTap: () {
+                  sl<BluetoothBloc>().add(UpdateCharaEvent(characteristic));
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

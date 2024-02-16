@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
-class BluetoothController {
+class BluetoothController extends GetxController {
   final FlutterBlue flutterBlue = FlutterBlue.instance;
   StreamSubscription? scanSubscription;
   List<BluetoothDevice> devicesList = [];
