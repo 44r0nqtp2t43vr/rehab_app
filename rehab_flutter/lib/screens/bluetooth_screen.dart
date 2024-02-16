@@ -34,9 +34,11 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
   }
 
   void selectDevice(BluetoothDevice device) async {
+    print('connect');
     await bluetoothController.connectToDevice(device);
     connectedDevice = device; // Store the connected device
     var services = await bluetoothController.discoverServices(device);
+    print(services.toString());
     Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => ServiceScreen(services: services)));
   }

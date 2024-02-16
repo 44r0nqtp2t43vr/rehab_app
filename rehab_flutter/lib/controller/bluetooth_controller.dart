@@ -30,7 +30,7 @@ class BluetoothController {
   }
 
   Future<void> connectToDevice(BluetoothDevice device) async {
-    await device.connect();
+    await device.connect(autoConnect: false);
   }
 
   Future<List<BluetoothService>> discoverServices(
