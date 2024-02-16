@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:rehab_flutter/controller/bluetooth_controller.dart'; // Adjust the import path as necessary
+import 'package:rehab_flutter/core/controller/bluetooth_controller.dart'; // Adjust the import path as necessary
 import 'package:rehab_flutter/screens/menu_screen.dart'; // Adjust the import path as necessary
 
 class BluetoothScreen extends StatefulWidget {
@@ -34,11 +34,9 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
   }
 
   void selectDevice(BluetoothDevice device) async {
-    print('connect');
     await bluetoothController.connectToDevice(device);
     connectedDevice = device; // Store the connected device
     var services = await bluetoothController.discoverServices(device);
-    print(services.toString());
     Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => ServiceScreen(services: services)));
   }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/config/routes/routes.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'screens/bluetooth_screen.dart'; // Make sure this import path matches your file structure
 
 void main() {
@@ -10,6 +12,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Haplos',
+      theme: theme(),
+      onGenerateRoute: AppRoutes.onGenerateRoutes,
       home: WelcomeScreen(),
     );
   }
