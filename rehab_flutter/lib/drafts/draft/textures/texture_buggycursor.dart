@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:image/image.dart' as img;
 
 class ColorPickerWidget extends StatefulWidget {
@@ -27,7 +27,6 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   List<Offset> cursorPositions = List.generate(16, (_) => Offset(20, 20));
   List<Color> cursorColors = List.generate(16, (_) => Colors.transparent);
 
-  FlutterBlue flutterBlue = FlutterBlue.instance;
   BluetoothDevice? targetDevice;
   BluetoothCharacteristic? targetCharacteristic;
   final String targetDeviceName = "Gloves_BLE_01";
@@ -382,14 +381,14 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   }
 
   void startScan() {
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
 
-    flutterBlue.scanResults.listen((results) {
+    FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
         print(result.device.name);
         if (result.device.name == targetDeviceName) {
           print("Device found: ${result.device.name}");
-          flutterBlue.stopScan();
+          FlutterBluePlus.stopScan();
           setState(() {
             targetDevice = result.device;
           });
