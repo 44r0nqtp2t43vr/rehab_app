@@ -4,8 +4,6 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/screens/actuator_therapy_screen.dart';
-import 'package:rehab_flutter/screens/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/screens/texture_therapy_screen.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -33,27 +31,11 @@ class MenuScreen extends StatelessWidget {
                 child: Text(
                     'Characteristic Selected: ${targetCharacteristic.uuid}')),
             ElevatedButton(
-              onPressed: () =>
-                  // go to actuactor therapy screen
-                  Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ActuatorTherapy(
-                      targetCharacteristic: targetCharacteristic),
-                ),
-              ),
+              onPressed: () => _onATButtonPressed(context),
               child: const Text('Actuator Therapy'),
             ),
             ElevatedButton(
-              onPressed: () =>
-                  // go to actuactor therapy screen
-                  Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PatternTherapyScreen(
-                      targetCharacteristic: targetCharacteristic),
-                ),
-              ),
+              onPressed: () => _onPatternTButtonPressed(context),
               child: const Text('Pattern Therapy'),
             ),
             ElevatedButton(
@@ -75,6 +57,10 @@ class MenuScreen extends StatelessWidget {
               onPressed: () => _onPTButtonPressed(context),
               child: const Text('Piano Tiles'),
             ),
+            ElevatedButton(
+              onPressed: () => _onTestButtonPressed(context),
+              child: const Text('Test'),
+            ),
           ],
         ),
       ),
@@ -83,5 +69,17 @@ class MenuScreen extends StatelessWidget {
 
   void _onPTButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/SongSelect');
+  }
+
+  void _onATButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/ActuatorTherapy');
+  }
+
+  void _onPatternTButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PatternTherapy');
+  }
+
+  void _onTestButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/Test');
   }
 }
