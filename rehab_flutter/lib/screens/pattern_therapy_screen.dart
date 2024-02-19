@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class PatternTherapyScreen extends StatefulWidget {
   final BluetoothCharacteristic targetCharacteristic;
@@ -29,7 +32,8 @@ class _PatternTherapyScreenState extends State<PatternTherapyScreen> {
   void sendPattern(String data) {
     // if (targetCharacteristic == null) return;
 
-    widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
+    // widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
+    sl<BluetoothBloc>().add(WriteDataEvent(data));
     // print("Pattern sent: $data");
   }
 

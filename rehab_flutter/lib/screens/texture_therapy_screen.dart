@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class TextureTherapyScreen extends StatefulWidget {
   final BluetoothCharacteristic targetCharacteristic;
@@ -358,7 +361,8 @@ class _TextureTherapyScreenState extends State<TextureTherapyScreen> {
   void sendPattern(String data) {
     if (widget.targetCharacteristic == null) return;
 
-    widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
+    // widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
+    sl<BluetoothBloc>().add(WriteDataEvent(data));
     // print("Pattern sent: $data");
   }
 

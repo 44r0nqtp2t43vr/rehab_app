@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:rehab_flutter/controller/bluetooth_controller.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
+import 'package:rehab_flutter/injection_container.dart';
 import 'package:rehab_flutter/screens/actuator_therapy_screen.dart';
 import 'package:rehab_flutter/screens/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/screens/texture_therapy_screen.dart';
@@ -12,14 +15,15 @@ class MenuScreen extends StatelessWidget {
   MenuScreen({Key? key, required this.targetCharacteristic}) : super(key: key);
 
   void sendTherapyPattern(String pattern) {
-    bluetoothController.sendPattern(targetCharacteristic, pattern);
+    // bluetoothController.sendPattern(targetCharacteristic, pattern);
+    sl<BluetoothBloc>().add(WriteDataEvent(pattern));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu'),
+        title: const Text('Menu'),
       ),
       body: Center(
         child: Column(
@@ -38,7 +42,7 @@ class MenuScreen extends StatelessWidget {
                       targetCharacteristic: targetCharacteristic),
                 ),
               ),
-              child: Text('Actuator Therapy'),
+              child: const Text('Actuator Therapy'),
             ),
             ElevatedButton(
               onPressed: () =>
@@ -50,7 +54,7 @@ class MenuScreen extends StatelessWidget {
                       targetCharacteristic: targetCharacteristic),
                 ),
               ),
-              child: Text('Pattern Therapy'),
+              child: const Text('Pattern Therapy'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.push(
@@ -60,21 +64,24 @@ class MenuScreen extends StatelessWidget {
                       targetCharacteristic: targetCharacteristic),
                 ),
               ),
-              child: Text('Texture Therapy'),
+              child: const Text('Texture Therapy'),
             ),
             ElevatedButton(
               onPressed: () =>
                   sendTherapyPattern("<205205205205205205205205205205>"),
-              child: Text('Rhythmic Therapy'),
+              child: const Text('Rhythmic Therapy'),
             ),
             ElevatedButton(
-              onPressed: () =>
-                  sendTherapyPattern("<088088088088088088088088088088>"),
-              child: Text('Piano Tiles'),
+              onPressed: () => _onPTButtonPressed(context),
+              child: const Text('Piano Tiles'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _onPTButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/SongSelect');
   }
 }
