@@ -51,7 +51,6 @@ class _PlayGameState extends State<PlayGame>
         //   setState(() => ++currentNoteIndex);
         //   animationController.forward(from: 0);
         // }
-
         if (currentNoteIndex == notes.last.orderNumber - 5) {
           _onEnd();
         } else {
@@ -59,6 +58,8 @@ class _PlayGameState extends State<PlayGame>
             currentNoteIndex++;
             // debugPrint(notes[currentNoteIndex].orderNumber.toString());
           });
+          sl<BluetoothBloc>()
+              .add(const WriteDataEvent("<000000000000000000000000000000>"));
           animationController.forward(from: 0);
         }
       }
