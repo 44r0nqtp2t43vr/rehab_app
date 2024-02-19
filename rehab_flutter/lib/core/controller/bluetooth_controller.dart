@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class BluetoothController extends GetxController {
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
   StreamSubscription? scanSubscription;
   List<BluetoothDevice> devicesList = [];
 
@@ -15,21 +14,22 @@ class BluetoothController extends GetxController {
     devicesList.clear();
 
     scanSubscription?.cancel();
-    scanSubscription = flutterBlue.scanResults.listen((results) {
+    scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        if (!devicesList.any((device) => device.id == result.device.id)) {
+        if (!devicesList
+            .any((device) => device.remoteId == result.device.remoteId)) {
           devicesList.add(result.device);
         }
       }
       onDevicesDiscovered(devicesList);
     });
 
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
   }
 
   void stopScan() {
     scanSubscription?.cancel();
-    flutterBlue.stopScan();
+    FlutterBluePlus.stopScan();
   }
 
   Future<void> connectToDevice(BluetoothDevice device) async {
@@ -55,6 +55,7 @@ class BluetoothController extends GetxController {
 
   Future writeData(String data) async {
     // List<int> bytes = utf8.encode(data);
+    // await targetCharacteristic.write(bytes, withoutResponse: true);
     await targetCharacteristic.write(data.codeUnits, withoutResponse: true);
   }
 }

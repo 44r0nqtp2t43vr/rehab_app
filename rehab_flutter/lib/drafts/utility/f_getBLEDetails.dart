@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,7 +20,6 @@ class BluetoothScreen extends StatefulWidget {
 }
 
 class _BluetoothScreenState extends State<BluetoothScreen> {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
   BluetoothDevice? targetDevice;
   List<BluetoothService> services = [];
   bool isScanning = false;
@@ -35,12 +34,12 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
     setState(() {
       isScanning = true;
     });
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
 
-    flutterBlue.scanResults.listen((results) {
+    FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
         if (result.device.name == "Gloves_BLE_01") {
-          flutterBlue.stopScan();
+          FlutterBluePlus.stopScan();
           setState(() {
             targetDevice = result.device;
             isScanning = false;

@@ -2,7 +2,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/note.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line.dart';
@@ -20,7 +19,6 @@ class PlayGame extends StatefulWidget {
 
 class _PlayGameState extends State<PlayGame>
     with SingleTickerProviderStateMixin {
-  final BluetoothController bluetoothController = BluetoothController();
   final AudioPlayer player = AudioPlayer();
   late AnimationController animationController;
   late List<Note> notes;
