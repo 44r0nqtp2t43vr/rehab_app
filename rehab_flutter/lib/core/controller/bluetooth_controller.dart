@@ -55,6 +55,6 @@ class BluetoothController extends GetxController {
 
   Future writeData(String data) async {
     // List<int> bytes = utf8.encode(data);
-    await targetCharacteristic.write(data.codeUnits);
+    await targetCharacteristic.write(data.codeUnits, withoutResponse: true);
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/injection_container.dart';
 import 'package:rehab_flutter/providers.dart';
 
 class ActuatorTherapy extends StatefulWidget {
@@ -51,7 +54,8 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
     String moduleValueString = moduleValue.toString().padLeft(3, '0');
     String data = "<" + List.filled(10, moduleValueString).join() + ">";
 
-    widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
+    // widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
+    sl<BluetoothBloc>().add(WriteDataEvent(data));
     print("Pattern sent: $data");
   }
 

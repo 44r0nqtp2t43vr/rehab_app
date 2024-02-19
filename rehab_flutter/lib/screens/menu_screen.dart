@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
+import 'package:rehab_flutter/injection_container.dart';
 import 'package:rehab_flutter/screens/actuator_therapy_screen.dart';
 import 'package:rehab_flutter/screens/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/screens/texture_therapy_screen.dart';
@@ -12,7 +15,8 @@ class MenuScreen extends StatelessWidget {
   MenuScreen({Key? key, required this.targetCharacteristic}) : super(key: key);
 
   void sendTherapyPattern(String pattern) {
-    bluetoothController.sendPattern(targetCharacteristic, pattern);
+    // bluetoothController.sendPattern(targetCharacteristic, pattern);
+    sl<BluetoothBloc>().add(WriteDataEvent(pattern));
   }
 
   @override
