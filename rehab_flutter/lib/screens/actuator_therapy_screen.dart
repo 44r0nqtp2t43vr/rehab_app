@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -16,7 +16,6 @@ class ActuatorTherapy extends StatefulWidget {
 }
 
 class _ActuatorTherapyState extends State<ActuatorTherapy> {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
   BluetoothDevice? targetDevice;
   final String targetDeviceName = "Gloves_BLE_01";
   bool isDeviceConnected = false;

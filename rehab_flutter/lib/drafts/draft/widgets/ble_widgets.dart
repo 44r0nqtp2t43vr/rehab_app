@@ -1,20 +1,20 @@
 // bluetooth_widgets.dart
-import 'package:flutter_blue/flutter_blue.dart';
+
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BluetoothWidgets {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
   BluetoothDevice? targetDevice;
   BluetoothCharacteristic? targetCharacteristic;
   final String targetDeviceName = "Gloves_BLE_01";
   bool isDeviceConnected = false;
 
   void startScan(Function(BluetoothDevice) onDeviceFound) {
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
 
-    flutterBlue.scanResults.listen((results) {
+    FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
         if (result.device.name == targetDeviceName) {
-          flutterBlue.stopScan();
+          FlutterBluePlus.stopScan();
           onDeviceFound(result.device);
           break;
         }
