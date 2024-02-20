@@ -4,7 +4,7 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/screens/texture_therapy_screen.dart';
+import 'package:rehab_flutter/drafts/presentable/texture_therapy_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   final BluetoothController bluetoothController = BluetoothController();
