@@ -4,7 +4,6 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/widgets/actuator_buttons.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/features/actuator_therapy/presentation/widgets/actuator_row.dart';
 
 class ActuatorTherapy extends StatefulWidget {
   const ActuatorTherapy({Key? key}) : super(key: key);
@@ -13,8 +12,7 @@ class ActuatorTherapy extends StatefulWidget {
   State<ActuatorTherapy> createState() => _ActuatorTherapyState();
 }
 
-class _ActuatorTherapyState extends State<ActuatorTherapy>
-    with SingleTickerProviderStateMixin {
+class _ActuatorTherapyState extends State<ActuatorTherapy> with SingleTickerProviderStateMixin {
   Set<int> activeValues = Set<int>(); // Ensure type specification for clarity
 
   @override
@@ -37,9 +35,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy>
   }
 
   void updateModuleValue() {
-    int combinedValue = activeValues.fold(
-            0, (previousValue, element) => previousValue + element) %
-        256;
+    int combinedValue = activeValues.fold(0, (previousValue, element) => previousValue + element) % 256;
     sendPattern(combinedValue);
   }
 
@@ -92,8 +88,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy>
             buildButtonRow([2, 16]),
             buildButtonRow([4, 32]),
             buildButtonRow([64, 128]),
-            Text(
-                "Characteristic Selected: ${sl<BluetoothController>().targetCharacteristic.uuid}"),
+            Text("Characteristic Selected: ${sl<BluetoothController>().targetCharacteristic.uuid}"),
           ],
         )),
       ),
