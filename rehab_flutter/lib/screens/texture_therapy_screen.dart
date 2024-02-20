@@ -22,8 +22,7 @@ class TextureTherapyScreen extends StatefulWidget {
 }
 
 class _TextureTherapyScreenState extends State<TextureTherapyScreen> {
-  // image variables
-  String imagePath = 'assets/images/MultipleTextures.png';
+  String imagePath = 'assets/images/Multiple_Textures.png';
   GlobalKey imageKey = GlobalKey();
   GlobalKey paintKey = GlobalKey();
   bool useSnapshot = true;
@@ -360,10 +359,7 @@ class _TextureTherapyScreenState extends State<TextureTherapyScreen> {
 
   void sendPattern(String data) {
     if (widget.targetCharacteristic == null) return;
-
-    // widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
     sl<BluetoothBloc>().add(WriteDataEvent(data));
-    // print("Pattern sent: $data");
   }
 
   @override

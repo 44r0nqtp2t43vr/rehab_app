@@ -104,8 +104,7 @@ class ServiceScreen extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>
-                          MenuScreen(targetCharacteristic: characteristic),
+                      builder: (_) => MenuScreen(),
                     ),
                   );
                 },
