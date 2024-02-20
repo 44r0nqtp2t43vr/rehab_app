@@ -1,9 +1,9 @@
 class Note {
   final int orderNumber;
-  final int line;
+  final List<int> lines;
   NoteState state = NoteState.ready;
 
-  Note(this.orderNumber, this.line);
+  Note(this.orderNumber, this.lines);
 }
 
 enum NoteState { ready, tapped, missed }
