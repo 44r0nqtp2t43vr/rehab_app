@@ -4,8 +4,11 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/texture_frame/widget/actuator_grid.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class TextureFrame extends StatefulWidget {
   final ImageTexture imageTexture;
@@ -88,7 +91,7 @@ class TextureFrameState extends State<TextureFrame> {
     tappedColors.clear();
 
     // Increase the spacing to 20 points instead of 10
-    int spacing = 20; // Adjust the spacing value as needed
+    int spacing = 15; // Adjust the spacing value as needed
 
     // Correct loop to generate positions with increased spacing
     for (int i = -1; i <= 2; i++) {
@@ -112,6 +115,23 @@ class TextureFrameState extends State<TextureFrame> {
     }
 
     setState(() {});
+    sendPattern();
+  }
+
+  void sendPattern() {
+    String leftString =
+        ActuatorGrid.sumOfLeftActivatedActuators(tappedColors, cursorValues)
+            .toString()
+            .padLeft(3, '0');
+    String rightString =
+        ActuatorGrid.sumOfRightActivatedActuators(tappedColors, cursorValues)
+            .toString()
+            .padLeft(3, '0');
+    String data =
+        "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+
+    sl<BluetoothBloc>().add(WriteDataEvent(data));
+    print("Pattern sent: $data");
   }
 
   @override

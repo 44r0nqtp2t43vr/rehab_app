@@ -19,13 +19,13 @@ class SingleActuator extends StatefulWidget {
 
 class _SingleActuatorState extends State<SingleActuator> {
   int value = 0;
-  bool isActivated = false;
+  bool isActivated = true;
 
   @override
   void initState() {
     super.initState();
     if (widget.tappedColor != Colors.green) {
-      isActivated = true;
+      isActivated = false;
     }
   }
 
@@ -41,9 +41,9 @@ class _SingleActuatorState extends State<SingleActuator> {
       left: adjustedLeft,
       top: adjustedTop,
       child: Container(
-        width: 20, // Circle size
-        height: 20,
-        child: Center(child: Text("${widget.value}")),
+        width: 10, // Circle size
+        height: 10,
+
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: widget.tappedColor,

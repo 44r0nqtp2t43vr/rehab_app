@@ -7,10 +7,11 @@ import 'package:rehab_flutter/injection_container.dart';
 import 'package:rehab_flutter/screens/texture_therapy_screen.dart';
 
 class MenuScreen extends StatelessWidget {
-  final BluetoothCharacteristic targetCharacteristic;
   final BluetoothController bluetoothController = BluetoothController();
 
-  MenuScreen({Key? key, required this.targetCharacteristic}) : super(key: key);
+  MenuScreen({
+    Key? key,
+  }) : super(key: key);
 
   void sendTherapyPattern(String pattern) {
     // bluetoothController.sendPattern(targetCharacteristic, pattern);
@@ -27,9 +28,6 @@ class MenuScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Center(
-                child: Text(
-                    'Characteristic Selected: ${targetCharacteristic.uuid}')),
             ElevatedButton(
               onPressed: () => _onATButtonPressed(context),
               child: const Text('Actuator Therapy'),
@@ -39,13 +37,7 @@ class MenuScreen extends StatelessWidget {
               child: const Text('Pattern Therapy'),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => TextureTherapyScreen(
-                      targetCharacteristic: targetCharacteristic),
-                ),
-              ),
+              onPressed: () => _onTextureTButtonPressed(context),
               child: const Text('Texture Therapy'),
             ),
             ElevatedButton(
@@ -81,5 +73,9 @@ class MenuScreen extends StatelessWidget {
 
   void _onTestButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Test');
+  }
+
+  void _onTextureTButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/TextureTherapy');
   }
 }

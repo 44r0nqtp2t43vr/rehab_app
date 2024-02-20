@@ -1,26 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/texture_frame/widget/single_actuator.dart';
+import 'single_actuator.dart'; // Make sure this import path matches your project structure
 
 class ActuatorGrid {
-  // get the sum of all SingleActuator.value if SingleActuator isActivated
-  static int getSumOfActivatedActuators(List<SingleActuator> actuators) {
+  // Calculate the sum of all SingleActuator.value if SingleActuator isActivated (based on color not being green)
+  static int sumOfLeftActivatedActuators(
+      List<Color> tappedColors, List<int> values) {
     int sum = 0;
-    for (SingleActuator actuator in actuators) {
-      if (actuator.isActivated) {
-        sum += actuator.value;
+    // Process only the left actuators (0-1, 4-5, 8-9, ...)
+    for (int i = 0; i < tappedColors.length; i += 4) {
+      if (i < tappedColors.length && tappedColors[i] == Colors.green) {
+        sum += values[i];
+      }
+      // Check if the next actuator is within the bounds of the list
+      if (i + 1 < tappedColors.length && tappedColors[i + 1] == Colors.green) {
+        sum += values[i + 1];
       }
     }
     return sum;
   }
 
-  static List<Widget> buildActuators(List<Offset> tapPositions,
-      List<Color> tappedColors, List<int> cursorValues) {
+  static int sumOfRightActivatedActuators(
+      List<Color> tappedColors, List<int> values) {
+    int sum = 0;
+    // Process only the right actuators (2-3, 6-7, 10-11, ...)
+    for (int i = 2; i < tappedColors.length; i += 4) {
+      if (i < tappedColors.length && tappedColors[i] == Colors.green) {
+        sum += values[i];
+      }
+      // Check if the next actuator is within the bounds of the list
+      if (i + 1 < tappedColors.length && tappedColors[i + 1] == Colors.green) {
+        sum += values[i + 1];
+      }
+    }
+    return sum;
+  }
+
+  static List<Widget> buildActuators(
+      List<Offset> tapPositions, List<Color> tappedColors, List<int> values) {
     List<Widget> actuators = [];
     for (int i = 0; i < tapPositions.length; i++) {
       actuators.add(SingleActuator(
         tapPosition: tapPositions[i],
         tappedColor: tappedColors[i],
-        value: cursorValues[i],
+        value: values[i],
       ));
     }
     return actuators;

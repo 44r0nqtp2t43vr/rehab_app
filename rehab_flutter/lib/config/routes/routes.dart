@@ -6,6 +6,8 @@ import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actua
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/main.dart';
+import 'package:rehab_flutter/screens/bluetooth_screen.dart';
+import 'package:rehab_flutter/screens/menu_screen.dart';
 
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
@@ -27,6 +29,15 @@ class AppRoutes {
 
       case '/Test':
         return _materialRoute(const TextureTherapy());
+
+      case '/TextureTherapy':
+        return _materialRoute(const TextureTherapy());
+
+      case '/MenuScreen':
+        return _materialRoute(MenuScreen());
+
+      case '/BluetoothScreen':
+        return _materialRoute(BluetoothScreen());
 
       // case '/ViewDevices':
       //   return _materialRoute(const ViewDevices());
