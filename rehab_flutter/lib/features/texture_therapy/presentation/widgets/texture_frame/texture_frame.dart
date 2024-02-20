@@ -41,6 +41,7 @@ class TextureFrameState extends State<TextureFrame> {
     64,
     128
   ];
+  String lastSentPattern = "";
 
   @override
   void initState() {
@@ -130,8 +131,14 @@ class TextureFrameState extends State<TextureFrame> {
     String data =
         "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
 
-    sl<BluetoothBloc>().add(WriteDataEvent(data));
-    print("Pattern sent: $data");
+    // Check if the data to be sent is different from the last sent pattern
+    if (data != lastSentPattern) {
+      sl<BluetoothBloc>().add(WriteDataEvent(data));
+      print("Pattern sent: $data");
+      lastSentPattern = data; // Update the last sent pattern
+    } else {
+      print("Pattern not sent, identical to last pattern.");
+    }
   }
 
   @override
