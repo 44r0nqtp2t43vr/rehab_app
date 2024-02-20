@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/routes/routes.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
 import 'screens/bluetooth_screen.dart'; // Make sure this import path matches your file structure
 
@@ -33,10 +34,7 @@ class WelcomeScreen extends StatelessWidget {
         behavior: HitTestBehavior
             .opaque, // Ensures the GestureDetector is as large as its parent
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => BluetoothScreen()),
-          );
+          _onTestButtonPressed(context);
         },
         child: Center(
           child: Text(
@@ -47,4 +45,8 @@ class WelcomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void _onTestButtonPressed(BuildContext context) {
+  Navigator.pushNamed(context, '/Test');
 }
