@@ -58,16 +58,24 @@ class _PlayGameState extends State<PlayGame>
             currentNoteIndex++;
             // debugPrint(notes[currentNoteIndex].orderNumber.toString());
           });
-          sl<BluetoothBloc>()
-              .add(const WriteDataEvent("<000000000000000000000000000000>"));
+          // sl<BluetoothBloc>()
+          //     .add(const WriteDataEvent("<000000000000000000000000000000>"));
           animationController.forward(from: 0);
         }
       }
     });
     animationController.addListener(() {
       if (animationController.value > 0.50 &&
+          animationController.value < 0.80 &&
           currentNoteIndex != notes.last.orderNumber - 5) {
-        _onPass(notes[currentNoteIndex].line);
+        _onPass(notes[currentNoteIndex].lines);
+      }
+    });
+    animationController.addListener(() {
+      if (animationController.value > 0.80 &&
+          currentNoteIndex != notes.last.orderNumber - 5) {
+        sl<BluetoothBloc>()
+            .add(const WriteDataEvent("<000000000000000000000000000000>"));
       }
     });
     player
@@ -115,25 +123,14 @@ class _PlayGameState extends State<PlayGame>
     );
   }
 
-  void _onPass(int lineNumber) {
-    if (lineNumber == -1) {
+  void _onPass(List<int> lineNumbers) {
+    if (lineNumbers.isEmpty) {
       return;
     } else {
-      String data = "<000000000000000000000000000000>";
-      switch (lineNumber) {
-        case 0:
-          data = "<255255000000000000000000000000>";
-        case 1:
-          data = "<000000255255000000000000000000>";
-        case 2:
-          data = "<000000000000255255000000000000>";
-        case 3:
-          data = "<000000000000000000255255000000>";
-        case 4:
-          data = "<000000000000000000000000255255>";
-        default:
-          data = "<000000000000000000000000000000>";
-      }
+      const String off = "000000";
+      const String on = "255255";
+      String data =
+          "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
       sl<BluetoothBloc>().add(WriteDataEvent(data));
     }
   }
@@ -182,13 +179,13 @@ class _PlayGameState extends State<PlayGame>
   }
 
   _drawLine(int lineNumber, double tileHeight, double tileWidth) {
-    // for instances where having multiple notes per time unit is possible
-    int lastRenderIndex = notes.indexOf(
-      notes.lastWhere(
-        (note) => note.orderNumber == currentNoteIndex + 5,
-        orElse: () => notes.last,
-      ),
-    );
+    // for instances where having multiple notes per time unit is possible + tap behavior
+    // int lastRenderIndex = notes.indexOf(
+    //   notes.lastWhere(
+    //     (note) => note.orderNumber == currentNoteIndex + 5,
+    //     orElse: () => notes.last,
+    //   ),
+    // );
 
     return Expanded(
       child: Line(
@@ -196,8 +193,9 @@ class _PlayGameState extends State<PlayGame>
         tileWidth: tileWidth,
         lineNumber: lineNumber,
         currentNotes: notes
-            .sublist(currentNoteIndex, lastRenderIndex)
-            .where((note) => note.line == lineNumber)
+            .sublist(currentNoteIndex, currentNoteIndex + 5)
+            .where(
+                (note) => note.lines.isNotEmpty && note.lines[lineNumber] == 1)
             .toList(),
         currentNoteIndex: currentNoteIndex,
         animation: animationController,
