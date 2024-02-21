@@ -28,9 +28,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   late List<ImageTexture> imageTextures;
   late AnimationController animationController;
   late img.Image photo;
+  late img.Image photo2;
   int currentImgIndex = 0;
   bool hasStarted = true;
   bool isPlaying = true;
+  bool isPreloaded = false;
   List<Offset> tapPositions0 = [];
   List<Offset> tapPositions1 = [];
   List<Offset> tapPositions2 = [];
@@ -65,10 +67,19 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         } else {
           setState(() {
             currentImgIndex++;
+            photo = photo2;
+            isPreloaded = false;
           });
-          _loadImage();
+          // _loadImage();
+
           animationController.forward(from: 0);
         }
+      }
+    });
+
+    animationController.addListener(() {
+      if (animationController.value >= 0.85 && !isPreloaded && currentImgIndex < imageTextures.length - 3) {
+        _loadImage2();
       }
     });
 
@@ -114,16 +125,30 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     }
   }
 
-  List<Offset> moveOffsetsToLeft(List<Offset> offsets, double distance) {
-    return offsets.map((offset) {
-      return Offset(offset.dx - distance, offset.dy); // Move to the left by 'distance'
-    }).toList();
-  }
+  Future<void> _loadImage2() async {
+    try {
+      int desiredWidth = 300;
+      int desiredHeight = 300;
+      ByteData data = await rootBundle.load(imageTextures[currentImgIndex + 1].texture).then((value) {
+        // Define your desired width and height for resizing
+        desiredWidth = MediaQuery.of(context).size.width.toInt();
+        desiredHeight = MediaQuery.of(context).size.height ~/ 2;
+        return value;
+      });
+      Uint8List bytes = data.buffer.asUint8List();
+      img.Image image = img.decodeImage(bytes)!;
 
-  List<Offset> moveOffsetsToRight(List<Offset> offsets, double distance) {
-    return offsets.map((offset) {
-      return Offset(offset.dx + distance, offset.dy); // Move to the right by 'distance'
-    }).toList();
+      // Resize the image
+      img.Image resizedImage = img.copyResize(image, width: desiredWidth, height: desiredHeight);
+
+      setState(() {
+        photo2 = resizedImage;
+        isPreloaded = true;
+      });
+    } catch (e) {
+      print("Failed to load image: $e");
+      // Handle error or set a default image/photo state
+    }
   }
 
   @override
@@ -256,27 +281,28 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         // final int imageY = max(0, min(photo.height - 1, gridY.round()));
 
         // if (i == -1 && j == -1) {
-        //   print("${animationController.value}, $gridYtoImage, ${gridYtoImage + photo.height}, ($gridX, $gridY), ($imageX, $imageY)");
+        //   print("${animationController.value}, ($gridX2, $gridY), ($imageX2, $gridYtoImage)");
         // }
 
-        // final img.Pixel pixel = photo.getPixelSafe(imageX, imageY);
-        img.Pixel pixel = photo.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        img.Image currentPhoto = gridYtoImage >= 0 ? photo : photo2;
+
+        img.Pixel pixel = currentPhoto.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        pixel = currentPhoto.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        pixel = currentPhoto.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        pixel = currentPhoto.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        pixel = currentPhoto.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 

@@ -8,8 +8,7 @@ import 'package:rehab_flutter/providers.dart';
 class ActuatorTherapy extends StatefulWidget {
   final BluetoothCharacteristic targetCharacteristic;
 
-  ActuatorTherapy({Key? key, required this.targetCharacteristic})
-      : super(key: key);
+  ActuatorTherapy({Key? key, required this.targetCharacteristic}) : super(key: key);
 
   @override
   _ActuatorTherapyState createState() => _ActuatorTherapyState();
@@ -41,9 +40,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
   }
 
   void updateModuleValue() {
-    int combinedValue = activeValues.fold(
-            0, (previousValue, element) => previousValue + element) %
-        256;
+    int combinedValue = activeValues.fold(0, (previousValue, element) => previousValue + element) % 256;
     sendPattern(combinedValue);
   }
 
@@ -79,13 +76,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
         body: Center(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildRow(1, 8),
-            buildRow(2, 16),
-            buildRow(4, 32),
-            buildRow(64, 128),
-            Text("Characteristic Selected: ${widget.targetCharacteristic.uuid}")
-          ],
+          children: [buildRow(1, 8), buildRow(2, 16), buildRow(4, 32), buildRow(64, 128), Text("Characteristic Selected: ${widget.targetCharacteristic.uuid}")],
         )),
       ),
     );
@@ -110,8 +101,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
           onLongPressStart: (_) => addActiveValue(value),
           onLongPressEnd: (_) => removeActiveValue(value),
           child: ElevatedButton(
-            onPressed:
-                () {}, // Empty function, we are using GestureDetector instead
+            onPressed: () {}, // Empty function, we are using GestureDetector instead
             child: Text(value.toString()),
             style: ElevatedButton.styleFrom(
               shape: CircleBorder(),

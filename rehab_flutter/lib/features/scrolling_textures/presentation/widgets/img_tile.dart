@@ -23,6 +23,7 @@ class ImgTile extends StatelessWidget {
             ? DecorationImage(
                 image: AssetImage(imgTexture.image),
                 fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
               )
             : null,
       ),
