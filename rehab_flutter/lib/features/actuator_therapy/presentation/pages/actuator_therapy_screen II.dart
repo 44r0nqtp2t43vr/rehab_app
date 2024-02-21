@@ -73,7 +73,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
     return {'left': leftSum, 'right': rightSum};
   }
 
-  void _resetNonPermanentCircles() {
+  void _resetNonPermanentGreenCircles() {
     for (int i = 0; i < _circleStates.length; i++) {
       if (!_permanentGreen[i]) {
         _circleStates[i] = false;
@@ -82,28 +82,45 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
     _sendUpdatedPattern();
   }
 
-  void _updateCircleStateBasedOnPosition(Offset globalPosition, bool isStart) {
-    for (int i = 0; i < _circleKeys.length; i++) {
-      final RenderBox? box =
-          _circleKeys[i].currentContext?.findRenderObject() as RenderBox?;
-      if (box != null) {
-        final position = box.localToGlobal(Offset.zero);
-        final size = box.size;
-
-        if (globalPosition.dx >= position.dx &&
-            globalPosition.dx <= position.dx + size.width &&
-            globalPosition.dy >= position.dy &&
-            globalPosition.dy <= position.dy + size.height) {
-          setState(() {
-            if (isStart || !_permanentGreen[i]) {
-              _circleStates[i] = true;
-            }
-          });
-          // Break to ensure only the first touched circle is activated
-          break;
-        }
+  void _resetNonPermanentRedCircles() {
+    for (int i = 0; i < _circleStates.length; i++) {
+      if (!_permanentGreen[i]) {
+        _circleStates[i] = false;
       }
     }
+    _sendUpdatedPattern();
+  }
+
+  void _updateCircleStateOnTap(int index) {
+    setState(() {
+      // Toggle the state based on whether it's currently permanent green or not
+      if (!_permanentGreen[index]) {
+        _permanentGreen[index] =
+            true; // Make it permanent green on tap if it was not
+      } else {
+        // If it was permanent green, toggle its state to red but not permanent
+        _circleStates[index] = !_circleStates[index];
+      }
+    });
+    _sendUpdatedPattern();
+  }
+
+  void _updateCircleStateOnPan(int index, bool isPanEnd) {
+    setState(() {
+      if (isPanEnd) {
+        // Reset to original state onPanEnd
+        if (_permanentGreen[index]) {
+          _circleStates[index] =
+              true; // Reset to green if it was permanent green
+        } else {
+          _circleStates[index] =
+              false; // Reset to red if it was not permanent green
+        }
+      } else {
+        // Toggle state on pan
+        _circleStates[index] = !_permanentGreen[index];
+      }
+    });
     _sendUpdatedPattern();
   }
 
@@ -122,26 +139,20 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
         title: Text('Actuator Therapy'),
       ),
       body: GestureDetector(
-        onPanStart: (DragStartDetails details) =>
-            _updateCircleStateBasedOnPosition(details.globalPosition, true),
-        onPanUpdate: (DragUpdateDetails details) =>
-            _updateCircleStateBasedOnPosition(details.globalPosition, false),
-        onPanEnd: (DragEndDetails details) =>
-            setState(_resetNonPermanentCircles),
-        child: Center(
-          // Use Center to align the child widget in the middle
-          child: ActuatorGrid(
-            circleKeys: _circleKeys,
-            circleStates: _circleStates,
-            permanentGreen: _permanentGreen,
-            updateState: (int index, bool value) {
-              setState(() {
-                _permanentGreen[index] = value;
-                _circleStates[index] = value;
-              });
-              _sendUpdatedPattern();
-            },
-          ),
+        onPanStart: (DragStartDetails details) {
+          // Implementation needs to identify the circle based on position and call _updateCircleStateOnPan
+        },
+        onPanUpdate: (DragUpdateDetails details) {
+          // Similar to onPanStart, but for continuous pan updates
+        },
+        onPanEnd: (DragEndDetails details) {
+          // Reset non-permanent circles to their original state
+        },
+        child: ActuatorGrid(
+          circleKeys: _circleKeys,
+          circleStates: _circleStates,
+          permanentGreen: _permanentGreen,
+          updateState: _updateState, // Directly use _updateState here
         ),
       ),
     );

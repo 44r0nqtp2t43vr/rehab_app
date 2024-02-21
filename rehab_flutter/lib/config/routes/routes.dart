@@ -6,7 +6,7 @@ import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actua
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/main.dart';
-import 'package:rehab_flutter/screens/bluetooth_screen.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/bluetooth_screen.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
 import 'package:rehab_flutter/screens/test.dart';
 
