@@ -25,11 +25,14 @@ class Gallery extends AnimatedWidget {
 
       return Transform.translate(
         offset: Offset(0, offset),
-        child: ImgTile(
-          height: imgHeight,
-          width: imgWidth,
-          imgTexture: imgTexture,
-          key: GlobalKey(),
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: ImgTile(
+            height: imgHeight,
+            width: imgWidth,
+            imgTexture: imgTexture,
+            key: GlobalKey(),
+          ),
         ),
       );
     }).toList();

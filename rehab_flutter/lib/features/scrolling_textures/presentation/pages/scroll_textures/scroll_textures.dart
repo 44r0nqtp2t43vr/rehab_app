@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
@@ -24,6 +23,7 @@ class ScrollTextures extends StatefulWidget {
 }
 
 class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProviderStateMixin {
+  final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
   final AudioPlayer player = AudioPlayer();
   late List<ImageTexture> imageTextures;
   late AnimationController animationController;
@@ -31,9 +31,17 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   int currentImgIndex = 0;
   bool hasStarted = true;
   bool isPlaying = true;
-  List<Offset> tapPositions = [];
-  List<Color> tappedColors = [];
-  List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+  List<Offset> tapPositions0 = [];
+  List<Offset> tapPositions1 = [];
+  List<Offset> tapPositions2 = [];
+  List<Offset> tapPositions3 = [];
+  List<Offset> tapPositions4 = [];
+  List<Color> tappedColors0 = [];
+  List<Color> tappedColors1 = [];
+  List<Color> tappedColors2 = [];
+  List<Color> tappedColors3 = [];
+  List<Color> tappedColors4 = [];
+
   String lastSentPattern = "";
 
   @override
@@ -47,7 +55,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 10),
     );
 
     animationController.addStatusListener((status) {
@@ -83,18 +91,39 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
   Future<void> _loadImage() async {
     try {
-      ByteData data = await rootBundle.load(imageTextures[currentImgIndex].texture);
+      int desiredWidth = 300;
+      int desiredHeight = 300;
+      ByteData data = await rootBundle.load(imageTextures[currentImgIndex].texture).then((value) {
+        // Define your desired width and height for resizing
+        desiredWidth = MediaQuery.of(context).size.width.toInt();
+        desiredHeight = MediaQuery.of(context).size.height ~/ 2;
+        return value;
+      });
       Uint8List bytes = data.buffer.asUint8List();
+      img.Image image = img.decodeImage(bytes)!;
+
+      // Resize the image
+      img.Image resizedImage = img.copyResize(image, width: desiredWidth, height: desiredHeight);
+
       setState(() {
-        photo = img.decodeImage(bytes)!;
-        print("=======================================");
-        print(photo.toString());
-        print("=======================================");
+        photo = resizedImage;
       });
     } catch (e) {
       print("Failed to load image: $e");
       // Handle error or set a default image/photo state
     }
+  }
+
+  List<Offset> moveOffsetsToLeft(List<Offset> offsets, double distance) {
+    return offsets.map((offset) {
+      return Offset(offset.dx - distance, offset.dy); // Move to the left by 'distance'
+    }).toList();
+  }
+
+  List<Offset> moveOffsetsToRight(List<Offset> offsets, double distance) {
+    return offsets.map((offset) {
+      return Offset(offset.dx + distance, offset.dy); // Move to the right by 'distance'
+    }).toList();
   }
 
   @override
@@ -111,8 +140,13 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
               _drawGallery(imgHeight, imgWidth),
             ],
           ),
-          // Custom paint to draw the circle
-          ...ActuatorGrid.buildActuators(tapPositions, tappedColors, cursorValues),
+          ...[
+            ...ActuatorGrid.buildActuators(tapPositions0, tappedColors0, cursorValues),
+            ...ActuatorGrid.buildActuators(tapPositions1, tappedColors1, cursorValues),
+            ...ActuatorGrid.buildActuators(tapPositions2, tappedColors2, cursorValues),
+            ...ActuatorGrid.buildActuators(tapPositions3, tappedColors3, cursorValues),
+            ...ActuatorGrid.buildActuators(tapPositions4, tappedColors4, cursorValues),
+          ],
         ],
       ),
     );
@@ -127,9 +161,22 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       currentImgIndex = 0;
       hasStarted = true;
       isPlaying = true;
+      tapPositions0 = [];
+      tapPositions1 = [];
+      tapPositions2 = [];
+      tapPositions3 = [];
+      tapPositions4 = [];
+      tappedColors0 = [];
+      tappedColors1 = [];
+      tappedColors2 = [];
+      tappedColors3 = [];
+      tappedColors4 = [];
+      lastSentPattern = "";
     });
     animationController.reset();
-    player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+    _loadImage().then((value) {
+      player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+    });
   }
 
   void _onEnd() {
@@ -179,23 +226,66 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     final double adjustedY = MediaQuery.of(context).size.height - 40; // Bottom of the screen
     int spacing = 15; // Adjust the spacing value as needed
 
-    tapPositions.clear();
-    tappedColors.clear();
+    tapPositions0.clear();
+    tapPositions1.clear();
+    tapPositions2.clear();
+    tapPositions3.clear();
+    tapPositions4.clear();
+    tappedColors0.clear();
+    tappedColors1.clear();
+    tappedColors2.clear();
+    tappedColors3.clear();
+    tappedColors4.clear();
 
     for (int i = -1; i <= 2; i++) {
       for (int j = -1; j <= 2; j++) {
-        final double gridX = adjustedX + (j * spacing);
+        final double gridX0 = adjustedX - 120 + (j * spacing);
+        final double gridX1 = adjustedX - 60 + (j * spacing);
+        final double gridX2 = adjustedX + (j * spacing);
+        final double gridX3 = adjustedX + 60 + (j * spacing);
+        final double gridX4 = adjustedX + 120 + (j * spacing);
         final double gridY = adjustedY + (i * spacing);
 
-        final int imageX = max(0, min(photo.width - 1, gridX.round()));
-        final int imageY = max(0, min(photo.height - 1, gridY.round()));
+        final double gridYtoImage = (photo.height - 1 - 40 + (i * spacing)) - ((photo.height - 1) * animationController.value);
 
-        final img.Pixel pixel = photo.getPixelSafe(imageX, imageY);
+        final int imageX0 = max(0, min(photo.width - 1, gridX0.round()));
+        final int imageX1 = max(0, min(photo.width - 1, gridX1.round()));
+        final int imageX2 = max(0, min(photo.width - 1, gridX2.round()));
+        final int imageX3 = max(0, min(photo.width - 1, gridX3.round()));
+        final int imageX4 = max(0, min(photo.width - 1, gridX4.round()));
+        // final int imageY = max(0, min(photo.height - 1, gridY.round()));
+
+        // if (i == -1 && j == -1) {
+        //   print("${animationController.value}, $gridYtoImage, ${gridYtoImage + photo.height}, ($gridX, $gridY), ($imageX, $imageY)");
+        // }
+
+        // final img.Pixel pixel = photo.getPixelSafe(imageX, imageY);
+        img.Pixel pixel = photo.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+        tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+        pixel = photo.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+        tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+        pixel = photo.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+        tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+        pixel = photo.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+        tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+        pixel = photo.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : 0);
+        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+        tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
         // Adjust position back to display space
-        tapPositions.add(Offset(gridX, gridY));
+        tapPositions0.add(Offset(gridX0, gridY));
+        tapPositions1.add(Offset(gridX1, gridY));
+        tapPositions2.add(Offset(gridX2, gridY));
+        tapPositions3.add(Offset(gridX3, gridY));
+        tapPositions4.add(Offset(gridX4, gridY));
       }
     }
 
@@ -204,9 +294,17 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   }
 
   void sendPattern() {
-    String leftString = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors, cursorValues).toString().padLeft(3, '0');
-    String rightString = ActuatorGrid.sumOfRightActivatedActuators(tappedColors, cursorValues).toString().padLeft(3, '0');
-    String data = "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+    String leftString0 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors0, cursorValues).toString().padLeft(3, '0');
+    String rightString0 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors0, cursorValues).toString().padLeft(3, '0');
+    String leftString1 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors1, cursorValues).toString().padLeft(3, '0');
+    String rightString1 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors1, cursorValues).toString().padLeft(3, '0');
+    String leftString2 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors2, cursorValues).toString().padLeft(3, '0');
+    String rightString2 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors2, cursorValues).toString().padLeft(3, '0');
+    String leftString3 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors3, cursorValues).toString().padLeft(3, '0');
+    String rightString3 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors3, cursorValues).toString().padLeft(3, '0');
+    String leftString4 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors4, cursorValues).toString().padLeft(3, '0');
+    String rightString4 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors4, cursorValues).toString().padLeft(3, '0');
+    String data = "<$leftString0$rightString0$leftString1$rightString1$leftString2$rightString2$leftString3$rightString3$leftString4$rightString4>";
 
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
@@ -214,7 +312,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       print("Pattern sent: $data");
       lastSentPattern = data; // Update the last sent pattern
     } else {
-      print("Pattern not sent, identical to last pattern.");
+      // print("Pattern not sent, identical to last pattern.");
     }
   }
 }

@@ -16,8 +16,8 @@ class ImgTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      height: 300,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         image: imgTexture.image.isNotEmpty
             ? DecorationImage(
