@@ -13,6 +13,8 @@ import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_tex
 import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/texture_frame/widget/actuator_grid.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
+enum AnimationState { upward, downward }
+
 class ScrollTextures extends StatefulWidget {
   final Song song;
 
@@ -27,6 +29,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   final AudioPlayer player = AudioPlayer();
   late List<ImageTexture> imageTextures;
   late AnimationController animationController;
+  late img.Image photo0 = img.Image(height: 0, width: 0);
   late img.Image photo;
   late img.Image photo2;
   int currentImgIndex = 0;
@@ -43,13 +46,57 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   List<Color> tappedColors2 = [];
   List<Color> tappedColors3 = [];
   List<Color> tappedColors4 = [];
-
   String lastSentPattern = "";
+  AnimationState animationState = AnimationState.downward;
+
+  void downwardAnimationStatusListener(AnimationStatus status) {
+    if (status == AnimationStatus.completed && isPlaying) {
+      if (currentImgIndex == imageTextures.length - 3) {
+        _onEnd();
+      } else {
+        setState(() {
+          currentImgIndex++;
+          photo = photo2;
+          isPreloaded = false;
+        });
+        animationController.forward(from: 0);
+      }
+    }
+  }
+
+  void upwardAnimationStatusListener(AnimationStatus status) {
+    if (status == AnimationStatus.dismissed && isPlaying) {
+      if (currentImgIndex == 2) {
+        _onEnd();
+      } else {
+        setState(() {
+          currentImgIndex--;
+          if (currentImgIndex - 1 > 0) {
+            photo0 = photo;
+            photo = photo2;
+            isPreloaded = false;
+          }
+        });
+        animationController.reverse(from: 1);
+      }
+    }
+  }
+
+  void downwardAnimationListener() {
+    if (animationController.value >= 0.85 && !isPreloaded && currentImgIndex < imageTextures.length - 3) {
+      _loadImage2();
+    }
+  }
+
+  void upwardAnimationListener() {
+    if (animationController.value <= 0.15 && !isPreloaded && currentImgIndex - 3 >= 0) {
+      _loadImage2();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    // notes = List.from(widget.song.songNotes);
     imageTextures = List.from([
       ...ImageTextureProvider().imageTextures,
       ...[ImageTexture(name: "", image: "", texture: ""), ImageTexture(name: "", image: "", texture: "")]
@@ -60,36 +107,27 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       duration: const Duration(seconds: 10),
     );
 
-    animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed && isPlaying) {
-        if (currentImgIndex == imageTextures.length - 3) {
-          _onEnd();
-        } else {
-          setState(() {
-            currentImgIndex++;
-            photo = photo2;
-            isPreloaded = false;
-          });
-          // _loadImage();
-
-          animationController.forward(from: 0);
-        }
-      }
-    });
-
-    animationController.addListener(() {
-      if (animationController.value >= 0.85 && !isPreloaded && currentImgIndex < imageTextures.length - 3) {
-        _loadImage2();
-      }
-    });
+    if (animationState == AnimationState.downward) {
+      animationController.addStatusListener(downwardAnimationStatusListener);
+      animationController.addListener(downwardAnimationListener);
+    } else if (animationState == AnimationState.upward) {
+      currentImgIndex = ImageTextureProvider().imageTextures.length + 1;
+      animationController.addStatusListener(upwardAnimationStatusListener);
+      animationController.addListener(upwardAnimationListener);
+    }
 
     _loadImage().then((value) {
       animationController.addListener(() {
         _onPass(context);
       });
+      player.play(AssetSource(widget.song.audioSource)).then((value) {
+        if (animationState == AnimationState.downward) {
+          animationController.forward();
+        } else if (animationState == AnimationState.upward) {
+          animationController.reverse(from: 1);
+        }
+      });
     });
-
-    player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
   }
 
   @override
@@ -104,7 +142,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     try {
       int desiredWidth = 300;
       int desiredHeight = 300;
-      ByteData data = await rootBundle.load(imageTextures[currentImgIndex].texture).then((value) {
+      int indexToLoad = currentImgIndex;
+      if (animationState == AnimationState.upward) {
+        indexToLoad = currentImgIndex - 2;
+      }
+      ByteData data = await rootBundle.load(imageTextures[indexToLoad].texture).then((value) {
         // Define your desired width and height for resizing
         desiredWidth = MediaQuery.of(context).size.width.toInt();
         desiredHeight = MediaQuery.of(context).size.height ~/ 2;
@@ -129,7 +171,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     try {
       int desiredWidth = 300;
       int desiredHeight = 300;
-      ByteData data = await rootBundle.load(imageTextures[currentImgIndex + 1].texture).then((value) {
+      int indexToLoad = currentImgIndex + 1;
+      if (animationState == AnimationState.upward) {
+        indexToLoad = currentImgIndex - 3;
+      }
+      ByteData data = await rootBundle.load(imageTextures[indexToLoad].texture).then((value) {
         // Define your desired width and height for resizing
         desiredWidth = MediaQuery.of(context).size.width.toInt();
         desiredHeight = MediaQuery.of(context).size.height ~/ 2;
@@ -179,11 +225,15 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
   void _restart() {
     setState(() {
+      if (animationState == AnimationState.downward) {
+        currentImgIndex = 0;
+      } else if (animationState == AnimationState.upward) {
+        currentImgIndex = ImageTextureProvider().imageTextures.length + 1;
+      }
       imageTextures = List.from([
         ...ImageTextureProvider().imageTextures,
         ...[ImageTexture(name: "", image: "", texture: ""), ImageTexture(name: "", image: "", texture: "")]
       ]);
-      currentImgIndex = 0;
       hasStarted = true;
       isPlaying = true;
       tapPositions0 = [];
@@ -197,10 +247,17 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       tappedColors3 = [];
       tappedColors4 = [];
       lastSentPattern = "";
+      photo0 = img.Image(height: 0, width: 0);
     });
     animationController.reset();
     _loadImage().then((value) {
-      player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+      player.play(AssetSource(widget.song.audioSource)).then((value) {
+        if (animationState == AnimationState.downward) {
+          animationController.forward();
+        } else if (animationState == AnimationState.upward) {
+          animationController.reverse(from: 1);
+        }
+      });
     });
   }
 
@@ -233,12 +290,18 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   }
 
   _drawGallery(double imgHeight, double imgWidth) {
+    List<ImageTexture> currentImageTextures = [];
+    if (animationState == AnimationState.downward) {
+      currentImageTextures = imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
+    } else if (animationState == AnimationState.upward) {
+      currentImageTextures = imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
+    }
+
     return Expanded(
       child: Gallery(
         imgHeight: imgHeight,
         imgWidth: imgWidth,
-        // imageTextures: imageTextures,
-        imageTextures: imageTextures.sublist(currentImgIndex, currentImgIndex + 3),
+        imageTextures: currentImageTextures,
         currentImgIndex: currentImgIndex,
         animation: animationController,
         key: GlobalKey(),
@@ -247,8 +310,10 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   }
 
   void _onPass(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
     final double adjustedX = MediaQuery.of(context).size.width / 2 + 7; // Adjust as needed
-    final double adjustedY = MediaQuery.of(context).size.height - 40; // Bottom of the screen
+    final double adjustedY = screenHeight - 40; // Bottom of the screen
+    final int photoSize = screenHeight ~/ 2;
     int spacing = 15; // Adjust the spacing value as needed
 
     tapPositions0.clear();
@@ -278,31 +343,35 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         final int imageX2 = max(0, min(photo.width - 1, gridX2.round()));
         final int imageX3 = max(0, min(photo.width - 1, gridX3.round()));
         final int imageX4 = max(0, min(photo.width - 1, gridX4.round()));
-        // final int imageY = max(0, min(photo.height - 1, gridY.round()));
 
-        // if (i == -1 && j == -1) {
-        //   print("${animationController.value}, ($gridX2, $gridY), ($imageX2, $gridYtoImage)");
+        // if (i == 2 && j == 2) {
+        //   print("${animationController.value}, ($gridX2, $gridY), ($imageX2, $gridYtoImage), ${gridYtoImage >= 0}");
         // }
 
-        img.Image currentPhoto = gridYtoImage >= 0 ? photo : photo2;
+        img.Image currentPhoto = photo;
+        if (gridYtoImage < 0 && animationState == AnimationState.downward) {
+          currentPhoto = photo2;
+        } else if (gridYtoImage < 0 && animationState == AnimationState.upward) {
+          currentPhoto = photo0;
+        }
 
-        img.Pixel pixel = currentPhoto.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
+        img.Pixel pixel = currentPhoto.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = currentPhoto.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
+        pixel = currentPhoto.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = currentPhoto.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
+        pixel = currentPhoto.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = currentPhoto.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
+        pixel = currentPhoto.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = currentPhoto.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : photo2.height + gridYtoImage.toInt());
+        pixel = currentPhoto.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
@@ -316,7 +385,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     }
 
     setState(() {});
-    sendPattern();
+    // sendPattern();
   }
 
   void sendPattern() {
