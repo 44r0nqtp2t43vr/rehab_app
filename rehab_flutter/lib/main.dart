@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/routes/routes.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
+
 import 'package:rehab_flutter/injection_container.dart';
-import 'screens/bluetooth_screen.dart'; // Make sure this import path matches your file structure
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,9 +32,10 @@ class WelcomeScreen extends StatelessWidget {
       body: GestureDetector(
         behavior: HitTestBehavior
             .opaque, // Ensures the GestureDetector is as large as its parent
-        onTap: () {
-          _onBlueToothScreenTap(context);
-        },
+        onTap: () =>
+            // _onATButtonPressed(context),
+            _onBlueToothScreenTap(context),
+
         child: Center(
           child: Text(
             'Welcome to Haplos!\nTap the screen to set up your gloves.',
@@ -49,4 +49,8 @@ class WelcomeScreen extends StatelessWidget {
 
 void _onBlueToothScreenTap(BuildContext context) {
   Navigator.pushNamed(context, '/BluetoothScreen');
+}
+
+void _onTest(BuildContext context) {
+  Navigator.pushNamed(context, '/ActuatorTherapy');
 }
