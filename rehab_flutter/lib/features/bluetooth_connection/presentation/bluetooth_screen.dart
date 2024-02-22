@@ -3,9 +3,10 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart'; // Adjust the import path as necessary
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/service_screen.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
 
-import '../injection_container.dart'; // Adjust the import path as necessary
+import '../../../injection_container.dart'; // Adjust the import path as necessary
 
 class BluetoothScreen extends StatefulWidget {
   @override
@@ -47,6 +48,10 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Filter the devicesList to only include devices with 'Gloves' in their name
+    var filteredDevicesList =
+        devicesList.where((device) => device.name.contains('Gloves')).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select a Bluetooth Device'),
@@ -54,14 +59,14 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
       body: isScanning
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: devicesList.length,
+              itemCount: filteredDevicesList.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(devicesList[index].name.isEmpty
+                  title: Text(filteredDevicesList[index].name.isEmpty
                       ? 'Unknown Device'
-                      : devicesList[index].name),
-                  subtitle: Text(devicesList[index].id.toString()),
-                  onTap: () => selectDevice(devicesList[index]),
+                      : filteredDevicesList[index].name),
+                  subtitle: Text(filteredDevicesList[index].id.toString()),
+                  onTap: () => selectDevice(filteredDevicesList[index]),
                 );
               },
             ),
@@ -75,44 +80,5 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
       bluetoothController.disconnectDevice(connectedDevice!); // Disconnect
     }
     super.dispose();
-  }
-}
-
-class ServiceScreen extends StatelessWidget {
-  final List<BluetoothService> services;
-
-  const ServiceScreen({Key? key, required this.services}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Device Services'),
-      ),
-      body: ListView.builder(
-        itemCount: services.length,
-        itemBuilder: (context, index) {
-          return ExpansionTile(
-            title: Text('Service UUID: ${services[index].uuid}'),
-            children: services[index]
-                .characteristics
-                .map((BluetoothCharacteristic characteristic) {
-              return ListTile(
-                title: Text('Characteristic UUID: ${characteristic.uuid}'),
-                onTap: () {
-                  sl<BluetoothBloc>().add(UpdateCharaEvent(characteristic));
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MenuScreen(),
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          );
-        },
-      ),
-    );
   }
 }
