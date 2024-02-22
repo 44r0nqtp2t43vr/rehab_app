@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
+import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/animation_button.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/gallery.dart';
 import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
@@ -36,6 +37,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   bool hasStarted = true;
   bool isPlaying = true;
   bool isPreloaded = false;
+  bool isEnded = false;
   List<Offset> tapPositions0 = [];
   List<Offset> tapPositions1 = [];
   List<Offset> tapPositions2 = [];
@@ -49,10 +51,56 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   String lastSentPattern = "";
   AnimationState animationState = AnimationState.downward;
 
+  void _pauseAnimation() {
+    animationController.stop();
+    setState(() {
+      isPlaying = false;
+    });
+  }
+
+  void _resumeAnimation() {
+    if (animationState == AnimationState.downward) {
+      animationController.forward();
+    } else if (animationState == AnimationState.upward) {
+      animationController.reverse();
+    }
+    setState(() {
+      isPlaying = true;
+    });
+  }
+
+  void _switchDirection() {
+    _pauseAnimation();
+    if (animationState == AnimationState.downward) {
+      setState(() {
+        animationState = AnimationState.upward;
+        currentImgIndex = currentImgIndex + 2;
+        isEnded = false;
+      });
+      animationController.removeStatusListener(downwardAnimationStatusListener);
+      animationController.removeListener(downwardAnimationListener);
+      animationController.addStatusListener(upwardAnimationStatusListener);
+      animationController.addListener(upwardAnimationListener);
+    } else if (animationState == AnimationState.upward) {
+      setState(() {
+        animationState = AnimationState.downward;
+        currentImgIndex = currentImgIndex - 2;
+        isEnded = false;
+      });
+      animationController.removeStatusListener(upwardAnimationStatusListener);
+      animationController.removeListener(upwardAnimationListener);
+      animationController.addStatusListener(downwardAnimationStatusListener);
+      animationController.addListener(downwardAnimationListener);
+    }
+    _resumeAnimation();
+  }
+
   void downwardAnimationStatusListener(AnimationStatus status) {
     if (status == AnimationStatus.completed && isPlaying) {
       if (currentImgIndex == imageTextures.length - 3) {
-        _onEnd();
+        setState(() {
+          isEnded = true;
+        });
       } else {
         setState(() {
           currentImgIndex++;
@@ -67,7 +115,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   void upwardAnimationStatusListener(AnimationStatus status) {
     if (status == AnimationStatus.dismissed && isPlaying) {
       if (currentImgIndex == 2) {
-        _onEnd();
+        setState(() {
+          isEnded = true;
+        });
       } else {
         setState(() {
           currentImgIndex--;
@@ -84,13 +134,13 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
   void downwardAnimationListener() {
     if (animationController.value >= 0.85 && !isPreloaded && currentImgIndex < imageTextures.length - 3) {
-      _loadImage2();
+      _loadImage(preload: true);
     }
   }
 
   void upwardAnimationListener() {
     if (animationController.value <= 0.15 && !isPreloaded && currentImgIndex - 3 >= 0) {
-      _loadImage2();
+      _loadImage(preload: true);
     }
   }
 
@@ -104,7 +154,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 2),
     );
 
     if (animationState == AnimationState.downward) {
@@ -138,14 +188,23 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     super.dispose();
   }
 
-  Future<void> _loadImage() async {
+  Future<void> _loadImage({bool preload = false}) async {
     try {
       int desiredWidth = 300;
       int desiredHeight = 300;
       int indexToLoad = currentImgIndex;
-      if (animationState == AnimationState.upward) {
-        indexToLoad = currentImgIndex - 2;
+      if (preload) {
+        indexToLoad = currentImgIndex + 1;
+        if (animationState == AnimationState.upward) {
+          indexToLoad = currentImgIndex - 3;
+        }
+      } else {
+        indexToLoad = currentImgIndex;
+        if (animationState == AnimationState.upward) {
+          indexToLoad = currentImgIndex - 2;
+        }
       }
+
       ByteData data = await rootBundle.load(imageTextures[indexToLoad].texture).then((value) {
         // Define your desired width and height for resizing
         desiredWidth = MediaQuery.of(context).size.width.toInt();
@@ -159,37 +218,12 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       img.Image resizedImage = img.copyResize(image, width: desiredWidth, height: desiredHeight);
 
       setState(() {
-        photo = resizedImage;
-      });
-    } catch (e) {
-      print("Failed to load image: $e");
-      // Handle error or set a default image/photo state
-    }
-  }
-
-  Future<void> _loadImage2() async {
-    try {
-      int desiredWidth = 300;
-      int desiredHeight = 300;
-      int indexToLoad = currentImgIndex + 1;
-      if (animationState == AnimationState.upward) {
-        indexToLoad = currentImgIndex - 3;
-      }
-      ByteData data = await rootBundle.load(imageTextures[indexToLoad].texture).then((value) {
-        // Define your desired width and height for resizing
-        desiredWidth = MediaQuery.of(context).size.width.toInt();
-        desiredHeight = MediaQuery.of(context).size.height ~/ 2;
-        return value;
-      });
-      Uint8List bytes = data.buffer.asUint8List();
-      img.Image image = img.decodeImage(bytes)!;
-
-      // Resize the image
-      img.Image resizedImage = img.copyResize(image, width: desiredWidth, height: desiredHeight);
-
-      setState(() {
-        photo2 = resizedImage;
-        isPreloaded = true;
+        if (preload) {
+          photo2 = resizedImage;
+          isPreloaded = true;
+        } else {
+          photo = resizedImage;
+        }
       });
     } catch (e) {
       print("Failed to load image: $e");
@@ -210,6 +244,30 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
             children: <Widget>[
               _drawGallery(imgHeight, imgWidth),
             ],
+          ),
+          Positioned(
+            top: 20,
+            right: 20,
+            child: AnimationButton(
+              onPressed: () => isEnded
+                  ? _restart()
+                  : isPlaying
+                      ? _pauseAnimation()
+                      : _resumeAnimation(),
+              icon: Icon(isEnded
+                  ? Icons.restart_alt
+                  : isPlaying
+                      ? Icons.pause
+                      : Icons.play_arrow),
+            ),
+          ),
+          Positioned(
+            top: 80,
+            right: 20,
+            child: AnimationButton(
+              onPressed: () => _switchDirection(),
+              icon: const Icon(Icons.sync),
+            ),
           ),
           ...[
             ...ActuatorGrid.buildActuators(tapPositions0, tappedColors0, cursorValues),
@@ -236,6 +294,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       ]);
       hasStarted = true;
       isPlaying = true;
+      isEnded = false;
       tapPositions0 = [];
       tapPositions1 = [];
       tapPositions2 = [];
@@ -261,33 +320,33 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     });
   }
 
-  void _onEnd() {
-    player.stop();
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Play again?"),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _restart();
-              },
-              child: const Text("Restart"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: const Text("Exit"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _onEnd() {
+  //   player.stop();
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: const Text("Play again?"),
+  //         actions: <Widget>[
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //               _restart();
+  //             },
+  //             child: const Text("Restart"),
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text("Exit"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   _drawGallery(double imgHeight, double imgWidth) {
     List<ImageTexture> currentImageTextures = [];
