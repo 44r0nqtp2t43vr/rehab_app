@@ -6,20 +6,18 @@ class Gallery extends AnimatedWidget {
   final double imgHeight;
   final double imgWidth;
   final int currentImgIndex;
+  final int rotateFactor;
   final List<ImageTexture> imageTextures;
 
-  const Gallery({required Key key, required this.imgHeight, required this.imgWidth, required this.currentImgIndex, required this.imageTextures, required Animation<double> animation}) : super(key: key, listenable: animation);
+  const Gallery({required Key key, required this.imgHeight, required this.imgWidth, required this.currentImgIndex, required this.rotateFactor, required this.imageTextures, required Animation<double> animation}) : super(key: key, listenable: animation);
 
   @override
   Widget build(BuildContext context) {
     Animation<double>? animation = super.listenable as Animation<double>?;
-    // get only notes for that line
-    // List<Note> thisLineNotes =
-    //     currentNotes.where((note) => note.line == lineNumber).toList();
 
-    // map notes to widgets
+    // map imageTextures to widgets
     List<Widget> tiles = imageTextures.map((imgTexture) {
-      //specify note distance from top
+      //specify distance from top
       int index = imageTextures.indexOf(imgTexture);
       double offset = (1 - index + animation!.value) * imgHeight;
 
@@ -29,6 +27,7 @@ class Gallery extends AnimatedWidget {
           height: imgHeight,
           width: imgWidth,
           imgTexture: imgTexture,
+          rotateFactor: rotateFactor,
           key: GlobalKey(),
         ),
       );

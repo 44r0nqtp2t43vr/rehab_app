@@ -34,6 +34,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   late img.Image photo;
   late img.Image photo2;
   int currentImgIndex = 0;
+  int rotateFactor = 0;
   bool hasStarted = true;
   bool isPlaying = true;
   bool isPreloaded = false;
@@ -95,6 +96,14 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     _resumeAnimation();
   }
 
+  void _incrementRotateFactor() {
+    setState(() {
+      rotateFactor = rotateFactor < 3 ? rotateFactor + 1 : 0;
+    });
+    _loadImage();
+    _loadImage(preload: true);
+  }
+
   void downwardAnimationStatusListener(AnimationStatus status) {
     if (status == AnimationStatus.completed && isPlaying) {
       if (currentImgIndex == imageTextures.length - 3) {
@@ -154,7 +163,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 10),
     );
 
     if (animationState == AnimationState.downward) {
@@ -166,10 +175,17 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       animationController.addListener(upwardAnimationListener);
     }
 
+    player.onPlayerComplete.listen((event) {
+      // When the song finishes playing, seek to the beginning and play it again
+      player.seek(Duration.zero);
+      player.play(AssetSource(widget.song.audioSource));
+    });
+
     _loadImage().then((value) {
       animationController.addListener(() {
         _onPass(context);
       });
+
       player.play(AssetSource(widget.song.audioSource)).then((value) {
         if (animationState == AnimationState.downward) {
           animationController.forward();
@@ -192,18 +208,13 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     try {
       int desiredWidth = 300;
       int desiredHeight = 300;
-      int indexToLoad = currentImgIndex;
-      if (preload) {
-        indexToLoad = currentImgIndex + 1;
-        if (animationState == AnimationState.upward) {
-          indexToLoad = currentImgIndex - 3;
-        }
-      } else {
-        indexToLoad = currentImgIndex;
-        if (animationState == AnimationState.upward) {
-          indexToLoad = currentImgIndex - 2;
-        }
-      }
+      int indexToLoad = preload
+          ? animationState == AnimationState.downward
+              ? currentImgIndex + 1
+              : currentImgIndex - 3
+          : animationState == AnimationState.downward
+              ? currentImgIndex
+              : currentImgIndex - 2;
 
       ByteData data = await rootBundle.load(imageTextures[indexToLoad].texture).then((value) {
         // Define your desired width and height for resizing
@@ -214,15 +225,20 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       Uint8List bytes = data.buffer.asUint8List();
       img.Image image = img.decodeImage(bytes)!;
 
+      // Rotate the image
+      if (rotateFactor > 0) {
+        image = img.copyRotate(image, angle: 90 * rotateFactor);
+      }
+
       // Resize the image
-      img.Image resizedImage = img.copyResize(image, width: desiredWidth, height: desiredHeight);
+      image = img.copyResize(image, width: desiredWidth, height: desiredHeight, maintainAspect: false);
 
       setState(() {
         if (preload) {
-          photo2 = resizedImage;
+          photo2 = image;
           isPreloaded = true;
         } else {
-          photo = resizedImage;
+          photo = image;
         }
       });
     } catch (e) {
@@ -266,7 +282,15 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
             right: 20,
             child: AnimationButton(
               onPressed: () => _switchDirection(),
-              icon: const Icon(Icons.sync),
+              icon: const Icon(Icons.swap_vert),
+            ),
+          ),
+          Positioned(
+            top: 140,
+            right: 20,
+            child: AnimationButton(
+              onPressed: () => _incrementRotateFactor(),
+              icon: const Icon(Icons.rotate_90_degrees_cw),
             ),
           ),
           ...[
@@ -320,34 +344,6 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     });
   }
 
-  // void _onEnd() {
-  //   player.stop();
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: const Text("Play again?"),
-  //         actions: <Widget>[
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //               _restart();
-  //             },
-  //             child: const Text("Restart"),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: const Text("Exit"),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
   _drawGallery(double imgHeight, double imgWidth) {
     List<ImageTexture> currentImageTextures = [];
     if (animationState == AnimationState.downward) {
@@ -362,6 +358,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         imgWidth: imgWidth,
         imageTextures: currentImageTextures,
         currentImgIndex: currentImgIndex,
+        rotateFactor: rotateFactor,
         animation: animationController,
         key: GlobalKey(),
       ),
@@ -370,7 +367,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
   void _onPass(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double adjustedX = MediaQuery.of(context).size.width / 2 + 7; // Adjust as needed
+    final double adjustedX = MediaQuery.of(context).size.width ~/ 2 * 1.00; // Adjust as needed
     final double adjustedY = screenHeight - 40; // Bottom of the screen
     final int photoSize = screenHeight ~/ 2;
     int spacing = 15; // Adjust the spacing value as needed
@@ -444,7 +441,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     }
 
     setState(() {});
-    // sendPattern();
+    sendPattern();
   }
 
   void sendPattern() {
