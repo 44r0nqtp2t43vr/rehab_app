@@ -4,6 +4,8 @@ import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/song_select/song_select.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
+import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_song_select/bg_song_select.dart';
+import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/main.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/bluetooth_screen.dart';
@@ -39,6 +41,12 @@ class AppRoutes {
 
       case '/BluetoothScreen':
         return _materialRoute(BluetoothScreen());
+
+      case '/BgSongSelect':
+        return _materialRoute(const BgSongSelect());
+
+      case '/ScrollTextures':
+        return _materialRoute(ScrollTextures(song: settings.arguments as Song));
 
       // case '/ViewDevices':
       //   return _materialRoute(const ViewDevices());

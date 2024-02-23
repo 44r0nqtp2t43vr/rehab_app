@@ -56,7 +56,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
       print("Pattern not sent, identical to last pattern.");
     }
   }
-
+  
   // Method to calculate the sums of left and right actuator buttons
   Map<String, int> _calculateSumsOfActuators() {
     int leftSum = 0, rightSum = 0;

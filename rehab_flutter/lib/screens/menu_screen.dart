@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
@@ -41,13 +40,16 @@ class MenuScreen extends StatelessWidget {
               child: const Text('Texture Therapy'),
             ),
             ElevatedButton(
-              onPressed: () =>
-                  sendTherapyPattern("<205205205205205205205205205205>"),
+              onPressed: () => sendTherapyPattern("<205205205205205205205205205205>"),
               child: const Text('Rhythmic Therapy'),
             ),
             ElevatedButton(
               onPressed: () => _onPTButtonPressed(context),
               child: const Text('Piano Tiles'),
+            ),
+            ElevatedButton(
+              onPressed: () => _onSTButtonPressed(context),
+              child: const Text('Scrolling Textures'),
             ),
             ElevatedButton(
               onPressed: () => _onTestButtonPressed(context),
@@ -69,6 +71,10 @@ class MenuScreen extends StatelessWidget {
 
   void _onPatternTButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/PatternTherapy');
+  }
+
+  void _onSTButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/BgSongSelect');
   }
 
   void _onTestButtonPressed(BuildContext context) {

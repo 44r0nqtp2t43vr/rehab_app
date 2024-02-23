@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
@@ -23,24 +22,7 @@ class TextureFrameState extends State<TextureFrame> {
   late img.Image photo;
   List<Offset> tapPositions = [];
   List<Color> tappedColors = [];
-  List<int> cursorValues = [
-    1,
-    8,
-    1,
-    8,
-    2,
-    16,
-    2,
-    16,
-    4,
-    32,
-    4,
-    32,
-    64,
-    128,
-    64,
-    128
-  ];
+  List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
   String lastSentPattern = "";
 
   @override
@@ -79,13 +61,11 @@ class TextureFrameState extends State<TextureFrame> {
     if (photo.width / photo.height > displayWidth / displayHeight) {
       // Adjust for wide image
       double scaledHeight = displayWidth / (photo.width / photo.height);
-      adjustedY =
-          (localPosition.dy - (displayHeight - scaledHeight) / 2) * scaleY;
+      adjustedY = (localPosition.dy - (displayHeight - scaledHeight) / 2) * scaleY;
     } else {
       // Adjust for tall image
       double scaledWidth = displayHeight * (photo.width / photo.height);
-      adjustedX =
-          (localPosition.dx - (displayWidth - scaledWidth) / 2) * scaleX;
+      adjustedX = (localPosition.dx - (displayWidth - scaledWidth) / 2) * scaleX;
     }
 
     tapPositions.clear();
@@ -105,10 +85,7 @@ class TextureFrameState extends State<TextureFrame> {
 
         final img.Pixel pixel = photo.getPixelSafe(imageX, imageY);
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors.add(!isWhite
-            ? Colors.green
-            : Color.fromRGBO(
-                pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+        tappedColors.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
         // Adjust position back to display space
         tapPositions.add(Offset(gridX / scaleX, gridY / scaleY));
@@ -120,16 +97,9 @@ class TextureFrameState extends State<TextureFrame> {
   }
 
   void sendPattern() {
-    String leftString =
-        ActuatorGrid.sumOfLeftActivatedActuators(tappedColors, cursorValues)
-            .toString()
-            .padLeft(3, '0');
-    String rightString =
-        ActuatorGrid.sumOfRightActivatedActuators(tappedColors, cursorValues)
-            .toString()
-            .padLeft(3, '0');
-    String data =
-        "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+    String leftString = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors, cursorValues).toString().padLeft(3, '0');
+    String rightString = ActuatorGrid.sumOfRightActivatedActuators(tappedColors, cursorValues).toString().padLeft(3, '0');
+    String data = "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
 
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
@@ -167,8 +137,7 @@ class TextureFrameState extends State<TextureFrame> {
             ),
           ),
           // Custom paint to draw the circle
-          ...ActuatorGrid.buildActuators(
-              tapPositions, tappedColors, cursorValues),
+          ...ActuatorGrid.buildActuators(tapPositions, tappedColors, cursorValues),
         ],
       ),
     );
