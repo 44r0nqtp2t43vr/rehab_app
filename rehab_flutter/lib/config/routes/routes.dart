@@ -8,8 +8,9 @@ import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/main.dart';
-import 'package:rehab_flutter/screens/bluetooth_screen.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/bluetooth_screen.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
+import 'package:rehab_flutter/screens/test.dart';
 
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
@@ -24,13 +25,13 @@ class AppRoutes {
         return _materialRoute(PlayGame(song: settings.arguments as Song));
 
       case '/ActuatorTherapy':
-        return _materialRoute(const ActuatorTherapy());
+        return _materialRoute(ActuatorTherapy());
 
       case '/PatternTherapy':
         return _materialRoute(const PatternTherapy());
 
       case '/Test':
-        return _materialRoute(const TextureTherapy());
+        return _materialRoute(Test());
 
       case '/TextureTherapy':
         return _materialRoute(const TextureTherapy());

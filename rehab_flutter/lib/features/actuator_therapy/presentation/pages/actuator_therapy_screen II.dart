@@ -12,9 +12,9 @@ class ActuatorTherapy extends StatefulWidget {
 class _ActuatorTherapyState extends State<ActuatorTherapy> {
   List<bool> _circleStates = List.generate(16, (_) => false);
   List<bool> _permanentGreen = List.generate(16, (_) => false);
+
   List<GlobalKey> _circleKeys = List.generate(16, (index) => GlobalKey());
   String lastSentPattern = "";
-  List<bool> _initialCircleStates = [];
 
   // Assuming _cursorValues is accessible like this
   final List<int> _cursorValues = [
@@ -56,7 +56,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
       print("Pattern not sent, identical to last pattern.");
     }
   }
-  
+
   // Method to calculate the sums of left and right actuator buttons
   Map<String, int> _calculateSumsOfActuators() {
     int leftSum = 0, rightSum = 0;
@@ -74,6 +74,15 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
     return {'left': leftSum, 'right': rightSum};
   }
 
+  void _resetNonPermanentCircles() {
+    for (int i = 0; i < _circleStates.length; i++) {
+      if (!_permanentGreen[i]) {
+        _circleStates[i] = false;
+      }
+    }
+    _sendUpdatedPattern();
+  }
+
   void _updateCircleStateBasedOnPosition(Offset globalPosition, bool isStart) {
     for (int i = 0; i < _circleKeys.length; i++) {
       final RenderBox? box =
@@ -87,14 +96,8 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
             globalPosition.dy >= position.dy &&
             globalPosition.dy <= position.dy + size.height) {
           setState(() {
-            if (isStart && _circleStates[i] == false) {
+            if (isStart || !_permanentGreen[i]) {
               _circleStates[i] = true;
-            } else if (isStart && _circleStates[i] == true) {
-              _circleStates[i] = false;
-            } else if (!_permanentGreen[i]) {
-              _circleStates[i] = true;
-            } else if (_permanentGreen[i]) {
-              _circleStates[i] = false;
             }
           });
           // Break to ensure only the first touched circle is activated
@@ -113,13 +116,6 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
     _sendUpdatedPattern();
   }
 
-  void _resetNonPermanentCircles() {
-    for (int i = 0; i < _circleStates.length; i++) {
-      _circleStates[i] = _initialCircleStates[i];
-    }
-    _sendUpdatedPattern();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,18 +123,12 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
         title: Text('Actuator Therapy'),
       ),
       body: GestureDetector(
-        onPanStart: (DragStartDetails details) {
-          // Capture initial state of circles
-          _initialCircleStates = List.from(_circleStates);
-          _updateCircleStateBasedOnPosition(details.globalPosition, true);
-        },
+        onPanStart: (DragStartDetails details) =>
+            _updateCircleStateBasedOnPosition(details.globalPosition, true),
         onPanUpdate: (DragUpdateDetails details) =>
             _updateCircleStateBasedOnPosition(details.globalPosition, false),
-        onPanEnd: (DragEndDetails details) {
-          setState(() {
-            _resetNonPermanentCircles();
-          });
-        },
+        onPanEnd: (DragEndDetails details) =>
+            setState(_resetNonPermanentCircles),
         child: Center(
           // Use Center to align the child widget in the middle
           child: ActuatorGrid(
