@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
-import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/animation_button.dart';
+import 'package:rehab_flutter/core/widgets/animation_button.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/gallery.dart';
 import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';

@@ -42,11 +42,20 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
 
   Future<void> _loadImage() async {
     try {
-      ByteData data = await rootBundle.load(widget.imageTexture.texture);
+      int desiredSize = 300;
+      ByteData data = await rootBundle.load(widget.imageTexture.texture).then((value) {
+        // Define your desired width and height for resizing
+        desiredSize = MediaQuery.of(context).size.width.toInt();
+        return value;
+      });
       Uint8List bytes = data.buffer.asUint8List();
+      img.Image image = img.decodeImage(bytes)!;
+
+      // Resize the image
+      image = img.copyResize(image, width: desiredSize, height: desiredSize, maintainAspect: false);
+
       setState(() {
-        photo = img.decodeImage(bytes)!;
-        // for pos in _tapPositions null
+        photo = image;
         tapPositions0.clear();
         tapPositions1.clear();
         tapPositions2.clear();
@@ -59,27 +68,25 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     }
   }
 
-  void _onTapImage(BuildContext context, dynamic details) {
+  void _onTapImage(BuildContext context, dynamic details, double imageSize) {
+    int imageSizeInt = imageSize.toInt();
+
     RenderBox box = context.findRenderObject() as RenderBox;
     final Offset localPosition = box.globalToLocal(details.globalPosition);
-
-    final double displayWidth = box.size.width;
-    final double displayHeight = box.size.height;
-    final double scaleX = photo.width / displayWidth;
-    final double scaleY = photo.height / displayHeight;
+    print(localPosition);
 
     double adjustedX = localPosition.dx;
     double adjustedY = localPosition.dy;
 
-    if (photo.width / photo.height > displayWidth / displayHeight) {
-      // Adjust for wide image
-      double scaledHeight = displayWidth / (photo.width / photo.height);
-      adjustedY = (localPosition.dy - (displayHeight - scaledHeight) / 2) * scaleY;
-    } else {
-      // Adjust for tall image
-      double scaledWidth = displayHeight * (photo.width / photo.height);
-      adjustedX = (localPosition.dx - (displayWidth - scaledWidth) / 2) * scaleX;
-    }
+    // if (photo.width / photo.height > displayWidth / displayHeight) {
+    //   // Adjust for wide image
+    //   double scaledHeight = displayWidth / (photo.width / photo.height);
+    //   adjustedY = (localPosition.dy - (displayHeight - scaledHeight) / 2) * scaleY;
+    // } else {
+    //   // Adjust for tall image
+    //   double scaledWidth = displayHeight * (photo.width / photo.height);
+    //   adjustedX = (localPosition.dx - (displayWidth - scaledWidth) / 2) * scaleX;
+    // }
 
     tapPositions0.clear();
     tapPositions1.clear();
@@ -103,14 +110,14 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
         final double gridX2 = adjustedX + (j * spacing);
         final double gridX3 = adjustedX + 60 + (j * spacing);
         final double gridX4 = adjustedX + 120 + (j * spacing);
-        final double gridY = adjustedY + (i * spacing) * scaleY;
+        final double gridY = adjustedY + (i * spacing);
 
-        final int imageX0 = max(0, min(photo.width - 1, gridX0.round()));
-        final int imageX1 = max(0, min(photo.width - 1, gridX1.round()));
-        final int imageX2 = max(0, min(photo.width - 1, gridX2.round()));
-        final int imageX3 = max(0, min(photo.width - 1, gridX3.round()));
-        final int imageX4 = max(0, min(photo.width - 1, gridX4.round()));
-        final int imageY = max(0, min(photo.height - 1, gridY.round()));
+        final int imageX0 = max(0, min(imageSizeInt, gridX0.round()));
+        final int imageX1 = max(0, min(imageSizeInt, gridX1.round()));
+        final int imageX2 = max(0, min(imageSizeInt, gridX2.round()));
+        final int imageX3 = max(0, min(imageSizeInt, gridX3.round()));
+        final int imageX4 = max(0, min(imageSizeInt, gridX4.round()));
+        final int imageY = max(0, min(imageSizeInt, gridY.round()));
 
         img.Pixel pixel = photo.getPixelSafe(imageX0, imageY);
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
@@ -133,16 +140,16 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
         tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
         // Adjust position back to display space
-        tapPositions0.add(Offset(gridX0 / scaleX, gridY / scaleY));
-        tapPositions1.add(Offset(gridX1 / scaleX, gridY / scaleY));
-        tapPositions2.add(Offset(gridX2 / scaleX, gridY / scaleY));
-        tapPositions3.add(Offset(gridX3 / scaleX, gridY / scaleY));
-        tapPositions4.add(Offset(gridX4 / scaleX, gridY / scaleY));
+        tapPositions0.add(Offset(gridX0, gridY));
+        tapPositions1.add(Offset(gridX1, gridY));
+        tapPositions2.add(Offset(gridX2, gridY));
+        tapPositions3.add(Offset(gridX3, gridY));
+        tapPositions4.add(Offset(gridX4, gridY));
       }
     }
 
     setState(() {});
-    sendPattern();
+    // sendPattern();
   }
 
   void sendPattern() {
@@ -180,11 +187,11 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    print(widget.animationController.value);
+    // print(widget.animationController.value);
 
     return GestureDetector(
-      onTapDown: (details) => _onTapImage(context, details),
-      onPanUpdate: (details) => _onTapImage(context, details),
+      onTapDown: (details) => _onTapImage(context, details, screenWidth),
+      onPanUpdate: (details) => _onTapImage(context, details, screenWidth),
       child: Stack(
         children: [
           Container(

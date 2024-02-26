@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/widgets/animation_button.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/scroll_texture_frame.dart';
 import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
@@ -18,6 +19,20 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
   int animationValue = 0;
   int currentIndex = 0;
   bool isPlaying = false;
+
+  void _pauseAnimation() {
+    animationController.stop();
+    setState(() {
+      isPlaying = false;
+    });
+  }
+
+  void _resumeAnimation() {
+    animationController.forward();
+    setState(() {
+      isPlaying = true;
+    });
+  }
 
   @override
   void initState() {
@@ -39,7 +54,7 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
       setState(() {});
     });
 
-    animationController.forward(from: 0);
+    // animationController.forward(from: 0);
   }
 
   @override
@@ -58,17 +73,9 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black, // Set border color here
-                  width: 2.0, // Set border width here
-                ),
-              ),
-              child: ScrollTextureFrame(
-                imageTexture: currentTexture,
-                animationController: animationController,
-              ),
+            ScrollTextureFrame(
+              imageTexture: currentTexture,
+              animationController: animationController,
             ),
 
             // put TextureNameSelector on the bottom
@@ -82,6 +89,15 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
                 });
               },
             ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     AnimationButton(
+            //       icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+            //       onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
