@@ -8,13 +8,12 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
+import 'package:rehab_flutter/features/scrolling_textures/domain/enums/animation_state.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/gallery.dart';
 import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/texture_frame/widget/actuator_grid.dart';
 import 'package:rehab_flutter/injection_container.dart';
-
-enum AnimationState { upward, downward }
 
 class ScrollTextures extends StatefulWidget {
   final Song song;
@@ -26,7 +25,8 @@ class ScrollTextures extends StatefulWidget {
 }
 
 class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProviderStateMixin {
-  final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+  // final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+  final List<int> cursorValues = [64, 4, 2, 1, 128, 32, 16, 8, 64, 4, 2, 1, 128, 32, 16, 8];
   final AudioPlayer player = AudioPlayer();
   late List<ImageTexture> imageTextures;
   late AnimationController animationController;
@@ -39,6 +39,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   bool isPlaying = true;
   bool isPreloaded = false;
   bool isEnded = false;
+  bool isActuatorsHorizontal = false;
   List<Offset> tapPositions0 = [];
   List<Offset> tapPositions1 = [];
   List<Offset> tapPositions2 = [];
@@ -79,9 +80,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         isEnded = false;
       });
       animationController.removeStatusListener(downwardAnimationStatusListener);
-      animationController.removeListener(downwardAnimationListener);
       animationController.addStatusListener(upwardAnimationStatusListener);
-      animationController.addListener(upwardAnimationListener);
     } else if (animationState == AnimationState.upward) {
       setState(() {
         animationState = AnimationState.downward;
@@ -89,10 +88,10 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         isEnded = false;
       });
       animationController.removeStatusListener(upwardAnimationStatusListener);
-      animationController.removeListener(upwardAnimationListener);
       animationController.addStatusListener(downwardAnimationStatusListener);
-      animationController.addListener(downwardAnimationListener);
     }
+    // _loadImage();
+    _loadImage(preload: true);
     _resumeAnimation();
   }
 
@@ -116,6 +115,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
           photo = photo2;
           isPreloaded = false;
         });
+        _loadImage(preload: true);
         animationController.forward(from: 0);
       }
     }
@@ -136,20 +136,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
             isPreloaded = false;
           }
         });
+        _loadImage(preload: true);
         animationController.reverse(from: 1);
       }
-    }
-  }
-
-  void downwardAnimationListener() {
-    if (animationController.value >= 0.85 && !isPreloaded && currentImgIndex < imageTextures.length - 3) {
-      _loadImage(preload: true);
-    }
-  }
-
-  void upwardAnimationListener() {
-    if (animationController.value <= 0.15 && !isPreloaded && currentImgIndex - 3 >= 0) {
-      _loadImage(preload: true);
     }
   }
 
@@ -168,11 +157,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
     if (animationState == AnimationState.downward) {
       animationController.addStatusListener(downwardAnimationStatusListener);
-      animationController.addListener(downwardAnimationListener);
     } else if (animationState == AnimationState.upward) {
       currentImgIndex = ImageTextureProvider().imageTextures.length + 1;
       animationController.addStatusListener(upwardAnimationStatusListener);
-      animationController.addListener(upwardAnimationListener);
     }
 
     player.onPlayerComplete.listen((event) {
@@ -185,6 +172,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       animationController.addListener(() {
         _onPass(context);
       });
+
+      _loadImage(preload: true);
 
       player.play(AssetSource(widget.song.audioSource)).then((value) {
         if (animationState == AnimationState.downward) {
@@ -334,6 +323,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     });
     animationController.reset();
     _loadImage().then((value) {
+      _loadImage(preload: true);
       player.play(AssetSource(widget.song.audioSource)).then((value) {
         if (animationState == AnimationState.downward) {
           animationController.forward();
@@ -367,10 +357,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
   void _onPass(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double adjustedX = MediaQuery.of(context).size.width ~/ 2 * 1.00; // Adjust as needed
-    final double adjustedY = screenHeight - 40; // Bottom of the screen
     final int photoSize = screenHeight ~/ 2;
-    int spacing = 15; // Adjust the spacing value as needed
+    const int spacing = 15; // Adjust the spacing value as needed
 
     tapPositions0.clear();
     tapPositions1.clear();
@@ -383,60 +371,153 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     tappedColors3.clear();
     tappedColors4.clear();
 
-    for (int i = -1; i <= 2; i++) {
-      for (int j = -1; j <= 2; j++) {
-        final double gridX0 = adjustedX - 120 + (j * spacing);
-        final double gridX1 = adjustedX - 60 + (j * spacing);
-        final double gridX2 = adjustedX + (j * spacing);
-        final double gridX3 = adjustedX + 60 + (j * spacing);
-        final double gridX4 = adjustedX + 120 + (j * spacing);
-        final double gridY = adjustedY + (i * spacing);
+    if (isActuatorsHorizontal) {
+      final double adjustedX = MediaQuery.of(context).size.width ~/ 2 * 1.00;
+      final double adjustedY = screenHeight - 40; // Bottom of the screen
 
-        final double gridYtoImage = (photo.height - 1 - 40 + (i * spacing)) - ((photo.height - 1) * animationController.value);
+      for (int i = -1; i <= 2; i++) {
+        for (int j = -1; j <= 2; j++) {
+          final double gridX0 = adjustedX - 120 + (j * spacing);
+          final double gridX1 = adjustedX - 60 + (j * spacing);
+          final double gridX2 = adjustedX + (j * spacing);
+          final double gridX3 = adjustedX + 60 + (j * spacing);
+          final double gridX4 = adjustedX + 120 + (j * spacing);
+          final double gridY = adjustedY + (i * spacing);
 
-        final int imageX0 = max(0, min(photo.width - 1, gridX0.round()));
-        final int imageX1 = max(0, min(photo.width - 1, gridX1.round()));
-        final int imageX2 = max(0, min(photo.width - 1, gridX2.round()));
-        final int imageX3 = max(0, min(photo.width - 1, gridX3.round()));
-        final int imageX4 = max(0, min(photo.width - 1, gridX4.round()));
+          final double gridYtoImage = (photo.height - 1 - 40 + (i * spacing)) - ((photo.height - 1) * animationController.value);
 
-        // if (i == 2 && j == 2) {
-        //   print("${animationController.value}, ($gridX2, $gridY), ($imageX2, $gridYtoImage), ${gridYtoImage >= 0}");
-        // }
+          final int imageX0 = max(0, min(photo.width - 1, gridX0.round()));
+          final int imageX1 = max(0, min(photo.width - 1, gridX1.round()));
+          final int imageX2 = max(0, min(photo.width - 1, gridX2.round()));
+          final int imageX3 = max(0, min(photo.width - 1, gridX3.round()));
+          final int imageX4 = max(0, min(photo.width - 1, gridX4.round()));
 
-        img.Image currentPhoto = photo;
-        if (gridYtoImage < 0 && animationState == AnimationState.downward) {
-          currentPhoto = photo2;
-        } else if (gridYtoImage < 0 && animationState == AnimationState.upward) {
-          currentPhoto = photo0;
+          // if (i == 2 && j == 2) {
+          //   print("${animationController.value}, ($gridX2, $gridY), ($imageX2, $gridYtoImage), ${gridYtoImage >= 0}");
+          // }
+
+          img.Image currentPhoto = photo;
+          if (gridYtoImage < 0 && animationState == AnimationState.downward) {
+            currentPhoto = photo2;
+          } else if (gridYtoImage < 0 && animationState == AnimationState.upward) {
+            currentPhoto = photo0;
+          }
+
+          img.Pixel pixel = currentPhoto.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
+          bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          pixel = currentPhoto.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          pixel = currentPhoto.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          pixel = currentPhoto.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          pixel = currentPhoto.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          // Adjust position back to display space
+          tapPositions0.add(Offset(gridX0, gridY));
+          tapPositions1.add(Offset(gridX1, gridY));
+          tapPositions2.add(Offset(gridX2, gridY));
+          tapPositions3.add(Offset(gridX3, gridY));
+          tapPositions4.add(Offset(gridX4, gridY));
         }
+      }
+    } else {
+      const double adjustedX = 40;
+      final double adjustedY = screenHeight / 4 * 3;
 
-        img.Pixel pixel = currentPhoto.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
-        bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+      for (int i = -1; i <= 2; i++) {
+        for (int j = -1; j <= 2; j++) {
+          final double gridX = adjustedX + (j * spacing);
+          final double gridY0 = adjustedY - 120 + (i * spacing);
+          final double gridY1 = adjustedY - 60 + (i * spacing);
+          final double gridY2 = adjustedY + (i * spacing);
+          final double gridY3 = adjustedY + 60 + (i * spacing);
+          final double gridY4 = adjustedY + 120 + (i * spacing);
 
-        pixel = currentPhoto.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          // final double gridYtoImage = (photo.height - 1 - 40 + (i * spacing)) - ((photo.height - 1) * animationController.value);
+          final double gridY0toImage = gridY0 - photo.height - ((photo.height - 1) * animationController.value);
+          final double gridY1toImage = gridY1 - photo.height - ((photo.height - 1) * animationController.value);
+          final double gridY2toImage = gridY2 - photo.height - ((photo.height - 1) * animationController.value);
+          final double gridY3toImage = gridY3 - photo.height - ((photo.height - 1) * animationController.value);
+          final double gridY4toImage = gridY4 - photo.height - ((photo.height - 1) * animationController.value);
 
-        pixel = currentPhoto.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          final int imageX = max(0, min(photo.width - 1, gridX.round()));
 
-        pixel = currentPhoto.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          // if (i == -1 && j == -1) {
+          //   // print("${animationController.value}, ($gridX, $gridY0), ($imageX, $gridY0toImage), ${gridY0toImage >= 0}");
+          //   print("($gridY0, $gridY0toImage), ($gridY1, $gridY1toImage), ($gridY2, $gridY2toImage), ($gridY3, $gridY3toImage), ($gridY4, $gridY4toImage)");
+          // }
 
-        pixel = currentPhoto.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : photoSize + gridYtoImage.toInt());
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          img.Pixel pixel;
+          bool isWhite;
+          img.Image currentPhoto = photo;
 
-        // Adjust position back to display space
-        tapPositions0.add(Offset(gridX0, gridY));
-        tapPositions1.add(Offset(gridX1, gridY));
-        tapPositions2.add(Offset(gridX2, gridY));
-        tapPositions3.add(Offset(gridX3, gridY));
-        tapPositions4.add(Offset(gridX4, gridY));
+          if (gridY0toImage < 0 && animationState == AnimationState.downward) {
+            currentPhoto = photo2;
+          } else if (gridY0toImage < 0 && animationState == AnimationState.upward) {
+            currentPhoto = photo0;
+          }
+          pixel = currentPhoto.getPixelSafe(imageX, gridY0toImage >= 0 ? gridY0toImage.toInt() : photoSize + gridY0toImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          currentPhoto = photo;
+          if (gridY1toImage < 0 && animationState == AnimationState.downward) {
+            currentPhoto = photo2;
+          } else if (gridY1toImage < 0 && animationState == AnimationState.upward) {
+            currentPhoto = photo0;
+          }
+          pixel = currentPhoto.getPixelSafe(imageX, gridY1toImage >= 0 ? gridY1toImage.toInt() : photoSize + gridY1toImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          currentPhoto = photo;
+          if (gridY2toImage < 0 && animationState == AnimationState.downward) {
+            currentPhoto = photo2;
+          } else if (gridY2toImage < 0 && animationState == AnimationState.upward) {
+            currentPhoto = photo0;
+          }
+          pixel = currentPhoto.getPixelSafe(imageX, gridY2toImage >= 0 ? gridY2toImage.toInt() : photoSize + gridY2toImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          currentPhoto = photo;
+          if (gridY3toImage < 0 && animationState == AnimationState.downward) {
+            currentPhoto = photo2;
+          } else if (gridY3toImage < 0 && animationState == AnimationState.upward) {
+            currentPhoto = photo0;
+          }
+          pixel = currentPhoto.getPixelSafe(imageX, gridY3toImage >= 0 ? gridY3toImage.toInt() : photoSize + gridY3toImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          currentPhoto = photo;
+          if (gridY4toImage < 0 && animationState == AnimationState.downward) {
+            currentPhoto = photo2;
+          } else if (gridY4toImage < 0 && animationState == AnimationState.upward) {
+            currentPhoto = photo0;
+          }
+          pixel = currentPhoto.getPixelSafe(imageX, gridY4toImage >= 0 ? gridY4toImage.toInt() : photoSize + gridY4toImage.toInt());
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          // Adjust position back to display space
+          tapPositions0.add(Offset(gridX, gridY0));
+          tapPositions1.add(Offset(gridX, gridY1));
+          tapPositions2.add(Offset(gridX, gridY2));
+          tapPositions3.add(Offset(gridX, gridY3));
+          tapPositions4.add(Offset(gridX, gridY4));
+        }
       }
     }
 
@@ -445,16 +526,16 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   }
 
   void sendPattern() {
-    String leftString0 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors0, cursorValues).toString().padLeft(3, '0');
-    String rightString0 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors0, cursorValues).toString().padLeft(3, '0');
-    String leftString1 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors1, cursorValues).toString().padLeft(3, '0');
-    String rightString1 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors1, cursorValues).toString().padLeft(3, '0');
-    String leftString2 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors2, cursorValues).toString().padLeft(3, '0');
-    String rightString2 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors2, cursorValues).toString().padLeft(3, '0');
-    String leftString3 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors3, cursorValues).toString().padLeft(3, '0');
-    String rightString3 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors3, cursorValues).toString().padLeft(3, '0');
-    String leftString4 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors4, cursorValues).toString().padLeft(3, '0');
-    String rightString4 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors4, cursorValues).toString().padLeft(3, '0');
+    String leftString0 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors0, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String rightString0 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors0, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String leftString1 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors1, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String rightString1 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors1, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String leftString2 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors2, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String rightString2 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors2, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String leftString3 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors3, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String rightString3 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors3, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String leftString4 = ActuatorGrid.sumOfLeftActivatedActuators(tappedColors4, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
+    String rightString4 = ActuatorGrid.sumOfRightActivatedActuators(tappedColors4, cursorValues, isHorizontal: isActuatorsHorizontal).toString().padLeft(3, '0');
     String data = "<$leftString0$rightString0$leftString1$rightString1$leftString2$rightString2$leftString3$rightString3$leftString4$rightString4>";
 
     // Check if the data to be sent is different from the last sent pattern
