@@ -1,0 +1,1 @@
+enum AnimationDirection { vertical, horizontal }

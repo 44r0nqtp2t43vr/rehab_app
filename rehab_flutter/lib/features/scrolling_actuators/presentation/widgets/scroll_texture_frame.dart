@@ -5,6 +5,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/features/scrolling_actuators/data/data_sources/anipattern_provider.dart';
+import 'package:rehab_flutter/features/scrolling_actuators/domain/enums/animation_direction.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/texture_frame/widget/actuator_grid.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -12,14 +14,17 @@ import 'package:rehab_flutter/injection_container.dart';
 class ScrollTextureFrame extends StatefulWidget {
   final ImageTexture imageTexture;
   final AnimationController animationController;
+  final AnimationDirection animationDirection;
+  final bool isPlaying;
 
-  const ScrollTextureFrame({super.key, required this.imageTexture, required this.animationController});
+  const ScrollTextureFrame({super.key, required this.imageTexture, required this.animationController, required this.animationDirection, required this.isPlaying});
 
   @override
   State<ScrollTextureFrame> createState() => _ScrollTextureFrameState();
 }
 
 class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
+  final AniPatternProvider aniPatternProvider = AniPatternProvider();
   late img.Image photo;
   List<Offset> tapPositions0 = [];
   List<Offset> tapPositions1 = [];
@@ -68,25 +73,22 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     }
   }
 
-  void _onTapImage(BuildContext context, dynamic details, double imageSize) {
+  void _renderActuators(BuildContext context, dynamic details, double imageSize) {
     int imageSizeInt = imageSize.toInt();
+    double adjustedX = 0;
+    double adjustedY = 0;
 
-    RenderBox box = context.findRenderObject() as RenderBox;
-    final Offset localPosition = box.globalToLocal(details.globalPosition);
-    print(localPosition);
+    if (details != null) {
+      RenderBox box = context.findRenderObject() as RenderBox;
+      final Offset localPosition = box.globalToLocal(details.globalPosition);
 
-    double adjustedX = localPosition.dx;
-    double adjustedY = localPosition.dy;
-
-    // if (photo.width / photo.height > displayWidth / displayHeight) {
-    //   // Adjust for wide image
-    //   double scaledHeight = displayWidth / (photo.width / photo.height);
-    //   adjustedY = (localPosition.dy - (displayHeight - scaledHeight) / 2) * scaleY;
-    // } else {
-    //   // Adjust for tall image
-    //   double scaledWidth = displayHeight * (photo.width / photo.height);
-    //   adjustedX = (localPosition.dx - (displayWidth - scaledWidth) / 2) * scaleX;
-    // }
+      adjustedX = localPosition.dx;
+      adjustedY = localPosition.dy;
+    } else {
+      final Offset animatedPosition = widget.animationDirection == AnimationDirection.vertical ? aniPatternProvider.verticalPattern(imageSize, widget.animationController.value) : aniPatternProvider.horizontalPattern(imageSize, widget.animationController.value);
+      adjustedX = animatedPosition.dx;
+      adjustedY = animatedPosition.dy;
+    }
 
     tapPositions0.clear();
     tapPositions1.clear();
@@ -187,11 +189,15 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    // print(widget.animationController.value);
+    print(widget.animationController.value);
+
+    if (widget.isPlaying) {
+      _renderActuators(context, null, screenWidth);
+    }
 
     return GestureDetector(
-      onTapDown: (details) => _onTapImage(context, details, screenWidth),
-      onPanUpdate: (details) => _onTapImage(context, details, screenWidth),
+      onTapDown: (details) => widget.isPlaying ? {} : _renderActuators(context, details, screenWidth),
+      onPanUpdate: (details) => widget.isPlaying ? {} : _renderActuators(context, details, screenWidth),
       child: Stack(
         children: [
           Container(

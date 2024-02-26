@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
+import 'package:rehab_flutter/features/scrolling_actuators/domain/enums/animation_direction.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/scroll_texture_frame.dart';
 import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
@@ -16,9 +17,11 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
   final PageController _pageController = PageController();
   final ImageTextureProvider imageTextureProvider = ImageTextureProvider();
   late AnimationController animationController;
+  AnimationDirection animationDirection = AnimationDirection.vertical;
   int animationValue = 0;
   int currentIndex = 0;
   bool isPlaying = false;
+  bool isEnded = false;
 
   void _pauseAnimation() {
     animationController.stop();
@@ -28,9 +31,29 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
   }
 
   void _resumeAnimation() {
+    if (isEnded) {
+      animationController.reset();
+    }
     animationController.forward();
     setState(() {
+      if (isEnded) {
+        isEnded = false;
+      }
       isPlaying = true;
+    });
+  }
+
+  void _stopAnimation() {
+    animationController.reset();
+    setState(() {
+      isPlaying = false;
+      isEnded = true;
+    });
+  }
+
+  void _toggleAniDirection() {
+    setState(() {
+      animationDirection = animationDirection == AnimationDirection.vertical ? AnimationDirection.horizontal : AnimationDirection.vertical;
     });
   }
 
@@ -46,6 +69,7 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
     animationController.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
         setState(() {
+          isEnded = true;
           isPlaying = false;
         });
       }
@@ -53,8 +77,6 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
     animationController.addListener(() {
       setState(() {});
     });
-
-    // animationController.forward(from: 0);
   }
 
   @override
@@ -71,15 +93,15 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            const Spacer(flex: 2),
             ScrollTextureFrame(
+              isPlaying: isPlaying,
               imageTexture: currentTexture,
               animationController: animationController,
+              animationDirection: animationDirection,
             ),
-
-            // put TextureNameSelector on the bottom
-            const SizedBox(height: 100),
+            const Spacer(flex: 3),
             TextureNameSelector(
               controller: _pageController,
               imageTextures: imageTextureProvider.imageTextures,
@@ -89,15 +111,25 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
                 });
               },
             ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     AnimationButton(
-            //       icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-            //       onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
-            //     ),
-            //   ],
-            // ),
+            const Spacer(flex: 1),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                AnimationButton(
+                  icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                  onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                ),
+                AnimationButton(
+                  icon: const Icon(Icons.stop),
+                  onPressed: () => _stopAnimation(),
+                ),
+                AnimationButton(
+                  icon: const Icon(Icons.swap_calls),
+                  onPressed: () => _toggleAniDirection(),
+                ),
+              ],
+            ),
+            const Spacer(flex: 2),
           ],
         ),
       ),
