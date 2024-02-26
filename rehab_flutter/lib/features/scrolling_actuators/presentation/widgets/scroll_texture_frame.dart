@@ -205,7 +205,7 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
             height: screenWidth,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(widget.imageTexture.texture),
+                image: AssetImage(widget.imageTexture.image),
                 fit: BoxFit.cover,
               ),
             ),
