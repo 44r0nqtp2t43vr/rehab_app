@@ -3,7 +3,6 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/drafts/presentable/texture_therapy_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   final BluetoothController bluetoothController = BluetoothController();
@@ -52,6 +51,10 @@ class MenuScreen extends StatelessWidget {
               child: const Text('Scrolling Textures'),
             ),
             ElevatedButton(
+              onPressed: () => _onSAButtonPressed(context),
+              child: const Text('Scrolling Actuators'),
+            ),
+            ElevatedButton(
               onPressed: () => _onTestButtonPressed(context),
               child: const Text('Test'),
             ),
@@ -75,6 +78,10 @@ class MenuScreen extends StatelessWidget {
 
   void _onSTButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/BgSongSelect');
+  }
+
+  void _onSAButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/ScrollActuators');
   }
 
   void _onTestButtonPressed(BuildContext context) {

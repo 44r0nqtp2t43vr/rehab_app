@@ -33,13 +33,13 @@ class WelcomeScreen extends StatelessWidget {
         title: const Text('Haplos'),
       ),
       body: GestureDetector(
-        behavior: HitTestBehavior
-            .opaque, // Ensures the GestureDetector is as large as its parent
+        behavior: HitTestBehavior.opaque, // Ensures the GestureDetector is as large as its parent
         onTap: () =>
             // _onATButtonPressed(context),
             _onBlueToothScreenTap(context),
+        // _onTest(context),
 
-        child: Center(
+        child: const Center(
           child: Text(
             'Welcome to Haplos!\nTap the screen to set up your gloves.',
             textAlign: TextAlign.center, // Center-align the text
@@ -55,5 +55,6 @@ void _onBlueToothScreenTap(BuildContext context) {
 }
 
 void _onTest(BuildContext context) {
-  Navigator.pushNamed(context, '/ActuatorTherapy');
+  Navigator.pushNamed(context, '/ScrollActuators');
+  // Navigator.pushNamed(context, '/ScrollTextures', arguments: SongProvider().songs[0]);
 }

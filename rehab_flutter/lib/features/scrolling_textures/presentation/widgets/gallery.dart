@@ -7,9 +7,10 @@ class Gallery extends AnimatedWidget {
   final double imgWidth;
   final int currentImgIndex;
   final int rotateFactor;
+  final bool isActuatorsHorizontal;
   final List<ImageTexture> imageTextures;
 
-  const Gallery({required Key key, required this.imgHeight, required this.imgWidth, required this.currentImgIndex, required this.rotateFactor, required this.imageTextures, required Animation<double> animation}) : super(key: key, listenable: animation);
+  const Gallery({required Key key, required this.imgHeight, required this.imgWidth, required this.currentImgIndex, required this.rotateFactor, required this.isActuatorsHorizontal, required this.imageTextures, required Animation<double> animation}) : super(key: key, listenable: animation);
 
   @override
   Widget build(BuildContext context) {
