@@ -24,12 +24,12 @@ class ScrollTextures extends StatefulWidget {
   State<ScrollTextures> createState() => _ScrollTexturesState();
 }
 
-class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProviderStateMixin {
-  // final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
-  final List<int> cursorValues = [64, 4, 2, 1, 128, 32, 16, 8, 64, 4, 2, 1, 128, 32, 16, 8];
+class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStateMixin {
+  // final List<int> cursorValues = [64, 4, 2, 1, 128, 32, 16, 8, 64, 4, 2, 1, 128, 32, 16, 8];
   final AudioPlayer player = AudioPlayer();
   late List<ImageTexture> imageTextures;
   late AnimationController animationController;
+  late AnimationController animationControllerHoriz;
   late img.Image photo0 = img.Image(height: 0, width: 0);
   late img.Image photo;
   late img.Image photo2;
@@ -39,7 +39,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   bool isPlaying = true;
   bool isPreloaded = false;
   bool isEnded = false;
-  bool isActuatorsHorizontal = false;
+  bool isActuatorsHorizontal = true;
+  bool isLastVertStateDownward = true;
   List<Offset> tapPositions0 = [];
   List<Offset> tapPositions1 = [];
   List<Offset> tapPositions2 = [];
@@ -52,9 +53,14 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   List<Color> tappedColors4 = [];
   String lastSentPattern = "";
   AnimationState animationState = AnimationState.downward;
+  List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
 
   void _pauseAnimation() {
-    animationController.stop();
+    if (isActuatorsHorizontal) {
+      animationController.stop();
+    } else {
+      animationControllerHoriz.stop();
+    }
     setState(() {
       isPlaying = false;
     });
@@ -65,19 +71,27 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       animationController.forward();
     } else if (animationState == AnimationState.upward) {
       animationController.reverse();
+    } else if (animationState == AnimationState.sideward) {
+      if (animationControllerHoriz.status == AnimationStatus.forward) {
+        animationControllerHoriz.forward();
+      } else {
+        animationControllerHoriz.reverse();
+      }
     }
     setState(() {
       isPlaying = true;
     });
   }
 
-  void _switchDirection() {
+  void _switchDirectionVert() {
     _pauseAnimation();
+
     if (animationState == AnimationState.downward) {
       setState(() {
         animationState = AnimationState.upward;
         currentImgIndex = currentImgIndex + 2;
         isEnded = false;
+        isLastVertStateDownward = false;
       });
       animationController.removeStatusListener(downwardAnimationStatusListener);
       animationController.addStatusListener(upwardAnimationStatusListener);
@@ -86,13 +100,44 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         animationState = AnimationState.downward;
         currentImgIndex = currentImgIndex - 2;
         isEnded = false;
+        isLastVertStateDownward = true;
       });
       animationController.removeStatusListener(upwardAnimationStatusListener);
       animationController.addStatusListener(downwardAnimationStatusListener);
+    } else if (animationState == AnimationState.sideward) {
+      animationControllerHoriz.stop();
+      setState(() {
+        isActuatorsHorizontal = true;
+        animationState = isLastVertStateDownward ? AnimationState.downward : AnimationState.upward;
+        cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+      });
+      _resumeAnimation();
     }
     // _loadImage();
     _loadImage(preload: true);
     _resumeAnimation();
+  }
+
+  void _switchDirectionHoriz() {
+    setState(() {
+      // Update cursor values if necessary
+      if (isActuatorsHorizontal) {
+        isActuatorsHorizontal = false;
+        cursorValues = [64, 4, 2, 1, 128, 32, 16, 8, 64, 4, 2, 1, 128, 32, 16, 8];
+      }
+
+      if (isEnded) {
+        currentImgIndex = !isLastVertStateDownward ? 0 : ImageTextureProvider().imageTextures.length + 1;
+      }
+      // Set the new animation state
+      animationState = AnimationState.sideward;
+      animationControllerHoriz.value = 0.0;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      animationController.stop();
+      animationControllerHoriz.forward(from: 0);
+    });
   }
 
   void _incrementRotateFactor() {
@@ -113,6 +158,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         setState(() {
           currentImgIndex++;
           photo = photo2;
+          photo2 = img.Image(height: 0, width: 0);
           isPreloaded = false;
         });
         _loadImage(preload: true);
@@ -155,12 +201,27 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       duration: const Duration(seconds: 10),
     );
 
+    animationControllerHoriz = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    );
+
     if (animationState == AnimationState.downward) {
       animationController.addStatusListener(downwardAnimationStatusListener);
     } else if (animationState == AnimationState.upward) {
       currentImgIndex = ImageTextureProvider().imageTextures.length + 1;
       animationController.addStatusListener(upwardAnimationStatusListener);
     }
+
+    animationControllerHoriz.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        // Reverse the animation when it completes
+        animationControllerHoriz.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        // Forward the animation when it is dismissed
+        animationControllerHoriz.forward();
+      }
+    });
 
     player.onPlayerComplete.listen((event) {
       // When the song finishes playing, seek to the beginning and play it again
@@ -170,6 +231,10 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
     _loadImage().then((value) {
       animationController.addListener(() {
+        _onPass(context);
+      });
+
+      animationControllerHoriz.addListener(() {
         _onPass(context);
       });
 
@@ -189,6 +254,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   void dispose() {
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
+    animationControllerHoriz.dispose();
     player.dispose();
     super.dispose();
   }
@@ -270,12 +336,20 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
             top: 80,
             right: 20,
             child: AnimationButton(
-              onPressed: () => _switchDirection(),
+              onPressed: () => _switchDirectionVert(),
               icon: const Icon(Icons.swap_vert),
             ),
           ),
           Positioned(
             top: 140,
+            right: 20,
+            child: AnimationButton(
+              onPressed: () => _switchDirectionHoriz(),
+              icon: const Icon(Icons.swap_horiz),
+            ),
+          ),
+          Positioned(
+            top: 200,
             right: 20,
             child: AnimationButton(
               onPressed: () => _incrementRotateFactor(),
@@ -295,10 +369,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
   }
 
   void _restart() {
+    animationControllerHoriz.stop();
     setState(() {
-      if (animationState == AnimationState.downward) {
+      if (isLastVertStateDownward) {
         currentImgIndex = 0;
-      } else if (animationState == AnimationState.upward) {
+      } else {
         currentImgIndex = ImageTextureProvider().imageTextures.length + 1;
       }
       imageTextures = List.from([
@@ -320,14 +395,19 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
       tappedColors4 = [];
       lastSentPattern = "";
       photo0 = img.Image(height: 0, width: 0);
+      photo2 = img.Image(height: 0, width: 0);
+      isActuatorsHorizontal = true;
+      animationState = isLastVertStateDownward ? AnimationState.downward : AnimationState.upward;
+      isLastVertStateDownward = !isLastVertStateDownward;
+      cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
     });
     animationController.reset();
     _loadImage().then((value) {
       _loadImage(preload: true);
       player.play(AssetSource(widget.song.audioSource)).then((value) {
-        if (animationState == AnimationState.downward) {
+        if (animationState != AnimationState.upward) {
           animationController.forward();
-        } else if (animationState == AnimationState.upward) {
+        } else if (animationState != AnimationState.downward) {
           animationController.reverse(from: 1);
         }
       });
@@ -336,9 +416,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
   _drawGallery(double imgHeight, double imgWidth) {
     List<ImageTexture> currentImageTextures = [];
-    if (animationState == AnimationState.downward) {
+    if (animationState != AnimationState.upward) {
       currentImageTextures = imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
-    } else if (animationState == AnimationState.upward) {
+    } else if (animationState != AnimationState.downward) {
       currentImageTextures = imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
     }
 
@@ -349,6 +429,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
         imageTextures: currentImageTextures,
         currentImgIndex: currentImgIndex,
         rotateFactor: rotateFactor,
+        isActuatorsHorizontal: isActuatorsHorizontal,
         animation: animationController,
         key: GlobalKey(),
       ),
@@ -437,7 +518,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
 
       for (int i = -1; i <= 2; i++) {
         for (int j = -1; j <= 2; j++) {
-          final double gridX = adjustedX + (j * spacing);
+          final double gridX = adjustedX + (j * spacing) + ((photo.width - 80) * animationControllerHoriz.value);
           final double gridY0 = adjustedY - 120 + (i * spacing);
           final double gridY1 = adjustedY - 60 + (i * spacing);
           final double gridY2 = adjustedY + (i * spacing);
@@ -462,9 +543,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
           bool isWhite;
           img.Image currentPhoto = photo;
 
-          if (gridY0toImage < 0 && animationState == AnimationState.downward) {
+          if (gridY0toImage < 0 && animationState != AnimationState.upward) {
             currentPhoto = photo2;
-          } else if (gridY0toImage < 0 && animationState == AnimationState.upward) {
+          } else if (gridY0toImage < 0 && animationState != AnimationState.downward) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY0toImage >= 0 ? gridY0toImage.toInt() : photoSize + gridY0toImage.toInt());
@@ -472,9 +553,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
           tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY1toImage < 0 && animationState == AnimationState.downward) {
+          if (gridY1toImage < 0 && animationState != AnimationState.upward) {
             currentPhoto = photo2;
-          } else if (gridY1toImage < 0 && animationState == AnimationState.upward) {
+          } else if (gridY1toImage < 0 && animationState != AnimationState.downward) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY1toImage >= 0 ? gridY1toImage.toInt() : photoSize + gridY1toImage.toInt());
@@ -482,9 +563,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
           tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY2toImage < 0 && animationState == AnimationState.downward) {
+          if (gridY2toImage < 0 && animationState != AnimationState.upward) {
             currentPhoto = photo2;
-          } else if (gridY2toImage < 0 && animationState == AnimationState.upward) {
+          } else if (gridY2toImage < 0 && animationState != AnimationState.downward) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY2toImage >= 0 ? gridY2toImage.toInt() : photoSize + gridY2toImage.toInt());
@@ -492,9 +573,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
           tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY3toImage < 0 && animationState == AnimationState.downward) {
+          if (gridY3toImage < 0 && animationState != AnimationState.upward) {
             currentPhoto = photo2;
-          } else if (gridY3toImage < 0 && animationState == AnimationState.upward) {
+          } else if (gridY3toImage < 0 && animationState != AnimationState.downward) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY3toImage >= 0 ? gridY3toImage.toInt() : photoSize + gridY3toImage.toInt());
@@ -502,9 +583,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
           tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY4toImage < 0 && animationState == AnimationState.downward) {
+          if (gridY4toImage < 0 && animationState != AnimationState.upward) {
             currentPhoto = photo2;
-          } else if (gridY4toImage < 0 && animationState == AnimationState.upward) {
+          } else if (gridY4toImage < 0 && animationState != AnimationState.downward) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY4toImage >= 0 ? gridY4toImage.toInt() : photoSize + gridY4toImage.toInt());
@@ -522,7 +603,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with SingleTickerProvid
     }
 
     setState(() {});
-    sendPattern();
+    // sendPattern();
   }
 
   void sendPattern() {

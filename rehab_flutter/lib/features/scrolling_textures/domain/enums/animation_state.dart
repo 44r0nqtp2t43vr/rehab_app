@@ -1,1 +1,1 @@
-enum AnimationState { upward, downward }
+enum AnimationState { upward, downward, sideward }
