@@ -479,7 +479,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   void _onPass(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final int photoSize = screenHeight ~/ 2;
-    const int spacing = 15; // Adjust the spacing value as needed
+    const int spacing = 10; // Adjust the spacing value as needed
 
     tapPositions0.clear();
     tapPositions1.clear();
@@ -498,11 +498,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
 
       for (int i = -1; i <= 2; i++) {
         for (int j = -1; j <= 2; j++) {
-          final double gridX0 = adjustedX - 120 + (j * spacing);
-          final double gridX1 = adjustedX - 60 + (j * spacing);
+          final double gridX0 = adjustedX - 80 + (j * spacing);
+          final double gridX1 = adjustedX - 40 + (j * spacing);
           final double gridX2 = adjustedX + (j * spacing);
-          final double gridX3 = adjustedX + 60 + (j * spacing);
-          final double gridX4 = adjustedX + 120 + (j * spacing);
+          final double gridX3 = adjustedX + 40 + (j * spacing);
+          final double gridX4 = adjustedX + 80 + (j * spacing);
           final double gridY = adjustedY + (i * spacing);
 
           final double gridYtoImage = (photo.height - 1 - 40 + (i * spacing)) - ((photo.height - 1) * animationController.value);
@@ -559,11 +559,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       for (int i = -1; i <= 2; i++) {
         for (int j = -1; j <= 2; j++) {
           final double gridX = adjustedX + (j * spacing) + ((photo.width - 80) * animationControllerHoriz.value);
-          final double gridY0 = adjustedY - 120 + (i * spacing);
-          final double gridY1 = adjustedY - 60 + (i * spacing);
+          final double gridY0 = adjustedY - 80 + (i * spacing);
+          final double gridY1 = adjustedY - 40 + (i * spacing);
           final double gridY2 = adjustedY + (i * spacing);
-          final double gridY3 = adjustedY + 60 + (i * spacing);
-          final double gridY4 = adjustedY + 120 + (i * spacing);
+          final double gridY3 = adjustedY + 40 + (i * spacing);
+          final double gridY4 = adjustedY + 80 + (i * spacing);
 
           // final double gridYtoImage = (photo.height - 1 - 40 + (i * spacing)) - ((photo.height - 1) * animationController.value);
           final double gridY0toImage = gridY0 - photo.height - ((photo.height - 1) * animationController.value);
@@ -583,9 +583,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           bool isWhite;
           img.Image currentPhoto = photo;
 
-          if (gridY0toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY0toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY0toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY0toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY0toImage >= 0 ? gridY0toImage.toInt() : photoSize + gridY0toImage.toInt());
@@ -593,9 +593,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY1toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY1toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY1toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY1toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY1toImage >= 0 ? gridY1toImage.toInt() : photoSize + gridY1toImage.toInt());
@@ -603,9 +603,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY2toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY2toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY2toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY2toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY2toImage >= 0 ? gridY2toImage.toInt() : photoSize + gridY2toImage.toInt());
@@ -613,9 +613,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY3toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY3toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY3toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY3toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY3toImage >= 0 ? gridY3toImage.toInt() : photoSize + gridY3toImage.toInt());
@@ -623,9 +623,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY4toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY4toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY4toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY4toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY4toImage >= 0 ? gridY4toImage.toInt() : photoSize + gridY4toImage.toInt());

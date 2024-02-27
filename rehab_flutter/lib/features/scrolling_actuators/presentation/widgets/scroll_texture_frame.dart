@@ -102,16 +102,16 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     tappedColors4.clear();
 
     // Increase the spacing to 20 points instead of 10
-    int spacing = 15; // Adjust the spacing value as needed
+    int spacing = 10; // Adjust the spacing value as needed
 
     // Correct loop to generate positions with increased spacing
     for (int i = -1; i <= 2; i++) {
       for (int j = -1; j <= 2; j++) {
-        final double gridX0 = adjustedX - 120 + (j * spacing);
-        final double gridX1 = adjustedX - 60 + (j * spacing);
+        final double gridX0 = adjustedX - 80 + (j * spacing);
+        final double gridX1 = adjustedX - 40 + (j * spacing);
         final double gridX2 = adjustedX + (j * spacing);
-        final double gridX3 = adjustedX + 60 + (j * spacing);
-        final double gridX4 = adjustedX + 120 + (j * spacing);
+        final double gridX3 = adjustedX + 40 + (j * spacing);
+        final double gridX4 = adjustedX + 80 + (j * spacing);
         final double gridY = adjustedY + (i * spacing);
 
         final int imageX0 = max(0, min(imageSizeInt, gridX0.round()));

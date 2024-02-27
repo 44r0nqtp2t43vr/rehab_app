@@ -72,7 +72,7 @@ class TextureFrameState extends State<TextureFrame> {
     tappedColors.clear();
 
     // Increase the spacing to 20 points instead of 10
-    int spacing = 15; // Adjust the spacing value as needed
+    int spacing = 10; // Adjust the spacing value as needed
 
     // Correct loop to generate positions with increased spacing
     for (int i = -1; i <= 2; i++) {

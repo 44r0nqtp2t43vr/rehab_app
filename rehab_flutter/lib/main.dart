@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/routes/routes.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/features/piano_tiles/data/data_sources/song_provider.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 void main() async {
@@ -36,8 +37,8 @@ class WelcomeScreen extends StatelessWidget {
         behavior: HitTestBehavior.opaque, // Ensures the GestureDetector is as large as its parent
         onTap: () =>
             // _onATButtonPressed(context),
-            _onBlueToothScreenTap(context),
-        // _onTest(context),
+            // _onBlueToothScreenTap(context),
+            _onTest(context),
 
         child: const Center(
           child: Text(
@@ -55,6 +56,7 @@ void _onBlueToothScreenTap(BuildContext context) {
 }
 
 void _onTest(BuildContext context) {
-  Navigator.pushNamed(context, '/ScrollActuators');
-  // Navigator.pushNamed(context, '/ScrollTextures', arguments: SongProvider().songs[0]);
+  // Navigator.pushNamed(context, '/ScrollActuators');
+  Navigator.pushNamed(context, '/ScrollTextures', arguments: SongProvider().songs[0]);
+  // Navigator.pushNamed(context, '/TextureTherapy');
 }
