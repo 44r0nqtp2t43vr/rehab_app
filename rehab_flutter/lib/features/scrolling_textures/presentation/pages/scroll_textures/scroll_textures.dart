@@ -83,10 +83,39 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     });
   }
 
+  void _setDirectionVert() {
+    animationControllerHoriz.stop();
+    if (isLastVertStateDownward) {
+      animationController.removeStatusListener(downwardAnimationStatusListener);
+      animationController.addStatusListener(upwardAnimationStatusListener);
+    } else {
+      animationController.removeStatusListener(upwardAnimationStatusListener);
+      animationController.addStatusListener(downwardAnimationStatusListener);
+    }
+    setState(() {
+      isActuatorsHorizontal = true;
+      cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+      if (isLastVertStateDownward) {
+        animationState = AnimationState.upward;
+        isLastVertStateDownward = false;
+        currentImgIndex = currentImgIndex + 2;
+        isEnded = false;
+      } else {
+        animationState = AnimationState.downward;
+        isLastVertStateDownward = true;
+        currentImgIndex = currentImgIndex - 2;
+        isEnded = false;
+      }
+    });
+    _loadImage(preload: true);
+    _resumeAnimation();
+  }
+
   void _switchDirectionVert() {
     _pauseAnimation();
 
     if (animationState == AnimationState.downward) {
+      print('going upward');
       setState(() {
         animationState = AnimationState.upward;
         currentImgIndex = currentImgIndex + 2;
@@ -96,6 +125,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       animationController.removeStatusListener(downwardAnimationStatusListener);
       animationController.addStatusListener(upwardAnimationStatusListener);
     } else if (animationState == AnimationState.upward) {
+      print('going downward');
       setState(() {
         animationState = AnimationState.downward;
         currentImgIndex = currentImgIndex - 2;
@@ -109,9 +139,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       setState(() {
         isActuatorsHorizontal = true;
         animationState = isLastVertStateDownward ? AnimationState.downward : AnimationState.upward;
+        isLastVertStateDownward = isLastVertStateDownward ? true : false;
         cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
       });
-      _resumeAnimation();
     }
     // _loadImage();
     _loadImage(preload: true);
@@ -119,16 +149,20 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   }
 
   void _switchDirectionHoriz() {
+    print(currentImgIndex);
     setState(() {
       // Update cursor values if necessary
       if (isActuatorsHorizontal) {
         isActuatorsHorizontal = false;
         cursorValues = [64, 4, 2, 1, 128, 32, 16, 8, 64, 4, 2, 1, 128, 32, 16, 8];
       }
+      // if (isLastVertStateDownward) {
+      //   currentImgIndex = isLastVertStateDownward ? currentImgIndex - 2 : currentImgIndex + 2;
+      // }
 
-      if (isEnded) {
-        currentImgIndex = !isLastVertStateDownward ? 0 : ImageTextureProvider().imageTextures.length + 1;
-      }
+      // if (isEnded) {
+      //   currentImgIndex = !isLastVertStateDownward ? 0 : ImageTextureProvider().imageTextures.length - 1;
+      // }
       // Set the new animation state
       animationState = AnimationState.sideward;
       animationControllerHoriz.value = 0.0;
@@ -336,7 +370,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
             top: 80,
             right: 20,
             child: AnimationButton(
-              onPressed: () => _switchDirectionVert(),
+              onPressed: () => animationState == AnimationState.sideward && isEnded ? _setDirectionVert() : _switchDirectionVert(),
               icon: const Icon(Icons.swap_vert),
             ),
           ),
@@ -398,7 +432,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       photo2 = img.Image(height: 0, width: 0);
       isActuatorsHorizontal = true;
       animationState = isLastVertStateDownward ? AnimationState.downward : AnimationState.upward;
-      isLastVertStateDownward = !isLastVertStateDownward;
+      isLastVertStateDownward = isLastVertStateDownward ? true : false;
       cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
     });
     animationController.reset();
@@ -416,10 +450,16 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
 
   _drawGallery(double imgHeight, double imgWidth) {
     List<ImageTexture> currentImageTextures = [];
-    if (animationState != AnimationState.upward) {
+    if (animationState == AnimationState.downward) {
       currentImageTextures = imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
-    } else if (animationState != AnimationState.downward) {
+    } else if (animationState == AnimationState.upward) {
       currentImageTextures = imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
+    } else if (animationState == AnimationState.sideward) {
+      if (isLastVertStateDownward) {
+        currentImageTextures = imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
+      } else {
+        currentImageTextures = imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
+      }
     }
 
     return Expanded(
