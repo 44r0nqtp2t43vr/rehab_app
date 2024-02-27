@@ -643,7 +643,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     }
 
     setState(() {});
-    // sendPattern();
+    sendPattern();
   }
 
   void sendPattern() {

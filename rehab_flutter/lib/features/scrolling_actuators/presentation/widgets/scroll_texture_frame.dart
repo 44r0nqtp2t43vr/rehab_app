@@ -151,7 +151,7 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     }
 
     setState(() {});
-    // sendPattern();
+    sendPattern();
   }
 
   void sendPattern() {
@@ -189,7 +189,6 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    print(widget.animationController.value);
 
     if (widget.isPlaying) {
       _renderActuators(context, null, screenWidth);

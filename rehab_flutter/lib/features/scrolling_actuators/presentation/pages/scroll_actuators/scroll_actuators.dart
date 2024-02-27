@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/domain/enums/animation_direction.dart';
+import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/animation_slider.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/scroll_texture_frame.dart';
 import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
@@ -18,6 +19,7 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
   final ImageTextureProvider imageTextureProvider = ImageTextureProvider();
   late AnimationController animationController;
   AnimationDirection animationDirection = AnimationDirection.vertical;
+  int animationDuration = 4;
   int animationValue = 0;
   int currentIndex = 0;
   bool isPlaying = false;
@@ -63,7 +65,7 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: Duration(seconds: animationDuration),
     );
 
     animationController.addStatusListener((AnimationStatus status) {
@@ -111,6 +113,17 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
                 });
               },
             ),
+            const Spacer(flex: 1),
+            AnimationSlider(
+                animationDuration: animationDuration,
+                onDurationChanged: (value) {
+                  setState(() {
+                    animationDuration = value.toInt();
+                    animationController.stop();
+                    animationController.duration = Duration(seconds: animationDuration);
+                    animationController.forward();
+                  });
+                }),
             const Spacer(flex: 1),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -56,6 +56,6 @@ void _onBlueToothScreenTap(BuildContext context) {
 }
 
 void _onTest(BuildContext context) {
-  // Navigator.pushNamed(context, '/ScrollActuators');
-  Navigator.pushNamed(context, '/ScrollTextures', arguments: SongProvider().songs[0]);
+  Navigator.pushNamed(context, '/ScrollActuators');
+  // Navigator.pushNamed(context, '/ScrollTextures', arguments: SongProvider().songs[0]);
 }
