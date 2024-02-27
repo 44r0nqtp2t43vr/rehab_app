@@ -583,9 +583,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           bool isWhite;
           img.Image currentPhoto = photo;
 
-          if (gridY0toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY0toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY0toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY0toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY0toImage >= 0 ? gridY0toImage.toInt() : photoSize + gridY0toImage.toInt());
@@ -593,9 +593,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY1toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY1toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY1toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY1toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY1toImage >= 0 ? gridY1toImage.toInt() : photoSize + gridY1toImage.toInt());
@@ -603,9 +603,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY2toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY2toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY2toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY2toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY2toImage >= 0 ? gridY2toImage.toInt() : photoSize + gridY2toImage.toInt());
@@ -613,9 +613,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY3toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY3toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY3toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY3toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY3toImage >= 0 ? gridY3toImage.toInt() : photoSize + gridY3toImage.toInt());
@@ -623,9 +623,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = photo;
-          if (gridY4toImage < 0 && animationState != AnimationState.upward) {
+          if (gridY4toImage < 0 && isLastVertStateDownward == true) {
             currentPhoto = photo2;
-          } else if (gridY4toImage < 0 && animationState != AnimationState.downward) {
+          } else if (gridY4toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = photo0;
           }
           pixel = currentPhoto.getPixelSafe(imageX, gridY4toImage >= 0 ? gridY4toImage.toInt() : photoSize + gridY4toImage.toInt());
