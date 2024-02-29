@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   BluetoothDevice? targetDevice;
   BluetoothCharacteristic? targetCharacteristic;
   final String targetDeviceName = "Gloves_BLE_01";
@@ -23,12 +25,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void startScan() {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
 
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        if (result.device.name == targetDeviceName) {
-          print("Device found: ${result.device.name}");
+        if (result.device.platformName == targetDeviceName) {
+          debugPrint("Device found: ${result.device.platformName}");
           FlutterBluePlus.stopScan();
           setState(() {
             targetDevice = result.device;
@@ -43,7 +45,7 @@ class _MyAppState extends State<MyApp> {
   void connectToDevice() async {
     if (targetDevice != null) {
       await targetDevice!.connect();
-      print("Device connected");
+      debugPrint("Device connected");
       setState(() {
         isDeviceConnected = true;
       });
@@ -55,19 +57,17 @@ class _MyAppState extends State<MyApp> {
     if (targetDevice == null) return;
 
     List<BluetoothService> services = await targetDevice!.discoverServices();
-    services.forEach((service) {
+    for (var service in services) {
       // Match the service UUID of your device
-      if (service.uuid.toString().toUpperCase() ==
-          "0000FFE0-0000-1000-8000-00805F9B34FB") {
-        service.characteristics.forEach((characteristic) {
+      if (service.uuid.toString().toUpperCase() == "0000FFE0-0000-1000-8000-00805F9B34FB") {
+        for (var characteristic in service.characteristics) {
           // Match the characteristic UUID for sending data
-          if (characteristic.uuid.toString().toUpperCase() ==
-              "0000FFE2-0000-1000-8000-00805F9B34FB") {
+          if (characteristic.uuid.toString().toUpperCase() == "0000FFE2-0000-1000-8000-00805F9B34FB") {
             targetCharacteristic = characteristic;
           }
-        });
+        }
       }
-    });
+    }
   }
 
   void sendPattern(int pattern) {
@@ -79,12 +79,12 @@ class _MyAppState extends State<MyApp> {
     } else if (pattern == 2) {
       data = "<106106106106106106106106106106>"; // Actual data for pattern 2
     } else {
-      print("Invalid pattern");
+      debugPrint("Invalid pattern");
       return;
     }
 
     targetCharacteristic!.write(data.codeUnits);
-    print("Pattern $pattern sent");
+    debugPrint("Pattern $pattern sent");
   }
 
   @override
@@ -92,25 +92,25 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Bluetooth Device Connector'),
+          title: const Text('Bluetooth Device Connector'),
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               if (isDeviceConnected) ...[
-                Text('Device Connected'),
+                const Text('Device Connected'),
                 ElevatedButton(
                   onPressed: () => sendPattern(1),
-                  child: Text('Send Pattern 1'),
+                  child: const Text('Send Pattern 1'),
                 ),
-                SizedBox(height: 10), // Add spacing between the buttons
+                const SizedBox(height: 10), // Add spacing between the buttons
                 ElevatedButton(
                   onPressed: () => sendPattern(2),
-                  child: Text('Send Pattern 2'),
+                  child: const Text('Send Pattern 2'),
                 ),
               ] else ...[
-                Text('Searching for Device...'),
+                const Text('Searching for Device...'),
               ],
             ],
           ),

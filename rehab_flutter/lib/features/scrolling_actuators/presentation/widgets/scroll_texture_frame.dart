@@ -68,7 +68,7 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
         tapPositions4.clear();
       });
     } catch (e) {
-      print("Failed to load image: $e");
+      debugPrint("Failed to load image: $e");
       // Handle error or set a default image/photo state
     }
   }
@@ -170,10 +170,10 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
       sl<BluetoothBloc>().add(WriteDataEvent(data));
-      print("Pattern sent: $data");
+      debugPrint("Pattern sent: $data");
       lastSentPattern = data; // Update the last sent pattern
     } else {
-      print("Pattern not sent, identical to last pattern.");
+      debugPrint("Pattern not sent, identical to last pattern.");
     }
   }
 

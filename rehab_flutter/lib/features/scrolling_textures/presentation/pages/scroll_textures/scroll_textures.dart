@@ -115,7 +115,6 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     _pauseAnimation();
 
     if (animationState == AnimationState.downward) {
-      print('going upward');
       setState(() {
         animationState = AnimationState.upward;
         currentImgIndex = currentImgIndex + 2;
@@ -125,7 +124,6 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       animationController.removeStatusListener(downwardAnimationStatusListener);
       animationController.addStatusListener(upwardAnimationStatusListener);
     } else if (animationState == AnimationState.upward) {
-      print('going downward');
       setState(() {
         animationState = AnimationState.downward;
         currentImgIndex = currentImgIndex - 2;
@@ -149,20 +147,13 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   }
 
   void _switchDirectionHoriz() {
-    print(currentImgIndex);
     setState(() {
       // Update cursor values if necessary
       if (isActuatorsHorizontal) {
         isActuatorsHorizontal = false;
         cursorValues = [64, 4, 2, 1, 128, 32, 16, 8, 64, 4, 2, 1, 128, 32, 16, 8];
       }
-      // if (isLastVertStateDownward) {
-      //   currentImgIndex = isLastVertStateDownward ? currentImgIndex - 2 : currentImgIndex + 2;
-      // }
 
-      // if (isEnded) {
-      //   currentImgIndex = !isLastVertStateDownward ? 0 : ImageTextureProvider().imageTextures.length - 1;
-      // }
       // Set the new animation state
       animationState = AnimationState.sideward;
       animationControllerHoriz.value = 0.0;
@@ -331,7 +322,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
         }
       });
     } catch (e) {
-      print("Failed to load image: $e");
+      debugPrint("Failed to load image: $e");
       // Handle error or set a default image/photo state
     }
   }
@@ -662,7 +653,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
       sl<BluetoothBloc>().add(WriteDataEvent(data));
-      print("Pattern sent: $data");
+      debugPrint("Pattern sent: $data");
       lastSentPattern = data; // Update the last sent pattern
     } else {
       // print("Pattern not sent, identical to last pattern.");

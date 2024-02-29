@@ -2,12 +2,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class CursorWidgets {
   // StreamController to broadcast color changes. Make sure to import dart:async if not already done.
-  final StreamController<List<Color>> stateController =
-      StreamController<List<Color>>.broadcast();
+  final StreamController<List<Color>> stateController = StreamController<List<Color>>.broadcast();
 
   // Function to generate cursor widgets based on color and position
   List<Widget> generateCursors(List<Color> colors, List<Offset> positions) {
@@ -30,10 +28,7 @@ class CursorWidgets {
           shape: BoxShape.circle,
           color: selectedColor,
           border: Border.all(width: 2.0, color: Colors.white),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))
-          ],
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
         ),
       ),
     );
@@ -42,9 +37,7 @@ class CursorWidgets {
   // Utility function to check if a color is close to white
   bool isColorCloseToWhite(Color color) {
     int threshold = 240; // Define what you consider "close to white"
-    return color.red > threshold &&
-        color.green > threshold &&
-        color.blue > threshold;
+    return color.red > threshold && color.green > threshold && color.blue > threshold;
   }
 
   // Method to update colors; it's a placeholder to show where you might update cursor colors.

@@ -9,13 +9,13 @@ import 'package:rehab_flutter/injection_container.dart';
 class PatternTherapyScreen extends StatefulWidget {
   final BluetoothCharacteristic targetCharacteristic;
 
-  PatternTherapyScreen({required this.targetCharacteristic});
+  const PatternTherapyScreen({super.key, required this.targetCharacteristic});
 
   @override
-  _PatternTherapyScreenState createState() => _PatternTherapyScreenState();
+  PatternTherapyScreenState createState() => PatternTherapyScreenState();
 }
 
-class _PatternTherapyScreenState extends State<PatternTherapyScreen> {
+class PatternTherapyScreenState extends State<PatternTherapyScreen> {
   BluetoothDevice? targetDevice;
   final String targetDeviceName = "Gloves_BLE_01";
   bool isDeviceConnected = false;
@@ -73,8 +73,7 @@ class _PatternTherapyScreenState extends State<PatternTherapyScreen> {
       ],
     };
 
-    _patternTimer =
-        Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms
       if (isPatternActive && activePattern == pattern) {
         var currentPatternData = patternData[pattern]!;
@@ -104,7 +103,7 @@ class _PatternTherapyScreenState extends State<PatternTherapyScreen> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Bluetooth Device Connector'),
+          title: const Text('Bluetooth Device Connector'),
         ),
         body: Center(
           child: Column(
@@ -114,8 +113,7 @@ class _PatternTherapyScreenState extends State<PatternTherapyScreen> {
                 value: patternDelay.toDouble(),
                 min: 20.0, // Set minimum value to 100ms for the slider
                 max: 1000.0, // Set maximum value to 1000ms for the slider
-                divisions:
-                    10, // This creates 10 discrete divisions in the slider
+                divisions: 10, // This creates 10 discrete divisions in the slider
                 label: "$patternDelay ms",
                 onChanged: (double value) {
                   setState(() {
@@ -129,27 +127,27 @@ class _PatternTherapyScreenState extends State<PatternTherapyScreen> {
               ),
               ElevatedButton(
                 onPressed: () => startPattern(3),
-                child: Text('Cascade Square Pattern'),
+                child: const Text('Cascade Square Pattern'),
               ),
               ElevatedButton(
                 onPressed: () => startPattern(7),
-                child: Text('Cascade Pattern'),
+                child: const Text('Cascade Pattern'),
               ),
               ElevatedButton(
                 onPressed: () => startPattern(4),
-                child: Text('Line Pattern'),
+                child: const Text('Line Pattern'),
               ),
               ElevatedButton(
                 onPressed: () => startPattern(5),
-                child: Text('Alternate Pattern'),
+                child: const Text('Alternate Pattern'),
               ),
               ElevatedButton(
                 onPressed: () => startPattern(6),
-                child: Text('Blink Pattern'),
+                child: const Text('Blink Pattern'),
               ),
               ElevatedButton(
                 onPressed: stopPattern,
-                child: Text('Stop Pattern'),
+                child: const Text('Stop Pattern'),
               ),
             ],
           ),

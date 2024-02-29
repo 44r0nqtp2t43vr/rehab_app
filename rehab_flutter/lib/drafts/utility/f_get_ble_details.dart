@@ -2,24 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: BluetoothScreen(),
     );
   }
 }
 
 class BluetoothScreen extends StatefulWidget {
+  const BluetoothScreen({super.key});
+
   @override
-  _BluetoothScreenState createState() => _BluetoothScreenState();
+  BluetoothScreenState createState() => BluetoothScreenState();
 }
 
-class _BluetoothScreenState extends State<BluetoothScreen> {
+class BluetoothScreenState extends State<BluetoothScreen> {
   BluetoothDevice? targetDevice;
   List<BluetoothService> services = [];
   bool isScanning = false;
@@ -34,11 +38,11 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
     setState(() {
       isScanning = true;
     });
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
 
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        if (result.device.name == "Gloves_BLE_01") {
+        if (result.device.platformName == "Gloves_BLE_01") {
           FlutterBluePlus.stopScan();
           setState(() {
             targetDevice = result.device;
@@ -56,17 +60,17 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Connect to Gloves_BLE_01"),
-          content: Text("Do you want to connect?"),
+          title: const Text("Connect to Gloves_BLE_01"),
+          content: const Text("Do you want to connect?"),
           actions: <Widget>[
             TextButton(
-              child: Text("No"),
+              child: const Text("No"),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
             ),
             TextButton(
-              child: Text("Yes"),
+              child: const Text("Yes"),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 connectToDevice();
@@ -97,20 +101,18 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bluetooth Device Services'),
+        title: const Text('Bluetooth Device Services'),
       ),
       body: isScanning
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: services.length,
               itemBuilder: (context, index) {
                 return ExpansionTile(
                   title: Text('Service UUID: ${services[index].uuid}'),
-                  children:
-                      services[index].characteristics.map((characteristic) {
+                  children: services[index].characteristics.map((characteristic) {
                     return ListTile(
-                      title:
-                          Text('Characteristic UUID: ${characteristic.uuid}'),
+                      title: Text('Characteristic UUID: ${characteristic.uuid}'),
                     );
                   }).toList(),
                 );

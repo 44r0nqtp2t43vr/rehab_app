@@ -7,7 +7,7 @@ class ActuatorGrid extends StatelessWidget {
   final List<bool> permanentGreen;
   final void Function(int, bool) updateState;
 
-  ActuatorGrid({
+  const ActuatorGrid({
     Key? key,
     required this.circleKeys,
     required this.circleStates,
@@ -19,13 +19,13 @@ class ActuatorGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       itemCount: 16,
       itemBuilder: (context, index) {
         return GestureDetector(

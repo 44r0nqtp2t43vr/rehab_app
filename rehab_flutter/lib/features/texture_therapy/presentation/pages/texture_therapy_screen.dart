@@ -13,7 +13,7 @@ class TextureTherapy extends StatefulWidget {
 
 class _TextureTherapyState extends State<TextureTherapy> {
   ImageTextureProvider imageTextureProvider = ImageTextureProvider();
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   int currentIndex = 0; // To keep track of the current texture being displayed
 
   @override
@@ -24,12 +24,11 @@ class _TextureTherapyState extends State<TextureTherapy> {
 
   @override
   Widget build(BuildContext context) {
-    ImageTexture currentTexture =
-        imageTextureProvider.imageTextures[currentIndex];
+    ImageTexture currentTexture = imageTextureProvider.imageTextures[currentIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Texture Therapy'),
+        title: const Text('Texture Therapy'),
       ),
       body: Center(
         child: Column(
@@ -37,7 +36,7 @@ class _TextureTherapyState extends State<TextureTherapy> {
           children: <Widget>[
             TextureFrame(imageTexture: currentTexture),
             // put TextureNameSelector on the bottom
-            SizedBox(height: 100),
+            const SizedBox(height: 100),
             TextureNameSelector(
               controller: _pageController,
               imageTextures: imageTextureProvider.imageTextures,

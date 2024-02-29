@@ -17,7 +17,7 @@ class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return _materialRoute(WelcomeScreen());
+        return _materialRoute(const WelcomeScreen());
 
       case '/SongSelect':
         return _materialRoute(const SongSelect());
@@ -26,13 +26,13 @@ class AppRoutes {
         return _materialRoute(PlayGame(song: settings.arguments as Song));
 
       case '/ActuatorTherapy':
-        return _materialRoute(ActuatorTherapy());
+        return _materialRoute(const ActuatorTherapy());
 
       case '/PatternTherapy':
         return _materialRoute(const PatternTherapy());
 
       case '/Test':
-        return _materialRoute(Test());
+        return _materialRoute(const Test());
 
       case '/TextureTherapy':
         return _materialRoute(const TextureTherapy());
@@ -41,7 +41,7 @@ class AppRoutes {
         return _materialRoute(MenuScreen());
 
       case '/BluetoothScreen':
-        return _materialRoute(BluetoothScreen());
+        return _materialRoute(const BluetoothScreen());
 
       case '/BgSongSelect':
         return _materialRoute(const BgSongSelect());
@@ -60,7 +60,7 @@ class AppRoutes {
       //       ViewServices(targetDevice: settings.arguments as BluetoothDevice));
 
       default:
-        return _materialRoute(WelcomeScreen());
+        return _materialRoute(const WelcomeScreen());
     }
   }
 

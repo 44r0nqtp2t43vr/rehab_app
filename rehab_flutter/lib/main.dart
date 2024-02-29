@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/routes/routes.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -37,8 +39,8 @@ class WelcomeScreen extends StatelessWidget {
         behavior: HitTestBehavior.opaque, // Ensures the GestureDetector is as large as its parent
         onTap: () =>
             // _onATButtonPressed(context),
-            // _onBlueToothScreenTap(context),
-            _onTest(context),
+            _onBlueToothScreenTap(context),
+        // _onTest(context),
 
         child: const Center(
           child: Text(

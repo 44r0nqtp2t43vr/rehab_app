@@ -41,7 +41,7 @@ class TextureFrameState extends State<TextureFrame> {
         tapPositions.clear();
       });
     } catch (e) {
-      print("Failed to load image: $e");
+      debugPrint("Failed to load image: $e");
       // Handle error or set a default image/photo state
     }
   }
@@ -104,10 +104,10 @@ class TextureFrameState extends State<TextureFrame> {
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
       sl<BluetoothBloc>().add(WriteDataEvent(data));
-      print("Pattern sent: $data");
+      debugPrint("Pattern sent: $data");
       lastSentPattern = data; // Update the last sent pattern
     } else {
-      print("Pattern not sent, identical to last pattern.");
+      debugPrint("Pattern not sent, identical to last pattern.");
     }
   }
 
@@ -120,6 +120,7 @@ class TextureFrameState extends State<TextureFrame> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (details) => _onTapImage(context, details),

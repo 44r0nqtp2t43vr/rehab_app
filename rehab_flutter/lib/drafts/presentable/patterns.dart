@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   BluetoothDevice? targetDevice;
   BluetoothCharacteristic? targetCharacteristic;
   final String targetDeviceName = "Gloves_BLE_01";
@@ -28,13 +30,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   void startScan() {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
 
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        print(result.device.name);
-        if (result.device.name == targetDeviceName) {
-          print("Device found: ${result.device.name}");
+        debugPrint(result.device.platformName);
+        if (result.device.platformName == targetDeviceName) {
+          debugPrint("Device found: ${result.device.platformName}");
           FlutterBluePlus.stopScan();
           setState(() {
             targetDevice = result.device;
@@ -49,7 +51,7 @@ class _MyAppState extends State<MyApp> {
   void connectToDevice() async {
     if (targetDevice != null) {
       await targetDevice!.connect();
-      print("Device connected");
+      debugPrint("Device connected");
       setState(() {
         isDeviceConnected = true;
       });
@@ -61,19 +63,17 @@ class _MyAppState extends State<MyApp> {
     if (targetDevice == null) return;
 
     List<BluetoothService> services = await targetDevice!.discoverServices();
-    services.forEach((service) {
+    for (var service in services) {
       // Match the service UUID of your device
-      if (service.uuid.toString().toUpperCase() ==
-          "0000FFE0-0000-1000-8000-00805F9B34FB") {
-        service.characteristics.forEach((characteristic) {
+      if (service.uuid.toString().toUpperCase() == "0000FFE0-0000-1000-8000-00805F9B34FB") {
+        for (var characteristic in service.characteristics) {
           // Match the characteristic UUID for sending data
-          if (characteristic.uuid.toString().toUpperCase() ==
-              "0000FFE2-0000-1000-8000-00805F9B34FB") {
+          if (characteristic.uuid.toString().toUpperCase() == "0000FFE2-0000-1000-8000-00805F9B34FB") {
             targetCharacteristic = characteristic;
           }
-        });
+        }
       }
-    });
+    }
   }
 
   void sendPattern(String data) {
@@ -120,8 +120,7 @@ class _MyAppState extends State<MyApp> {
       ],
     };
 
-    _patternTimer =
-        Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms
       if (isPatternActive && activePattern == pattern) {
         var currentPatternData = patternData[pattern]!;
@@ -151,7 +150,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Bluetooth Device Connector'),
+          title: const Text('Bluetooth Device Connector'),
         ),
         body: Center(
           child: Column(
@@ -162,8 +161,7 @@ class _MyAppState extends State<MyApp> {
                   value: patternDelay.toDouble(),
                   min: 80.0, // Set minimum value to 100ms for the slider
                   max: 1000.0, // Set maximum value to 1000ms for the slider
-                  divisions:
-                      10, // This creates 10 discrete divisions in the slider
+                  divisions: 10, // This creates 10 discrete divisions in the slider
                   label: "$patternDelay ms",
                   onChanged: (double value) {
                     setState(() {
@@ -177,30 +175,30 @@ class _MyAppState extends State<MyApp> {
                 ),
                 ElevatedButton(
                   onPressed: () => startPattern(3),
-                  child: Text('Cascade Square Pattern'),
+                  child: const Text('Cascade Square Pattern'),
                 ),
                 ElevatedButton(
                   onPressed: () => startPattern(7),
-                  child: Text('Cascade Pattern'),
+                  child: const Text('Cascade Pattern'),
                 ),
                 ElevatedButton(
                   onPressed: () => startPattern(4),
-                  child: Text('Line Pattern'),
+                  child: const Text('Line Pattern'),
                 ),
                 ElevatedButton(
                   onPressed: () => startPattern(5),
-                  child: Text('Alternate Pattern'),
+                  child: const Text('Alternate Pattern'),
                 ),
                 ElevatedButton(
                   onPressed: () => startPattern(6),
-                  child: Text('Blink Pattern'),
+                  child: const Text('Blink Pattern'),
                 ),
                 ElevatedButton(
                   onPressed: stopPattern,
-                  child: Text('Stop Pattern'),
+                  child: const Text('Stop Pattern'),
                 ),
               ] else ...[
-                Text('Searching for Device...'),
+                const Text('Searching for Device...'),
               ],
             ],
           ),

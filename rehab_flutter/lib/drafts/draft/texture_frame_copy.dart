@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
@@ -43,11 +42,10 @@ class TextureFrameState extends State<TextureFrame> {
       setState(() {
         photo = img.decodeImage(bytes)!;
         // Optionally reset other state variables if needed
-        _tapPosition =
-            null; // Reset tap position if you want to start fresh for new image
+        _tapPosition = null; // Reset tap position if you want to start fresh for new image
       });
     } catch (e) {
-      print("Failed to load image: $e");
+      debugPrint("Failed to load image: $e");
       // Handle error or set a default image/photo state
     }
   }
@@ -93,14 +91,12 @@ class TextureFrameState extends State<TextureFrame> {
     // White color detection and setting tapped color
     bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
     setState(() {
-      tappedColor = !isWhite
-          ? Colors.green
-          : Color.fromRGBO(
-              pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0);
+      tappedColor = !isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0);
       _tapPosition = localPosition;
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (details) => _onTapImage(context, details),
@@ -118,9 +114,7 @@ class TextureFrameState extends State<TextureFrame> {
             ),
           ),
           // Custom paint to draw the circle
-          if (_tapPosition != null)
-            SingleActuator(
-                tapPosition: _tapPosition, tappedColor: tappedColor, value: 1),
+          if (_tapPosition != null) SingleActuator(tapPosition: _tapPosition, tappedColor: tappedColor, value: 1),
         ],
       ),
     );

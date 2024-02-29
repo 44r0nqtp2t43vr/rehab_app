@@ -14,10 +14,10 @@ class SingleActuator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SingleActuatorState createState() => _SingleActuatorState();
+  SingleActuatorState createState() => SingleActuatorState();
 }
 
-class _SingleActuatorState extends State<SingleActuator> {
+class SingleActuatorState extends State<SingleActuator> {
   int value = 0;
   bool isActivated = true;
 

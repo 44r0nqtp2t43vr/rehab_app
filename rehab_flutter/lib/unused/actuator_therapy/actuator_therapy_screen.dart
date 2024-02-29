@@ -12,9 +12,8 @@ class ActuatorTherapy extends StatefulWidget {
   State<ActuatorTherapy> createState() => _ActuatorTherapyState();
 }
 
-class _ActuatorTherapyState extends State<ActuatorTherapy>
-    with SingleTickerProviderStateMixin {
-  Set<int> activeValues = Set<int>(); // Ensure type specification for clarity
+class _ActuatorTherapyState extends State<ActuatorTherapy> with SingleTickerProviderStateMixin {
+  Set<int> activeValues = <int>{}; // Ensure type specification for clarity
 
   @override
   void initState() {
@@ -36,18 +35,16 @@ class _ActuatorTherapyState extends State<ActuatorTherapy>
   }
 
   void updateModuleValue() {
-    int combinedValue = activeValues.fold(
-            0, (previousValue, element) => previousValue + element) %
-        256;
+    int combinedValue = activeValues.fold(0, (previousValue, element) => previousValue + element) % 256;
     sendPattern(combinedValue);
   }
 
   void sendPattern(int moduleValue) {
     String moduleValueString = moduleValue.toString().padLeft(3, '0');
-    String data = "<" + List.filled(10, moduleValueString).join() + ">";
+    String data = "<${List.filled(10, moduleValueString).join()}>";
 
     sl<BluetoothBloc>().add(WriteDataEvent(data));
-    print("Pattern sent: $data");
+    debugPrint("Pattern sent: $data");
   }
 
   void toggleActiveValue(int value) {
@@ -80,7 +77,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy>
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Bluetooth Device Connector'),
+          title: const Text('Bluetooth Device Connector'),
         ),
         body: Center(
             child: Column(
@@ -91,8 +88,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy>
             buildButtonRow([2, 16]),
             buildButtonRow([4, 32]),
             buildButtonRow([64, 128]),
-            Text(
-                "Characteristic Selected: ${sl<BluetoothController>().targetCharacteristic.uuid}"),
+            Text("Characteristic Selected: ${sl<BluetoothController>().targetCharacteristic.uuid}"),
           ],
         )),
       ),
