@@ -91,6 +91,7 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     ImageTexture currentTexture = imageTextureProvider.imageTextures[currentIndex];
+    int desiredSize = MediaQuery.of(context).size.width.toInt();
 
     return Scaffold(
       body: Center(
@@ -98,6 +99,7 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
           children: <Widget>[
             const Spacer(flex: 2),
             ScrollTextureFrame(
+              imgSize: desiredSize,
               isPlaying: isPlaying,
               imageTexture: currentTexture,
               animationController: animationController,

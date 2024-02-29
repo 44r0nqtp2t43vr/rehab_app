@@ -3,8 +3,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
+import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
+import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/controller/actuators_controller.dart';
+import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
+import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/data/data_sources/anipattern_provider.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/domain/enums/animation_direction.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
@@ -12,12 +17,13 @@ import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/text
 import 'package:rehab_flutter/injection_container.dart';
 
 class ScrollTextureFrame extends StatefulWidget {
+  final int imgSize;
   final ImageTexture imageTexture;
   final AnimationController animationController;
   final AnimationDirection animationDirection;
   final bool isPlaying;
 
-  const ScrollTextureFrame({super.key, required this.imageTexture, required this.animationController, required this.animationDirection, required this.isPlaying});
+  const ScrollTextureFrame({super.key, required this.imgSize, required this.imageTexture, required this.animationController, required this.animationDirection, required this.isPlaying});
 
   @override
   State<ScrollTextureFrame> createState() => _ScrollTextureFrameState();
@@ -42,7 +48,8 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
   @override
   void initState() {
     super.initState();
-    _loadImage();
+
+    // _loadImage();
   }
 
   Future<void> _loadImage() async {
@@ -81,77 +88,78 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     if (details != null) {
       RenderBox box = context.findRenderObject() as RenderBox;
       final Offset localPosition = box.globalToLocal(details.globalPosition);
-
+      sl<ActuatorsBloc>().add(UpdateActuatorsEvent(localPosition));
       adjustedX = localPosition.dx;
       adjustedY = localPosition.dy;
     } else {
       final Offset animatedPosition = widget.animationDirection == AnimationDirection.vertical ? aniPatternProvider.verticalPattern(imageSize, widget.animationController.value) : aniPatternProvider.horizontalPattern(imageSize, widget.animationController.value);
+      sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
       adjustedX = animatedPosition.dx;
       adjustedY = animatedPosition.dy;
     }
 
-    tapPositions0.clear();
-    tapPositions1.clear();
-    tapPositions2.clear();
-    tapPositions3.clear();
-    tapPositions4.clear();
-    tappedColors0.clear();
-    tappedColors1.clear();
-    tappedColors2.clear();
-    tappedColors3.clear();
-    tappedColors4.clear();
+    // tapPositions0.clear();
+    // tapPositions1.clear();
+    // tapPositions2.clear();
+    // tapPositions3.clear();
+    // tapPositions4.clear();
+    // tappedColors0.clear();
+    // tappedColors1.clear();
+    // tappedColors2.clear();
+    // tappedColors3.clear();
+    // tappedColors4.clear();
 
-    // Increase the spacing to 20 points instead of 10
-    int spacing = 10; // Adjust the spacing value as needed
+    // // Increase the spacing to 20 points instead of 10
+    // int spacing = 10; // Adjust the spacing value as needed
 
-    // Correct loop to generate positions with increased spacing
-    for (int i = -1; i <= 2; i++) {
-      for (int j = -1; j <= 2; j++) {
-        final double gridX0 = adjustedX - 80 + (j * spacing);
-        final double gridX1 = adjustedX - 40 + (j * spacing);
-        final double gridX2 = adjustedX + (j * spacing);
-        final double gridX3 = adjustedX + 40 + (j * spacing);
-        final double gridX4 = adjustedX + 80 + (j * spacing);
-        final double gridY = adjustedY + (i * spacing);
+    // // Correct loop to generate positions with increased spacing
+    // for (int i = -1; i <= 2; i++) {
+    //   for (int j = -1; j <= 2; j++) {
+    //     final double gridX0 = adjustedX - 80 + (j * spacing);
+    //     final double gridX1 = adjustedX - 40 + (j * spacing);
+    //     final double gridX2 = adjustedX + (j * spacing);
+    //     final double gridX3 = adjustedX + 40 + (j * spacing);
+    //     final double gridX4 = adjustedX + 80 + (j * spacing);
+    //     final double gridY = adjustedY + (i * spacing);
 
-        final int imageX0 = max(0, min(imageSizeInt, gridX0.round()));
-        final int imageX1 = max(0, min(imageSizeInt, gridX1.round()));
-        final int imageX2 = max(0, min(imageSizeInt, gridX2.round()));
-        final int imageX3 = max(0, min(imageSizeInt, gridX3.round()));
-        final int imageX4 = max(0, min(imageSizeInt, gridX4.round()));
-        final int imageY = max(0, min(imageSizeInt, gridY.round()));
+    //     final int imageX0 = max(0, min(imageSizeInt, gridX0.round()));
+    //     final int imageX1 = max(0, min(imageSizeInt, gridX1.round()));
+    //     final int imageX2 = max(0, min(imageSizeInt, gridX2.round()));
+    //     final int imageX3 = max(0, min(imageSizeInt, gridX3.round()));
+    //     final int imageX4 = max(0, min(imageSizeInt, gridX4.round()));
+    //     final int imageY = max(0, min(imageSizeInt, gridY.round()));
 
-        img.Pixel pixel = photo.getPixelSafe(imageX0, imageY);
-        bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+    //     img.Pixel pixel = photo.getPixelSafe(imageX0, imageY);
+    //     bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+    //     tappedColors0.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX1, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+    //     pixel = photo.getPixelSafe(imageX1, imageY);
+    //     isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+    //     tappedColors1.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX2, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+    //     pixel = photo.getPixelSafe(imageX2, imageY);
+    //     isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+    //     tappedColors2.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX3, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+    //     pixel = photo.getPixelSafe(imageX3, imageY);
+    //     isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+    //     tappedColors3.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photo.getPixelSafe(imageX4, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+    //     pixel = photo.getPixelSafe(imageX4, imageY);
+    //     isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+    //     tappedColors4.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        // Adjust position back to display space
-        tapPositions0.add(Offset(gridX0, gridY));
-        tapPositions1.add(Offset(gridX1, gridY));
-        tapPositions2.add(Offset(gridX2, gridY));
-        tapPositions3.add(Offset(gridX3, gridY));
-        tapPositions4.add(Offset(gridX4, gridY));
-      }
-    }
+    //     // Adjust position back to display space
+    //     tapPositions0.add(Offset(gridX0, gridY));
+    //     tapPositions1.add(Offset(gridX1, gridY));
+    //     tapPositions2.add(Offset(gridX2, gridY));
+    //     tapPositions3.add(Offset(gridX3, gridY));
+    //     tapPositions4.add(Offset(gridX4, gridY));
+    //   }
+    // }
 
     setState(() {});
-    sendPattern();
+    // sendPattern();
   }
 
   void sendPattern() {
@@ -210,11 +218,12 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
             ),
           ),
           // Custom paint to draw the circle
-          ...ActuatorGrid.buildActuators(tapPositions0, tappedColors0, cursorValues),
-          ...ActuatorGrid.buildActuators(tapPositions1, tappedColors1, cursorValues),
-          ...ActuatorGrid.buildActuators(tapPositions2, tappedColors2, cursorValues),
-          ...ActuatorGrid.buildActuators(tapPositions3, tappedColors3, cursorValues),
-          ...ActuatorGrid.buildActuators(tapPositions4, tappedColors4, cursorValues),
+          // ...ActuatorGrid.buildActuators(tapPositions0, tappedColors0, cursorValues),
+          // ...ActuatorGrid.buildActuators(tapPositions1, tappedColors1, cursorValues),
+          // ...ActuatorGrid.buildActuators(tapPositions2, tappedColors2, cursorValues),
+          // ...ActuatorGrid.buildActuators(tapPositions3, tappedColors3, cursorValues),
+          // ...ActuatorGrid.buildActuators(tapPositions4, tappedColors4, cursorValues),
+          ...sl<ActuatorsController>().buildActuators(),
         ],
       ),
     );
