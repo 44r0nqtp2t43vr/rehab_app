@@ -31,13 +31,12 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   late AnimationController animationController;
   late AnimationController animationControllerHoriz;
   late img.Image photo0 = img.Image(height: 0, width: 0);
-  late img.Image photo;
-  late img.Image photo2;
+  late img.Image photo = img.Image(height: 0, width: 0);
+  late img.Image photo2 = img.Image(height: 0, width: 0);
   int currentImgIndex = 0;
   int rotateFactor = 0;
   bool hasStarted = true;
   bool isPlaying = true;
-  bool isPreloaded = false;
   bool isEnded = false;
   bool isActuatorsHorizontal = true;
   bool isLastVertStateDownward = true;
@@ -86,11 +85,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   void _setDirectionVert() {
     animationControllerHoriz.stop();
     if (isLastVertStateDownward) {
-      animationController.removeStatusListener(downwardAnimationStatusListener);
-      animationController.addStatusListener(upwardAnimationStatusListener);
+      animationController.removeStatusListener(_downwardAnimationStatusListener);
+      animationController.addStatusListener(_upwardAnimationStatusListener);
     } else {
-      animationController.removeStatusListener(upwardAnimationStatusListener);
-      animationController.addStatusListener(downwardAnimationStatusListener);
+      animationController.removeStatusListener(_upwardAnimationStatusListener);
+      animationController.addStatusListener(_downwardAnimationStatusListener);
     }
     setState(() {
       isActuatorsHorizontal = true;
@@ -121,8 +120,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
         isEnded = false;
         isLastVertStateDownward = false;
       });
-      animationController.removeStatusListener(downwardAnimationStatusListener);
-      animationController.addStatusListener(upwardAnimationStatusListener);
+      animationController.removeStatusListener(_downwardAnimationStatusListener);
+      animationController.addStatusListener(_upwardAnimationStatusListener);
     } else if (animationState == AnimationState.upward) {
       setState(() {
         animationState = AnimationState.downward;
@@ -130,8 +129,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
         isEnded = false;
         isLastVertStateDownward = true;
       });
-      animationController.removeStatusListener(upwardAnimationStatusListener);
-      animationController.addStatusListener(downwardAnimationStatusListener);
+      animationController.removeStatusListener(_upwardAnimationStatusListener);
+      animationController.addStatusListener(_downwardAnimationStatusListener);
     } else if (animationState == AnimationState.sideward) {
       animationControllerHoriz.stop();
       setState(() {
@@ -169,11 +168,12 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     setState(() {
       rotateFactor = rotateFactor < 3 ? rotateFactor + 1 : 0;
     });
-    _loadImage();
-    _loadImage(preload: true);
+    // _loadImage();
+    // _loadImage(preload: true);
+    _rotateImages();
   }
 
-  void downwardAnimationStatusListener(AnimationStatus status) {
+  void _downwardAnimationStatusListener(AnimationStatus status) {
     if (status == AnimationStatus.completed && isPlaying) {
       if (currentImgIndex == imageTextures.length - 3) {
         setState(() {
@@ -184,7 +184,6 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           currentImgIndex++;
           photo = photo2;
           photo2 = img.Image(height: 0, width: 0);
-          isPreloaded = false;
         });
         _loadImage(preload: true);
         animationController.forward(from: 0);
@@ -192,7 +191,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     }
   }
 
-  void upwardAnimationStatusListener(AnimationStatus status) {
+  void _upwardAnimationStatusListener(AnimationStatus status) {
     if (status == AnimationStatus.dismissed && isPlaying) {
       if (currentImgIndex == 2) {
         setState(() {
@@ -204,13 +203,81 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
           if (currentImgIndex - 1 > 0) {
             photo0 = photo;
             photo = photo2;
-            isPreloaded = false;
           }
         });
         _loadImage(preload: true);
         animationController.reverse(from: 1);
       }
     }
+  }
+
+  Future<void> _loadImage({bool preload = false}) async {
+    try {
+      int desiredWidth = 300;
+      int desiredHeight = 300;
+      int indexToLoad = preload
+          ? animationState == AnimationState.downward
+              ? currentImgIndex + 1
+              : currentImgIndex - 3
+          : animationState == AnimationState.downward
+              ? currentImgIndex
+              : currentImgIndex - 2;
+
+      ByteData data = await rootBundle.load(imageTextures[indexToLoad].texture).then((value) {
+        // Define your desired width and height for resizing
+        desiredWidth = MediaQuery.of(context).size.width.toInt();
+        desiredHeight = MediaQuery.of(context).size.height ~/ 2;
+        return value;
+      });
+      Uint8List bytes = data.buffer.asUint8List();
+      img.Image image = img.decodeImage(bytes)!;
+
+      // Rotate the image
+      if (preload && rotateFactor > 0) {
+        image = img.copyRotate(image, angle: 90 * rotateFactor);
+      }
+
+      // Resize the image
+      image = img.copyResize(image, width: desiredWidth, height: desiredHeight, maintainAspect: false);
+
+      setState(() {
+        if (preload) {
+          photo2 = image;
+        } else {
+          photo = image;
+        }
+      });
+    } catch (e) {
+      debugPrint("Failed to load image: $e");
+      // Handle error or set a default image/photo state
+    }
+  }
+
+  void _rotateImages() {
+    int desiredWidth = MediaQuery.of(context).size.width.toInt();
+    int desiredHeight = MediaQuery.of(context).size.height ~/ 2;
+    img.Image newPhoto0 = photo0;
+    img.Image newPhoto1 = photo;
+    img.Image newPhoto2 = photo2;
+
+    if (photo0.height != 0 && photo0.width != 0) {
+      newPhoto0 = img.copyRotate(newPhoto0, angle: 90);
+      newPhoto0 = img.copyResize(newPhoto0, width: desiredWidth, height: desiredHeight, maintainAspect: false);
+    }
+    if (photo.height != 0 && photo.width != 0) {
+      newPhoto1 = img.copyRotate(newPhoto1, angle: 90);
+      newPhoto1 = img.copyResize(newPhoto1, width: desiredWidth, height: desiredHeight, maintainAspect: false);
+    }
+    if (photo2.height != 0 && photo2.width != 0) {
+      newPhoto2 = img.copyRotate(newPhoto2, angle: 90);
+      newPhoto2 = img.copyResize(newPhoto2, width: desiredWidth, height: desiredHeight, maintainAspect: false);
+    }
+
+    setState(() {
+      photo0 = newPhoto0;
+      photo = newPhoto1;
+      photo2 = newPhoto2;
+    });
   }
 
   @override
@@ -232,10 +299,10 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     );
 
     if (animationState == AnimationState.downward) {
-      animationController.addStatusListener(downwardAnimationStatusListener);
+      animationController.addStatusListener(_downwardAnimationStatusListener);
     } else if (animationState == AnimationState.upward) {
       currentImgIndex = ImageTextureProvider().imageTextures.length + 1;
-      animationController.addStatusListener(upwardAnimationStatusListener);
+      animationController.addStatusListener(_upwardAnimationStatusListener);
     }
 
     animationControllerHoriz.addStatusListener((status) {
@@ -282,49 +349,6 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     animationControllerHoriz.dispose();
     player.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadImage({bool preload = false}) async {
-    try {
-      int desiredWidth = 300;
-      int desiredHeight = 300;
-      int indexToLoad = preload
-          ? animationState == AnimationState.downward
-              ? currentImgIndex + 1
-              : currentImgIndex - 3
-          : animationState == AnimationState.downward
-              ? currentImgIndex
-              : currentImgIndex - 2;
-
-      ByteData data = await rootBundle.load(imageTextures[indexToLoad].texture).then((value) {
-        // Define your desired width and height for resizing
-        desiredWidth = MediaQuery.of(context).size.width.toInt();
-        desiredHeight = MediaQuery.of(context).size.height ~/ 2;
-        return value;
-      });
-      Uint8List bytes = data.buffer.asUint8List();
-      img.Image image = img.decodeImage(bytes)!;
-
-      // Rotate the image
-      if (rotateFactor > 0) {
-        image = img.copyRotate(image, angle: 90 * rotateFactor);
-      }
-
-      // Resize the image
-      image = img.copyResize(image, width: desiredWidth, height: desiredHeight, maintainAspect: false);
-
-      setState(() {
-        if (preload) {
-          photo2 = image;
-          isPreloaded = true;
-        } else {
-          photo = image;
-        }
-      });
-    } catch (e) {
-      debugPrint("Failed to load image: $e");
-      // Handle error or set a default image/photo state
-    }
   }
 
   @override
