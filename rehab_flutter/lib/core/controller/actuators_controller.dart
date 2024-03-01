@@ -14,6 +14,7 @@ class ActuatorsController extends GetxController {
   final double actuatorSize = 6;
   final double actuatorSpacing = 10;
   final int actuatorsPerFinger = 16;
+  final int spaceBetweenFingers = 50;
   late ActuatorsOrientation orientation;
   late ActuatorsNumOfFingers numOfFingers;
   late String lastSentPattern;
@@ -98,7 +99,12 @@ class ActuatorsController extends GetxController {
       Uint8List bytes = data.buffer.asUint8List();
       img.Image image = img.decodeImage(bytes)!;
 
-      image = img.copyResize(image, width: imagesWidth, height: imagesHeight, maintainAspect: false);
+      if (imagesHeight > 0 && imagesWidth > 0) {
+        image = img.copyResize(image, width: imagesWidth, height: imagesHeight, maintainAspect: false);
+      } else {
+        imagesWidth = image.width;
+        imagesHeight = image.height;
+      }
 
       if (preload) {
         imagesToScan[1] = image;
@@ -111,58 +117,57 @@ class ActuatorsController extends GetxController {
   }
 
   void updateActuators({required Offset position}) {
+    resetActuators();
+
     double adjustedX = position.dx;
     double adjustedY = position.dy;
 
-    positionsMap.forEach((key, value) {
-      value.clear();
-    });
-    colorsMap.forEach((key, value) {
-      value.clear();
-    });
-
     for (int i = -1; i <= 2; i++) {
       for (int j = -1; j <= 2; j++) {
-        final double gridX0 = adjustedX - 80 + (j * actuatorSpacing);
-        final double gridX1 = adjustedX - 40 + (j * actuatorSpacing);
         final double gridX2 = adjustedX + (j * actuatorSpacing);
-        final double gridX3 = adjustedX + 40 + (j * actuatorSpacing);
-        final double gridX4 = adjustedX + 80 + (j * actuatorSpacing);
         final double gridY = adjustedY + (i * actuatorSpacing);
 
-        final int imageX0 = max(0, min(imagesWidth, gridX0.round()));
-        final int imageX1 = max(0, min(imagesWidth, gridX1.round()));
         final int imageX2 = max(0, min(imagesWidth, gridX2.round()));
-        final int imageX3 = max(0, min(imagesWidth, gridX3.round()));
-        final int imageX4 = max(0, min(imagesWidth, gridX4.round()));
         final int imageY = max(0, min(imagesHeight, gridY.round()));
 
-        img.Pixel pixel = imagesToScan[0].getPixelSafe(imageX0, imageY);
+        img.Pixel pixel = imagesToScan[0].getPixelSafe(imageX2, imageY);
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         colorsMap[0]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = imagesToScan[0].getPixelSafe(imageX1, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        colorsMap[1]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+        positionsMap[0]!.add(Offset(gridX2, gridY));
 
-        pixel = imagesToScan[0].getPixelSafe(imageX2, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        colorsMap[2]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+        if (numOfFingers == ActuatorsNumOfFingers.five) {
+          final double gridX3 = adjustedX + spaceBetweenFingers + (j * actuatorSpacing);
+          final double gridX4 = adjustedX + (spaceBetweenFingers * 2) + (j * actuatorSpacing);
+          final double gridX0 = adjustedX - (spaceBetweenFingers * 2) + (j * actuatorSpacing);
+          final double gridX1 = adjustedX - spaceBetweenFingers + (j * actuatorSpacing);
 
-        pixel = imagesToScan[0].getPixelSafe(imageX3, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        colorsMap[3]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          final int imageX0 = max(0, min(imagesWidth, gridX0.round()));
+          final int imageX1 = max(0, min(imagesWidth, gridX1.round()));
+          final int imageX3 = max(0, min(imagesWidth, gridX3.round()));
+          final int imageX4 = max(0, min(imagesWidth, gridX4.round()));
 
-        pixel = imagesToScan[0].getPixelSafe(imageX4, imageY);
-        isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        colorsMap[4]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          pixel = imagesToScan[0].getPixelSafe(imageX0, imageY);
+          bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          colorsMap[1]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        // Adjust position back to display space
-        positionsMap[0]!.add(Offset(gridX0, gridY));
-        positionsMap[1]!.add(Offset(gridX1, gridY));
-        positionsMap[2]!.add(Offset(gridX2, gridY));
-        positionsMap[3]!.add(Offset(gridX3, gridY));
-        positionsMap[4]!.add(Offset(gridX4, gridY));
+          pixel = imagesToScan[0].getPixelSafe(imageX1, imageY);
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          colorsMap[2]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          pixel = imagesToScan[0].getPixelSafe(imageX3, imageY);
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          colorsMap[3]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          pixel = imagesToScan[0].getPixelSafe(imageX4, imageY);
+          isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
+          colorsMap[4]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+
+          positionsMap[1]!.add(Offset(gridX0, gridY));
+          positionsMap[2]!.add(Offset(gridX1, gridY));
+          positionsMap[3]!.add(Offset(gridX3, gridY));
+          positionsMap[4]!.add(Offset(gridX4, gridY));
+        }
       }
     }
 

@@ -12,6 +12,7 @@ class ActuatorsRepositoryImpl implements ActuatorsRepository {
 
   @override
   Future<void> initializeActuators(ActuatorsInitData initData) async {
+    _controller.resetActuators();
     await _controller.initializeActuators(orientation: initData.orientation, numOfFingers: initData.numOfFingers, imgSrc: initData.imgSrc, imagesHeight: initData.imagesHeight, imagesWidth: initData.imagesWidth);
   }
 
