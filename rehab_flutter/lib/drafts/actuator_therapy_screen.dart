@@ -3,21 +3,21 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/providers.dart';
 
 class ActuatorTherapy extends StatefulWidget {
   final BluetoothCharacteristic targetCharacteristic;
 
-  ActuatorTherapy({Key? key, required this.targetCharacteristic}) : super(key: key);
+  const ActuatorTherapy({Key? key, required this.targetCharacteristic}) : super(key: key);
 
   @override
-  _ActuatorTherapyState createState() => _ActuatorTherapyState();
+  ActuatorTherapyState createState() => ActuatorTherapyState();
 }
 
-class _ActuatorTherapyState extends State<ActuatorTherapy> {
+class ActuatorTherapyState extends State<ActuatorTherapy> {
   BluetoothDevice? targetDevice;
   final String targetDeviceName = "Gloves_BLE_01";
   bool isDeviceConnected = false;
+  // ignore: prefer_collection_literals
   Set<int> activeValues = Set<int>(); // Ensure type specification for clarity
 
   @override
@@ -45,14 +45,15 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
   }
 
   void sendPattern(int moduleValue) {
+    // ignore: unnecessary_null_comparison
     if (widget.targetCharacteristic == null) return;
 
     String moduleValueString = moduleValue.toString().padLeft(3, '0');
-    String data = "<" + List.filled(10, moduleValueString).join() + ">";
+    String data = "<${List.filled(10, moduleValueString).join()}>";
 
     // widget.targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
     sl<BluetoothBloc>().add(WriteDataEvent(data));
-    print("Pattern sent: $data");
+    debugPrint("Pattern sent: $data");
   }
 
   void toggleActiveValue(int value) {
@@ -71,7 +72,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Bluetooth Device Connector'),
+          title: const Text('Bluetooth Device Connector'),
         ),
         body: Center(
             child: Column(
@@ -102,11 +103,12 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
           onLongPressEnd: (_) => removeActiveValue(value),
           child: ElevatedButton(
             onPressed: () {}, // Empty function, we are using GestureDetector instead
-            child: Text(value.toString()),
+
             style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(24),
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(24),
             ),
+            child: Text(value.toString()),
           ),
         ),
       ),

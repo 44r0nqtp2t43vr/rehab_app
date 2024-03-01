@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
@@ -9,11 +11,13 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:image/image.dart' as img;
 
 class ColorPickerWidget extends StatefulWidget {
+  const ColorPickerWidget({super.key});
+
   @override
-  _ColorPickerWidgetState createState() => _ColorPickerWidgetState();
+  ColorPickerWidgetState createState() => ColorPickerWidgetState();
 }
 
-class _ColorPickerWidgetState extends State<ColorPickerWidget> {
+class ColorPickerWidgetState extends State<ColorPickerWidget> {
   String imagePath = 'assets/images/MultipleTextures.png';
   GlobalKey imageKey = GlobalKey();
   GlobalKey paintKey = GlobalKey();
@@ -21,10 +25,9 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   bool useSnapshot = true;
   late GlobalKey currentKey;
 
-  final StreamController<List<Color>> _stateController =
-      StreamController<List<Color>>.broadcast();
+  final StreamController<List<Color>> _stateController = StreamController<List<Color>>.broadcast();
   late img.Image photo;
-  List<Offset> cursorPositions = List.generate(16, (_) => Offset(20, 20));
+  List<Offset> cursorPositions = List.generate(16, (_) => const Offset(20, 20));
   List<Color> cursorColors = List.generate(16, (_) => Colors.transparent);
 
   BluetoothDevice? targetDevice;
@@ -53,8 +56,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
         initialData: List.generate(16, (_) => Colors.green[500]!),
         stream: _stateController.stream,
         builder: (context, snapshot) {
-          final colors =
-              snapshot.data ?? List.generate(16, (_) => Colors.green);
+          final colors = snapshot.data ?? List.generate(16, (_) => Colors.green);
           return Stack(
             children: <Widget>[
               RepaintBoundary(
@@ -92,14 +94,12 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
     int rightActuatorSum = 0;
     // Generate cursor widgets for left actuator (positions 0-7 and colors 0-7)
     for (int i = 0; i < 8; i++) {
-      cursorWidgets.add(
-          colorPickerCursor(colors[i], cursorPositions[i], cursorValues[i]));
+      cursorWidgets.add(colorPickerCursor(colors[i], cursorPositions[i], cursorValues[i]));
     }
     // Generate cursor widgets for right actuator (positions 8-15 and colors 8-15)
     int x = 0;
     for (int i = 8; i < 16; i++) {
-      cursorWidgets.add(
-          colorPickerCursor(colors[i], cursorPositions[i], cursorValues[x]));
+      cursorWidgets.add(colorPickerCursor(colors[i], cursorPositions[i], cursorValues[x]));
       x++;
     }
     for (int i = 0; i < 8; i++) {
@@ -123,21 +123,14 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
       x++;
     }
 
-    String fingerStringLocal = leftActuatorSum.toString().padLeft(3, '0') +
-        rightActuatorSum.toString().padLeft(3, '0');
-    fingerStringLocal = "<" +
-        fingerString +
-        fingerString +
-        fingerString +
-        fingerString +
-        fingerString +
-        ">";
+    String fingerStringLocal = leftActuatorSum.toString().padLeft(3, '0') + rightActuatorSum.toString().padLeft(3, '0');
+    fingerStringLocal = "<$fingerString$fingerString$fingerString$fingerString$fingerString>";
     if (fingerStringLocal != fingerString) {
       sendPattern(fingerStringLocal);
       fingerString = fingerStringLocal;
-      print("Different pattern");
+      debugPrint("Different pattern");
     } else {
-      print("Same pattern");
+      debugPrint("Same pattern");
     }
 
     return cursorWidgets;
@@ -145,13 +138,14 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
 
   void _resetAndStartTimer() {
     _sendPatternTimer?.cancel(); // Cancel any existing timer
-    _sendPatternTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    _sendPatternTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       if (targetCharacteristic != null && fingerString.isNotEmpty) {
         targetCharacteristic!.write(Uint8List.fromList(fingerString.codeUnits));
       }
     });
   }
 
+  // ignore: unused_element
   void _sendPatternSafely(String data) {
     if (targetCharacteristic == null) return;
 
@@ -178,15 +172,14 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
       }
 
       // Generate the cursor widget
-      Widget cursorWidget =
-          colorPickerCursor(colors[i], cursorPositions[i], cursorValues[i]);
+      Widget cursorWidget = colorPickerCursor(colors[i], cursorPositions[i], cursorValues[i]);
       cursorWidgets.add(cursorWidget);
-      print("Actuator = $i");
+      debugPrint("Actuator = $i");
     }
 
     // Pad actuatorSum to ensure it's a three-digit string
     String actuatorString = actuatorSum.toString().padLeft(3, '0');
-    print(actuatorString); // Print the padded string
+    debugPrint(actuatorString); // Print the padded string
 
     return cursorWidgets;
   }
@@ -194,16 +187,13 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   bool isColorCloseToWhite(Color color) {
     // Assuming "close to white" means high values for R, G, and B
     int threshold = 240; // You can adjust this threshold
-    return color.red > threshold &&
-        color.green > threshold &&
-        color.blue > threshold;
+    return color.red > threshold && color.green > threshold && color.blue > threshold;
   }
 
 // if color is not white, selectedColor = green, t
-  Widget colorPickerCursor(
-      Color selectedColor, Offset cursorPosition, int value) {
+  Widget colorPickerCursor(Color selectedColor, Offset cursorPosition, int value) {
     bool isActivated = false;
-    Timer? _sendPatternTimer;
+    Timer? sendPatternTimer;
 
     // Check if the selectedColor is white or close to white
     // If not, set selectedColor to green
@@ -212,8 +202,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
       isActivated = true;
     }
     double cursorLeft = cursorPosition.dx - 10;
-    double cursorBottom =
-        MediaQuery.of(context).size.height - cursorPosition.dy - 10;
+    double cursorBottom = MediaQuery.of(context).size.height - cursorPosition.dy - 10;
     return Positioned(
       left: cursorLeft,
       bottom: cursorBottom,
@@ -224,16 +213,14 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
           shape: BoxShape.circle,
           color: selectedColor,
           border: Border.all(width: 2.0, color: Colors.white),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))
-          ],
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
         ),
       ),
     );
   }
 
   void searchPixel(Offset globalPosition) async {
+    // ignore: unnecessary_null_comparison
     if (photo == null) {
       await (useSnapshot ? loadSnapshotBytes() : loadImageBundleBytes());
     }
@@ -251,8 +238,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
           (row - gridSize / 2) * step + globalPosition.dy,
         );
         updatedPositions.add(cursorOffset);
-        _calculatePixel(cursorOffset,
-            index: col * gridSize + row); // Switched the index calculation
+        _calculatePixel(cursorOffset, index: col * gridSize + row); // Switched the index calculation
       }
     }
 
@@ -262,9 +248,9 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   }
 
   void _calculatePixel(Offset globalPosition, {required int index}) {
-    RenderBox? box =
-        currentKey.currentContext?.findRenderObject() as RenderBox?;
+    RenderBox? box = currentKey.currentContext?.findRenderObject() as RenderBox?;
 
+    // ignore: unnecessary_null_comparison
     if (box != null && photo != null) {
       Offset localPosition = box.globalToLocal(globalPosition);
 
@@ -280,10 +266,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
         (localPosition.dy - dy) / scale,
       );
 
-      if (adjustedLocalPosition.dx >= 0 &&
-          adjustedLocalPosition.dx < photo.width &&
-          adjustedLocalPosition.dy >= 0 &&
-          adjustedLocalPosition.dy < photo.height) {
+      if (adjustedLocalPosition.dx >= 0 && adjustedLocalPosition.dx < photo.width && adjustedLocalPosition.dy >= 0 && adjustedLocalPosition.dy < photo.height) {
         const int sampleRadius = 1;
         List<int> rValues = [], gValues = [], bValues = [], aValues = [];
 
@@ -292,10 +275,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
             int sampleX = adjustedLocalPosition.dx.toInt() + x;
             int sampleY = adjustedLocalPosition.dy.toInt() + y;
 
-            if (sampleX >= 0 &&
-                sampleX < photo.width &&
-                sampleY >= 0 &&
-                sampleY < photo.height) {
+            if (sampleX >= 0 && sampleX < photo.width && sampleY >= 0 && sampleY < photo.height) {
               img.Pixel samplePixel = photo.getPixelSafe(sampleX, sampleY);
               // Explicitly convert to int before adding to the lists
               rValues.add(samplePixel.r.toInt());
@@ -306,39 +286,26 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
           }
         }
 
-        int avgR = rValues.isNotEmpty
-            ? rValues.reduce((a, b) => a + b) ~/ rValues.length
-            : 0;
-        int avgG = gValues.isNotEmpty
-            ? gValues.reduce((a, b) => a + b) ~/ gValues.length
-            : 0;
-        int avgB = bValues.isNotEmpty
-            ? bValues.reduce((a, b) => a + b) ~/ bValues.length
-            : 0;
-        int avgA = aValues.isNotEmpty
-            ? aValues.reduce((a, b) => a + b) ~/ aValues.length
-            : 255; // Ensure opacity
+        int avgR = rValues.isNotEmpty ? rValues.reduce((a, b) => a + b) ~/ rValues.length : 0;
+        int avgG = gValues.isNotEmpty ? gValues.reduce((a, b) => a + b) ~/ gValues.length : 0;
+        int avgB = bValues.isNotEmpty ? bValues.reduce((a, b) => a + b) ~/ bValues.length : 0;
+        int avgA = aValues.isNotEmpty ? aValues.reduce((a, b) => a + b) ~/ aValues.length : 255; // Ensure opacity
 
-        Color averageColor =
-            Color((avgA << 24) | (avgR << 16) | (avgG << 8) | avgB);
+        Color averageColor = Color((avgA << 24) | (avgR << 16) | (avgG << 8) | avgB);
 
         // Update the cursor color
         cursorColors[index] = averageColor;
-        _stateController.add(
-            List.from(cursorColors)); // Update the stream with the new colors
+        _stateController.add(List.from(cursorColors)); // Update the stream with the new colors
       }
     }
   }
 
   Future<void> loadSnapshotBytes() async {
-    RenderRepaintBoundary? boundary =
-        paintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    RenderRepaintBoundary? boundary = paintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
 
     if (boundary != null) {
-      ui.Image capture =
-          await boundary.toImage(pixelRatio: 3.0); // Higher resolution
-      ByteData? imageBytes =
-          await capture.toByteData(format: ui.ImageByteFormat.png);
+      ui.Image capture = await boundary.toImage(pixelRatio: 3.0); // Higher resolution
+      ByteData? imageBytes = await capture.toByteData(format: ui.ImageByteFormat.png);
 
       if (imageBytes != null) {
         setImageBytes(imageBytes);
@@ -355,7 +322,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
         photo = decodedImage;
       });
     } else {
-      print("Failed to decode image.");
+      debugPrint("Failed to decode image.");
     }
   }
 
@@ -376,18 +343,18 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
         photo = decodedImage;
       });
     } else {
-      print("Failed to load image from assets.");
+      debugPrint("Failed to load image from assets.");
     }
   }
 
   void startScan() {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
 
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        print(result.device.name);
-        if (result.device.name == targetDeviceName) {
-          print("Device found: ${result.device.name}");
+        debugPrint(result.device.platformName);
+        if (result.device.platformName == targetDeviceName) {
+          debugPrint("Device found: ${result.device.platformName}");
           FlutterBluePlus.stopScan();
           setState(() {
             targetDevice = result.device;
@@ -402,7 +369,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   void connectToDevice() async {
     if (targetDevice != null) {
       await targetDevice!.connect();
-      print("Device connected");
+      debugPrint("Device connected");
       setState(() {
         isDeviceConnected = true;
       });
@@ -414,19 +381,17 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
     if (targetDevice == null) return;
 
     List<BluetoothService> services = await targetDevice!.discoverServices();
-    services.forEach((service) {
+    for (var service in services) {
       // Match the service UUID of your device
-      if (service.uuid.toString().toUpperCase() ==
-          "0000FFE0-0000-1000-8000-00805F9B34FB") {
-        service.characteristics.forEach((characteristic) {
+      if (service.uuid.toString().toUpperCase() == "0000FFE0-0000-1000-8000-00805F9B34FB") {
+        for (var characteristic in service.characteristics) {
           // Match the characteristic UUID for sending data
-          if (characteristic.uuid.toString().toUpperCase() ==
-              "0000FFE2-0000-1000-8000-00805F9B34FB") {
+          if (characteristic.uuid.toString().toUpperCase() == "0000FFE2-0000-1000-8000-00805F9B34FB") {
             targetCharacteristic = characteristic;
           }
-        });
+        }
       }
-    });
+    }
   }
 
   void sendPattern(String data) {
@@ -447,4 +412,4 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   }
 }
 
-void main() => runApp(MaterialApp(home: ColorPickerWidget()));
+void main() => runApp(const MaterialApp(home: ColorPickerWidget()));

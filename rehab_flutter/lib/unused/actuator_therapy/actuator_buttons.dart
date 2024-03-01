@@ -15,11 +15,12 @@ Widget buildButton({
         onLongPressEnd: (_) => onLongPressEnd(),
         child: ElevatedButton(
           onPressed: () {}, // This is intentionally left empty
-          child: Text(value.toString()),
+
           style: ElevatedButton.styleFrom(
-            shape: CircleBorder(),
-            padding: EdgeInsets.all(24),
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(24),
           ),
+          child: Text(value.toString()),
         ),
       ),
     ),

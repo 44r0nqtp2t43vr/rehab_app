@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   BluetoothDevice? targetDevice;
   BluetoothCharacteristic? targetCharacteristic;
   final String targetDeviceName = "Gloves_BLE_01";
   bool isDeviceConnected = false;
-  Set<int> activeValues = Set(); // Track active button values
+  Set<int> activeValues = {}; // Track active button values
 
   @override
   void initState() {
@@ -24,13 +26,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   void startScan() {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
 
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        print(result.device.name);
-        if (result.device.name == targetDeviceName) {
-          print("Device found: ${result.device.name}");
+        debugPrint(result.device.platformName);
+        if (result.device.platformName == targetDeviceName) {
+          debugPrint("Device found: ${result.device.platformName}");
           FlutterBluePlus.stopScan();
           setState(() {
             targetDevice = result.device;
@@ -45,7 +47,7 @@ class _MyAppState extends State<MyApp> {
   void connectToDevice() async {
     if (targetDevice != null) {
       await targetDevice!.connect();
-      print("Device connected");
+      debugPrint("Device connected");
       setState(() {
         isDeviceConnected = true;
       });
@@ -63,16 +65,13 @@ class _MyAppState extends State<MyApp> {
       var serviceUUID = service.uuid.toString().toUpperCase();
       if (serviceUUID.contains("0000FFE0-0000-1000-8000-00805F9B34FB")) {
         // Replace with actual partial or full UUID
-        for (BluetoothCharacteristic characteristic
-            in service.characteristics) {
+        for (BluetoothCharacteristic characteristic in service.characteristics) {
           var characteristicUUID = characteristic.uuid.toString().toUpperCase();
           // Similarly, check if this is the characteristic we're interested in
-          if (characteristicUUID
-              .contains("0000FFE2-0000-1000-8000-00805F9B34FB")) {
+          if (characteristicUUID.contains("0000FFE2-0000-1000-8000-00805F9B34FB")) {
             // Replace with actual partial or full UUID
             setState(() {
-              targetCharacteristic =
-                  characteristic; // Store the characteristic for later use
+              targetCharacteristic = characteristic; // Store the characteristic for later use
             });
             return; // Exit if the desired characteristic is found
           }
@@ -81,7 +80,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     if (targetCharacteristic == null) {
-      print("Desired service/characteristic not found");
+      debugPrint("Desired service/characteristic not found");
     }
   }
 
@@ -101,9 +100,7 @@ class _MyAppState extends State<MyApp> {
 
   void updateModuleValue() {
     // Calculate the combined value of all active buttons
-    int combinedValue = activeValues.fold(
-            0, (previousValue, element) => previousValue + element) %
-        256;
+    int combinedValue = activeValues.fold(0, (previousValue, element) => previousValue + element) % 256;
     // Send the combined value to the module
     sendPattern(combinedValue);
   }
@@ -112,11 +109,11 @@ class _MyAppState extends State<MyApp> {
     if (targetCharacteristic == null) return;
 
     String moduleValueString = moduleValue.toString().padLeft(3, '0');
-    String data = "<" + List.filled(10, moduleValueString).join() + ">";
+    String data = "<${List.filled(10, moduleValueString).join()}>";
 
     // Write the data without waiting for a response
     targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
-    print("Pattern sent: $data");
+    debugPrint("Pattern sent: $data");
   }
 
   void toggleActiveValue(int value) {
@@ -135,7 +132,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Bluetooth Device Connector'),
+          title: const Text('Bluetooth Device Connector'),
         ),
         body: Center(
           child: isDeviceConnected
@@ -148,7 +145,7 @@ class _MyAppState extends State<MyApp> {
                     buildRow(64, 128),
                   ],
                 )
-              : Text('Searching for Device...'),
+              : const Text('Searching for Device...'),
         ),
       ),
     );
@@ -173,13 +170,13 @@ class _MyAppState extends State<MyApp> {
           onLongPressStart: (_) => addActiveValue(value),
           onLongPressEnd: (_) => removeActiveValue(value),
           child: ElevatedButton(
-            onPressed:
-                () {}, // Empty function, we are using GestureDetector instead
-            child: Text(value.toString()),
+            onPressed: () {}, // Empty function, we are using GestureDetector instead
+
             style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(24),
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(24),
             ),
+            child: Text(value.toString()),
           ),
         ),
       ),

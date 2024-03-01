@@ -40,8 +40,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
     // Assuming patternProvider is accessible here, if not, it should be passed as a parameter or made globally accessible
     var currentPatternData = patternProvider.patterns[patternIndex].patternData;
 
-    _patternTimer =
-        Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms or as per the requirement
       if (isPatternActive && activePattern == patternIndex) {
         sendPattern(currentPatternData[timer.tick % currentPatternData.length]);
@@ -69,7 +68,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Bluetooth Device Connector'),
+          title: const Text('Bluetooth Device Connector'),
         ),
         body: Center(
           child: Column(
@@ -89,8 +88,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
               ...patternProvider.patterns.map((pattern) {
                 return PatternButton(
                   buttonText: pattern.name,
-                  onPressed: () =>
-                      startPattern(patternProvider.patterns.indexOf(pattern)),
+                  onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
                 );
               }).toList(),
               PatternButton(

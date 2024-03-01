@@ -26,7 +26,7 @@ class TextureNameSelector extends StatelessWidget {
           return Center(
             child: Text(
               imageTextures[index].name,
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
           );
         },

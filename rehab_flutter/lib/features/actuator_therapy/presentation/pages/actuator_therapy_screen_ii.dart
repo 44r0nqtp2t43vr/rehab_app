@@ -5,15 +5,17 @@ import 'package:rehab_flutter/injection_container.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/widgets/actuator_grid.dart';
 
 class ActuatorTherapy extends StatefulWidget {
+  const ActuatorTherapy({super.key});
+
   @override
-  _ActuatorTherapyState createState() => _ActuatorTherapyState();
+  ActuatorTherapyState createState() => ActuatorTherapyState();
 }
 
-class _ActuatorTherapyState extends State<ActuatorTherapy> {
-  List<bool> _circleStates = List.generate(16, (_) => false);
-  List<bool> _permanentGreen = List.generate(16, (_) => false);
+class ActuatorTherapyState extends State<ActuatorTherapy> {
+  final List<bool> _circleStates = List.generate(16, (_) => false);
+  final List<bool> _permanentGreen = List.generate(16, (_) => false);
 
-  List<GlobalKey> _circleKeys = List.generate(16, (index) => GlobalKey());
+  final List<GlobalKey> _circleKeys = List.generate(16, (index) => GlobalKey());
   String lastSentPattern = "";
 
   // Assuming _cursorValues is accessible like this
@@ -44,16 +46,15 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
   void sendPattern(int left, int right) {
     String leftString = left.toString().padLeft(3, '0');
     String rightString = right.toString().padLeft(3, '0');
-    String data =
-        "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+    String data = "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
 
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
       sl<BluetoothBloc>().add(WriteDataEvent(data));
-      print("Pattern sent: $data");
+      debugPrint("Pattern sent: $data");
       lastSentPattern = data; // Update the last sent pattern
     } else {
-      print("Pattern not sent, identical to last pattern.");
+      debugPrint("Pattern not sent, identical to last pattern.");
     }
   }
 
@@ -85,16 +86,12 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
 
   void _updateCircleStateBasedOnPosition(Offset globalPosition, bool isStart) {
     for (int i = 0; i < _circleKeys.length; i++) {
-      final RenderBox? box =
-          _circleKeys[i].currentContext?.findRenderObject() as RenderBox?;
+      final RenderBox? box = _circleKeys[i].currentContext?.findRenderObject() as RenderBox?;
       if (box != null) {
         final position = box.localToGlobal(Offset.zero);
         final size = box.size;
 
-        if (globalPosition.dx >= position.dx &&
-            globalPosition.dx <= position.dx + size.width &&
-            globalPosition.dy >= position.dy &&
-            globalPosition.dy <= position.dy + size.height) {
+        if (globalPosition.dx >= position.dx && globalPosition.dx <= position.dx + size.width && globalPosition.dy >= position.dy && globalPosition.dy <= position.dy + size.height) {
           setState(() {
             if (isStart || !_permanentGreen[i]) {
               _circleStates[i] = true;
@@ -108,6 +105,7 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
     _sendUpdatedPattern();
   }
 
+  // ignore: unused_element
   void _updateState(int index, bool value) {
     setState(() {
       _permanentGreen[index] = value;
@@ -120,15 +118,12 @@ class _ActuatorTherapyState extends State<ActuatorTherapy> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Actuator Therapy'),
+        title: const Text('Actuator Therapy'),
       ),
       body: GestureDetector(
-        onPanStart: (DragStartDetails details) =>
-            _updateCircleStateBasedOnPosition(details.globalPosition, true),
-        onPanUpdate: (DragUpdateDetails details) =>
-            _updateCircleStateBasedOnPosition(details.globalPosition, false),
-        onPanEnd: (DragEndDetails details) =>
-            setState(_resetNonPermanentCircles),
+        onPanStart: (DragStartDetails details) => _updateCircleStateBasedOnPosition(details.globalPosition, true),
+        onPanUpdate: (DragUpdateDetails details) => _updateCircleStateBasedOnPosition(details.globalPosition, false),
+        onPanEnd: (DragEndDetails details) => setState(_resetNonPermanentCircles),
         child: Center(
           // Use Center to align the child widget in the middle
           child: ActuatorGrid(
