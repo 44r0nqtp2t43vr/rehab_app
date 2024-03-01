@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
-import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
-import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
-import 'package:rehab_flutter/core/enums/actuators_enums.dart';
-import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -86,15 +81,6 @@ class MenuScreen extends StatelessWidget {
   }
 
   void _onSAButtonPressed(BuildContext context) {
-    int photoSize = MediaQuery.of(context).size.width.toInt();
-
-    sl<ActuatorsBloc>().add(InitActuatorsEvent(ActuatorsInitData(
-      imgSrc: ImageTextureProvider().imageTextures[0].texture,
-      orientation: ActuatorsOrientation.landscape,
-      numOfFingers: ActuatorsNumOfFingers.five,
-      photosHeight: photoSize,
-      photosWidth: photoSize,
-    )));
     Navigator.pushNamed(context, '/ScrollActuators');
   }
 

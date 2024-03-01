@@ -8,6 +8,7 @@ import 'package:rehab_flutter/core/interface/bluetooth_repository.dart';
 import 'package:rehab_flutter/core/repository/actuators_repository.dart';
 import 'package:rehab_flutter/core/repository/bluetooth_repository.dart';
 import 'package:rehab_flutter/core/usecases/init_actuators.dart';
+import 'package:rehab_flutter/core/usecases/load_image.dart';
 import 'package:rehab_flutter/core/usecases/update_actuators.dart';
 import 'package:rehab_flutter/core/usecases/update_chara.dart';
 import 'package:rehab_flutter/core/usecases/write_data.dart';
@@ -34,8 +35,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<UpdateActuatorsUseCase>(UpdateActuatorsUseCase(sl()));
 
+  sl.registerSingleton<LoadImageUseCase>(LoadImageUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl()));
 
-  sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl()));
+  sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 }

@@ -3,12 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/routes/routes.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
-import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
-import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
-import 'package:rehab_flutter/core/enums/actuators_enums.dart';
-import 'package:rehab_flutter/features/piano_tiles/data/data_sources/song_provider.dart';
-import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 void main() async {
@@ -63,15 +57,6 @@ void _onBlueToothScreenTap(BuildContext context) {
 }
 
 void _onTest(BuildContext context) {
-  int photoSize = MediaQuery.of(context).size.width.toInt();
-
-  sl<ActuatorsBloc>().add(InitActuatorsEvent(ActuatorsInitData(
-    imgSrc: ImageTextureProvider().imageTextures[0].texture,
-    orientation: ActuatorsOrientation.landscape,
-    numOfFingers: ActuatorsNumOfFingers.five,
-    photosHeight: photoSize,
-    photosWidth: photoSize,
-  )));
   Navigator.pushNamed(context, '/ScrollActuators');
   // Navigator.pushNamed(context, '/ScrollTextures', arguments: SongProvider().songs[0]);
   // Navigator.pushNamed(context, '/TextureTherapy');

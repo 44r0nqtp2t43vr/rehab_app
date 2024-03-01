@@ -17,10 +17,10 @@ class ActuatorsController extends GetxController {
   late ActuatorsOrientation orientation;
   late ActuatorsNumOfFingers numOfFingers;
   late String lastSentPattern;
-  late int photosHeight;
-  late int photosWidth;
+  late int imagesHeight;
+  late int imagesWidth;
 
-  List<img.Image> photosToScan = [
+  List<img.Image> imagesToScan = [
     img.Image(height: 0, width: 0),
     img.Image(height: 0, width: 0),
     img.Image(height: 0, width: 0),
@@ -42,13 +42,13 @@ class ActuatorsController extends GetxController {
     4: [],
   };
 
-  Future<void> initializeActuators({required ActuatorsOrientation orientation, required ActuatorsNumOfFingers numOfFingers, required String imgSrc, required int photosHeight, required int photosWidth}) async {
+  Future<void> initializeActuators({required ActuatorsOrientation orientation, required ActuatorsNumOfFingers numOfFingers, required String imgSrc, required int imagesHeight, required int imagesWidth}) async {
     this.orientation = orientation;
     this.numOfFingers = numOfFingers;
-    this.photosHeight = photosHeight;
-    this.photosWidth = photosWidth;
+    this.imagesHeight = imagesHeight;
+    this.imagesWidth = imagesWidth;
     lastSentPattern = "<000000000000000000000000000000>";
-    await loadImage(src: imgSrc);
+    await loadImage(src: imgSrc, preload: false);
   }
 
   int numOfFingersIntFromEnum() {
@@ -83,21 +83,28 @@ class ActuatorsController extends GetxController {
     return actuators;
   }
 
-  Future<void> loadImage({required String src}) async {
+  void resetActuators() {
+    positionsMap.forEach((key, value) {
+      value.clear();
+    });
+    colorsMap.forEach((key, value) {
+      value.clear();
+    });
+  }
+
+  Future<void> loadImage({required String src, required bool preload}) async {
     try {
       ByteData data = await rootBundle.load(src);
       Uint8List bytes = data.buffer.asUint8List();
       img.Image image = img.decodeImage(bytes)!;
 
-      positionsMap.forEach((key, value) {
-        value.clear();
-      });
-      colorsMap.forEach((key, value) {
-        value.clear();
-      });
+      image = img.copyResize(image, width: imagesWidth, height: imagesHeight, maintainAspect: false);
 
-      image = img.copyResize(image, width: photosWidth, height: photosHeight, maintainAspect: false);
-      photosToScan[0] = image;
+      if (preload) {
+        imagesToScan[1] = image;
+      } else {
+        imagesToScan[0] = image;
+      }
     } catch (e) {
       debugPrint("Failed to load image: $e");
     }
@@ -123,30 +130,30 @@ class ActuatorsController extends GetxController {
         final double gridX4 = adjustedX + 80 + (j * actuatorSpacing);
         final double gridY = adjustedY + (i * actuatorSpacing);
 
-        final int imageX0 = max(0, min(photosWidth, gridX0.round()));
-        final int imageX1 = max(0, min(photosWidth, gridX1.round()));
-        final int imageX2 = max(0, min(photosWidth, gridX2.round()));
-        final int imageX3 = max(0, min(photosWidth, gridX3.round()));
-        final int imageX4 = max(0, min(photosWidth, gridX4.round()));
-        final int imageY = max(0, min(photosHeight, gridY.round()));
+        final int imageX0 = max(0, min(imagesWidth, gridX0.round()));
+        final int imageX1 = max(0, min(imagesWidth, gridX1.round()));
+        final int imageX2 = max(0, min(imagesWidth, gridX2.round()));
+        final int imageX3 = max(0, min(imagesWidth, gridX3.round()));
+        final int imageX4 = max(0, min(imagesWidth, gridX4.round()));
+        final int imageY = max(0, min(imagesHeight, gridY.round()));
 
-        img.Pixel pixel = photosToScan[0].getPixelSafe(imageX0, imageY);
+        img.Pixel pixel = imagesToScan[0].getPixelSafe(imageX0, imageY);
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         colorsMap[0]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photosToScan[0].getPixelSafe(imageX1, imageY);
+        pixel = imagesToScan[0].getPixelSafe(imageX1, imageY);
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         colorsMap[1]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photosToScan[0].getPixelSafe(imageX2, imageY);
+        pixel = imagesToScan[0].getPixelSafe(imageX2, imageY);
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         colorsMap[2]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photosToScan[0].getPixelSafe(imageX3, imageY);
+        pixel = imagesToScan[0].getPixelSafe(imageX3, imageY);
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         colorsMap[3]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-        pixel = photosToScan[0].getPixelSafe(imageX4, imageY);
+        pixel = imagesToScan[0].getPixelSafe(imageX4, imageY);
         isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
         colorsMap[4]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
