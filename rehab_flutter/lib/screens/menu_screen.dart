@@ -39,7 +39,8 @@ class MenuScreen extends StatelessWidget {
               child: const Text('Texture Therapy'),
             ),
             ElevatedButton(
-              onPressed: () => sendTherapyPattern("<205205205205205205205205205205>"),
+              onPressed: () =>
+                  sendTherapyPattern("<205205205205205205205205205205>"),
               child: const Text('Rhythmic Therapy'),
             ),
             ElevatedButton(
@@ -53,6 +54,10 @@ class MenuScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _onSAButtonPressed(context),
               child: const Text('Scrolling Actuators'),
+            ),
+            ElevatedButton(
+              onPressed: () => _onVisualizerTButtonPressed(context),
+              child: const Text('Visualizer'),
             ),
             ElevatedButton(
               onPressed: () => _onTestButtonPressed(context),
@@ -90,5 +95,9 @@ class MenuScreen extends StatelessWidget {
 
   void _onTextureTButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/TextureTherapy');
+  }
+
+  void _onVisualizerTButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/VisualizerScreen');
   }
 }

@@ -7,10 +7,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/features/visualizer_therapy/domain/audio_data.dart';
+import 'package:rehab_flutter/features/visualizer_therapy/presentation/widgets/circle_row.dart';
 
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/features/visualizer_therapy/visualizer_therapy/presentation/widgets/circle_row.dart';
-import 'package:rehab_flutter/features/visualizer_therapy/visualizer_therapy/domain/audio_data.dart';
 
 class VisualizerScreen extends StatefulWidget {
   @override
