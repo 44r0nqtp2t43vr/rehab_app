@@ -71,9 +71,18 @@ class _VisualizerScreenState extends State<VisualizerScreen>
       setState(() {
         _currentTimeInSeconds = currentTimeInSeconds; // Update the current time
 
+        if (currentData.midrange != _midRange) {
+          _midRange = currentData.midrange;
+        }
+
         if (currentData.count == 1) {
           _circleHeight = 20;
           _circleWidth = 20;
+          _sendUpdatedPattern(1);
+          // wait 20 seconds the send 0
+          Future.delayed(const Duration(milliseconds: 100), () {
+            _sendUpdatedPattern(0);
+          });
 
           print("Playback time: ${currentTimeInSeconds}");
           print("Data time: ${currentData.time}");
