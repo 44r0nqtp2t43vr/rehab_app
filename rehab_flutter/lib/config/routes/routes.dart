@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/cutaneous_stimulation/cutaneous_stimulation.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/home/home_screen.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/music_therapy/music_therapy.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/therapy/therapy_screen.dart';
+import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
+import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
+import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/song_select/song_select.dart';
@@ -9,15 +16,41 @@ import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/main.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/bluetooth_screen.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
 import 'package:rehab_flutter/screens/test.dart';
 
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
+      // case '/':
+      //   return _materialRoute(const WelcomeScreen());
       case '/':
+        return _materialRoute(const OnboardingScreen());
+
+      case '/Onboarding':
+        return _materialRoute(const OnboardingScreen());
+
+      case '/Login':
+        return _materialRoute(const LoginScreen());
+
+      case '/Register':
+        return _materialRoute(const RegisterScreen());
+
+      case '/BluetoothConnect':
         return _materialRoute(const WelcomeScreen());
+
+      case '/Home':
+        return _materialRoute(const HomeScreen());
+
+      case '/Therapy':
+        return _materialRoute(const TherapyScreen());
+
+      case '/MusicTherapy':
+        return _materialRoute(const MusicTherapyScreen());
+
+      case '/CutaneousStimulation':
+        return _materialRoute(const CutaneousStimulationScreen());
 
       case '/SongSelect':
         return _materialRoute(const SongSelect());
@@ -60,7 +93,7 @@ class AppRoutes {
       //       ViewServices(targetDevice: settings.arguments as BluetoothDevice));
 
       default:
-        return _materialRoute(const WelcomeScreen());
+        return _materialRoute(const OnboardingScreen());
     }
   }
 

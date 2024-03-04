@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/service_screen.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/service_screen/service_screen.dart';
 
 class BluetoothScreen extends StatefulWidget {
   const BluetoothScreen({super.key});
