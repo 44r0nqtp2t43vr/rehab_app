@@ -24,7 +24,13 @@ class ActuatorsRepositoryImpl implements ActuatorsRepository {
 
   @override
   Future<void> loadImage(ActuatorsImageData imageData) async {
-    _controller.resetActuators();
-    await _controller.loadImage(src: imageData.src, preload: imageData.preload);
+    if (imageData.resetActuators == true) {
+      _controller.resetActuators();
+    }
+    if (imageData.rotateFactor > 0) {
+      await _controller.loadImage(src: imageData.src, preload: imageData.preload, rotateFactor: imageData.rotateFactor);
+    } else {
+      await _controller.loadImage(src: imageData.src, preload: imageData.preload);
+    }
   }
 }
