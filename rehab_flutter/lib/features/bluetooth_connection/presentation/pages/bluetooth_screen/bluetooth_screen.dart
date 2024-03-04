@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/service_screen/service_screen.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class BluetoothScreen extends StatefulWidget {
   const BluetoothScreen({super.key});
@@ -45,22 +48,32 @@ class BluetoothScreenState extends State<BluetoothScreen> {
     // Filter the devicesList to only include devices with 'Gloves' in their name
     var filteredDevicesList = devicesList.where((device) => device.platformName.contains('Gloves')).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select a Bluetooth Device'),
+    return BlocProvider(
+      create: (_) => sl<BluetoothBloc>()
+        ..add(InitActuatorsEvent(ActuatorsInitData(
+          imgSrc: imageTextureProvider.imageTextures[0].texture,
+          orientation: ActuatorsOrientation.landscape,
+          numOfFingers: ActuatorsNumOfFingers.one,
+          imagesHeight: 0,
+          imagesWidth: 0,
+        ))),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Select a Bluetooth Device'),
+        ),
+        body: isScanning
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: filteredDevicesList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(filteredDevicesList[index].platformName.isEmpty ? 'Unknown Device' : filteredDevicesList[index].platformName),
+                    subtitle: Text(filteredDevicesList[index].remoteId.toString()),
+                    onTap: () => selectDevice(filteredDevicesList[index]),
+                  );
+                },
+              ),
       ),
-      body: isScanning
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: filteredDevicesList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(filteredDevicesList[index].platformName.isEmpty ? 'Unknown Device' : filteredDevicesList[index].platformName),
-                  subtitle: Text(filteredDevicesList[index].remoteId.toString()),
-                  onTap: () => selectDevice(filteredDevicesList[index]),
-                );
-              },
-            ),
     );
   }
 

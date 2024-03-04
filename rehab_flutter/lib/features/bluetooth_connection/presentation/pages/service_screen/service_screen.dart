@@ -3,7 +3,6 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/screens/menu_screen.dart';
 
 class ServiceScreen extends StatelessWidget {
   final List<BluetoothService> services;
@@ -42,15 +41,7 @@ class ServiceScreen extends StatelessWidget {
             const SizedBox(height: 20), // Adds space between the icon and the button
             ffe2Characteristic != null
                 ? ElevatedButton(
-                    onPressed: () {
-                      sl<BluetoothBloc>().add(UpdateCharaEvent(ffe2Characteristic!));
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => MenuScreen(),
-                        ),
-                      );
-                    },
+                    onPressed: () => _onCharacteristicButtonPressed(context, ffe2Characteristic!),
                     child: Text('Connect to Characteristic UUID: ${ffe2Characteristic.uuid}'),
                   )
                 : const Text('No characteristic with UUID ffe2 found.'),
@@ -58,5 +49,10 @@ class ServiceScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onCharacteristicButtonPressed(BuildContext context, BluetoothCharacteristic characteristic) {
+    sl<BluetoothBloc>().add(UpdateCharaEvent(characteristic));
+    Navigator.pushNamed(context, '/Home');
   }
 }

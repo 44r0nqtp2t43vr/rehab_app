@@ -8,16 +8,14 @@ class BluetoothController extends GetxController {
 
   late BluetoothCharacteristic targetCharacteristic;
 
-  void startScan(
-      {required Function(List<BluetoothDevice>) onDevicesDiscovered}) {
+  void startScan({required Function(List<BluetoothDevice>) onDevicesDiscovered}) {
     stopScan();
     devicesList.clear();
 
     scanSubscription?.cancel();
     scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        if (!devicesList
-            .any((device) => device.remoteId == result.device.remoteId)) {
+        if (!devicesList.any((device) => device.remoteId == result.device.remoteId)) {
           devicesList.add(result.device);
         }
       }
@@ -36,8 +34,7 @@ class BluetoothController extends GetxController {
     await device.connect(autoConnect: false);
   }
 
-  Future<List<BluetoothService>> discoverServices(
-      BluetoothDevice device) async {
+  Future<List<BluetoothService>> discoverServices(BluetoothDevice device) async {
     return await device.discoverServices();
   }
 

@@ -26,7 +26,7 @@ class MusicTherapyScreen extends StatelessWidget {
   }
 
   void _onPianoTilesButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/PianoTilesSongSelect');
+    Navigator.pushNamed(context, '/SongSelect');
   }
 
   void _onVisualizerButtonPressed(BuildContext context) {

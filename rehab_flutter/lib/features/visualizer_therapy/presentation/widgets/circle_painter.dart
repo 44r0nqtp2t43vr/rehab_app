@@ -32,11 +32,10 @@ class RayPainter extends CustomPainter {
     final center = Offset(totalWidth / 2, totalHeight / 2);
 
     // Draw the ellipse
-    Rect ellipseRect = Rect.fromCenter(
-        center: center, width: circleWidth, height: circleHeight);
+    Rect ellipseRect = Rect.fromCenter(center: center, width: circleWidth, height: circleHeight);
     canvas.drawOval(ellipseRect, paint);
 
-    final totalRays = 20;
+    const totalRays = 20;
     for (int i = 0; i < totalRays; i++) {
       final angle = (i * 2 * pi / totalRays) - pi / 2;
 

@@ -1,23 +1,20 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/features/visualizer_therapy/presentation/widgets/circle_painter.dart';
 
 class RaysAnimationScreen extends StatefulWidget {
+  const RaysAnimationScreen({super.key});
+
   @override
-  _RaysAnimationScreenState createState() => _RaysAnimationScreenState();
+  RaysAnimationScreenState createState() => RaysAnimationScreenState();
 }
 
-class _RaysAnimationScreenState extends State<RaysAnimationScreen>
-    with SingleTickerProviderStateMixin {
+class RaysAnimationScreenState extends State<RaysAnimationScreen> with SingleTickerProviderStateMixin {
   AnimationController? _animationController;
 
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
-          ..repeat(reverse: true);
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat(reverse: true);
   }
 
   @override
@@ -30,7 +27,7 @@ class _RaysAnimationScreenState extends State<RaysAnimationScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Alternating Rays Animation"),
+        title: const Text("Alternating Rays Animation"),
       ),
       body: Center(
         child: AnimatedBuilder(
