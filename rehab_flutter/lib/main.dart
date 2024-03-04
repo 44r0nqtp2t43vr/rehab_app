@@ -41,8 +41,8 @@ class WelcomeScreen extends StatelessWidget {
 
         onTap: () =>
             // _onATButtonPressed(context),
-            _onBlueToothScreenTap(context),
-        // _onTest(context),
+            // _onBlueToothScreenTap(context),
+            _onTest(context),
 
         child: const Center(
           child: Text(
@@ -62,5 +62,5 @@ void _onBlueToothScreenTap(BuildContext context) {
 void _onTest(BuildContext context) {
   // Navigator.pushNamed(context, '/ScrollActuators');
 
-  Navigator.pushNamed(context, '/TextureTherapy');
+  Navigator.pushNamed(context, '/VisualizerSlider');
 }

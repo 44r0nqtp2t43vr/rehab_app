@@ -9,6 +9,7 @@ import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/features/visualizer_therapy/presentation/screens/visualizer_screen.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
 import 'package:rehab_flutter/main.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/bluetooth_screen.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
@@ -54,6 +55,9 @@ class AppRoutes {
         return _materialRoute(const ScrollActuators());
       case '/VisualizerScreen':
         return _materialRoute(VisualizerScreen());
+
+      case '/VisualizerSlider':
+        return _materialRoute(VisualizerScreenSlider());
 
       // case '/ViewDevices':
       //   return _materialRoute(const ViewDevices());
