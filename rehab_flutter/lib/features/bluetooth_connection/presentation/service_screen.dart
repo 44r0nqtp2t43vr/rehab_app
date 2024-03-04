@@ -28,7 +28,7 @@ class ServiceScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Device Services'),
+        title: const Text('Device Services'),
       ),
       body: Center(
         child: Column(
@@ -39,12 +39,11 @@ class ServiceScreen extends StatelessWidget {
               size: 100.0,
               color: Theme.of(context).primaryColor,
             ),
-            SizedBox(height: 20), // Adds space between the icon and the button
+            const SizedBox(height: 20), // Adds space between the icon and the button
             ffe2Characteristic != null
                 ? ElevatedButton(
                     onPressed: () {
-                      sl<BluetoothBloc>()
-                          .add(UpdateCharaEvent(ffe2Characteristic!));
+                      sl<BluetoothBloc>().add(UpdateCharaEvent(ffe2Characteristic!));
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -52,10 +51,9 @@ class ServiceScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Text(
-                        'Connect to Characteristic UUID: ${ffe2Characteristic.uuid}'),
+                    child: Text('Connect to Characteristic UUID: ${ffe2Characteristic.uuid}'),
                   )
-                : Text('No characteristic with UUID ffe2 found.'),
+                : const Text('No characteristic with UUID ffe2 found.'),
           ],
         ),
       ),

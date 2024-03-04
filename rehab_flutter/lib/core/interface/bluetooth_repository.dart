@@ -5,7 +5,6 @@ abstract class BluetoothRepository {
   // Future<Stream<List<ScanResult>>> getScanResults();
   // Future<List<BluetoothService>> getServices();
   // Future<void> connectToDevice(BluetoothDevice targetDevice);
-  Future<void> updateCharacteristic(
-      BluetoothCharacteristic targetCharacteristic);
+  Future<void> updateCharacteristic(BluetoothCharacteristic targetCharacteristic);
   Future<void> writeData(String data);
 }

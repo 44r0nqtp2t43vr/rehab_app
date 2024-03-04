@@ -1,33 +1,38 @@
-import 'package:flutter/gestures.dart';
+// ignore_for_file: library_private_types_in_public_api, avoid_single_cascade_in_expression_statements
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 void main() {
-  runApp(Test());
+  runApp(const Test());
 }
 
 class Test extends StatelessWidget {
+  const Test({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: Grid(),
+      home: const Grid(),
     );
   }
 }
 
 class Grid extends StatefulWidget {
+  const Grid({super.key});
+
   @override
   GridState createState() {
-    return new GridState();
+    return GridState();
   }
 }
 
 class GridState extends State<Grid> {
-  final Set<int> selectedIndexes = Set<int>();
+  final Set<int> selectedIndexes = <int>{};
   final key = GlobalKey();
-  final Set<_Foo> _trackTaped = Set<_Foo>();
+  final Set<_Foo> _trackTaped = <_Foo>{};
 
   _detectTapedItem(PointerEvent event) {
     final RenderObject? renderObject = key.currentContext?.findRenderObject();
@@ -64,8 +69,8 @@ class GridState extends State<Grid> {
       child: GridView.builder(
         key: key,
         itemCount: 8,
-        physics: NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           childAspectRatio: 1.0,
           crossAxisSpacing: 5.0,
@@ -94,8 +99,7 @@ class GridState extends State<Grid> {
 class Foo extends SingleChildRenderObjectWidget {
   final int index;
 
-  Foo({required Widget child, required this.index, Key? key})
-      : super(child: child, key: key);
+  const Foo({required Widget child, required this.index, Key? key}) : super(child: child, key: key);
 
   @override
   _Foo createRenderObject(BuildContext context) {

@@ -9,11 +9,11 @@ class BluetoothWidgets {
   bool isDeviceConnected = false;
 
   void startScan(Function(BluetoothDevice) onDeviceFound) {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
 
     FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
-        if (result.device.name == targetDeviceName) {
+        if (result.device.platformName == targetDeviceName) {
           FlutterBluePlus.stopScan();
           onDeviceFound(result.device);
           break;
@@ -34,17 +34,15 @@ class BluetoothWidgets {
     if (targetDevice == null) return;
 
     List<BluetoothService> services = await targetDevice!.discoverServices();
-    services.forEach((service) {
-      if (service.uuid.toString().toUpperCase() ==
-          "0000FFE0-0000-1000-8000-00805F9B34FB") {
-        service.characteristics.forEach((characteristic) {
-          if (characteristic.uuid.toString().toUpperCase() ==
-              "0000FFE2-0000-1000-8000-00805F9B34FB") {
+    for (var service in services) {
+      if (service.uuid.toString().toUpperCase() == "0000FFE0-0000-1000-8000-00805F9B34FB") {
+        for (var characteristic in service.characteristics) {
+          if (characteristic.uuid.toString().toUpperCase() == "0000FFE2-0000-1000-8000-00805F9B34FB") {
             targetCharacteristic = characteristic;
           }
-        });
+        }
       }
-    });
+    }
   }
 
   void sendPattern(String data) {
