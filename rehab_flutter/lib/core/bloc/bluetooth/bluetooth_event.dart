@@ -11,14 +11,12 @@ abstract class BluetoothEvent extends Equatable {
   List<Object> get props => [targetCharacteristic!, data!];
 }
 
-// class GetServices extends RemoteServicesEvent {
-//   const GetServices(BluetoothDevice targetDevice)
-//       : super(targetDevice: targetDevice);
-// }
+class ScanDevicesEvent extends BluetoothEvent {
+  const ScanDevicesEvent() : super();
+}
 
 class UpdateCharaEvent extends BluetoothEvent {
-  const UpdateCharaEvent(BluetoothCharacteristic targetCharacteristic)
-      : super(targetCharacteristic: targetCharacteristic);
+  const UpdateCharaEvent(BluetoothCharacteristic targetCharacteristic) : super(targetCharacteristic: targetCharacteristic);
 }
 
 class WriteDataEvent extends BluetoothEvent {

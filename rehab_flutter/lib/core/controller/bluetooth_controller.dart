@@ -6,28 +6,39 @@ class BluetoothController extends GetxController {
   StreamSubscription? scanSubscription;
   List<BluetoothDevice> devicesList = [];
 
+  late BluetoothDevice targetDevice;
   late BluetoothCharacteristic targetCharacteristic;
 
-  void startScan({required Function(List<BluetoothDevice>) onDevicesDiscovered}) {
-    stopScan();
+  Future<void> startScan() async {
+    // Stop any ongoing scan
+    FlutterBluePlus.stopScan();
+
+    // Clear the device list
     devicesList.clear();
 
+    // Cancel any existing scan subscription
     scanSubscription?.cancel();
+
+    // Listen to scan results
     scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (ScanResult result in results) {
         if (!devicesList.any((device) => device.remoteId == result.device.remoteId)) {
           devicesList.add(result.device);
         }
       }
-      onDevicesDiscovered(devicesList);
     });
 
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
+    // Start the scan
+    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 1));
   }
 
   void stopScan() {
     scanSubscription?.cancel();
     FlutterBluePlus.stopScan();
+  }
+
+  List<BluetoothDevice> filterDevicesList() {
+    return devicesList.where((device) => device.platformName.contains('Gloves')).toList();
   }
 
   Future<void> connectToDevice(BluetoothDevice device) async {
@@ -42,8 +53,8 @@ class BluetoothController extends GetxController {
     targetCharacteristic.write(data.codeUnits);
   }
 
-  void disconnectDevice(BluetoothDevice device) {
-    device.disconnect();
+  void disconnectDevice() {
+    targetDevice.disconnect();
   }
 
   void updateCharacteristic(BluetoothCharacteristic newCharacteristic) {

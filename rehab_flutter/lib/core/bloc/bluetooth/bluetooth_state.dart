@@ -1,13 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 abstract class BluetoothState extends Equatable {
+  final List<BluetoothDevice>? devices;
   final DioException? error;
 
-  const BluetoothState({this.error});
+  const BluetoothState({this.devices, this.error});
 
   @override
-  List<Object> get props => [error!];
+  List<Object> get props => [devices!, error!];
 }
 
 class BluetoothNone extends BluetoothState {
@@ -19,5 +21,5 @@ class BluetoothLoading extends BluetoothState {
 }
 
 class BluetoothDone extends BluetoothState {
-  const BluetoothDone();
+  const BluetoothDone({super.devices});
 }

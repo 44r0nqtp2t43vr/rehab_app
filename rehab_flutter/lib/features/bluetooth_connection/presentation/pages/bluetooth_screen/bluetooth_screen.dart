@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart' as flutter_blue_plus;
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_state.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/service_screen/service_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -14,75 +17,56 @@ class BluetoothScreen extends StatefulWidget {
 }
 
 class BluetoothScreenState extends State<BluetoothScreen> {
-  final BluetoothController bluetoothController = BluetoothController();
-  List<BluetoothDevice> devicesList = [];
-  bool isScanning = false;
-  BluetoothDevice? connectedDevice; // Variable to store the connected device
+  void selectDevice(flutter_blue_plus.BluetoothDevice device) async {
+    await sl<BluetoothController>().connectToDevice(device);
+    sl<BluetoothController>().targetDevice = device; // Store the connected device
+    await sl<BluetoothController>().discoverServices(device).then((services) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => ServiceScreen(services: services))));
+  }
 
   @override
   void initState() {
     super.initState();
-    getDevices();
-  }
-
-  void getDevices() {
-    setState(() {
-      isScanning = true;
-    });
-    bluetoothController.startScan(onDevicesDiscovered: (List<BluetoothDevice> devices) {
-      setState(() {
-        devicesList = devices;
-        isScanning = false;
-      });
-    });
-  }
-
-  void selectDevice(BluetoothDevice device) async {
-    await bluetoothController.connectToDevice(device);
-    connectedDevice = device; // Store the connected device
-    await bluetoothController.discoverServices(device).then((services) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => ServiceScreen(services: services))));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Filter the devicesList to only include devices with 'Gloves' in their name
-    var filteredDevicesList = devicesList.where((device) => device.platformName.contains('Gloves')).toList();
-
-    return BlocProvider(
-      create: (_) => sl<BluetoothBloc>()
-        ..add(InitActuatorsEvent(ActuatorsInitData(
-          imgSrc: imageTextureProvider.imageTextures[0].texture,
-          orientation: ActuatorsOrientation.landscape,
-          numOfFingers: ActuatorsNumOfFingers.one,
-          imagesHeight: 0,
-          imagesWidth: 0,
-        ))),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Select a Bluetooth Device'),
-        ),
-        body: isScanning
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: filteredDevicesList.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(filteredDevicesList[index].platformName.isEmpty ? 'Unknown Device' : filteredDevicesList[index].platformName),
-                    subtitle: Text(filteredDevicesList[index].remoteId.toString()),
-                    onTap: () => selectDevice(filteredDevicesList[index]),
-                  );
-                },
-              ),
-      ),
-    );
   }
 
   @override
   void dispose() {
-    bluetoothController.stopScan();
-    if (connectedDevice != null) {
-      bluetoothController.disconnectDevice(connectedDevice!); // Disconnect
-    }
+    sl<BluetoothController>().stopScan();
+    sl<BluetoothController>().disconnectDevice();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<BluetoothBloc>()..add(const ScanDevicesEvent()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Select a Bluetooth Device'),
+        ),
+        body: _buildBody(),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return BlocBuilder<BluetoothBloc, BluetoothState>(
+      builder: (context, state) {
+        if (state is BluetoothLoading) {
+          return const Center(child: CupertinoActivityIndicator());
+        } else if (state is BluetoothDone) {
+          return ListView.builder(
+            itemCount: state.devices!.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(state.devices![index].platformName.isEmpty ? 'Unknown Device' : state.devices![index].platformName),
+                subtitle: Text(state.devices![index].remoteId.toString()),
+                onTap: () => selectDevice(state.devices![index]),
+              );
+            },
+          );
+        }
+        return Container();
+      },
+    );
   }
 }
