@@ -394,6 +394,8 @@ class ActuatorsController extends GetxController {
         }
       }
     }
+
+    sendPattern();
   }
 
   void rotateImages() {
