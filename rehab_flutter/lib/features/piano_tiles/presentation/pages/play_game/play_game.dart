@@ -113,7 +113,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                   ),
                   AppIconButton(
                     icon: Icons.settings,
-                    onPressed: () {},
+                    onPressed: () => _onSettingsButtonPressed(),
                   ),
                 ],
               ),
@@ -212,6 +212,31 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                 Navigator.of(context).pop();
               },
               child: const Text("Exit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onSettingsButtonPressed() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Switch to Visualizer?"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Yes"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("No"),
             ),
           ],
         );
