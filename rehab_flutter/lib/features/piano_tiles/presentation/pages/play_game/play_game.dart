@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/note.dart';
 import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line.dart';
@@ -24,6 +25,22 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   int currentNoteIndex = 0;
   bool hasStarted = true;
   bool isPlaying = true;
+
+  void _pauseAnimation() {
+    animationController.stop();
+    player.pause();
+    setState(() {
+      isPlaying = false;
+    });
+  }
+
+  void _resumeAnimation() {
+    animationController.forward();
+    player.resume();
+    setState(() {
+      isPlaying = true;
+    });
+  }
 
   @override
   void initState() {
@@ -80,10 +97,26 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
         children: [
           Expanded(
             flex: 1,
-            child: Row(
-              children: [
-                // assume many children
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.song.title,
+                      style: const TextStyle(
+                        fontSize: 32,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  AppIconButton(
+                    icon: Icons.settings,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -113,10 +146,21 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
           ),
           Expanded(
             flex: 1,
-            child: Column(
-              children: [
-                // assume many children
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  LinearProgressIndicator(
+                    value: notes[currentNoteIndex].orderNumber / widget.song.noteFrames.last,
+                  ),
+                  const SizedBox(height: 20),
+                  AppIconButton(
+                    icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                    onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
