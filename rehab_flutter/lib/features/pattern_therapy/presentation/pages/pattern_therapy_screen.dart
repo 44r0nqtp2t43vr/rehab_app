@@ -60,6 +60,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
   @override
   void dispose() {
     _patternTimer?.cancel();
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 

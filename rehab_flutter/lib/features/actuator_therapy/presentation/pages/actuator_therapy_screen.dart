@@ -119,6 +119,12 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
   }
 
   @override
+  void dispose() {
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

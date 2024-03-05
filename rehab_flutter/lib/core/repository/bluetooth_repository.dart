@@ -7,23 +7,24 @@ class BluetoothRepositoryImpl implements BluetoothRepository {
 
   BluetoothRepositoryImpl(this._controller);
 
-  // Future<Stream<List<ScanResult>>> getScanResults() async {
-  //   final scanResults = await _controller.scanDevices();
-  //   return scanResults;
-  // }
-
-  // Future<List<BluetoothService>> getServices() async {
-  //   final services = await _controller.discoverServices();
-  //   return services;
-  // }
-
-  // Future<void> connectToDevice(BluetoothDevice targetDevice) async {
-  //   await _controller.connectToDevice(targetDevice);
-  // }
+  @override
+  Future<Stream<List<ScanResult>>> scanDevices() async {
+    final scanResults = await _controller.scanDevices();
+    return scanResults;
+  }
 
   @override
-  Future<void> updateCharacteristic(
-      BluetoothCharacteristic targetCharacteristic) {
+  Future<List<BluetoothService>> connectDevice(BluetoothDevice targetDevice) async {
+    return await _controller.connectToDevice(targetDevice).then((value) => _controller.discoverServices().then((value) => value));
+  }
+
+  @override
+  Future<void> disconnectDevice() async {
+    await _controller.disconnectDevice();
+  }
+
+  @override
+  Future<void> updateCharacteristic(BluetoothCharacteristic targetCharacteristic) {
     _controller.updateCharacteristic(targetCharacteristic);
     return Future.value(null);
   }
