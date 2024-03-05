@@ -13,10 +13,6 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         children: [
           AppButton(
-            onPressed: () => _onHomeButtonPressed(context),
-            child: const Text('Home'),
-          ),
-          AppButton(
             onPressed: () => _onTherapyButtonPressed(context),
             child: const Text('Therapy'),
           ),
@@ -31,10 +27,6 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _onHomeButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/Home');
   }
 
   void _onTherapyButtonPressed(BuildContext context) {

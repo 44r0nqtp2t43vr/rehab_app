@@ -9,22 +9,11 @@ class Line extends AnimatedWidget {
   final int currentNoteIndex;
   final List<Note> currentNotes;
 
-  const Line(
-      {required Key key,
-      required this.tileHeight,
-      required this.tileWidth,
-      required this.currentNotes,
-      required this.currentNoteIndex,
-      required this.lineNumber,
-      required Animation<double> animation})
-      : super(key: key, listenable: animation);
+  const Line({required Key key, required this.tileHeight, required this.tileWidth, required this.currentNotes, required this.currentNoteIndex, required this.lineNumber, required Animation<double> animation}) : super(key: key, listenable: animation);
 
   @override
   Widget build(BuildContext context) {
     Animation<double>? animation = super.listenable as Animation<double>?;
-    // get only notes for that line
-    // List<Note> thisLineNotes =
-    //     currentNotes.where((note) => note.line == lineNumber).toList();
 
     // map notes to widgets
     List<Widget> tiles = currentNotes.map((note) {
@@ -32,8 +21,16 @@ class Line extends AnimatedWidget {
       int index = note.orderNumber - currentNoteIndex;
       double offset = (3 - index + animation!.value) * tileHeight;
 
-      return Transform.translate(
-        offset: Offset(0, offset),
+      // return Transform.translate(
+      //   offset: Offset(0, offset),
+      //   child: Tile(
+      //     height: tileHeight,
+      //     width: tileWidth,
+      //     key: GlobalKey(),
+      //   ),
+      // );
+      return Positioned(
+        top: offset,
         child: Tile(
           height: tileHeight,
           width: tileWidth,
@@ -42,7 +39,8 @@ class Line extends AnimatedWidget {
       );
     }).toList();
 
-    return SizedBox.expand(
+    return SizedBox(
+      height: tileHeight * 4,
       child: Stack(
         children: tiles,
       ),
