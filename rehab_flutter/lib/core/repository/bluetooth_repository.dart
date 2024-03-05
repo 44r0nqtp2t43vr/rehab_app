@@ -1,7 +1,6 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/core/interface/bluetooth_repository.dart';
-import 'package:rehab_flutter/core/resources/data_state.dart';
 
 class BluetoothRepositoryImpl implements BluetoothRepository {
   final BluetoothController _controller;
@@ -9,9 +8,19 @@ class BluetoothRepositoryImpl implements BluetoothRepository {
   BluetoothRepositoryImpl(this._controller);
 
   @override
-  Future<DataState<List<BluetoothDevice>>> scanDevices() async {
-    await _controller.startScan();
-    return DataSuccess(_controller.filterDevicesList());
+  Future<Stream<List<ScanResult>>> scanDevices() async {
+    final scanResults = await _controller.scanDevices();
+    return scanResults;
+  }
+
+  @override
+  Future<List<BluetoothService>> connectDevice(BluetoothDevice targetDevice) async {
+    return await _controller.connectToDevice(targetDevice).then((value) => _controller.discoverServices().then((value) => value));
+  }
+
+  @override
+  Future<void> disconnectDevice() async {
+    await _controller.disconnectDevice();
   }
 
   @override

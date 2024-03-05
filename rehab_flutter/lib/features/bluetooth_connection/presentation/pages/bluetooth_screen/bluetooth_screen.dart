@@ -1,39 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart' as flutter_blue_plus;
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_state.dart';
-import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/service_screen/service_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
-class BluetoothScreen extends StatefulWidget {
+class BluetoothScreen extends StatelessWidget {
   const BluetoothScreen({super.key});
-
-  @override
-  BluetoothScreenState createState() => BluetoothScreenState();
-}
-
-class BluetoothScreenState extends State<BluetoothScreen> {
-  void selectDevice(flutter_blue_plus.BluetoothDevice device) async {
-    await sl<BluetoothController>().connectToDevice(device);
-    sl<BluetoothController>().targetDevice = device; // Store the connected device
-    await sl<BluetoothController>().discoverServices(device).then((services) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => ServiceScreen(services: services))));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    sl<BluetoothController>().stopScan();
-    sl<BluetoothController>().disconnectDevice();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +17,12 @@ class BluetoothScreenState extends State<BluetoothScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Select a Bluetooth Device'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () => _onRescan(),
+            ),
+          ],
         ),
         body: _buildBody(),
       ),
@@ -49,24 +30,45 @@ class BluetoothScreenState extends State<BluetoothScreen> {
   }
 
   Widget _buildBody() {
-    return BlocBuilder<BluetoothBloc, BluetoothState>(
+    return BlocBuilder<BluetoothBloc, BluetoothAppState>(
       builder: (context, state) {
         if (state is BluetoothLoading) {
           return const Center(child: CupertinoActivityIndicator());
         } else if (state is BluetoothDone) {
-          return ListView.builder(
-            itemCount: state.devices!.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(state.devices![index].platformName.isEmpty ? 'Unknown Device' : state.devices![index].platformName),
-                subtitle: Text(state.devices![index].remoteId.toString()),
-                onTap: () => selectDevice(state.devices![index]),
-              );
+          return StreamBuilder<List<ScanResult>>(
+            stream: state.scanResults,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                // Stream has data
+                final scanResults = snapshot.data!.where((scanResult) => scanResult.device.platformName.contains('Gloves')).toList();
+                if (scanResults.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: scanResults.length,
+                    itemBuilder: (context, index) {
+                      final device = scanResults[index].device;
+                      return ListTile(
+                        title: Text(device.platformName.isEmpty ? 'Unknown Device' : device.platformName),
+                        subtitle: Text(device.remoteId.toString()),
+                        onTap: () => _onDeviceCardPressed(context, device),
+                      );
+                    },
+                  );
+                }
+              }
+              return const Center(child: CupertinoActivityIndicator());
             },
           );
         }
         return Container();
       },
     );
+  }
+
+  void _onDeviceCardPressed(BuildContext context, BluetoothDevice targetDevice) {
+    Navigator.pushNamed(context, '/ServiceScreen', arguments: targetDevice);
+  }
+
+  void _onRescan() {
+    sl<BluetoothBloc>().add(const ScanDevicesEvent());
   }
 }

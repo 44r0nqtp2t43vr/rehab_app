@@ -2,17 +2,26 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 abstract class BluetoothEvent extends Equatable {
+  final BluetoothDevice? targetDevice;
   final BluetoothCharacteristic? targetCharacteristic;
   final String? data;
 
-  const BluetoothEvent({this.targetCharacteristic, this.data});
+  const BluetoothEvent({this.targetDevice, this.targetCharacteristic, this.data});
 
   @override
-  List<Object> get props => [targetCharacteristic!, data!];
+  List<Object> get props => [targetDevice!, targetCharacteristic!, data!];
 }
 
 class ScanDevicesEvent extends BluetoothEvent {
   const ScanDevicesEvent() : super();
+}
+
+class ConnectDeviceEvent extends BluetoothEvent {
+  const ConnectDeviceEvent(BluetoothDevice targetDevice) : super(targetDevice: targetDevice);
+}
+
+class DisconnectDeviceEvent extends BluetoothEvent {
+  const DisconnectDeviceEvent() : super();
 }
 
 class UpdateCharaEvent extends BluetoothEvent {

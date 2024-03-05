@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/cutaneous_stimulation/cutaneous_stimulation.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/home/home_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/music_therapy/music_therapy.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/service_screen/service_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/therapy/therapy_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
@@ -41,6 +43,9 @@ class AppRoutes {
 
       case '/BluetoothScreen':
         return _materialRoute(const BluetoothScreen());
+
+      case '/ServiceScreen':
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/Home':
         return _materialRoute(const HomeScreen());
@@ -86,13 +91,6 @@ class AppRoutes {
 
       case '/Visualizer':
         return _materialRoute(const VisualizerScreen());
-
-      // case '/ViewDevices':
-      //   return _materialRoute(const ViewDevices());
-
-      // case '/ViewServices':
-      //   return _materialRoute(
-      //       ViewServices(targetDevice: settings.arguments as BluetoothDevice));
 
       default:
         return _materialRoute(const OnboardingScreen());

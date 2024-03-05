@@ -9,52 +9,27 @@ class BluetoothController extends GetxController {
   late BluetoothDevice targetDevice;
   late BluetoothCharacteristic targetCharacteristic;
 
-  Future<void> startScan() async {
-    // Stop any ongoing scan
-    FlutterBluePlus.stopScan();
-
-    // Clear the device list
-    devicesList.clear();
-
-    // Cancel any existing scan subscription
-    scanSubscription?.cancel();
-
-    // Listen to scan results
-    scanSubscription = FlutterBluePlus.scanResults.listen((results) {
-      for (ScanResult result in results) {
-        if (!devicesList.any((device) => device.remoteId == result.device.remoteId)) {
-          devicesList.add(result.device);
-        }
-      }
-    });
-
-    // Start the scan
-    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 1));
+  Future<Stream<List<ScanResult>>> scanDevices() async {
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
+    return FlutterBluePlus.scanResults;
   }
 
-  void stopScan() {
-    scanSubscription?.cancel();
-    FlutterBluePlus.stopScan();
+  Future<void> connectToDevice(BluetoothDevice targetDevice) async {
+    this.targetDevice = targetDevice;
+    await this.targetDevice.connect(autoConnect: false);
   }
 
-  List<BluetoothDevice> filterDevicesList() {
-    return devicesList.where((device) => device.platformName.contains('Gloves')).toList();
-  }
-
-  Future<void> connectToDevice(BluetoothDevice device) async {
-    await device.connect(autoConnect: false);
-  }
-
-  Future<List<BluetoothService>> discoverServices(BluetoothDevice device) async {
-    return await device.discoverServices();
+  Future<List<BluetoothService>> discoverServices() async {
+    final services = await targetDevice.discoverServices();
+    return services;
   }
 
   void sendPattern(BluetoothCharacteristic targetCharacteristic, String data) {
     targetCharacteristic.write(data.codeUnits);
   }
 
-  void disconnectDevice() {
-    targetDevice.disconnect();
+  Future<void> disconnectDevice() async {
+    await targetDevice.disconnect();
   }
 
   void updateCharacteristic(BluetoothCharacteristic newCharacteristic) {
