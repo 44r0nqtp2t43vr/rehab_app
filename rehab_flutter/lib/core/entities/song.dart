@@ -24,17 +24,27 @@ class Song {
     required this.noteCounts,
   });
 
+  String get songTime {
+    int minutes = duration ~/ 60;
+    int remainingSeconds = (duration % 60).round();
+
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  int get songLastNote {
+    return duration ~/ 0.3;
+  }
+
   List<Note> get songNotes {
     final List<Note> notes = [];
     final List<int> choiceLines = [0, 1, 2, 3, 4];
-    final int lastNoteFrame = noteFrames.last;
     int noteFrameIndex = 0;
 
     if (noteFrames.isEmpty) {
       return notes;
     }
 
-    for (int i = 0; i < lastNoteFrame + 7; i++) {
+    for (int i = 0; i < songLastNote + 5; i++) {
       if (noteFrameIndex > noteFrames.length - 1 || i != noteFrames[noteFrameIndex]) {
         notes.add(Note(i, []));
         continue;

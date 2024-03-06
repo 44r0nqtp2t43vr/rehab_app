@@ -16,6 +16,7 @@ class SongCard extends StatelessWidget {
         child: ListTile(
           title: Text(song.title),
           subtitle: Text(song.artist),
+          trailing: Text(song.songTime),
         ),
       ),
     );

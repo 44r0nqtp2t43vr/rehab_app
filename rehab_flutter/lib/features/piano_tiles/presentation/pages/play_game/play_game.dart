@@ -42,6 +42,13 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     });
   }
 
+  String secToString(double duration) {
+    int minutes = duration ~/ 60;
+    int remainingSeconds = (duration % 60).round();
+
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -59,22 +66,18 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
           setState(() {
             currentNoteIndex++;
           });
+          _onPass();
           animationController.forward(from: 0);
         }
       }
     });
 
     animationController.addListener(() {
-      if (animationController.value > 0.00 && animationController.value < 0.30 && currentNoteIndex != notes.last.orderNumber - 5) {
-        _onPass(notes[currentNoteIndex].lines);
-      }
-    });
-
-    animationController.addListener(() {
-      if (animationController.value > 0.30 && currentNoteIndex != notes.last.orderNumber - 5) {
+      if ((animationController.value * 10).round() == 5) {
         sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
       }
     });
+
     player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
   }
 
@@ -151,8 +154,18 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  LinearProgressIndicator(
-                    value: notes[currentNoteIndex].orderNumber / widget.song.noteFrames.last,
+                  Row(
+                    children: [
+                      Text(secToString(notes[currentNoteIndex].orderNumber * 0.3)),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          value: notes[currentNoteIndex].orderNumber / widget.song.songLastNote,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Text(widget.song.songTime),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   AppIconButton(
@@ -168,13 +181,15 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     );
   }
 
-  void _onPass(List<int> lineNumbers) {
+  void _onPass() async {
+    List<int> lineNumbers = notes[currentNoteIndex].lines;
     if (lineNumbers.isEmpty) {
       return;
     } else {
       const String off = "000000";
       const String on = "255255";
       String data = "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
+      await Future.delayed(const Duration(milliseconds: 5));
       sl<BluetoothBloc>().add(WriteDataEvent(data));
     }
   }
