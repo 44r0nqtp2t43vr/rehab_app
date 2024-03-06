@@ -12,9 +12,9 @@ class RayPainter extends CustomPainter {
   final double rayWidth;
 
   RayPainter({
-    required this.progress,
-    this.totalHeight = 100.0,
-    this.totalWidth = 100.0,
+    this.progress = 1,
+    this.totalHeight = 80.0,
+    this.totalWidth = 80.0,
     this.color = Colors.blue,
     this.circleHeight = 25.0,
     this.circleWidth = 25.0,
@@ -29,7 +29,7 @@ class RayPainter extends CustomPainter {
       ..strokeWidth = rayWidth
       ..style = PaintingStyle.fill;
 
-    final center = Offset(totalWidth / 2, totalHeight / 2);
+    final center = Offset(size.width / 2, size.height / 2);
 
     // Draw the ellipse
     Rect ellipseRect = Rect.fromCenter(
@@ -61,14 +61,17 @@ class RayPainter extends CustomPainter {
       final double endX = startX + cos(angle) * lengthModifier;
       final double endY = startY + sin(angle) * lengthModifier;
       final endOffset = Offset(endX, endY);
-      final paint = Paint()
-        ..color = Colors.lightBlue
-        ..strokeWidth = rayWidth
-        ..style = PaintingStyle.fill;
+      // final paint = Paint()
+      //   ..color = Colors.lightBlue
+      //   ..strokeWidth = rayWidth
+      //   ..style = PaintingStyle.fill;
       canvas.drawLine(startOffset, endOffset, paint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    // Always repaint for continuous animation
+    return true;
+  }
 }
