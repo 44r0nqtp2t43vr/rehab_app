@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_state.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
@@ -94,6 +96,7 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
   void dispose() {
     _pageController.dispose();
     animationController.dispose();
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 

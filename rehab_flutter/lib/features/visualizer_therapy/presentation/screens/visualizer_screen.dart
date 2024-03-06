@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -13,19 +12,20 @@ import 'package:rehab_flutter/features/visualizer_therapy/presentation/widgets/c
 import 'package:rehab_flutter/injection_container.dart';
 
 class VisualizerScreen extends StatefulWidget {
+  const VisualizerScreen({super.key});
+
   @override
-  _VisualizerScreenState createState() => _VisualizerScreenState();
+  VisualizerScreenState createState() => VisualizerScreenState();
 }
 
-class _VisualizerScreenState extends State<VisualizerScreen>
-    with SingleTickerProviderStateMixin {
+class VisualizerScreenState extends State<VisualizerScreen> with SingleTickerProviderStateMixin {
   late AudioPlayer audioPlayer;
   late bool isPlaying;
   late AnimationController _animationController; // Made non-nullable
   late List<AudioData> audioDataList; // Made non-nullable
   Timer? timer;
 
-  late double _currentTimeInSeconds;
+  // late double _currentTimeInSeconds;
   late double _midRange;
   late double _rayHeight;
   late double _rayWidth;
@@ -45,7 +45,7 @@ class _VisualizerScreenState extends State<VisualizerScreen>
     _circleWidth = 0;
 
     _midRange = 0;
-    _currentTimeInSeconds = 0;
+    // _currentTimeInSeconds = 0;
 
     loadAudioData().then((loadedData) {
       if (mounted) {
@@ -55,21 +55,17 @@ class _VisualizerScreenState extends State<VisualizerScreen>
       }
     });
 
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
-          ..repeat(reverse: true);
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat(reverse: true);
   }
 
   Future<void> updateVisualizer() async {
     final currentPosition = await audioPlayer.getCurrentPosition();
-    final currentTimeInSeconds = currentPosition != null
-        ? currentPosition.inMilliseconds.toDouble() / 1000
-        : 0.0;
+    final currentTimeInSeconds = currentPosition != null ? currentPosition.inMilliseconds.toDouble() / 1000 : 0.0;
 
     final currentData = getCurrentDataEntry(currentTimeInSeconds);
     if (currentData != null) {
       setState(() {
-        _currentTimeInSeconds = currentTimeInSeconds; // Update the current time
+        // _currentTimeInSeconds = currentTimeInSeconds; // Update the current time
 
         if (currentData.midrange != _midRange) {
           _midRange = currentData.midrange;
@@ -84,9 +80,9 @@ class _VisualizerScreenState extends State<VisualizerScreen>
             _sendUpdatedPattern(0);
           });
 
-          print("Playback time: ${currentTimeInSeconds}");
-          print("Data time: ${currentData.time}");
-          print("sent");
+          debugPrint("Playback time: $currentTimeInSeconds");
+          debugPrint("Data time: ${currentData.time}");
+          debugPrint("sent");
         } else {
           _circleHeight = 10;
           _circleWidth = 10;
@@ -104,8 +100,7 @@ class _VisualizerScreenState extends State<VisualizerScreen>
       timer?.cancel(); // Stop updating the visualizer when paused
     } else {
       await audioPlayer.play(AssetSource('audio/Exb_30.mp3'));
-      timer = Timer.periodic(Duration(milliseconds: 10),
-          (Timer t) => updateVisualizer()); // Restart the visualizer updates
+      timer = Timer.periodic(const Duration(milliseconds: 10), (Timer t) => updateVisualizer()); // Restart the visualizer updates
     }
     setState(() {
       isPlaying = !isPlaying;
@@ -113,20 +108,19 @@ class _VisualizerScreenState extends State<VisualizerScreen>
   }
 
   Future<List<AudioData>> loadAudioData() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/data/final.json');
+    final String jsonString = await rootBundle.loadString('assets/data/final.json');
     final List<dynamic> jsonResponse = json.decode(jsonString);
     return jsonResponse.map((data) => AudioData.fromJson(data)).toList();
   }
 
   AudioData? getCurrentDataEntry(double currentTime) {
     // Check if the audioDataList is null or empty first to avoid unnecessary processing
-    if (audioDataList == null || audioDataList!.isEmpty) {
+    if (audioDataList.isEmpty) {
       return null;
     }
     // Attempt to find the last data entry where the condition matches
     try {
-      return audioDataList!.lastWhere((data) => data.time <= currentTime);
+      return audioDataList.lastWhere((data) => data.time <= currentTime);
     } catch (e) {
       // If no entry is found, lastWhere throws an error, which we catch to return null
       return null;
@@ -137,10 +131,9 @@ class _VisualizerScreenState extends State<VisualizerScreen>
   void sendPattern(int left, int right) {
     String leftString = left.toString().padLeft(3, '0');
     String rightString = right.toString().padLeft(3, '0');
-    String data =
-        "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+    String data = "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
     sl<BluetoothBloc>().add(WriteDataEvent(data));
-    print("Pattern sent: $data");
+    debugPrint("Pattern sent: $data");
   }
 
   void _sendUpdatedPattern(int x) {
@@ -163,40 +156,16 @@ class _VisualizerScreenState extends State<VisualizerScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Alternating Rays Animation"),
+        title: const Text("Alternating Rays Animation"),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleRow(
-                animationController: _animationController,
-                circleWidth: _circleWidth,
-                circleHeight: _circleHeight,
-                rayHeight: _rayHeight,
-                rayWidth: _rayWidth,
-                midRange: _midRange),
-            CircleRow(
-                animationController: _animationController,
-                circleWidth: _circleWidth,
-                circleHeight: _circleHeight,
-                rayHeight: _rayHeight,
-                rayWidth: _rayWidth,
-                midRange: _midRange),
-            CircleRow(
-                animationController: _animationController,
-                circleWidth: _circleWidth,
-                circleHeight: _circleHeight,
-                rayHeight: _rayHeight,
-                rayWidth: _rayWidth,
-                midRange: _midRange),
-            CircleRow(
-                animationController: _animationController,
-                circleWidth: _circleWidth,
-                circleHeight: _circleHeight,
-                rayHeight: _rayHeight,
-                rayWidth: _rayWidth,
-                midRange: _midRange),
+            CircleRow(animationController: _animationController, circleWidth: _circleWidth, circleHeight: _circleHeight, rayHeight: _rayHeight, rayWidth: _rayWidth, midRange: _midRange),
+            CircleRow(animationController: _animationController, circleWidth: _circleWidth, circleHeight: _circleHeight, rayHeight: _rayHeight, rayWidth: _rayWidth, midRange: _midRange),
+            CircleRow(animationController: _animationController, circleWidth: _circleWidth, circleHeight: _circleHeight, rayHeight: _rayHeight, rayWidth: _rayWidth, midRange: _midRange),
+            CircleRow(animationController: _animationController, circleWidth: _circleWidth, circleHeight: _circleHeight, rayHeight: _rayHeight, rayWidth: _rayWidth, midRange: _midRange),
             ElevatedButton(
               onPressed: togglePlay,
               child: Icon(isPlaying ? Icons.pause : Icons.play_arrow),

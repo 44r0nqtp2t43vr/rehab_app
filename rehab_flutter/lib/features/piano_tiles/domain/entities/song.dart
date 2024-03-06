@@ -29,9 +29,8 @@ class Song {
       return notes;
     }
 
-    for (int i = 0; i < lastNoteFrame + 5; i++) {
-      if (noteFrameIndex > noteFrames.length - 1 ||
-          i != noteFrames[noteFrameIndex]) {
+    for (int i = 0; i < lastNoteFrame + 7; i++) {
+      if (noteFrameIndex > noteFrames.length - 1 || i != noteFrames[noteFrameIndex]) {
         notes.add(Note(i, []));
         continue;
       }
@@ -51,25 +50,4 @@ class Song {
 
     return notes;
   }
-
-  // List<Note> get songNotes {
-  //   List<Note> notes = [];
-  //   int lastBeatFrame = beatFrames.last;
-  //   int beatFrameIndex = 0;
-
-  //   if (beatFrames.isEmpty) {
-  //     return notes;
-  //   }
-
-  //   for (int index = 0; index < lastBeatFrame + 5; index++) {
-  //     int lineNumber = -1;
-  //     if (index < lastBeatFrame && index == beatFrames[beatFrameIndex]) {
-  //       lineNumber = Random().nextInt(5);
-  //       beatFrameIndex++;
-  //     }
-  //     notes.add(Note(index, lineNumber));
-  //   }
-
-  //   return notes;
-  // }
 }
