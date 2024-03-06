@@ -8,7 +8,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/audio_data.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/RayPainterState.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/data/RayPainterState.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -59,11 +59,9 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   int rightActuatorSum = 0;
   List<int> activeValues = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   // Add these variables to your class
-  DateTime? _lastSendTime;
-  Duration _throttleDuration = Duration(milliseconds: 100);
-  Timer? _throttleTimer;
 
   var lastSentPattern;
+
   @override
   void initState() {
     super.initState();
@@ -112,22 +110,9 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   void _sendUpdatedPattern() {
     var sums = calculateSumsOfActuators(activeValues);
     if (sums != lastSentPattern) {
-      DateTime now = DateTime.now();
-      if (_lastSendTime == null ||
-          now.difference(_lastSendTime!) > _throttleDuration) {
-        // Enough time has passed; send the pattern now
-        sendPattern(sums['left']!, sums['right']!);
-        lastSentPattern = sums;
-        _lastSendTime = now; // Update the last send time
-      } else if (_throttleTimer == null || !_throttleTimer!.isActive) {
-        // Not enough time has passed; schedule the send operation
-        Duration delay = _throttleDuration - now.difference(_lastSendTime!);
-        _throttleTimer = Timer(delay, () {
-          sendPattern(sums['left']!, sums['right']!);
-          lastSentPattern = sums;
-          _lastSendTime = DateTime.now(); // Update the last send time
-        });
-      }
+      // Enough time has passed; send the pattern now
+      sendPattern(sums['left']!, sums['right']!);
+      lastSentPattern = sums;
     } else {
       debugPrint("Same pattern; Not sending");
     }
@@ -206,6 +191,7 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       for (int i = 0; i < activeValues.length; i++) {
         activeValues[i] = 0;
       }
+
       if (noteOnset == 1 &&
           blocks[prevIndex].noteOnset == 0 &&
           blocks[prevIndex - 1].noteOnset == 0 &&
@@ -222,10 +208,15 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
             // Change each circle's color in the current column to green
             for (var index in column) {
               setState(() {
+                for (int i = 0; i < activeValues.length; i++) {
+                  activeValues[i] = 0;
+                }
                 circles[index].color = Colors.green;
                 circles[index].circleWidth = 40.0;
                 circles[index].circleHeight = 40.0;
+                activeValues[index] = 1; // Mark as active
               });
+              _sendUpdatedPattern();
             }
           });
 
@@ -240,10 +231,15 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
               circle.color = Colors.blue;
               circle.circleWidth = 20.0;
               circle.circleHeight = 20.0;
+              for (int i = 0; i < activeValues.length; i++) {
+                activeValues[i] = 0; // Mark as inactive
+              }
             });
           }
         });
-      } else {
+      } else if (activeValues
+          .every((value) => value == 0)) //active values is all 0
+      {
         // Bass condition
         if (getBoolValue(bass)) {
           for (int i = 0; i < bassSquare.length; i++) {
@@ -337,40 +333,38 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     // Ensure a rebuild to reflect color and size changes
   }
 
-// Class level variable to track the last switch time
+  void loadBlocks() async {
+    String data =
+        await rootBundle.loadString('assets/data/forest_of_blocks.json');
+    final List<dynamic> blockJson = json.decode(data);
+    blocks = blockJson.map((json) => AudioData.fromJson(json)).toList();
+  }
+
+  void togglePlay() async {
+    if (isPlaying) {
+      await audioPlayer.pause();
+    } else {
+      await audioPlayer.play(AssetSource('audio/forestofblocks.mp3'));
+    }
+    setState(() {
+      isPlaying = !isPlaying;
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    positionSubscription?.cancel();
+    // Cancel the subscription to avoid memory leaks
+    audioPlayer.dispose();
+    super.dispose();
+  }
 
   bool getBoolValue(double value) {
     if (value < 0.2) {
       return false;
     } else {
       return true;
-    }
-  }
-
-  int getNormalizedValueForMid(double value) {
-//  val < 0.2 return 0, if val < 0.4 return 1, until return 4
-
-    if (value < 0.2) {
-      return 0;
-    } else if (value < 0.4) {
-      return 1;
-    } else if (value < 0.6) {
-      return 2;
-    } else if (value < 0.8) {
-      return 3;
-    } else {
-      return 4;
-    }
-  }
-
-  int getNormalizedValueForTop(double value) {
-    //  val < 0.2 return 0, if val < 0.4 return 1, until return 4
-    if (value < 0.33) {
-      return 0;
-    } else if (value < 0.66) {
-      return 1;
-    } else {
-      return 2;
     }
   }
 
@@ -389,9 +383,6 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
               onPressed: togglePlay,
               child: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
             ),
-            buildSlider("Ray Width", _rayWidth, -100, 100, (newValue) {
-              setState(() => _rayWidth = newValue);
-            }),
           ],
         ),
       ),
@@ -428,91 +419,4 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     }
     return rows;
   }
-
-  void loadBlocks() async {
-    String data =
-        await rootBundle.loadString('assets/data/forest_of_blocks.json');
-    final List<dynamic> blockJson = json.decode(data);
-    blocks = blockJson.map((json) => AudioData.fromJson(json)).toList();
-  }
-
-  void togglePlay() async {
-    if (isPlaying) {
-      await audioPlayer.pause();
-    } else {
-      await audioPlayer.play(AssetSource('audio/forestofblocks.mp3'));
-    }
-    setState(() {
-      isPlaying = !isPlaying;
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    positionSubscription?.cancel();
-    // Cancel the subscription to avoid memory leaks
-    audioPlayer.dispose();
-    super.dispose();
-  }
-}
-
-double interpolate(
-    double input, double inputMax, double max, double median, double min) {
-  if (input <= (inputMax / 2)) {
-    // Scale input in the range 0 to inputMax/2 to min to median
-    return min + (median - min) * (input / (inputMax / 2));
-  } else {
-    // Scale input in the range inputMax/2 to inputMax to median to max
-    return median +
-        (max - median) * ((input - (inputMax / 2)) / (inputMax / 2));
-  }
-}
-
-Color getColor(double higherMidrange) {
-  higherMidrange = higherMidrange;
-  // Use if-else statements to determine the color
-  if (higherMidrange <= 1) {
-    return Colors.blue; // Coldest
-  } else if (higherMidrange <= 2) {
-    return Colors.lightBlue;
-  } else if (higherMidrange <= 3) {
-    return Colors.cyan;
-  } else if (higherMidrange <= 4) {
-    return Colors.teal;
-  } else if (higherMidrange <= 5) {
-    return Colors.green;
-  } else if (higherMidrange <= 6) {
-    return Colors.lightGreen;
-  } else if (higherMidrange <= 7) {
-    return Colors.lime;
-  } else if (higherMidrange <= 8) {
-    return Colors.yellow;
-  } else if (higherMidrange <= 9) {
-    return Colors.amber;
-  } else if (higherMidrange > 9) {
-    return Colors.red; // Warmest
-  } else {
-    return Colors.grey; // Default or error case, should not be reached
-  }
-}
-
-Widget buildSlider(String label, double value, double min, double max,
-    ValueChanged<double> newValue) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Column(
-      children: [
-        Text(label),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: (max - min).toInt(),
-          label: value.toStringAsFixed(2),
-          onChanged: (value) => newValue(value),
-        ),
-      ],
-    ),
-  );
 }
