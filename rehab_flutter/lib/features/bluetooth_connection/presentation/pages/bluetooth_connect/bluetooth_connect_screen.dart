@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class BluetoothConnectScreen extends StatelessWidget {
   const BluetoothConnectScreen({super.key});
@@ -33,6 +36,7 @@ class BluetoothConnectScreen extends StatelessWidget {
   }
 
   void _onSkip(BuildContext context) {
-    Navigator.pushNamed(context, '/Home');
+    sl<NavigationController>().setTab(TabEnum.home);
+    Navigator.pushNamed(context, '/MainScreen');
   }
 }

@@ -5,6 +5,8 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_state.dart';
+import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class ServiceScreen extends StatelessWidget {
@@ -75,6 +77,7 @@ class ServiceScreen extends StatelessWidget {
 
   void _onCharacteristicButtonPressed(BuildContext context, BluetoothCharacteristic characteristic) {
     sl<BluetoothBloc>().add(UpdateCharaEvent(characteristic));
-    Navigator.pushNamed(context, '/Home');
+    sl<NavigationController>().setTab(TabEnum.home);
+    Navigator.pushNamed(context, '/MainScreen');
   }
 }
