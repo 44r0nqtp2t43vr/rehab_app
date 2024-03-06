@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/features/piano_tiles/domain/entities/note.dart';
+import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/tile.dart';
 
 class Line extends AnimatedWidget {

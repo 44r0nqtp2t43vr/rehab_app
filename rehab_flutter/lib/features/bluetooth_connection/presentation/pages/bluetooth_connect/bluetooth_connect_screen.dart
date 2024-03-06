@@ -8,6 +8,12 @@ class BluetoothConnectScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Haplos'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: () => _onSkip(context),
+          ),
+        ],
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque, // Ensures the GestureDetector is as large as its parent
@@ -24,5 +30,9 @@ class BluetoothConnectScreen extends StatelessWidget {
 
   void _onBlueToothScreenTap(BuildContext context) {
     Navigator.pushNamed(context, '/BluetoothScreen');
+  }
+
+  void _onSkip(BuildContext context) {
+    Navigator.pushNamed(context, '/Home');
   }
 }
