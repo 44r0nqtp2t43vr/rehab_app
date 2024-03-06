@@ -30,6 +30,6 @@ class MusicTherapyScreen extends StatelessWidget {
   }
 
   void _onVisualizerButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/Visualizer');
+    Navigator.pushNamed(context, '/VisualizerSlider');
   }
 }
