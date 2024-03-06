@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/cutaneous_stimulation/cutaneous_stimulation.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/home/home_screen.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/music_therapy/music_therapy.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/service_screen/service_screen.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/therapy/therapy_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
@@ -47,17 +44,8 @@ class AppRoutes {
       case '/ServiceScreen':
         return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
-      case '/Home':
-        return _materialRoute(const HomeScreen());
-
-      case '/Therapy':
-        return _materialRoute(const TherapyScreen());
-
-      case '/MusicTherapy':
-        return _materialRoute(const MusicTherapyScreen());
-
-      case '/CutaneousStimulation':
-        return _materialRoute(const CutaneousStimulationScreen());
+      case '/MainScreen':
+        return _materialRoute(const MainScreen());
 
       case '/SongSelect':
         return _materialRoute(const SongSelect());
