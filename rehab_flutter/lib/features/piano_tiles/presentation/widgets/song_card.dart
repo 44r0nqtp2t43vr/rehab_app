@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
+import 'package:rehab_flutter/core/entities/song.dart';
 
 class SongCard extends StatelessWidget {
   final Song song;

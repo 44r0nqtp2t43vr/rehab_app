@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/features/piano_tiles/data/data_sources/song_provider.dart';
-import 'package:rehab_flutter/features/piano_tiles/domain/entities/song.dart';
+import 'package:rehab_flutter/core/data_sources/song_provider.dart';
+import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_card.dart';
 
 class BgSongSelect extends StatelessWidget {
