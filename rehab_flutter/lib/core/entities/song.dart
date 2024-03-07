@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/enums/genre_enum.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 
 class Song {
   final String title;
@@ -25,10 +26,7 @@ class Song {
   });
 
   String get songTime {
-    int minutes = duration ~/ 60;
-    int remainingSeconds = (duration % 60).round();
-
-    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+    return secToMinSec(duration);
   }
 
   int get songLastNote {
