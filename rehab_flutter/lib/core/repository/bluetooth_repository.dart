@@ -14,8 +14,11 @@ class BluetoothRepositoryImpl implements BluetoothRepository {
   }
 
   @override
-  Future<List<BluetoothService>> connectDevice(BluetoothDevice targetDevice) async {
-    return await _controller.connectToDevice(targetDevice).then((value) => _controller.discoverServices().then((value) => value));
+  Future<List<BluetoothService>> connectDevice(
+      BluetoothDevice targetDevice) async {
+    return await _controller
+        .connectToDevice(targetDevice)
+        .then((value) => _controller.discoverServices().then((value) => value));
   }
 
   @override
@@ -24,7 +27,8 @@ class BluetoothRepositoryImpl implements BluetoothRepository {
   }
 
   @override
-  Future<void> updateCharacteristic(BluetoothCharacteristic targetCharacteristic) {
+  Future<void> updateCharacteristic(
+      BluetoothCharacteristic targetCharacteristic) {
     _controller.updateCharacteristic(targetCharacteristic);
     return Future.value(null);
   }

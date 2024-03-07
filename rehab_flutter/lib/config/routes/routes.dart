@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
+import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/service_screen/service_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
@@ -16,7 +17,10 @@ import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/features/visualizer_therapy/presentation/screens/visualizer_screen.dart';
-import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/song_selection.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
+import 'package:rehab_flutter/main.dart';
+// import 'package:rehab_flutter/features/bluetooth_connection/presentation/bluetooth_screen.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
 import 'package:rehab_flutter/screens/test.dart';
 
@@ -42,7 +46,8 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(
+            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -77,6 +82,11 @@ class AppRoutes {
       case '/ScrollActuators':
         return _materialRoute(const ScrollActuators());
 
+      case '/VisualizerSlider':
+        return _materialRoute(SongsListScreen());
+
+      // case '/ViewDevices':
+      //   return _materialRoute(const ViewDevices());
       case '/Visualizer':
         return _materialRoute(const VisualizerScreen());
 
