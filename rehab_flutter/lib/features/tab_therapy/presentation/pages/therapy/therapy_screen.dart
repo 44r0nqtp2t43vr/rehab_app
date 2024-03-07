@@ -21,6 +21,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   Widget buildTherapyScreenHome() {
     return Column(
       children: [
+        SizedBox(height: 500),
         AppButton(
           onPressed: () => _onMTButtonPressed(),
           child: const Text('Music Therapy'),

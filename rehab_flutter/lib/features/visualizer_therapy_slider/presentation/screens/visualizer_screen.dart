@@ -10,8 +10,8 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/AudioData.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/RayPainterState.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/Song.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/bluetooth_controller.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/helper_functions.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/helper_functions.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
