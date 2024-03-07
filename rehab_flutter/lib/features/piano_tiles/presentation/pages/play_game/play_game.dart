@@ -4,6 +4,7 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_divider.dart';
@@ -40,13 +41,6 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     setState(() {
       isPlaying = true;
     });
-  }
-
-  String secToString(double duration) {
-    int minutes = duration ~/ 60;
-    int remainingSeconds = (duration % 60).round();
-
-    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -156,7 +150,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                 children: [
                   Row(
                     children: [
-                      Text(secToString(notes[currentNoteIndex].orderNumber * 0.3)),
+                      Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
                       const SizedBox(width: 20),
                       Expanded(
                         child: LinearProgressIndicator(
