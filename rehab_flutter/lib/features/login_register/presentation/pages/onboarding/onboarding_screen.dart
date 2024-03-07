@@ -16,6 +16,10 @@ class OnboardingScreen extends StatelessWidget {
             onPressed: () => _onLoginButtonPressed(context),
             child: const Text('Login'),
           ),
+          AppButton(
+            onPressed: () => _onHomeButtonPressed(context),
+            child: const Text('Home'),
+          ),
         ],
       ),
     );
@@ -23,5 +27,9 @@ class OnboardingScreen extends StatelessWidget {
 
   void _onLoginButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Login');
+  }
+
+  void _onHomeButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/Home');
   }
 }

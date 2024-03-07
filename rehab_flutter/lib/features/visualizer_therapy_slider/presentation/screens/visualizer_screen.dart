@@ -7,20 +7,32 @@ import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/audio_data.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/data/RayPainterState.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/AudioData.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/RayPainterState.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/Song.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/bluetooth_controller.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/helper_functions.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class VisualizerScreenSlider extends StatefulWidget {
+  final Song songData;
+
+  // Constructor
+  VisualizerScreenSlider({required this.songData});
+
   @override
   _VisualizerScreenStateSlider createState() => _VisualizerScreenStateSlider();
 }
 
 class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     with SingleTickerProviderStateMixin {
+//  controllers
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
+  late StreamSubscription? positionSubscription;
+
+  // initial values
   double _totalHeight = 100.0;
   double _totalWidth = 100.0;
   double _circleHeight = 20.0;
@@ -29,37 +41,47 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   double _rayWidth = 60.0;
   Color _color = Colors.blue;
   bool isPlaying = false;
-  late StreamSubscription? positionSubscription;
+
+// list of circles
   List<dynamic> circles = [];
+
+  // AudioData variables
   List<dynamic> blocks = [];
   int currentIndex = -1;
   int prevIndex = -1;
+
+  // Cols
   List<int> firstCol = [0, 4, 8, 12];
   List<int> secondCol = [1, 5, 9, 13];
   List<int> thirdCol = [2, 6, 10, 14];
   List<int> fourthCol = [3, 7, 11, 15];
+
+// Rows
   List<int> firstRow = [0, 1, 2, 3];
   List<int> secondRow = [4, 5, 6, 7];
   List<int> thirdRow = [8, 9, 10, 11];
   List<int> fourthRow = [12, 13, 14, 15];
+
+  // squares
   List<int> firstSquare = [0, 1, 4, 5];
   List<int> secondSquare = [2, 3, 6, 7];
   List<int> thirdSquare = [8, 9, 12, 13];
   List<int> fourthSquare = [10, 11, 14, 15];
   List<int> innerSquare = [5, 6, 9, 10];
   List<int> outerSquare = [0, 1, 2, 3, 4, 7, 8, 11, 12, 13, 14, 15];
+
+  // frequencies
   List<int> bassSquare = [4, 5, 8, 9];
   List<int> midRangeSquare = [6, 7, 10, 11];
   List<int> subBassSquare = [12, 13];
   List<int> lowerMidrangeSquare = [14, 15];
   List<int> presenceSquare = [0, 1];
-
   List<int> higherMidrangeSquare = [2, 3];
+
+  // actuator vars
   int leftActuatorSum = 0;
   int rightActuatorSum = 0;
   List<int> activeValues = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  // Add these variables to your class
-
   var lastSentPattern;
 
   @override
@@ -98,67 +120,13 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     });
 
     // Load blocks from forest_of_blocks.json
-    loadBlocks();
+    loadBlocks(widget.songData.metaDataUrl);
     // Subscribe to the onPositionChanged event
     positionSubscription = audioPlayer.onPositionChanged.listen((position) {
       // Find and use the closest block based on the current playback position
       useClosestBlock(
           position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
     });
-  }
-
-  void _sendUpdatedPattern() {
-    var sums = calculateSumsOfActuators(activeValues);
-    if (sums != lastSentPattern) {
-      // Enough time has passed; send the pattern now
-      sendPattern(sums['left']!, sums['right']!);
-      lastSentPattern = sums;
-    } else {
-      debugPrint("Same pattern; Not sending");
-    }
-  }
-
-  void sendPattern(int left, int right) {
-    String leftString = left.toString().padLeft(3, '0');
-    String rightString = right.toString().padLeft(3, '0');
-    String data =
-        "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
-
-    // Check if the data to be sent is different from the last sent pattern
-    // print(data);
-    sl<BluetoothBloc>().add(WriteDataEvent(data));
-  }
-
-  Map<String, int> calculateSumsOfActuators(List<int> actuatorValues) {
-    int leftSum = 0;
-    int rightSum = 0;
-    final List<int> cursorValues = [
-      1, 8, // 0-1
-      1, 8, // 2-3
-      2, 16, // 4-5
-      2, 16, // 6-7
-      4, 32, // 8-9
-      4, 32, // 10-11
-      64, 128, // 12-13
-      64, 128, // 14-15
-    ];
-
-    // Iterate through the actuatorValues to calculate the sums
-    for (int i = 0; i < actuatorValues.length; i++) {
-      // Check if the actuator is active (1)
-      if (actuatorValues[i] == 1) {
-        // Determine if the index is for a left or right actuator
-        if (i % 4 < 2) {
-          // Left actuators (0-1, 4-5, 8-9, ...)
-          leftSum += cursorValues[i];
-        } else {
-          // Right actuators (2-3, 6-7, 10-11, ...)
-          rightSum += cursorValues[i];
-        }
-      }
-    }
-
-    return {'left': leftSum, 'right': rightSum};
   }
 
   void useClosestBlock(double positionSec) {
@@ -197,154 +165,103 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
           blocks[prevIndex - 1].noteOnset == 0 &&
           blocks[prevIndex - 2].noteOnset == 0 &&
           blocks[prevIndex - 3].noteOnset == 0) {
+        for (int i = 0; i < activeValues.length; i++) {
+          activeValues[i] = 0;
+        }
         int delay = 0; // Initial delay is 0ms for the first column
+        List<List<int>> columns = [
+          firstCol,
+          secondCol,
+          thirdCol,
+          fourthCol
+        ]; // List of column groups for iteration
 
-        // List of column groups for iteration
-        List<List<int>> columns = [firstCol, secondCol, thirdCol, fourthCol];
-
-        // Iterate over each column group
         for (var column in columns) {
           Timer(Duration(milliseconds: delay), () {
-            // Change each circle's color in the current column to green
             for (var index in column) {
-              setState(() {
-                for (int i = 0; i < activeValues.length; i++) {
-                  activeValues[i] = 0;
-                }
-                circles[index].color = Colors.green;
-                circles[index].circleWidth = 40.0;
-                circles[index].circleHeight = 40.0;
-                activeValues[index] = 1; // Mark as active
-              });
-              _sendUpdatedPattern();
+              // Reset active values before setting the current column as active
+              for (int i = 0; i < activeValues.length; i++) {
+                activeValues[i] = 0;
+              }
+              updateCircleState(
+                  index, Colors.green, 40.0, 40.0, 1); // Mark as active
             }
           });
 
-          // Increase delay by 50ms for the next column
+          // Increase delay by 200ms for the next column
           delay += 200;
         }
 
-        // Schedule the reset to blue for all circles, to happen after the last column has turned green
+// Schedule the reset to blue for all circles, to happen after the last column has turned green
         Timer(Duration(milliseconds: delay), () {
-          for (var circle in circles) {
-            setState(() {
-              circle.color = Colors.blue;
-              circle.circleWidth = 20.0;
-              circle.circleHeight = 20.0;
-              for (int i = 0; i < activeValues.length; i++) {
-                activeValues[i] = 0; // Mark as inactive
-              }
-            });
-          }
+          resetAllCircles(Colors.blue, 20.0, 20.0, 0); // Mark all as inactive
         });
       } else if (activeValues
           .every((value) => value == 0)) //active values is all 0
       {
-        // Bass condition
-        if (getBoolValue(bass)) {
-          for (int i = 0; i < bassSquare.length; i++) {
-            circles[bassSquare[i]].circleWidth = 40.0;
-            circles[bassSquare[i]].circleHeight = 40.0;
-            activeValues[bassSquare[i]] = 1; // Mark as active
-          }
-        } else {
-          for (int i = 0; i < bassSquare.length; i++) {
-            circles[bassSquare[i]].circleHeight = 20.0;
-            circles[bassSquare[i]].circleWidth = 20.0;
-            activeValues[bassSquare[i]] = 0; // Mark as inactive
-          }
-        }
-
-        // Mid Range condition
-        if (getBoolValue(midRange)) {
-          for (int i = 0; i < midRangeSquare.length; i++) {
-            circles[midRangeSquare[i]].circleWidth = 40.0;
-            circles[midRangeSquare[i]].circleHeight = 40.0;
-            activeValues[midRangeSquare[i]] = 1; // Mark as active
-          }
-        } else {
-          for (int i = 0; i < midRangeSquare.length; i++) {
-            circles[midRangeSquare[i]].circleHeight = 20.0;
-            circles[midRangeSquare[i]].circleWidth = 20.0;
-            activeValues[midRangeSquare[i]] = 0; // Mark as inactive
-          }
-        }
-
-        // Additional conditions for lowerMidrange, subBass, presence, and higherMidrange follow the same pattern
-        // Lower Midrange condition
-        if (getBoolValue(lowerMidrange)) {
-          for (int i = 0; i < lowerMidrangeSquare.length; i++) {
-            circles[lowerMidrangeSquare[i]].circleWidth = 40.0;
-            circles[lowerMidrangeSquare[i]].circleHeight = 40.0;
-            activeValues[lowerMidrangeSquare[i]] = 1; // Mark as active
-          }
-        } else {
-          for (int i = 0; i < lowerMidrangeSquare.length; i++) {
-            circles[lowerMidrangeSquare[i]].circleHeight = 20.0;
-            circles[lowerMidrangeSquare[i]].circleWidth = 20.0;
-            activeValues[lowerMidrangeSquare[i]] = 0; // Mark as inactive
-          }
-        }
-
-        if (getBoolValue(subBass)) {
-          for (int i = 0; i < subBassSquare.length; i++) {
-            circles[subBassSquare[i]].circleWidth = 40.0;
-            circles[subBassSquare[i]].circleHeight = 40.0;
-            activeValues[subBassSquare[i]] = 1; // Mark as active
-          }
-        } else {
-          for (int i = 0; i < subBassSquare.length; i++) {
-            circles[subBassSquare[i]].circleHeight = 20.0;
-            circles[subBassSquare[i]].circleWidth = 20.0;
-            activeValues[subBassSquare[i]] = 0; // Mark as inactive
-          }
-        }
-        if (getBoolValue(presence)) {
-          for (int i = 0; i < presenceSquare.length; i++) {
-            circles[presenceSquare[i]].circleWidth = 40.0;
-            circles[presenceSquare[i]].circleHeight = 40.0;
-            activeValues[presenceSquare[i]] = 1; // Mark as active
-          }
-        } else {
-          for (int i = 0; i < presenceSquare.length; i++) {
-            circles[presenceSquare[i]].circleHeight = 20.0;
-            circles[presenceSquare[i]].circleWidth = 20.0;
-            activeValues[presenceSquare[i]] = 0; // Mark as inactive
-          }
-        }
-        if (getBoolValue(higherMidrange)) {
-          for (int i = 0; i < higherMidrangeSquare.length; i++) {
-            circles[higherMidrangeSquare[i]].circleWidth = 40.0;
-            circles[higherMidrangeSquare[i]].circleHeight = 40.0;
-            activeValues[higherMidrangeSquare[i]] = 1; // Mark as active
-          }
-        } else {
-          for (int i = 0; i < higherMidrangeSquare.length; i++) {
-            circles[higherMidrangeSquare[i]].circleHeight = 20.0;
-            circles[higherMidrangeSquare[i]].circleWidth = 20.0;
-            activeValues[higherMidrangeSquare[i]] = 0; // Mark as inactive
-          }
-        }
+        updateCircleProperties(bassSquare, getBoolValue(bass));
+        updateCircleProperties(midRangeSquare, getBoolValue(midRange));
+        updateCircleProperties(
+            lowerMidrangeSquare, getBoolValue(lowerMidrange));
+        updateCircleProperties(subBassSquare, getBoolValue(subBass));
+        updateCircleProperties(presenceSquare, getBoolValue(presence));
+        updateCircleProperties(
+            higherMidrangeSquare, getBoolValue(higherMidrange));
       }
 
-      _sendUpdatedPattern();
+      lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
 
     // Ensure a rebuild to reflect color and size changes
   }
 
-  void loadBlocks() async {
-    String data =
-        await rootBundle.loadString('assets/data/forest_of_blocks.json');
+  void updateCircleState(
+      int index, Color color, double width, double height, int activeValue) {
+    setState(() {
+      circles[index].color = color;
+      circles[index].circleWidth = width;
+      circles[index].circleHeight = height;
+      activeValues[index] = activeValue;
+    });
+    lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+  }
+
+  void resetAllCircles(
+      Color color, double width, double height, int activeValue) {
+    setState(() {
+      for (var circle in circles) {
+        circle.color = color;
+        circle.circleWidth = width;
+        circle.circleHeight = height;
+      }
+      for (int i = 0; i < activeValues.length; i++) {
+        activeValues[i] = activeValue;
+      }
+    });
+  }
+
+  void updateCircleProperties(List<int> squares, bool isActive) {
+    final double size = isActive ? 40.0 : 20.0;
+    final int activeValue = isActive ? 1 : 0;
+
+    for (int i = 0; i < squares.length; i++) {
+      circles[squares[i]].circleWidth = size;
+      circles[squares[i]].circleHeight = size;
+      activeValues[squares[i]] = activeValue;
+    }
+  }
+
+  void loadBlocks(String audioData) async {
+    String data = await rootBundle.loadString(audioData);
     final List<dynamic> blockJson = json.decode(data);
     blocks = blockJson.map((json) => AudioData.fromJson(json)).toList();
   }
 
-  void togglePlay() async {
+  void togglePlay(String audioFile) async {
     if (isPlaying) {
       await audioPlayer.pause();
     } else {
-      await audioPlayer.play(AssetSource('audio/forestofblocks.mp3'));
+      await audioPlayer.play(AssetSource(audioFile));
     }
     setState(() {
       isPlaying = !isPlaying;
@@ -360,14 +277,6 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     super.dispose();
   }
 
-  bool getBoolValue(double value) {
-    if (value < 0.2) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -380,7 +289,7 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
           children: [
             ...buildRayPainterRows(),
             ElevatedButton(
-              onPressed: togglePlay,
+              onPressed: () => togglePlay(widget.songData.audioUrl),
               child: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
             ),
           ],
