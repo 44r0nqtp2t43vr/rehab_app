@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class BluetoothConnectScreen extends StatelessWidget {
   const BluetoothConnectScreen({super.key});
@@ -8,6 +11,12 @@ class BluetoothConnectScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Haplos'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: () => _onSkip(context),
+          ),
+        ],
       ),
       body: GestureDetector(
         behavior: HitTestBehavior
@@ -32,5 +41,10 @@ class BluetoothConnectScreen extends StatelessWidget {
     // Navigator.pushNamed(context, '/ScrollActuators');
 
     Navigator.pushNamed(context, '/VisualizerSlider');
+  }
+
+  void _onSkip(BuildContext context) {
+    sl<NavigationController>().setTab(TabEnum.home);
+    Navigator.pushNamed(context, '/MainScreen');
   }
 }
