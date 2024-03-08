@@ -6,10 +6,16 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
   runApp(const MyApp());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {

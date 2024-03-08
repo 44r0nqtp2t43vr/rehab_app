@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "145561982761",
+    "project_id": "cu-touch-flutter",
+    "storage_bucket": "cu-touch-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145561982761:android:725bf595277a9320940938",
+        "android_client_info": {
+          "package_name": "com.example.rehab_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "145561982761-257neo21bvbikkf5tnr6fd2u4cfbb3vi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYumOqQaB0stRSiCXKewS5zCSzfjxD5IY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "145561982761-257neo21bvbikkf5tnr6fd2u4cfbb3vi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "145561982761-keh4dr3pbm7i4af8ek8vtj4r6jn2m7dv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cutouch.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
