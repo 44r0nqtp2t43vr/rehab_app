@@ -71,12 +71,12 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   List<int> outerSquare = [0, 1, 2, 3, 4, 7, 8, 11, 12, 13, 14, 15];
 
   // frequencies
-  List<int> bassSquare = [4, 5, 8, 9];
-  List<int> midRangeSquare = [6, 7, 10, 11];
-  List<int> subBassSquare = [12, 13];
-  List<int> lowerMidrangeSquare = [14, 15];
-  List<int> presenceSquare = [0, 1];
-  List<int> higherMidrangeSquare = [2, 3];
+  List<int> bassSquare = [2, 3, 6, 7];
+  List<int> midRangeSquare = [9, 10];
+  List<int> subBassSquare = [0, 1, 4, 5];
+  List<int> lowerMidrangeSquare = [8, 12];
+  List<int> presenceSquare = [13, 14];
+  List<int> higherMidrangeSquare = [11, 15];
 
   // actuator vars
   int leftActuatorSum = 0;
