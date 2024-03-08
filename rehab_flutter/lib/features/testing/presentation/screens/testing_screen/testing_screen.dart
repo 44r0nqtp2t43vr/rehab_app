@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/rhythmic_patterns_tester.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/static_patterns_tester.dart';
@@ -13,9 +17,10 @@ class TestingScreen extends StatefulWidget {
 
 class _TestingScreenState extends State<TestingScreen> {
   final List<double> accuracyList = [];
-  final int numOfStaticPatternsItems = 1;
+  final int numOfStaticPatternsItems = 5;
   final int numOfTexturesItems = 1;
   final int numOfRhythmicPatternsItems = 1;
+  late List<StaticPattern> staticPatternsList;
   TestingState testingState = TestingState.staticPatterns;
   int currentItemInd = 0;
 
@@ -23,6 +28,9 @@ class _TestingScreenState extends State<TestingScreen> {
     setState(() {
       accuracyList.add(newAccuracy);
       currentItemInd++;
+      if (currentItemInd < numOfStaticPatternsItems) {
+        debugPrint(staticPatternsList[currentItemInd].pattern);
+      }
 
       if (currentItemInd == numOfStaticPatternsItems) {
         testingState = TestingState.textures;
@@ -35,7 +43,10 @@ class _TestingScreenState extends State<TestingScreen> {
   Widget getWidgetFromTestingState() {
     switch (testingState) {
       case TestingState.staticPatterns:
-        return StaticPatternsTester(onResponse: onResponse);
+        return StaticPatternsTester(
+          onResponse: onResponse,
+          currentStaticPattern: staticPatternsList[currentItemInd],
+        );
       case TestingState.texturesIntro:
         return Container();
       case TestingState.textures:
@@ -47,6 +58,18 @@ class _TestingScreenState extends State<TestingScreen> {
       default:
         return Container();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    final Random random = Random();
+    final TestingDataProvider testingDataProvider = TestingDataProvider();
+    staticPatternsList = List.from(testingDataProvider.staticPatterns);
+    staticPatternsList.shuffle(random);
+
+    debugPrint(staticPatternsList[currentItemInd].pattern);
   }
 
   @override

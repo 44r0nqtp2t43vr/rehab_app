@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -30,6 +33,7 @@ class OnboardingScreen extends StatelessWidget {
   }
 
   void _onHomeButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/Home');
+    sl<NavigationController>().setTab(TabEnum.home);
+    Navigator.pushNamed(context, '/MainScreen');
   }
 }

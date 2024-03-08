@@ -66,38 +66,36 @@ class _PatternTherapyState extends State<PatternTherapy> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Bluetooth Device Connector'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              PatternDelaySlider(
-                patternDelay: patternDelay.toDouble(),
-                onDelayChanged: (double value) {
-                  setState(() {
-                    patternDelay = value.toInt();
-                    if (isPatternActive) {
-                      startPattern(activePattern!);
-                    }
-                  });
-                },
-              ),
-              ...patternProvider.patterns.map((pattern) {
-                return PatternButton(
-                  buttonText: pattern.name,
-                  onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
-                );
-              }).toList(),
-              PatternButton(
-                buttonText: 'Stop Pattern',
-                onPressed: stopPattern,
-              ),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bluetooth Device Connector'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            PatternDelaySlider(
+              patternDelay: patternDelay.toDouble(),
+              onDelayChanged: (double value) {
+                setState(() {
+                  patternDelay = value.toInt();
+                  if (isPatternActive) {
+                    startPattern(activePattern!);
+                  }
+                });
+              },
+            ),
+            ...patternProvider.patterns.map((pattern) {
+              return PatternButton(
+                buttonText: pattern.name,
+                onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
+              );
+            }).toList(),
+            PatternButton(
+              buttonText: 'Stop Pattern',
+              onPressed: stopPattern,
+            ),
+          ],
         ),
       ),
     );

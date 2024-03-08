@@ -12,8 +12,8 @@ class Session {
   final String activityThreeSpeed;
   final int activityThreeTime;
   final int activityThreeCurrentTime;
-  final int? pretestScore;
-  final int? posttestScore;
+  final double? pretestScore;
+  final double? posttestScore;
 
   Session({
     required this.sessionId,
