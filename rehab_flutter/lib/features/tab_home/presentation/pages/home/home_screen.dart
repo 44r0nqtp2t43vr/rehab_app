@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/widgets/app_button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -6,9 +7,17 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(),
+        AppButton(
+          onPressed: () => _onTestingButtonPressed(context),
+          child: const Text('Pretest'),
+        ),
       ],
     );
+  }
+
+  void _onTestingButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/Testing');
   }
 }

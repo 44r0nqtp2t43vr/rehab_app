@@ -15,12 +15,10 @@ import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/patter
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/pages/scroll_actuators/scroll_actuators.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_song_select/bg_song_select.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
+import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/features/visualizer_therapy/presentation/screens/visualizer_screen.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/song_selection.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
-import 'package:rehab_flutter/main.dart';
-// import 'package:rehab_flutter/features/bluetooth_connection/presentation/bluetooth_screen.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
 import 'package:rehab_flutter/screens/test.dart';
 
@@ -46,11 +44,13 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
+
+      case '/Testing':
+        return _materialRoute(const TestingScreen());
 
       case '/SongSelect':
         return _materialRoute(const SongSelect());
