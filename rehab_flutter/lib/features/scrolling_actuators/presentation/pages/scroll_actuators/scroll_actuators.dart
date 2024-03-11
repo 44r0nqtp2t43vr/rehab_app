@@ -31,7 +31,6 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
   late AnimationController animationController;
   AnimationDirection animationDirection = AnimationDirection.vertical;
   int animationDuration = 4;
-  int animationValue = 0;
   int currentIndex = 0;
   bool isPlaying = false;
   bool isEnded = false;

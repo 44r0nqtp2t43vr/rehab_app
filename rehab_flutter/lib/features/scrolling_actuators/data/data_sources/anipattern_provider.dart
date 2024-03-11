@@ -2,28 +2,30 @@ import 'dart:ui';
 
 class AniPatternProvider {
   Offset verticalPattern(double imageSize, double animationValue) {
+    const double padding = 30;
     double adjustedX = 0;
     double adjustedY = 0;
+
     final List<double> xPoints = [
-      imageSize / 4,
+      (imageSize / 4),
       imageSize / 2,
-      imageSize / 4 * 3,
+      (imageSize / 4 * 3),
     ];
     if (animationValue >= 0.00 && animationValue <= 0.30) {
-      adjustedX = xPoints[0];
-      adjustedY = imageSize * (animationValue / 0.30);
+      adjustedX = xPoints[0] + padding;
+      adjustedY = (imageSize - padding * 2) * (animationValue / 0.30) + padding;
     } else if (animationValue > 0.30 && animationValue < 0.35) {
-      adjustedX = xPoints[0] + xPoints[0] * ((animationValue - 0.30) / 0.05);
-      adjustedY = imageSize;
+      adjustedX = (xPoints[0] + padding) + ((xPoints[0] - padding) * ((animationValue - 0.30) / 0.05));
+      adjustedY = imageSize - padding;
     } else if (animationValue >= 0.35 && animationValue <= 0.65) {
       adjustedX = xPoints[1];
-      adjustedY = imageSize * ((0.65 - animationValue) / 0.30);
+      adjustedY = (imageSize - padding * 2) * ((0.65 - animationValue) / 0.30) + padding;
     } else if (animationValue > 0.65 && animationValue < 0.70) {
-      adjustedX = xPoints[1] + xPoints[0] * ((animationValue - 0.65) / 0.05);
-      adjustedY = 0;
+      adjustedX = xPoints[1] + (xPoints[0] - padding) * ((animationValue - 0.65) / 0.05);
+      adjustedY = padding;
     } else if (animationValue >= 0.70 && animationValue <= 1.0) {
-      adjustedX = xPoints[2];
-      adjustedY = imageSize * ((animationValue - 0.70) / 0.30);
+      adjustedX = xPoints[2] - padding;
+      adjustedY = (imageSize - padding * 2) * ((animationValue - 0.70) / 0.30) + padding;
     }
     // final adjustedX = imageSize / 2;
     // final adjustedY = imageSize * animationValue;

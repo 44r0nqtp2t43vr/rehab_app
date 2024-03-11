@@ -22,7 +22,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   final List<bool> _isCircleStateUpdated = List.generate(16, (_) => false);
   final List<int> _cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
 
-  void sendPattern() {
+  void _sendPattern() {
     String currentPatternString = widget.currentStaticPattern.pattern;
     String data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
 
@@ -73,9 +73,6 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
       }
     }
 
-    debugPrint(answers.toString());
-    debugPrint(correctAnswers.toString());
-    debugPrint("${correctlyAnsweredCount / shouldBeTrueCount}");
     return (correctlyAnsweredCount / shouldBeTrueCount) * 100;
   }
 
@@ -112,6 +109,15 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   @override
   void initState() {
     super.initState();
+    _sendPattern();
+  }
+
+  @override
+  void didUpdateWidget(covariant StaticPatternsTester oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentStaticPattern != oldWidget.currentStaticPattern) {
+      _sendPattern();
+    }
   }
 
   @override

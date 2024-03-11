@@ -3,59 +3,56 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/features/pattern_therapy/data/pattern_provider.dart';
-import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/pattern_button.dart';
-import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/pattern_slider.dart';
+import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class RhythmicPatternsTester extends StatefulWidget {
   final void Function(double) onResponse;
+  final RhythmicPattern currentRhythmicPattern;
 
-  const RhythmicPatternsTester({super.key, required this.onResponse});
+  const RhythmicPatternsTester({super.key, required this.onResponse, required this.currentRhythmicPattern});
 
   @override
   State<RhythmicPatternsTester> createState() => _RhythmicPatternsTesterState();
 }
 
 class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
-  bool isPatternActive = false;
-  int? activePattern;
-  int patternDelay = 500; // Start with a default delay of 500ms
-  Timer? _patternTimer; // Timer to handle the looping of patterns
-  PatternProvider patternProvider = PatternProvider();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  final int patternDelay = 500;
+  Timer? _patternTimer;
 
   void sendPattern(String data) {
     sl<BluetoothBloc>().add(WriteDataEvent(data));
   }
 
-  void startPattern(int patternIndex) {
-    stopPattern(); // Stop any existing patterns before starting a new one
-    activePattern = patternIndex;
-    isPatternActive = true;
-
-    // Assuming patternProvider is accessible here, if not, it should be passed as a parameter or made globally accessible
-    var currentPatternData = patternProvider.patterns[patternIndex].patternData;
-
+  void startPattern() {
     _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
-      // Adjusted to 500ms or as per the requirement
-      if (isPatternActive && activePattern == patternIndex) {
-        sendPattern(currentPatternData[timer.tick % currentPatternData.length]);
-      } else {
-        timer.cancel();
-      }
+      sendPattern(widget.currentRhythmicPattern.pattern[timer.tick % widget.currentRhythmicPattern.pattern.length]);
     });
   }
 
   void stopPattern() {
-    isPatternActive = false;
-    activePattern = null;
     _patternTimer?.cancel();
     sendPattern("<000000000000000000000000000000>");
+  }
+
+  void _onSubmit(String value) {
+    stopPattern();
+    widget.onResponse(value == widget.currentRhythmicPattern.name ? 100 : 0);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startPattern();
+  }
+
+  @override
+  void didUpdateWidget(covariant RhythmicPatternsTester oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentRhythmicPattern != oldWidget.currentRhythmicPattern) {
+      startPattern();
+    }
   }
 
   @override
@@ -69,27 +66,25 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        PatternDelaySlider(
-          patternDelay: patternDelay.toDouble(),
-          onDelayChanged: (double value) {
-            setState(() {
-              patternDelay = value.toInt();
-              if (isPatternActive) {
-                startPattern(activePattern!);
-              }
-            });
-          },
+      children: [
+        Expanded(
+          flex: 2,
+          child: Container(),
         ),
-        ...patternProvider.patterns.map((pattern) {
-          return PatternButton(
-            buttonText: pattern.name,
-            onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
-          );
-        }).toList(),
-        PatternButton(
-          buttonText: 'Stop Pattern',
-          onPressed: stopPattern,
+        Expanded(
+          flex: 1,
+          child: Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: TestingDataProvider.rhythmicPatterns.map(
+              (rhythmicPattern) {
+                return ElevatedButton(
+                  onPressed: () => _onSubmit(rhythmicPattern.name),
+                  child: Text(rhythmicPattern.name),
+                );
+              },
+            ).toList(),
+          ),
         ),
       ],
     );
