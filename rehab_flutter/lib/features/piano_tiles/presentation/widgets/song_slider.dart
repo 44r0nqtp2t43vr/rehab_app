@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 
 class SongSlider extends StatelessWidget {
   final double currentDuration;
@@ -20,8 +21,8 @@ class SongSlider extends StatelessWidget {
       value: currentDuration,
       min: minDuration,
       max: maxDuration,
-      divisions: (maxDuration - minDuration) ~/ 1,
-      label: "",
+      divisions: (maxDuration - minDuration) ~/ 0.3,
+      label: secToMinSec(currentDuration),
       onChanged: onDurationChanged,
     );
   }

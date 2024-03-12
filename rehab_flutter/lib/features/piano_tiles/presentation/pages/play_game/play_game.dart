@@ -69,7 +69,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     });
 
     animationController.addListener(() {
-      if ((animationController.value * 10).round() == 5) {
+      if ((animationController.value * 10).round() == 9) {
         sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
       }
     });
@@ -179,10 +179,20 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                         const SizedBox(width: 20),
                         Expanded(
                           child: SongSlider(
-                            currentDuration: currentNoteIndex * .3,
+                            currentDuration: currentNoteIndex * 0.3,
                             minDuration: 0,
                             maxDuration: widget.song.duration,
-                            onDurationChanged: (value) {},
+                            onDurationChanged: (value) {
+                              setState(() {
+                                currentNoteIndex = value ~/ 0.3;
+                                if (!isPlaying) {
+                                  isPlaying = true;
+                                }
+                              });
+                              player.seek(Duration(milliseconds: currentNoteIndex * 300));
+                              player.resume();
+                              animationController.forward();
+                            },
                           ),
                         ),
                         const SizedBox(width: 20),
