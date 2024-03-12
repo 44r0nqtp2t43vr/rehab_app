@@ -67,9 +67,9 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(
+        const Expanded(
           flex: 2,
-          child: Container(),
+          child: Center(child: Text("What pattern do you feel right now?")),
         ),
         Expanded(
           flex: 1,

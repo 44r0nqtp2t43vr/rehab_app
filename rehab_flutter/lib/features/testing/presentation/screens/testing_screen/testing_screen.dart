@@ -61,6 +61,17 @@ class _TestingScreenState extends State<TestingScreen> {
     debugPrint(accuracyList.toString());
   }
 
+  Widget getItemNumFromTestingState() {
+    switch (testingState) {
+      case TestingState.staticPatterns:
+      case TestingState.textures:
+      case TestingState.rhythmicPatterns:
+        return Text("Item #${currentItemInd + 1}");
+      default:
+        return const SizedBox();
+    }
+  }
+
   Widget getWidgetFromTestingState() {
     switch (testingState) {
       case TestingState.staticPatterns:
@@ -118,7 +129,12 @@ class _TestingScreenState extends State<TestingScreen> {
       appBar: AppBar(
         title: const Text('Testing'),
       ),
-      body: currentTestingWidget,
+      body: Column(
+        children: [
+          getItemNumFromTestingState(),
+          Expanded(child: currentTestingWidget),
+        ],
+      ),
     );
   }
 }

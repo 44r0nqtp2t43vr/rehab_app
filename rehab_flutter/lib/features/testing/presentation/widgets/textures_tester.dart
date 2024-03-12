@@ -35,7 +35,7 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
   }
 
   void _renderActuators(double imageSize) {
-    final Offset animatedPosition = AniPatternProvider().verticalPattern(imageSize, animationController.value);
+    final Offset animatedPosition = AniPatternProvider().doubleVPattern(imageSize, animationController.value);
     sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
 
     setState(() {});
@@ -47,7 +47,7 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 20),
     );
 
     animationController.addStatusListener((AnimationStatus status) {
@@ -139,15 +139,15 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
                 const Spacer(),
                 Stack(
                   children: [
-                    Container(
+                    SizedBox(
                       width: desiredSize.toDouble(),
                       height: desiredSize.toDouble(),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(currentTexture.image),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      // decoration: BoxDecoration(
+                      //   image: DecorationImage(
+                      //     image: AssetImage(currentTexture.image),
+                      //     fit: BoxFit.cover,
+                      //   ),
+                      // ),
                     ),
                     ...sl<ActuatorsController>().buildActuators(),
                   ],

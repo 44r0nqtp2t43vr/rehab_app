@@ -31,6 +31,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
   bool isPlaying = false;
 
   void _onAnimationFinish() {
+    animationController.reset();
     if (currentImageTextureInd < TestingDataProvider.imageTextures.length - 1) {
       setState(() {
         currentImageTextureInd++;
@@ -43,7 +44,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
   }
 
   void _renderActuators(double imageSize) {
-    final Offset animatedPosition = AniPatternProvider().verticalPattern(imageSize, animationController.value);
+    final Offset animatedPosition = AniPatternProvider().doubleVPattern(imageSize, animationController.value);
     sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
 
     setState(() {});
@@ -55,7 +56,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 20),
     );
 
     animationController.addStatusListener((AnimationStatus status) {
@@ -63,7 +64,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
         setState(() {
           isPlaying = false;
         });
-        animationController.reset();
+
         _onAnimationFinish();
       }
     });
@@ -109,6 +110,15 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                currentImageTextureInd < TestingDataProvider.imageTextures.length - 1
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: AppButton(
+                          onPressed: () => _onAnimationFinish(),
+                          child: const Text('Next Texture'),
+                        ),
+                      )
+                    : const SizedBox(),
                 AppButton(
                   onPressed: () => widget.onProceed(TestingState.textures),
                   child: const Text('Proceed'),

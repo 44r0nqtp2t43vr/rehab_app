@@ -58,4 +58,39 @@ class AniPatternProvider {
     }
     return Offset(adjustedX, adjustedY);
   }
+
+  Offset doubleVPattern(double imageSize, double animationValue) {
+    const double padding = 24;
+    double xUnit = imageSize / 4;
+    double yUnit = imageSize - (padding * 2);
+    double adjustedX = 0;
+    double adjustedY = 0;
+
+    final List<double> xPoints = [
+      xUnit + padding,
+      xUnit * 2,
+      xUnit * 3 - padding,
+    ];
+
+    final List<double> yPoints = [
+      padding,
+      imageSize - padding,
+    ];
+
+    if (animationValue >= 0.00 && animationValue <= 0.25) {
+      adjustedX = xPoints[0];
+      adjustedY = yPoints[0] + (yUnit * (animationValue / 0.25));
+    } else if (animationValue >= 0.25 && animationValue <= 0.50) {
+      adjustedX = xPoints[0] + ((xPoints[1] - xPoints[0]) * ((animationValue - 0.25) / 0.25));
+      adjustedY = yPoints[1] - (yUnit * ((animationValue - 0.25) / 0.25));
+    } else if (animationValue >= 0.50 && animationValue <= 0.75) {
+      adjustedX = xPoints[1] + ((xPoints[2] - xPoints[1]) * ((animationValue - 0.50) / 0.25));
+      adjustedY = yPoints[0] + (yUnit * ((animationValue - 0.50) / 0.25));
+    } else if (animationValue >= 0.75 && animationValue <= 1.0) {
+      adjustedX = xPoints[2];
+      adjustedY = yPoints[1] - (yUnit * ((animationValue - 0.75) / 0.25));
+    }
+
+    return Offset(adjustedX, adjustedY);
+  }
 }

@@ -77,13 +77,22 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
       children: [
         Expanded(
           flex: 2,
-          child: Text(currentRhythmicPattern.name),
+          child: Center(child: Text(currentRhythmicPattern.name)),
         ),
         Expanded(
           flex: 1,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              currentRhythmicPatternInd < TestingDataProvider.rhythmicPatterns.length - 1
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: AppButton(
+                        onPressed: () => _onAnimationFinish(),
+                        child: const Text('Next Pattern'),
+                      ),
+                    )
+                  : const SizedBox(),
               AppButton(
                 onPressed: () => widget.onProceed(TestingState.rhythmicPatterns),
                 child: const Text('Proceed'),
