@@ -50,11 +50,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () => _onSignUpButtonPressed(context),
                 child: const Text('Sign up'),
               ),
+              AppButton(
+                onPressed: () => _onPassiveButton(context),
+                child: const Text('TEST'),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _onPassiveButton(BuildContext context) {
+    Navigator.pushNamed(context, '/Test');
   }
 
   void _onLoginButtonPressed(BuildContext context) async {

@@ -26,6 +26,10 @@ class MusicTherapyScreen extends StatelessWidget {
           onPressed: () => _onVisualizerButtonPressed(context),
           child: const Text('Visualizer'),
         ),
+        AppButton(
+          onPressed: () => _onPassiveTherapyButtonPressed(context),
+          child: const Text('Passive Therapy'),
+        ),
       ],
     );
   }
@@ -41,5 +45,9 @@ class MusicTherapyScreen extends StatelessWidget {
 
   void _onVisualizerButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/VisualizerSlider');
+  }
+
+  void _onPassiveTherapyButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PassiveTherapy');
   }
 }
