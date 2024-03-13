@@ -5,9 +5,11 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
+import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_divider.dart';
+import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class PlayGame extends StatefulWidget {
@@ -67,7 +69,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     });
 
     animationController.addListener(() {
-      if ((animationController.value * 10).round() == 5) {
+      if ((animationController.value * 10).round() == 9) {
         sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
       }
     });
@@ -85,92 +87,150 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    double tileHeight = MediaQuery.of(context).size.height / 6;
-    double tileWidth = MediaQuery.of(context).size.width / 5;
+    // Get the screen size including the safe area
+    Size screenSize = MediaQuery.of(context).size;
+
+    // Get the safe area insets
+    EdgeInsets safeAreaInsets = MediaQuery.of(context).padding;
+
+    // Calculate the available screen size excluding the safe area
+    double availableScreenWidth = screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
+    double availableScreenHeight = screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
+
+    double tileWidth = availableScreenWidth / 5;
+    double tileHeight = ((availableScreenHeight / 9) * 5) / 4;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.song.title,
-                      style: const TextStyle(
-                        fontSize: 32,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppIconButton(
+                      icon: Icons.arrow_drop_down,
+                      onPressed: () {},
                     ),
-                  ),
-                  AppIconButton(
-                    icon: Icons.settings,
-                    onPressed: () => _onSettingsButtonPressed(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Stack(
-              fit: StackFit.passthrough,
-              children: <Widget>[
-                Image.asset(
-                  'assets/images/background.jpg',
-                  fit: BoxFit.cover,
-                ),
-                Row(
-                  children: <Widget>[
-                    _drawLine(0, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(1, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(2, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(3, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(4, tileHeight, tileWidth),
+                    AppButton(
+                      onPressed: () {},
+                      child: const Text('Basic'),
+                    ),
+                    AppButton(
+                      onPressed: () {},
+                      child: const Text('Intermediate'),
+                    ),
+                    AppIconButton(
+                      icon: Icons.more_vert,
+                      onPressed: () => _onSettingsButtonPressed(),
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: LinearProgressIndicator(
-                          value: notes[currentNoteIndex].orderNumber / widget.song.songLastNote,
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Text(widget.song.songTime),
-                    ],
+            Expanded(
+              flex: 5,
+              child: Stack(
+                fit: StackFit.passthrough,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/background.jpg',
+                    fit: BoxFit.cover,
                   ),
-                  const SizedBox(height: 20),
-                  AppIconButton(
-                    icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                    onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                  Row(
+                    children: <Widget>[
+                      _drawLine(0, tileHeight, tileWidth),
+                      const LineDivider(),
+                      _drawLine(1, tileHeight, tileWidth),
+                      const LineDivider(),
+                      _drawLine(2, tileHeight, tileWidth),
+                      const LineDivider(),
+                      _drawLine(3, tileHeight, tileWidth),
+                      const LineDivider(),
+                      _drawLine(4, tileHeight, tileWidth),
+                    ],
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.song.title,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    Text(
+                      widget.song.artist,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: SongSlider(
+                            currentDuration: currentNoteIndex * 0.3,
+                            minDuration: 0,
+                            maxDuration: widget.song.duration,
+                            onDurationChanged: (value) {
+                              setState(() {
+                                currentNoteIndex = value ~/ 0.3;
+                                if (!isPlaying) {
+                                  isPlaying = true;
+                                }
+                              });
+                              player.seek(Duration(milliseconds: currentNoteIndex * 300));
+                              player.resume();
+                              animationController.forward();
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Text(widget.song.songTime),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AppIconButton(
+                          icon: Icons.shuffle,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: Icons.arrow_back,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                          onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                        ),
+                        AppIconButton(
+                          icon: Icons.arrow_forward,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: Icons.playlist_play,
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
