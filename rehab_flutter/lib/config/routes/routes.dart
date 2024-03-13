@@ -9,7 +9,6 @@ import 'package:rehab_flutter/features/login_register/presentation/pages/login/l
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
-import 'package:rehab_flutter/features/piano_tiles/presentation/pages/song_select/song_select.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/pages/scroll_actuators/scroll_actuators.dart';
@@ -51,9 +50,6 @@ class AppRoutes {
 
       case '/Testing':
         return _materialRoute(const TestingScreen());
-
-      case '/SongSelect':
-        return _materialRoute(const SongSelect());
 
       case '/PlayGame':
         return _materialRoute(PlayGame(song: settings.arguments as Song));

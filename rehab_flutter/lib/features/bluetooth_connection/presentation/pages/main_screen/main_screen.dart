@@ -33,32 +33,34 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: getScreenFromTab(),
-          ),
-          Row(
-            children: [
-              AppButton(
-                onPressed: () => _onHomeButtonPressed(),
-                child: const Text('Home'),
-              ),
-              AppButton(
-                onPressed: () => _onTherapyButtonPressed(),
-                child: const Text('Therapy'),
-              ),
-              AppButton(
-                onPressed: () => _onActivityButtonPressed(),
-                child: const Text('Activity'),
-              ),
-              AppButton(
-                onPressed: () => _onProfileButtonPressed(),
-                child: const Text('Profile'),
-              ),
-            ],
-          ),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: getScreenFromTab(),
+            ),
+            Row(
+              children: [
+                AppButton(
+                  onPressed: () => _onHomeButtonPressed(),
+                  child: const Text('Home'),
+                ),
+                AppButton(
+                  onPressed: () => _onTherapyButtonPressed(),
+                  child: const Text('Therapy'),
+                ),
+                AppButton(
+                  onPressed: () => _onActivityButtonPressed(),
+                  child: const Text('Activity'),
+                ),
+                AppButton(
+                  onPressed: () => _onProfileButtonPressed(),
+                  child: const Text('Profile'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
