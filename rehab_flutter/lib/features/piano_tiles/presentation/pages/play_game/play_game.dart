@@ -25,8 +25,11 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   final AudioPlayer player = AudioPlayer();
   late AnimationController animationController;
   late List<Note> notes;
+  late List<Note> notesToRender;
+  late double tileHeight;
+  late double tileWidth;
   int currentNoteIndex = 0;
-  bool hasStarted = true;
+  bool hasStarted = false;
   bool isPlaying = true;
 
   void _pauseAnimation() {
@@ -45,194 +48,17 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    notes = List.from(widget.song.songNotes);
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(microseconds: 299725),
-    );
-
-    animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed && isPlaying) {
-        if (currentNoteIndex == notes.last.orderNumber - 5) {
-          _onEnd();
-        } else {
-          setState(() {
-            currentNoteIndex++;
-          });
-          _onPass();
-          animationController.forward(from: 0);
-        }
+  void _onDurationChanged(double value) {
+    setState(() {
+      currentNoteIndex = value ~/ 0.3;
+      notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
+      if (!isPlaying) {
+        isPlaying = true;
       }
     });
-
-    animationController.addListener(() {
-      if ((animationController.value * 10).round() == 9) {
-        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-      }
-    });
-
-    player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
-  }
-
-  @override
-  void dispose() {
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-    animationController.dispose();
-    player.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Get the screen size including the safe area
-    Size screenSize = MediaQuery.of(context).size;
-
-    // Get the safe area insets
-    EdgeInsets safeAreaInsets = MediaQuery.of(context).padding;
-
-    // Calculate the available screen size excluding the safe area
-    double availableScreenWidth = screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
-    double availableScreenHeight = screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
-
-    double tileWidth = availableScreenWidth / 5;
-    double tileHeight = ((availableScreenHeight / 9) * 5) / 4;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AppIconButton(
-                      icon: Icons.arrow_drop_down,
-                      onPressed: () {},
-                    ),
-                    AppButton(
-                      onPressed: () {},
-                      child: const Text('Basic'),
-                    ),
-                    AppButton(
-                      onPressed: () {},
-                      child: const Text('Intermediate'),
-                    ),
-                    AppIconButton(
-                      icon: Icons.more_vert,
-                      onPressed: () => _onSettingsButtonPressed(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 5,
-              child: Stack(
-                fit: StackFit.passthrough,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/images/background.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      _drawLine(0, tileHeight, tileWidth),
-                      const LineDivider(),
-                      _drawLine(1, tileHeight, tileWidth),
-                      const LineDivider(),
-                      _drawLine(2, tileHeight, tileWidth),
-                      const LineDivider(),
-                      _drawLine(3, tileHeight, tileWidth),
-                      const LineDivider(),
-                      _drawLine(4, tileHeight, tileWidth),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.song.title,
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    Text(
-                      widget.song.artist,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: SongSlider(
-                            currentDuration: currentNoteIndex * 0.3,
-                            minDuration: 0,
-                            maxDuration: widget.song.duration,
-                            onDurationChanged: (value) {
-                              setState(() {
-                                currentNoteIndex = value ~/ 0.3;
-                                if (!isPlaying) {
-                                  isPlaying = true;
-                                }
-                              });
-                              player.seek(Duration(milliseconds: currentNoteIndex * 300));
-                              player.resume();
-                              animationController.forward();
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        Text(widget.song.songTime),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AppIconButton(
-                          icon: Icons.shuffle,
-                          onPressed: () {},
-                        ),
-                        AppIconButton(
-                          icon: Icons.arrow_back,
-                          onPressed: () {},
-                        ),
-                        AppIconButton(
-                          icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                          onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
-                        ),
-                        AppIconButton(
-                          icon: Icons.arrow_forward,
-                          onPressed: () {},
-                        ),
-                        AppIconButton(
-                          icon: Icons.playlist_play,
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    player.seek(Duration(milliseconds: currentNoteIndex * 300));
+    player.resume();
+    animationController.forward();
   }
 
   void _onPass() async {
@@ -243,7 +69,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
       const String off = "000000";
       const String on = "255255";
       String data = "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
-      await Future.delayed(const Duration(milliseconds: 5));
+      await Future.delayed(const Duration(milliseconds: 10));
       sl<BluetoothBloc>().add(WriteDataEvent(data));
     }
   }
@@ -313,13 +139,205 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     );
   }
 
-  _drawLine(int lineNumber, double tileHeight, double tileWidth) {
+  void _initBuild(BuildContext context) {
+    if (!hasStarted) {
+      // Get the screen size including the safe area
+      Size screenSize = MediaQuery.of(context).size;
+
+      // Get the safe area insets
+      EdgeInsets safeAreaInsets = MediaQuery.of(context).padding;
+
+      // Calculate the available screen size excluding the safe area
+      double availableScreenWidth = screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
+      double availableScreenHeight = screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
+
+      setState(() {
+        tileWidth = availableScreenWidth / 5;
+        tileHeight = ((availableScreenHeight / 9) * 5) / 3;
+        hasStarted = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    notes = List.from(widget.song.songNotes);
+    notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
+
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(microseconds: 299725),
+    );
+
+    animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed && isPlaying) {
+        if (currentNoteIndex == notes.last.orderNumber - 5) {
+          _onEnd();
+        } else {
+          setState(() {
+            currentNoteIndex++;
+            notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
+          });
+          _onPass();
+          animationController.forward(from: 0);
+        }
+      }
+    });
+
+    animationController.addListener(() {
+      if ((animationController.value * 10).round() == 9) {
+        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      }
+    });
+
+    player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+    // _onDurationChanged(0);
+  }
+
+  @override
+  void dispose() {
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    animationController.dispose();
+    player.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _initBuild(context);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppIconButton(
+                      icon: Icons.arrow_drop_down,
+                      onPressed: () {},
+                    ),
+                    AppButton(
+                      onPressed: () {},
+                      child: const Text('Basic'),
+                    ),
+                    AppButton(
+                      onPressed: () {},
+                      child: const Text('Intermediate'),
+                    ),
+                    AppIconButton(
+                      icon: Icons.more_vert,
+                      onPressed: () => _onSettingsButtonPressed(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/background.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    _drawLine(0, tileHeight, tileWidth),
+                    const LineDivider(),
+                    _drawLine(1, tileHeight, tileWidth),
+                    const LineDivider(),
+                    _drawLine(2, tileHeight, tileWidth),
+                    const LineDivider(),
+                    _drawLine(3, tileHeight, tileWidth),
+                    const LineDivider(),
+                    _drawLine(4, tileHeight, tileWidth),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.song.title,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    Text(
+                      widget.song.artist,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: SongSlider(
+                            currentDuration: currentNoteIndex * 0.3,
+                            minDuration: 0,
+                            maxDuration: widget.song.duration,
+                            onDurationChanged: (value) => _onDurationChanged(value),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Text(widget.song.songTime),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AppIconButton(
+                          icon: Icons.shuffle,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: Icons.arrow_back,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                          onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                        ),
+                        AppIconButton(
+                          icon: Icons.arrow_forward,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: Icons.playlist_play,
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _drawLine(int lineNumber, double tileHeight, double tileWidth) {
     return Expanded(
       child: Line(
         tileHeight: tileHeight,
         tileWidth: tileWidth,
         lineNumber: lineNumber,
-        currentNotes: notes.sublist(currentNoteIndex, currentNoteIndex + 5).where((note) => note.lines.isNotEmpty && note.lines[lineNumber] == 1).toList(),
+        currentNotes: notesToRender,
         currentNoteIndex: currentNoteIndex,
         animation: animationController,
         key: GlobalKey(),
