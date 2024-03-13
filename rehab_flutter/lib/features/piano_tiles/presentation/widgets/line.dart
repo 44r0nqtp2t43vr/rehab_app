@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/tile.dart';
 
-class Line extends AnimatedWidget {
+class Line extends StatelessWidget {
   final double tileHeight;
   final double tileWidth;
   final int lineNumber;
+  final double animationValue;
   final int currentNoteIndex;
   final List<Note> currentNotes;
 
-  const Line({required Key key, required this.tileHeight, required this.tileWidth, required this.currentNotes, required this.currentNoteIndex, required this.lineNumber, required Animation<double> animation}) : super(key: key, listenable: animation);
+  const Line({super.key, required this.tileHeight, required this.tileWidth, required this.currentNotes, required this.animationValue, required this.currentNoteIndex, required this.lineNumber});
 
   @override
   Widget build(BuildContext context) {
-    Animation<double>? animation = super.listenable as Animation<double>?;
-
     // List<Widget> tiles = [];
     // for (var i = 0; i < currentNotes.length; i++) {
     //   Note currentNote = currentNotes[i];
@@ -39,7 +38,7 @@ class Line extends AnimatedWidget {
     List<Widget> tiles = currentNotes.where((note) => note.lines.isNotEmpty && note.lines[lineNumber] == 1).map((note) {
       //specify note distance from top
       int index = note.orderNumber - currentNoteIndex;
-      double offset = (2 - index + animation!.value) * tileHeight;
+      double offset = (2 - index + animationValue) * tileHeight;
 
       // return Transform.translate(
       //   offset: Offset(0, offset),

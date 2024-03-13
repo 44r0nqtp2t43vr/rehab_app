@@ -7,8 +7,7 @@ import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
-import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line.dart';
-import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_divider.dart';
+import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_container.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -191,8 +190,9 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
       }
     });
 
-    player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
-    // _onDurationChanged(0);
+    // player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+    animationController.forward();
+    player.play(AssetSource(widget.song.audioSource));
   }
 
   @override
@@ -241,26 +241,13 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
             ),
             Expanded(
               flex: 5,
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/background.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Row(
-                  children: <Widget>[
-                    _drawLine(0, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(1, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(2, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(3, tileHeight, tileWidth),
-                    const LineDivider(),
-                    _drawLine(4, tileHeight, tileWidth),
-                  ],
-                ),
+              child: LineContainer(
+                tileHeight: tileHeight,
+                tileWidth: tileWidth,
+                currentNotes: notesToRender,
+                currentNoteIndex: currentNoteIndex,
+                animation: animationController,
+                key: GlobalKey(),
               ),
             ),
             Expanded(
@@ -327,20 +314,6 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _drawLine(int lineNumber, double tileHeight, double tileWidth) {
-    return Expanded(
-      child: Line(
-        tileHeight: tileHeight,
-        tileWidth: tileWidth,
-        lineNumber: lineNumber,
-        currentNotes: notesToRender,
-        currentNoteIndex: currentNoteIndex,
-        animation: animationController,
-        key: GlobalKey(),
       ),
     );
   }
