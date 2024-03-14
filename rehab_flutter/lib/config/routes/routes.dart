@@ -54,7 +54,10 @@ class AppRoutes {
         return _materialRoute(const TestingScreen());
 
       case '/PlayGame':
-        return _materialRoute(PlayGame(song: sl<SongController>().currentSong.value!));
+        return _materialRoute(PlayGame(
+          song: sl<SongController>().getCurrentSong()!,
+          startingNoteIndex: sl<SongController>().getCurrentNoteIndex(),
+        ));
 
       case '/ActuatorTherapy':
         return _materialRoute(const ActuatorTherapy());

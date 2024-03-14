@@ -14,8 +14,9 @@ import 'package:rehab_flutter/injection_container.dart';
 
 class PlayGame extends StatefulWidget {
   final Song song;
+  final int startingNoteIndex;
 
-  const PlayGame({super.key, required this.song});
+  const PlayGame({super.key, required this.song, required this.startingNoteIndex});
 
   @override
   State<PlayGame> createState() => _PlayGameState();
@@ -28,7 +29,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   late List<Note> notesToRender;
   late double tileHeight;
   late double tileWidth;
-  int currentNoteIndex = 0;
+  late int currentNoteIndex;
   bool hasStarted = false;
   bool isPlaying = true;
 
@@ -49,16 +50,16 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   }
 
   void _onDurationChanged(double value) {
+    value = value <= widget.song.duration - 1 ? value : widget.song.duration - 1;
     setState(() {
       currentNoteIndex = value ~/ 0.3;
       notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
-      if (!isPlaying) {
-        isPlaying = true;
-      }
     });
     player.seek(Duration(milliseconds: currentNoteIndex * 300));
-    player.resume();
-    animationController.forward();
+    if (isPlaying) {
+      player.resume();
+      animationController.forward();
+    }
   }
 
   void _onPass() async {
@@ -86,8 +87,12 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   // }
 
   void _onEnd() {
-    player.stop();
+    player.pause();
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    setState(() {
+      isPlaying = false;
+    });
+    animationController.reset();
     // showDialog(
     //   context: context,
     //   builder: (context) {
@@ -140,7 +145,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   // }
 
   void _onMinimize(BuildContext context) {
-    // sl<SongController>().setNoteIndex(currentNoteIndex);
+    sl<SongController>().setNoteIndex(currentNoteIndex);
     Navigator.of(context).pushReplacementNamed("/MainScreen");
   }
 
@@ -167,7 +172,9 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
+
     notes = List.from(widget.song.songNotes);
+    currentNoteIndex = widget.startingNoteIndex;
     notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
 
     animationController = AnimationController(
@@ -198,6 +205,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
 
     // player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
     animationController.forward();
+    player.seek(Duration(milliseconds: currentNoteIndex * 300));
     player.play(AssetSource(widget.song.audioSource));
   }
 
@@ -220,7 +228,6 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
           return;
         }
         sl<SongController>().setSong(null);
-        sl<SongController>().currentNoteIndex(currentNoteIndex);
         Navigator.of(context).pushReplacementNamed("/MainScreen");
       },
       child: Scaffold(

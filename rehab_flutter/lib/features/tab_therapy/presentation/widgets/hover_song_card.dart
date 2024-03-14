@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
+import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class HoverSongCard extends GetView<SongController> {
   const HoverSongCard({super.key});
@@ -36,7 +38,7 @@ class HoverSongCard extends GetView<SongController> {
                   ),
                   AppIconButton(
                     icon: Icons.play_arrow,
-                    onPressed: () {},
+                    onPressed: () => _onPlayButtonPressed(context),
                   ),
                   AppIconButton(
                     icon: Icons.arrow_forward,
@@ -51,5 +53,15 @@ class HoverSongCard extends GetView<SongController> {
             )
           : const SizedBox(),
     );
+  }
+
+  void _onPlayButtonPressed(BuildContext context) {
+    MusicTherapy mtType = sl<SongController>().currentMTType;
+
+    if (mtType == MusicTherapy.basic) {
+      Navigator.pushNamed(context, '/PlayGame');
+    } else if (mtType == MusicTherapy.intermediate) {
+      Navigator.pushNamed(context, '/VisualizerSlider');
+    }
   }
 }
