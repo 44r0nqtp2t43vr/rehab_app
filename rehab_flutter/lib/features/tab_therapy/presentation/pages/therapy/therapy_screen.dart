@@ -16,7 +16,8 @@ class TherapyScreen extends StatefulWidget {
 }
 
 class _TherapyScreenState extends State<TherapyScreen> {
-  void setTabTherapy() {
+  void setTabTherapy(TabTherapyEnum newTabTherapy) {
+    sl<NavigationController>().setTherapyTab(newTabTherapy);
     setState(() {});
   }
 
@@ -78,19 +79,16 @@ class _TherapyScreenState extends State<TherapyScreen> {
   void _onBasicMTButtonPressed(BuildContext context) {
     Navigator.of(context).pop();
     sl<SongController>().setMTType(MusicTherapy.basic);
-    sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
-    setState(() {});
+    setTabTherapy(TabTherapyEnum.music);
   }
 
   void _onIntermediateMTButtonPressed(BuildContext context) {
     Navigator.of(context).pop();
     sl<SongController>().setMTType(MusicTherapy.intermediate);
-    sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
-    setState(() {});
+    setTabTherapy(TabTherapyEnum.music);
   }
 
   void _onCTButtonPressed() {
-    sl<NavigationController>().setTherapyTab(TabTherapyEnum.cutaneous);
-    setState(() {});
+    setTabTherapy(TabTherapyEnum.cutaneous);
   }
 }

@@ -34,9 +34,11 @@ class MTScreenAll extends StatelessWidget {
 
   void _onSongTapped(BuildContext context, Song song) {
     MusicTherapy mtType = sl<SongController>().currentMTType;
+    sl<SongController>().setSong(song);
+    sl<SongController>().setNoteIndex(0);
 
     if (mtType == MusicTherapy.basic) {
-      Navigator.pushNamed(context, '/PlayGame', arguments: song);
+      Navigator.pushNamed(context, '/PlayGame');
     } else if (mtType == MusicTherapy.intermediate) {
       Navigator.pushNamed(context, '/VisualizerSlider');
     }

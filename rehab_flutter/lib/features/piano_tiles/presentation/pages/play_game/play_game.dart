@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
@@ -73,69 +74,74 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     }
   }
 
-  void _restart() {
-    setState(() {
-      notes = List.from(widget.song.songNotes);
-      hasStarted = true;
-      isPlaying = true;
-      currentNoteIndex = 0;
-    });
-    animationController.reset();
-    player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
-  }
+  // void _restart() {
+  //   setState(() {
+  //     notes = List.from(widget.song.songNotes);
+  //     hasStarted = true;
+  //     isPlaying = true;
+  //     currentNoteIndex = 0;
+  //   });
+  //   animationController.reset();
+  //   player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+  // }
 
   void _onEnd() {
     player.stop();
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Play again?"),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _restart();
-              },
-              child: const Text("Restart"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: const Text("Exit"),
-            ),
-          ],
-        );
-      },
-    );
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       title: const Text("Play again?"),
+    //       actions: <Widget>[
+    //         ElevatedButton(
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //             _restart();
+    //           },
+    //           child: const Text("Restart"),
+    //         ),
+    //         ElevatedButton(
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //             Navigator.of(context).pop();
+    //           },
+    //           child: const Text("Exit"),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
-  void _onSettingsButtonPressed() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Switch to Visualizer?"),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Yes"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("No"),
-            ),
-          ],
-        );
-      },
-    );
+  // void _onSettingsButtonPressed() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: const Text("Switch to Visualizer?"),
+  //         actions: <Widget>[
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text("Yes"),
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text("No"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+  void _onMinimize(BuildContext context) {
+    sl<SongController>().setNoteIndex(currentNoteIndex);
+    Navigator.of(context).pushReplacementNamed("/MainScreen");
   }
 
   void _initBuild(BuildContext context) {
@@ -197,6 +203,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
 
   @override
   void dispose() {
+    sl<SongController>().setSong(null);
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
     player.dispose();
@@ -221,7 +228,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                   children: [
                     AppIconButton(
                       icon: Icons.arrow_drop_down,
-                      onPressed: () {},
+                      onPressed: () => _onMinimize(context),
                     ),
                     AppButton(
                       onPressed: () {},
@@ -233,7 +240,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                     ),
                     AppIconButton(
                       icon: Icons.more_vert,
-                      onPressed: () => _onSettingsButtonPressed(),
+                      onPressed: () {},
                     ),
                   ],
                 ),

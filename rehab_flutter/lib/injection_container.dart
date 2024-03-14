@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
@@ -34,6 +35,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<NavigationController>(NavigationController());
 
   sl.registerSingleton<SongController>(SongController());
+
+  Get.put<SongController>(sl<SongController>());
 
   // UseCases
   sl.registerSingleton<ScanDevicesUseCase>(ScanDevicesUseCase(sl()));

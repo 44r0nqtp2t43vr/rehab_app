@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:get/get.dart';
+import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/tab_therapy/domain/enums/mtscreen_enums.dart';
+import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/hover_song_card.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen_all.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen_genres.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen_playlist.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class MusicTherapyScreen extends StatefulWidget {
-  final VoidCallback callback;
+  final void Function(TabTherapyEnum) callback;
 
   const MusicTherapyScreen({super.key, required this.callback});
 
@@ -19,6 +21,7 @@ class MusicTherapyScreen extends StatefulWidget {
 }
 
 class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
+  final SongController _controller = Get.find<SongController>();
   MTScreen screenState = MTScreen.all;
 
   Widget _getWidgetFromMTScreenState() {
@@ -36,6 +39,7 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(sl<SongController>().getCurrentSong() != null ? sl<SongController>().getCurrentSong()!.title : "null");
     return Column(
       children: [
         Row(
@@ -85,49 +89,18 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
           child: Stack(
             children: [
               _getWidgetFromMTScreenState(),
-              Positioned(
-                left: 8,
-                right: 8,
-                bottom: 8,
-                child: Container(
-                  height: 60,
-                  color: Colors.blue,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Song Title",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              "Artist",
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      AppIconButton(
-                        icon: Icons.play_arrow,
-                        onPressed: () {},
-                      ),
-                      AppIconButton(
-                        icon: Icons.arrow_forward,
-                        onPressed: () {},
-                      ),
-                      AppIconButton(
-                        icon: Icons.playlist_play,
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
+              GetBuilder<SongController>(
+                builder: (_) {
+                  final currentSong = _controller.getCurrentSong();
+                  return currentSong != null
+                      ? Positioned(
+                          left: 8,
+                          right: 8,
+                          bottom: 8,
+                          child: HoverSongCard(song: currentSong),
+                        )
+                      : const SizedBox();
+                },
               ),
             ],
           ),
@@ -137,8 +110,7 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
   }
 
   void _onBackButtonPressed(BuildContext context) {
-    sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
-    widget.callback();
+    widget.callback(TabTherapyEnum.home);
   }
 
   void _onAllButtonPressed(BuildContext context) {
