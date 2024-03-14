@@ -8,30 +8,39 @@ import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
+import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/data/data_sources/anipattern_provider.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
+import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
-class TexturesTester extends StatefulWidget {
-  final void Function(double) onResponse;
-  final ImageTexture currentImageTexture;
+class TexturesIntro extends StatefulWidget {
+  final void Function(TestingState) onProceed;
 
-  const TexturesTester({super.key, required this.onResponse, required this.currentImageTexture});
+  const TexturesIntro({super.key, required this.onProceed});
 
   @override
-  State<TexturesTester> createState() => _TexturesTesterState();
+  State<TexturesIntro> createState() => _TexturesIntroState();
 }
 
-class _TexturesTesterState extends State<TexturesTester> with SingleTickerProviderStateMixin {
+class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
+  ImageTexture currentImageTexture = TestingDataProvider.imageTextures[0];
+  int currentImageTextureInd = 0;
   bool isPlaying = false;
 
-  void _onSubmit(String value) {
-    setState(() {
-      isPlaying = false;
-    });
-    widget.onResponse(value == widget.currentImageTexture.name ? 100 : 0);
+  void _onAnimationFinish() {
+    animationController.reset();
+    if (currentImageTextureInd < TestingDataProvider.imageTextures.length - 1) {
+      setState(() {
+        currentImageTextureInd++;
+        currentImageTexture = TestingDataProvider.imageTextures[currentImageTextureInd];
+        isPlaying = true;
+      });
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: currentImageTexture.texture, preload: false)));
+      animationController.forward();
+    }
   }
 
   void _renderActuators(double imageSize) {
@@ -55,7 +64,8 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
         setState(() {
           isPlaying = false;
         });
-        animationController.reset();
+
+        _onAnimationFinish();
       }
     });
     animationController.addListener(() {
@@ -64,18 +74,6 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
 
     isPlaying = true;
     animationController.forward();
-  }
-
-  @override
-  void didUpdateWidget(covariant TexturesTester oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.currentImageTexture != oldWidget.currentImageTexture) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: widget.currentImageTexture.texture, preload: false)));
-
-      isPlaying = true;
-      animationController.reset();
-      animationController.forward();
-    }
   }
 
   @override
@@ -95,7 +93,7 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
     return BlocProvider(
       create: (_) => sl<ActuatorsBloc>()
         ..add(InitActuatorsEvent(ActuatorsInitData(
-          imgSrc: widget.currentImageTexture.texture,
+          imgSrc: currentImageTexture.texture,
           orientation: ActuatorsOrientation.landscape,
           numOfFingers: ActuatorsNumOfFingers.five,
           imagesHeight: desiredSize,
@@ -105,21 +103,27 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
         children: [
           Expanded(
             flex: 2,
-            child: _buildBody(widget.currentImageTexture, desiredSize),
+            child: _buildBody(currentImageTexture, desiredSize),
           ),
           Expanded(
             flex: 1,
-            child: Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: TestingDataProvider.imageTextures.map(
-                (imageTexture) {
-                  return ElevatedButton(
-                    onPressed: () => _onSubmit(imageTexture.name),
-                    child: Text(imageTexture.name),
-                  );
-                },
-              ).toList(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                currentImageTextureInd < TestingDataProvider.imageTextures.length - 1
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 12.0),
+                        child: AppButton(
+                          onPressed: () => _onAnimationFinish(),
+                          child: const Text('Next Texture'),
+                        ),
+                      )
+                    : const SizedBox(),
+                AppButton(
+                  onPressed: () => widget.onProceed(TestingState.textures),
+                  child: const Text('Proceed'),
+                ),
+              ],
             ),
           ),
         ],
@@ -139,19 +143,20 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
                 const Spacer(),
                 Stack(
                   children: [
-                    SizedBox(
+                    Container(
                       width: desiredSize.toDouble(),
                       height: desiredSize.toDouble(),
-                      // decoration: BoxDecoration(
-                      //   image: DecorationImage(
-                      //     image: AssetImage(currentTexture.image),
-                      //     fit: BoxFit.cover,
-                      //   ),
-                      // ),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(currentTexture.image),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                     ...sl<ActuatorsController>().buildActuators(),
                   ],
                 ),
+                Text(currentImageTexture.name),
                 const Spacer(),
               ],
             ),

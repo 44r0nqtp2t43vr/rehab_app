@@ -5,10 +5,10 @@ class Tile extends StatelessWidget {
   final double width;
 
   const Tile({
-    required Key key,
+    super.key,
     required this.height,
     required this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
