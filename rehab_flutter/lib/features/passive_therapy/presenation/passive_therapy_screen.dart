@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/passive_therapy/data/pattern_bools_provider.dart';
-import 'package:rehab_flutter/features/passive_therapy/domain/pattern_bools.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/helper_functions/bluetooth_functions.dart';
+import 'package:rehab_flutter/features/passive_therapy/presenation/widgets/pattern_grid.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class PassiveTherapyScreen extends StatefulWidget {
@@ -15,129 +16,197 @@ class PassiveTherapyScreen extends StatefulWidget {
 
 class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     with TickerProviderStateMixin {
-  late AnimationController _animationController;
-  Timer? _timer;
-  Timer? _totalTimer;
-  int totalTime = 20 * 60; // 20 minutes in seconds
-  int patternTime = 2 * 60; // 2 minutes in seconds
-  String currentPatternName = "";
-
-  int currentFrame = 0; // Index for the current frame within a pattern.
-
-  String accumulatedValues = '';
-  // Instantiate PatternBoolsProvider and use the first pattern for demonstration.
+//  PROVIDER
   final PatternBoolsProvider patternBoolsProvider = PatternBoolsProvider();
+
+// COUNTDOWN TIMER
+  static int COUNTDOWN_DURATION = 20;
+  static String COUNTDOWN_TEXT = '20:00';
+  Timer? _countdownTimer;
+  Duration _duration = Duration(
+      minutes:
+          COUNTDOWN_DURATION); // Initialize the countdown duration to 8 minutes
+  String _countdownText = COUNTDOWN_TEXT; // Initial countdown text display
+
+// PATTERN CHANGING
+  static int PATTERN_CHANGE_DURATION = 1;
+  static String PATTERN_CHANGE_COUNTDOWN_TEXT = '1:00';
+  Timer? _patternChangeTimer;
+  Duration _patternChangeDuration = Duration(minutes: PATTERN_CHANGE_DURATION);
+  String _patternChangeCountdownText =
+      PATTERN_CHANGE_COUNTDOWN_TEXT; // Initial text display for pattern change countdown
+  int patternIndex = 0;
+
+// ANIMATION SPEED
+  static int ANIMATION_SPEED_DURATION = 30;
+  static String ANIMATION_SPEED_COUNTDOWN_TEXT = '0:30';
+  static int ANIMATION_SPEED_SLOW = 500;
+  static int ANIMATION_SPEED_FAST = 100;
+  int _animationSpeed = ANIMATION_SPEED_SLOW;
+  Timer? _animationSpeedTimer;
+  Timer? _animationSpeedChangeTimer;
+  Duration _animationSpeedChangeDuration =
+      Duration(seconds: ANIMATION_SPEED_DURATION);
+  String _animationSpeedChangeCountdownText = ANIMATION_SPEED_COUNTDOWN_TEXT;
+
+// PATTERNS
+  late var pattern;
   List<int> sumOneIndices = [0, 1, 4, 5, 8, 9, 12, 13];
   List<int> fingerBool = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  List<int> values = [1, 8, 1, 8, 2, 16, 2, 16, 4, 3, 4, 3, 64, 128, 64, 128];
-  double _colorSliderValue = 0.0;
-  double elapsedTime = 0; // Total elapsed time in seconds, as double
-  String lastSentPattern = "";
-  int patternIndex = 0; // Index for the current pattern
+  List<int> values = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+  int currentFrame = 0;
+
+// BLUETOOTH
+  String lastSentPattern = '';
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
 
-    int patternIndex = 0;
-    updatePatternInfo(patternIndex); // Start with the first pattern
-    startTimer();
+    // Initialize pattern based on patternIndex
+    pattern = patternBoolsProvider.patternBools[patternIndex];
+
+    // Countdown Timer
+    _countdownTimer = Timer.periodic(Duration(seconds: 1), _handleCountdown);
+
+    // Animation Speed Timer
+    _initializeAnimationSpeedTimer();
+
+    // Animation Speed Change Timer
+    _animationSpeedChangeTimer =
+        Timer.periodic(Duration(seconds: 1), _handleAnimationSpeedChange);
+
+    // Pattern Change Timer
+    _patternChangeTimer =
+        Timer.periodic(Duration(seconds: 1), _handlePatternChange);
   }
 
-  void startTimer() {
-    _timer?.cancel(); // Cancel any existing timer
-
-    _timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+  void _handleCountdown(Timer timer) {
+    if (_duration.inSeconds == 0) {
+      timer.cancel();
+      _cleanupTimers();
+    } else {
       setState(() {
-        elapsedTime += 0.5; // Increment by 0.5 seconds for each 500ms tick
-        if (elapsedTime >= patternTime) {
-          patternIndex =
-              (patternIndex + 1) % patternBoolsProvider.patternBools.length;
-          updatePatternInfo(
-              patternIndex); // Update the pattern based on the new index
-          elapsedTime = 0; // Reset elapsed time for the new pattern
-          patternTime = 2 * 60; // Reset time for the next pattern
-        }
-
-        // Perform any updates that need to happen every tick here
+        _duration -= Duration(seconds: 1);
+        _countdownText = _formatDuration(_duration);
       });
+    }
+  }
 
-      if (totalTime <= 0) {
-        _timer?.cancel(); // Stop the timer when total time runs out
+  void _initializeAnimationSpeedTimer() {
+    _animationSpeedTimer?.cancel();
+    _animationSpeedTimer = Timer.periodic(
+        Duration(milliseconds: _animationSpeed), _updateAnimation);
+  }
+
+  void _handleAnimationSpeedChange(Timer timer) {
+    if (_animationSpeedChangeDuration.inSeconds == 0) {
+      _toggleAnimationSpeed();
+      _initializeAnimationSpeedTimer();
+      _animationSpeedChangeDuration =
+          Duration(seconds: ANIMATION_SPEED_DURATION - 1);
+    } else {
+      setState(() {
+        _animationSpeedChangeDuration -= Duration(seconds: 1);
+        _animationSpeedChangeCountdownText =
+            _formatDuration(_animationSpeedChangeDuration);
+      });
+    }
+  }
+
+  void _handlePatternChange(Timer timer) {
+    setState(() {
+      if (_patternChangeDuration.inSeconds == 0) {
+        _resetPatternChangeTimer();
+      } else {
+        _patternChangeDuration -= Duration(seconds: 1);
+        _patternChangeCountdownText = _formatDuration(_patternChangeDuration);
       }
     });
   }
 
-  void updatePatternInfo(int patternIndex) {
-    var pattern = patternBoolsProvider.patternBools[patternIndex];
-    currentPatternName = pattern.name;
-    // Perform any additional setup or initialization for the new pattern here
+  void _updateAnimation(Timer timer) {
+    setState(() {
+      // Core animation update logic including pattern changes and animation updates
+      _processAnimation();
+    });
   }
 
-  void updateTimeDisplay() {
-    // This method updates the display elements for time and pattern name.
-    // Since setState is called in the timer's callback, the UI will automatically update.
-  }
-  void sendPattern(List<int> first, List<int> second, List<int> third,
-      List<int> fourth, List<int> fifth) {
-    String firstLeft = first[0].toString().padLeft(3, '0');
-    String firstRight = first[1].toString().padLeft(3, '0');
-    String secondLeft = second[0].toString().padLeft(3, '0');
-    String secondRight = second[1].toString().padLeft(3, '0');
-    String thirdLeft = third[0].toString().padLeft(3, '0');
-    String thirdRight = third[1].toString().padLeft(3, '0');
-    String fourthLeft = fourth[0].toString().padLeft(3, '0');
-    String fourthRight = fourth[1].toString().padLeft(3, '0');
-    String fifthLeft = fifth[0].toString().padLeft(3, '0');
-    String fifthRight = fifth[1].toString().padLeft(3, '0');
-    String data =
-        "<$firstLeft$firstRight$secondLeft$secondRight$thirdLeft$thirdRight$fourthLeft$fourthRight$fifthLeft$fifthRight>";
+  void _processAnimation() {
+    // Assuming 'pattern.firstFinger.length' is valid and initialized
+    int length = pattern.firstFinger.length;
+    currentFrame = (currentFrame + 1) % length;
 
-    // Check if the data to be sent is different from the last sent pattern
-    if (data != lastSentPattern) {
-      sl<BluetoothBloc>().add(WriteDataEvent(data));
-      debugPrint("Pattern sent: $data");
-      lastSentPattern = data; // Update the last sent pattern
-    } else {
-      debugPrint("Pattern not sent, identical to last pattern.");
+    List<List<int>> sums = _calculateSumsForAllFingers();
+    lastSentPattern = sendPattern(
+        sums[0], sums[1], sums[2], sums[3], sums[4], lastSentPattern);
+    // _printFingerSums(sums);
+    // Additional logic to update the animation based on the current frame
+  }
+
+  List<List<int>> _calculateSumsForAllFingers() {
+    List<List<List<int>>> fingerPatterns = [
+      pattern.firstFinger,
+      pattern.secondFinger,
+      pattern.thirdFinger,
+      pattern.fourthFinger,
+      pattern.fifthFinger,
+    ];
+
+    return fingerPatterns
+        .map((fingerPattern) =>
+            calculateSums(fingerPattern, currentFrame, values, sumOneIndices))
+        .toList();
+  }
+
+  void _printFingerSums(List<List<int>> sums) {
+    for (int i = 0; i < sums.length; i++) {
+      print("finger${i + 1}: sum1: ${sums[i][0]}, sum2: ${sums[i][1]}");
     }
   }
 
-  // Method to calculate the sums of left and right actuator buttons
-
-  List<int> calculateSums(List<List<int>> fingerPatterns, int currentFrame,
-      List<int> values, List<int> sumOneIndices) {
-    int sumOne = 0;
-    int sumTwo = 0;
-    for (int index = 0; index < fingerPatterns[currentFrame].length; index++) {
-      if (fingerPatterns[currentFrame][index] == 1) {
-        if (sumOneIndices.contains(index)) {
-          sumOne += values[index];
-        } else {
-          sumTwo += values[index];
-        }
-      }
-    }
-    return [sumOne, sumTwo];
+  void _cleanupTimers() {
+    _animationSpeedTimer?.cancel();
+    _patternChangeTimer?.cancel();
+    _animationSpeedChangeTimer?.cancel();
   }
 
-// Ensure to dispose of the timer
+  String _formatDuration(Duration duration) {
+    return '${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+  }
+
+  void _resetPatternChangeTimer() {
+    _patternChangeDuration = Duration(minutes: PATTERN_CHANGE_DURATION);
+    _patternChangeCountdownText = PATTERN_CHANGE_COUNTDOWN_TEXT;
+    patternIndex =
+        (patternIndex + 1) % patternBoolsProvider.patternBools.length;
+    pattern = patternBoolsProvider.patternBools[patternIndex];
+    currentFrame = 0; // Reset current frame for the new pattern
+  }
+
+  void _toggleAnimationSpeed() {
+    // Toggle animation speed between slow and fast, start with slow
+    _animationSpeedTimer?.cancel();
+    _animationSpeed = _animationSpeed == ANIMATION_SPEED_SLOW
+        ? ANIMATION_SPEED_FAST
+        : ANIMATION_SPEED_SLOW;
+    _animationSpeedChangeDuration =
+        Duration(seconds: ANIMATION_SPEED_DURATION - 1); // Reset countdown
+  }
+
   @override
   void dispose() {
-    _timer?.cancel();
-    _animationController.dispose();
+    _animationSpeedTimer?.cancel();
+    _animationSpeedChangeTimer?.cancel();
+    _countdownTimer?.cancel();
+    _patternChangeTimer?.cancel();
+    sendPattern([000, 000], [000, 000], [000, 000], [000, 000], [000, 000],
+        lastSentPattern);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Assuming you're using the first pattern for demonstration.
-    var pattern = patternBoolsProvider.patternBools[0];
-
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -147,154 +216,40 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Total Time Left: ${formatTime(totalTime)}"),
-              Text("Time for Current Pattern: ${formatTime(patternTime)}"),
-              Text("Current Pattern: $currentPatternName"),
-              // Example for displaying the first finger's frames.
-              // Extend this for additional fingers as needed.
+              Text(
+                'Countdown: $_countdownText',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Pattern Change Countdown: $_patternChangeCountdownText',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "Speed Countdown: $_animationSpeedChangeCountdownText",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text("Pattern Name: ${pattern.name}",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.grey,
-                    child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemCount: 16, // Assuming all frames have 16 elements.
-                      itemBuilder: (context, index) {
-                        final circleColor =
-                            pattern.firstFinger[currentFrame][index] == 1
-                                ? Colors.red
-                                : Colors.white;
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: circleColor,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    height: 70,
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.grey,
-                    child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemCount: 16, // Assuming all frames have 16 elements.
-                      itemBuilder: (context, index) {
-                        final circleColor =
-                            pattern.secondFinger[currentFrame][index] == 1
-                                ? Colors.red
-                                : Colors.white;
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: circleColor,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    height: 70,
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.grey,
-                    child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemCount: 16, // Assuming all frames have 16 elements.
-                      itemBuilder: (context, index) {
-                        final circleColor =
-                            pattern.thirdFinger[currentFrame][index] == 1
-                                ? Colors.red
-                                : Colors.white;
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: circleColor,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    height: 70,
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.grey,
-                    child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemCount: 16, // Assuming all frames have 16 elements.
-                      itemBuilder: (context, index) {
-                        final circleColor =
-                            pattern.fourthFinger[currentFrame][index] == 1
-                                ? Colors.red
-                                : Colors.white;
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: circleColor,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    height: 70,
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.grey,
-                    child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemCount: 16, // Assuming all frames have 16 elements.
-                      itemBuilder: (context, index) {
-                        final circleColor =
-                            pattern.fifthFinger[currentFrame][index] == 1
-                                ? Colors.red
-                                : Colors.white;
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: circleColor,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  // Example for displaying the first finger's frames.
+                  // Extend this for additional fingers as needed.
+                  PatternGridWidget(
+                      patternData: pattern.firstFinger,
+                      currentFrame: currentFrame),
+                  PatternGridWidget(
+                      patternData: pattern.secondFinger,
+                      currentFrame: currentFrame),
+                  PatternGridWidget(
+                      patternData: pattern.thirdFinger,
+                      currentFrame: currentFrame),
+                  PatternGridWidget(
+                      patternData: pattern.fourthFinger,
+                      currentFrame: currentFrame),
+                  PatternGridWidget(
+                      patternData: pattern.fifthFinger,
+                      currentFrame: currentFrame),
                 ],
               ),
             ],
@@ -302,12 +257,5 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
         ),
       ),
     );
-  }
-
-  String formatTime(int seconds) {
-    // Helper function to format the time from seconds to MM:SS format
-    int minutes = seconds ~/ 60;
-    int remainingSeconds = seconds % 60;
-    return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
   }
 }
