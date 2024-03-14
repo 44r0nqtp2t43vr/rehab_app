@@ -8,6 +8,7 @@ import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/s
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
+import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/song_select/song_select.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
@@ -44,7 +45,8 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(
+            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -65,7 +67,7 @@ class AppRoutes {
         return _materialRoute(const PatternTherapy());
 
       case '/Test':
-        return _materialRoute(const Test());
+        return _materialRoute(const PassiveTherapyScreen());
 
       case '/TextureTherapy':
         return _materialRoute(const TextureTherapy());
@@ -89,6 +91,9 @@ class AppRoutes {
       //   return _materialRoute(const ViewDevices());
       case '/Visualizer':
         return _materialRoute(const VisualizerScreen());
+
+      case '/PassiveTherapy':
+        return _materialRoute(const PassiveTherapyScreen());
 
       default:
         return _materialRoute(const OnboardingScreen());
