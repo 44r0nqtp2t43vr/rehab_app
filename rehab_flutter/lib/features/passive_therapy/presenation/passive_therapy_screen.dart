@@ -88,7 +88,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     } else {
       setState(() {
         _duration -= Duration(seconds: 1);
-        _countdownText = _formatDuration(_duration);
+        _countdownText = formatDuration(_duration);
       });
     }
   }
@@ -109,7 +109,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
       setState(() {
         _animationSpeedChangeDuration -= Duration(seconds: 1);
         _animationSpeedChangeCountdownText =
-            _formatDuration(_animationSpeedChangeDuration);
+            formatDuration(_animationSpeedChangeDuration);
       });
     }
   }
@@ -120,7 +120,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
         _resetPatternChangeTimer();
       } else {
         _patternChangeDuration -= Duration(seconds: 1);
-        _patternChangeCountdownText = _formatDuration(_patternChangeDuration);
+        _patternChangeCountdownText = formatDuration(_patternChangeDuration);
       }
     });
   }
@@ -159,20 +159,10 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
         .toList();
   }
 
-  void _printFingerSums(List<List<int>> sums) {
-    for (int i = 0; i < sums.length; i++) {
-      print("finger${i + 1}: sum1: ${sums[i][0]}, sum2: ${sums[i][1]}");
-    }
-  }
-
   void _cleanupTimers() {
     _animationSpeedTimer?.cancel();
     _patternChangeTimer?.cancel();
     _animationSpeedChangeTimer?.cancel();
-  }
-
-  String _formatDuration(Duration duration) {
-    return '${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 
   void _resetPatternChangeTimer() {
