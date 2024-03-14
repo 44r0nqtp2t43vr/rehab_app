@@ -23,8 +23,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   Widget buildTherapyScreenHome() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(height: 500),
         AppButton(
           onPressed: () => _onMTButtonPressed(),
           child: const Text('Music Therapy'),
@@ -79,12 +79,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
   void _onBasicMTButtonPressed(BuildContext context) {
     Navigator.of(context).pop();
     sl<SongController>().setMTType(MusicTherapy.basic);
+    sl<SongController>().setSong(null);
     setTabTherapy(TabTherapyEnum.music);
   }
 
   void _onIntermediateMTButtonPressed(BuildContext context) {
     Navigator.of(context).pop();
     sl<SongController>().setMTType(MusicTherapy.intermediate);
+    sl<SongController>().setSong(null);
     setTabTherapy(TabTherapyEnum.music);
   }
 

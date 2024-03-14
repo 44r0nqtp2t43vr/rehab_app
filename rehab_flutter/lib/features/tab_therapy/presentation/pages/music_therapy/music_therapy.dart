@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
+import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/tab_therapy/domain/enums/mtscreen_enums.dart';
@@ -21,25 +22,22 @@ class MusicTherapyScreen extends StatefulWidget {
 }
 
 class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
-  final SongController _controller = Get.find<SongController>();
   MTScreen screenState = MTScreen.all;
 
-  Widget _getWidgetFromMTScreenState() {
-    switch (screenState) {
-      case MTScreen.all:
-        return const MTScreenAll();
-      case MTScreen.genres:
-        return const MTScreenGenres();
-      case MTScreen.playlist:
-        return const MTScreenPlaylist();
-      default:
-        return Container();
+  void setSong(BuildContext context, Song song) {
+    MusicTherapy mtType = sl<SongController>().currentMTType;
+    sl<SongController>().setSong(song);
+    sl<SongController>().setNoteIndex(0);
+
+    if (mtType == MusicTherapy.basic) {
+      Navigator.pushNamed(context, '/PlayGame');
+    } else if (mtType == MusicTherapy.intermediate) {
+      Navigator.pushNamed(context, '/VisualizerSlider');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(sl<SongController>().getCurrentSong() != null ? sl<SongController>().getCurrentSong()!.title : "null");
     return Column(
       children: [
         Row(
@@ -89,24 +87,30 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
           child: Stack(
             children: [
               _getWidgetFromMTScreenState(),
-              GetBuilder<SongController>(
-                builder: (_) {
-                  final currentSong = _controller.getCurrentSong();
-                  return currentSong != null
-                      ? Positioned(
-                          left: 8,
-                          right: 8,
-                          bottom: 8,
-                          child: HoverSongCard(song: currentSong),
-                        )
-                      : const SizedBox();
-                },
+              const Positioned(
+                left: 8,
+                right: 8,
+                bottom: 8,
+                child: HoverSongCard(),
               ),
             ],
           ),
         ),
       ],
     );
+  }
+
+  Widget _getWidgetFromMTScreenState() {
+    switch (screenState) {
+      case MTScreen.all:
+        return MTScreenAll(callback: setSong);
+      case MTScreen.genres:
+        return const MTScreenGenres();
+      case MTScreen.playlist:
+        return const MTScreenPlaylist();
+      default:
+        return Container();
+    }
   }
 
   void _onBackButtonPressed(BuildContext context) {

@@ -140,7 +140,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   // }
 
   void _onMinimize(BuildContext context) {
-    sl<SongController>().setNoteIndex(currentNoteIndex);
+    // sl<SongController>().setNoteIndex(currentNoteIndex);
     Navigator.of(context).pushReplacementNamed("/MainScreen");
   }
 
@@ -203,7 +203,6 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
 
   @override
   void dispose() {
-    sl<SongController>().setSong(null);
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
     player.dispose();
@@ -214,112 +213,123 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     _initBuild(context);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AppIconButton(
-                      icon: Icons.arrow_drop_down,
-                      onPressed: () => _onMinimize(context),
-                    ),
-                    AppButton(
-                      onPressed: () {},
-                      child: const Text('Basic'),
-                    ),
-                    AppButton(
-                      onPressed: () {},
-                      child: const Text('Intermediate'),
-                    ),
-                    AppIconButton(
-                      icon: Icons.more_vert,
-                      onPressed: () {},
-                    ),
-                  ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
+        sl<SongController>().setSong(null);
+        sl<SongController>().currentNoteIndex(currentNoteIndex);
+        Navigator.of(context).pushReplacementNamed("/MainScreen");
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AppIconButton(
+                        icon: Icons.arrow_drop_down,
+                        onPressed: () => _onMinimize(context),
+                      ),
+                      AppButton(
+                        onPressed: () {},
+                        child: const Text('Basic'),
+                      ),
+                      AppButton(
+                        onPressed: () {},
+                        child: const Text('Intermediate'),
+                      ),
+                      AppIconButton(
+                        icon: Icons.more_vert,
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              flex: 5,
-              child: LineContainer(
-                tileHeight: tileHeight,
-                tileWidth: tileWidth,
-                currentNotes: notesToRender,
-                currentNoteIndex: currentNoteIndex,
-                animation: animationController,
-                key: GlobalKey(),
+              Expanded(
+                flex: 5,
+                child: LineContainer(
+                  tileHeight: tileHeight,
+                  tileWidth: tileWidth,
+                  currentNotes: notesToRender,
+                  currentNoteIndex: currentNoteIndex,
+                  animation: animationController,
+                  key: GlobalKey(),
+                ),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.song.title,
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    Text(
-                      widget.song.artist,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: SongSlider(
-                            currentDuration: currentNoteIndex * 0.3,
-                            minDuration: 0,
-                            maxDuration: widget.song.duration,
-                            onDurationChanged: (value) => _onDurationChanged(value),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.song.title,
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                      Text(
+                        widget.song.artist,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: SongSlider(
+                              currentDuration: currentNoteIndex * 0.3,
+                              minDuration: 0,
+                              maxDuration: widget.song.duration,
+                              onDurationChanged: (value) => _onDurationChanged(value),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 20),
-                        Text(widget.song.songTime),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AppIconButton(
-                          icon: Icons.shuffle,
-                          onPressed: () {},
-                        ),
-                        AppIconButton(
-                          icon: Icons.arrow_back,
-                          onPressed: () {},
-                        ),
-                        AppIconButton(
-                          icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                          onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
-                        ),
-                        AppIconButton(
-                          icon: Icons.arrow_forward,
-                          onPressed: () {},
-                        ),
-                        AppIconButton(
-                          icon: Icons.playlist_play,
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 20),
+                          Text(widget.song.songTime),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AppIconButton(
+                            icon: Icons.shuffle,
+                            onPressed: () {},
+                          ),
+                          AppIconButton(
+                            icon: Icons.arrow_back,
+                            onPressed: () {},
+                          ),
+                          AppIconButton(
+                            icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                            onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                          ),
+                          AppIconButton(
+                            icon: Icons.arrow_forward,
+                            onPressed: () {},
+                          ),
+                          AppIconButton(
+                            icon: Icons.playlist_play,
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

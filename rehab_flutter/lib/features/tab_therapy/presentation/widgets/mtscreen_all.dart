@@ -1,13 +1,12 @@
-import 'package:flutter/widgets.dart';
-import 'package:rehab_flutter/core/controller/song_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/data_sources/song_provider.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
-import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/song_card.dart';
-import 'package:rehab_flutter/injection_container.dart';
 
 class MTScreenAll extends StatelessWidget {
-  const MTScreenAll({super.key});
+  final Function(BuildContext, Song) callback;
+
+  const MTScreenAll({super.key, required this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +32,6 @@ class MTScreenAll extends StatelessWidget {
   }
 
   void _onSongTapped(BuildContext context, Song song) {
-    MusicTherapy mtType = sl<SongController>().currentMTType;
-    sl<SongController>().setSong(song);
-    sl<SongController>().setNoteIndex(0);
-
-    if (mtType == MusicTherapy.basic) {
-      Navigator.pushNamed(context, '/PlayGame');
-    } else if (mtType == MusicTherapy.intermediate) {
-      Navigator.pushNamed(context, '/VisualizerSlider');
-    }
+    callback(context, song);
   }
 }
