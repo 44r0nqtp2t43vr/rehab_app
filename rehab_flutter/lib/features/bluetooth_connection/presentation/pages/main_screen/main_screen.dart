@@ -32,33 +32,53 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: getScreenFromTab(),
-          ),
-          Row(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
+
+        final currentTab = sl<NavigationController>().currentTab;
+        final currentTabTherapy = sl<NavigationController>().currentTherapyTab;
+
+        if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.music) {
+          sl<NavigationController>().currentTherapyTab = TabTherapyEnum.home;
+          //TODO: fix navigation
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
             children: [
-              AppButton(
-                onPressed: () => _onHomeButtonPressed(),
-                child: const Text('Home'),
+              Expanded(
+                child: getScreenFromTab(),
               ),
-              AppButton(
-                onPressed: () => _onTherapyButtonPressed(),
-                child: const Text('Therapy'),
-              ),
-              AppButton(
-                onPressed: () => _onActivityButtonPressed(),
-                child: const Text('Activity'),
-              ),
-              AppButton(
-                onPressed: () => _onProfileButtonPressed(),
-                child: const Text('Profile'),
+              Row(
+                children: [
+                  AppButton(
+                    onPressed: () => _onHomeButtonPressed(),
+                    child: const Text('Home'),
+                  ),
+                  AppButton(
+                    onPressed: () => _onTherapyButtonPressed(),
+                    child: const Text('Therapy'),
+                  ),
+                  AppButton(
+                    onPressed: () => _onActivityButtonPressed(),
+                    child: const Text('Activity'),
+                  ),
+                  AppButton(
+                    onPressed: () => _onProfileButtonPressed(),
+                    child: const Text('Profile'),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,9 +1,11 @@
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/interface/actuators_repository.dart';
 import 'package:rehab_flutter/core/interface/bluetooth_repository.dart';
 import 'package:rehab_flutter/core/repository/actuators_repository.dart';
@@ -31,6 +33,10 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<ActuatorsRepository>(ActuatorsRepositoryImpl(sl()));
 
   sl.registerSingleton<NavigationController>(NavigationController());
+
+  sl.registerSingleton<SongController>(SongController());
+
+  Get.put<SongController>(sl<SongController>());
 
   // UseCases
   sl.registerSingleton<ScanDevicesUseCase>(ScanDevicesUseCase(sl()));

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
-import 'package:rehab_flutter/injection_container.dart';
 
 class CutaneousTherapyScreen extends StatelessWidget {
-  final VoidCallback callback;
+  final void Function(TabTherapyEnum) callback;
 
   const CutaneousTherapyScreen({super.key, required this.callback});
 
@@ -42,8 +40,7 @@ class CutaneousTherapyScreen extends StatelessWidget {
   }
 
   void _onBackButtonPressed(BuildContext context) {
-    sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
-    callback();
+    callback(TabTherapyEnum.home);
   }
 
   void _onATButtonPressed(BuildContext context) {
