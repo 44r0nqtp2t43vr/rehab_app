@@ -60,3 +60,19 @@ void _printFingerSums(List<List<int>> sums) {
 String formatDuration(Duration duration) {
   return '${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
 }
+
+List<List<int>> calculateSumsForAllFingers(
+    pattern, currentFrame, values, sumOneIndices) {
+  List<List<List<int>>> fingerPatterns = [
+    pattern.firstFinger,
+    pattern.secondFinger,
+    pattern.thirdFinger,
+    pattern.fourthFinger,
+    pattern.fifthFinger,
+  ];
+
+  return fingerPatterns
+      .map((fingerPattern) =>
+          calculateSums(fingerPattern, currentFrame, values, sumOneIndices))
+      .toList();
+}

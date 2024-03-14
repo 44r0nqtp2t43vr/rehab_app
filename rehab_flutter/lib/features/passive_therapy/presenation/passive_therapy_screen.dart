@@ -29,10 +29,10 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   String _countdownText = COUNTDOWN_TEXT; // Initial countdown text display
 
 // PATTERN CHANGING
-  static int PATTERN_CHANGE_DURATION = 1;
+  static int PATTERN_CHANGE_DURATION = 60;
   static String PATTERN_CHANGE_COUNTDOWN_TEXT = '1:00';
   Timer? _patternChangeTimer;
-  Duration _patternChangeDuration = Duration(minutes: PATTERN_CHANGE_DURATION);
+  Duration _patternChangeDuration = Duration(seconds: PATTERN_CHANGE_DURATION);
   String _patternChangeCountdownText =
       PATTERN_CHANGE_COUNTDOWN_TEXT; // Initial text display for pattern change countdown
   int patternIndex = 0;
@@ -96,7 +96,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   void _initializeAnimationSpeedTimer() {
     _animationSpeedTimer?.cancel();
     _animationSpeedTimer = Timer.periodic(
-        Duration(milliseconds: _animationSpeed), _updateAnimation);
+        Duration(milliseconds: _animationSpeed), _processAnimation);
   }
 
   void _handleAnimationSpeedChange(Timer timer) {
@@ -125,38 +125,19 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     });
   }
 
-  void _updateAnimation(Timer timer) {
-    setState(() {
-      // Core animation update logic including pattern changes and animation updates
-      _processAnimation();
-    });
-  }
-
-  void _processAnimation() {
+  void _processAnimation(Timer timer) {
     // Assuming 'pattern.firstFinger.length' is valid and initialized
-    int length = pattern.firstFinger.length;
-    currentFrame = (currentFrame + 1) % length;
+    setState(() {
+      int length = pattern.firstFinger.length;
+      currentFrame = (currentFrame + 1) % length;
 
-    List<List<int>> sums = _calculateSumsForAllFingers();
-    lastSentPattern = sendPattern(
-        sums[0], sums[1], sums[2], sums[3], sums[4], lastSentPattern);
+      List<List<int>> sums = calculateSumsForAllFingers(
+          pattern, currentFrame, values, sumOneIndices);
+      lastSentPattern = sendPattern(
+          sums[0], sums[1], sums[2], sums[3], sums[4], lastSentPattern);
+    });
     // _printFingerSums(sums);
     // Additional logic to update the animation based on the current frame
-  }
-
-  List<List<int>> _calculateSumsForAllFingers() {
-    List<List<List<int>>> fingerPatterns = [
-      pattern.firstFinger,
-      pattern.secondFinger,
-      pattern.thirdFinger,
-      pattern.fourthFinger,
-      pattern.fifthFinger,
-    ];
-
-    return fingerPatterns
-        .map((fingerPattern) =>
-            calculateSums(fingerPattern, currentFrame, values, sumOneIndices))
-        .toList();
   }
 
   void _cleanupTimers() {
@@ -166,7 +147,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   }
 
   void _resetPatternChangeTimer() {
-    _patternChangeDuration = Duration(minutes: PATTERN_CHANGE_DURATION);
+    _patternChangeDuration = Duration(seconds: PATTERN_CHANGE_DURATION - 1);
     _patternChangeCountdownText = PATTERN_CHANGE_COUNTDOWN_TEXT;
     patternIndex =
         (patternIndex + 1) % patternBoolsProvider.patternBools.length;
