@@ -1,0 +1,1 @@
+enum MusicTherapy { basic, intermediate }

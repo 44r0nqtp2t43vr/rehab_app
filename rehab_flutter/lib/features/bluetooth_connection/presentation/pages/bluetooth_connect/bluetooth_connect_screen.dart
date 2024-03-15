@@ -19,10 +19,8 @@ class BluetoothConnectScreen extends StatelessWidget {
         ],
       ),
       body: GestureDetector(
-        behavior: HitTestBehavior
-            .opaque, // Ensures the GestureDetector is as large as its parent
+        behavior: HitTestBehavior.opaque, // Ensures the GestureDetector is as large as its parent
         onTap: () => _onBlueToothScreenTap(context),
-        // _onTest(context),
         child: const Center(
           child: Text(
             'Welcome to Haplos!\nTap the screen to set up your gloves.',
@@ -35,12 +33,6 @@ class BluetoothConnectScreen extends StatelessWidget {
 
   void _onBlueToothScreenTap(BuildContext context) {
     Navigator.pushNamed(context, '/BluetoothScreen');
-  }
-
-  void _onTest(BuildContext context) {
-    // Navigator.pushNamed(context, '/ScrollActuators');
-
-    Navigator.pushNamed(context, '/VisualizerSlider');
   }
 
   void _onSkip(BuildContext context) {
