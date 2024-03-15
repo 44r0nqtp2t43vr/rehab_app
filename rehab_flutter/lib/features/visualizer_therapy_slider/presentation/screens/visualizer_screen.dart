@@ -4,28 +4,28 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
-import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/AudioData.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/RayPainterState.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/Song.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
+import 'package:rehab_flutter/core/widgets/app_button.dart';
+import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
+import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/ray_painter_state.dart';
+
+import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/helper_functions.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
-import 'package:rehab_flutter/injection_container.dart';
 
 class VisualizerScreenSlider extends StatefulWidget {
   final Song songData;
 
   // Constructor
-  VisualizerScreenSlider({required this.songData});
+  const VisualizerScreenSlider({super.key, required this.songData});
 
   @override
-  _VisualizerScreenStateSlider createState() => _VisualizerScreenStateSlider();
+  VisualizerScreenStateSlider createState() => VisualizerScreenStateSlider();
 }
 
-class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
+class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     with SingleTickerProviderStateMixin {
 //  controllers
   late AudioPlayer audioPlayer;
@@ -33,13 +33,13 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   late StreamSubscription? positionSubscription;
 
   // initial values
-  double _totalHeight = 100.0;
-  double _totalWidth = 100.0;
-  double _circleHeight = 20.0;
-  double _circleWidth = 20.0;
-  double _rayHeight = -8.0;
-  double _rayWidth = 60.0;
-  Color _color = Colors.blue;
+  final double _totalHeight = 100.0;
+  final double _totalWidth = 100.0;
+  final double _circleHeight = 20.0;
+  final double _circleWidth = 20.0;
+  final double _rayHeight = -8.0;
+  final double _rayWidth = 60.0;
+  final Color _color = Colors.blue;
   bool isPlaying = false;
 
 // list of circles
@@ -73,16 +73,18 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   // frequencies
   List<int> bassSquare = [2, 3, 6, 7];
   List<int> midRangeSquare = [9, 10];
-  List<int> subBassSquare = [0, 1, 4, 5];
+  List<int> subBassSquare = [1, 4];
   List<int> lowerMidrangeSquare = [8, 12];
   List<int> presenceSquare = [13, 14];
   List<int> higherMidrangeSquare = [11, 15];
+  List<int> brillianceSquare = [0, 5];
 
   // actuator vars
   int leftActuatorSum = 0;
   int rightActuatorSum = 0;
   List<int> activeValues = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  var lastSentPattern;
+  Map<String, int> lastSentPattern = {};
+  double currentPositionSec = 0.0;
 
   @override
   void initState() {
@@ -91,7 +93,7 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     audioPlayer = AudioPlayer();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 850),
     )..addListener(() {
         setState(() {});
       });
@@ -123,7 +125,10 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     loadBlocks(widget.songData.metaDataUrl);
     // Subscribe to the onPositionChanged event
     positionSubscription = audioPlayer.onPositionChanged.listen((position) {
-      // Find and use the closest block based on the current playback position
+      setState(() {
+        currentPositionSec = position.inSeconds.toDouble();
+      });
+
       useClosestBlock(
           position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
     });
@@ -151,14 +156,16 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     var subBass = blocks[currentIndex].subBass;
     var lowerMidrange = blocks[currentIndex].lowerMidrange;
     var presence = blocks[currentIndex].presence;
-
     var noteOnset = blocks[currentIndex].noteOnset;
+    var brilliance = blocks[currentIndex].brilliance;
 
     setState(() {
       // 0 for item in ActiveValues
       for (int i = 0; i < activeValues.length; i++) {
         activeValues[i] = 0;
       }
+      print("Time: ${blocks[currentIndex].time}");
+      print("Position: $positionSec");
 
       if (noteOnset == 1 &&
           blocks[prevIndex].noteOnset == 0 &&
@@ -191,81 +198,39 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
           // Increase delay by 200ms for the next column
           delay += 200;
         }
-
+        print(noteOnset);
 // Schedule the reset to blue for all circles, to happen after the last column has turned green
         Timer(Duration(milliseconds: delay), () {
           resetAllCircles(Colors.blue, 20.0, 20.0, 0); // Mark all as inactive
         });
+      } else if (noteOnset == 1) {
+        updateCirclePropertiesNoteOnset(outerSquare, true);
+        // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
       } else if (activeValues
           .every((value) => value == 0)) //active values is all 0
       {
-        updateCircleProperties(bassSquare, getBoolValue(bass));
-        updateCircleProperties(midRangeSquare, getBoolValue(midRange));
+        updateCircleProperties(bassSquare, getBassBoolValue(bass));
+        updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
         updateCircleProperties(
-            lowerMidrangeSquare, getBoolValue(lowerMidrange));
-        updateCircleProperties(subBassSquare, getBoolValue(subBass));
-        updateCircleProperties(presenceSquare, getBoolValue(presence));
+            lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
+        updateCircleProperties(subBassSquare, getSubBassBoolValue(subBass));
+        updateCircleProperties(presenceSquare, getPresenceBoolValue(presence));
         updateCircleProperties(
-            higherMidrangeSquare, getBoolValue(higherMidrange));
+            higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
+        updateCircleProperties(
+            brillianceSquare, getBrillianceBoolValue(brilliance));
       }
 
-      lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+      // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
 
     // Ensure a rebuild to reflect color and size changes
   }
 
-  void updateCircleState(
-      int index, Color color, double width, double height, int activeValue) {
-    setState(() {
-      circles[index].color = color;
-      circles[index].circleWidth = width;
-      circles[index].circleHeight = height;
-      activeValues[index] = activeValue;
-    });
-    lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
-  }
-
-  void resetAllCircles(
-      Color color, double width, double height, int activeValue) {
-    setState(() {
-      for (var circle in circles) {
-        circle.color = color;
-        circle.circleWidth = width;
-        circle.circleHeight = height;
-      }
-      for (int i = 0; i < activeValues.length; i++) {
-        activeValues[i] = activeValue;
-      }
-    });
-  }
-
-  void updateCircleProperties(List<int> squares, bool isActive) {
-    final double size = isActive ? 40.0 : 20.0;
-    final int activeValue = isActive ? 1 : 0;
-
-    for (int i = 0; i < squares.length; i++) {
-      circles[squares[i]].circleWidth = size;
-      circles[squares[i]].circleHeight = size;
-      activeValues[squares[i]] = activeValue;
-    }
-  }
-
-  void loadBlocks(String audioData) async {
-    String data = await rootBundle.loadString(audioData);
-    final List<dynamic> blockJson = json.decode(data);
-    blocks = blockJson.map((json) => AudioData.fromJson(json)).toList();
-  }
-
-  void togglePlay(String audioFile) async {
-    if (isPlaying) {
-      await audioPlayer.pause();
-    } else {
-      await audioPlayer.play(AssetSource(audioFile));
-    }
-    setState(() {
-      isPlaying = !isPlaying;
-    });
+  void _onDurationChanged(double value) {
+    // Seek the audio player to the new value
+    audioPlayer.seek(Duration(seconds: value.toInt()));
+    // Update any state related to the current playback position, if necessary
   }
 
   @override
@@ -281,21 +246,118 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ray Painter Animation'),
+        title: const Text('Ray Painter Animation'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ...buildRayPainterRows(),
-            ElevatedButton(
-              onPressed: () => togglePlay(widget.songData.audioUrl),
-              child: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppIconButton(
+                    icon: Icons.arrow_drop_down,
+                    onPressed: () {},
+                  ),
+                  AppButton(
+                    onPressed: () {},
+                    child: const Text('Basic'),
+                  ),
+                  AppButton(
+                    onPressed: () {},
+                    child: const Text('Intermediate'),
+                  ),
+                  AppIconButton(
+                    icon: Icons.more_vert,
+                    onPressed: () => {},
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+          Column(
+            children: [
+              ...buildRayPainterRows(),
+            ],
+          ),
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  Text(
+                    widget.songData.title,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                  Text(
+                    widget.songData.artist,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text(secToMinSec(
+                          currentPositionSec)), // Display current playback position
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: SongSlider(
+                          currentDuration: currentPositionSec,
+                          minDuration: 0,
+                          maxDuration: widget.songData.duration,
+                          onDurationChanged: (value) =>
+                              _onDurationChanged(value),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Text(widget.songData.songTime),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AppIconButton(
+                        icon: Icons.shuffle,
+                        onPressed: () {},
+                      ),
+                      AppIconButton(
+                        icon: Icons.arrow_back,
+                        onPressed: () {},
+                      ),
+                      AppIconButton(
+                          icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                          onPressed: () => {
+                                togglePlay(widget.songData.audioSource),
+                              }),
+                      AppIconButton(
+                        icon: Icons.arrow_forward,
+                        onPressed: () {},
+                      ),
+                      AppIconButton(
+                        icon: Icons.playlist_play,
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  String secToMinSec(double seconds) {
+    int roundedSeconds = seconds.round();
+    int minutes = roundedSeconds ~/ 60;
+    int remainingSeconds = roundedSeconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
   }
 
   List<Widget> buildRayPainterRows() {
@@ -305,7 +367,7 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       List<Widget> rowItems = circles
           .sublist(i, min(i + itemsPerRow, circles.length))
           .map((circleState) {
-        return Container(
+        return SizedBox(
           width: 100,
           height: 100,
           child: CustomPaint(
@@ -327,5 +389,72 @@ class _VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
           children: rowItems));
     }
     return rows;
+  }
+
+  void updateCircleState(
+      int index, Color color, double width, double height, int activeValue) {
+    setState(() {
+      circles[index].color = color;
+      circles[index].circleWidth = width;
+      circles[index].circleHeight = height;
+
+      activeValues[index] = activeValue;
+    });
+    // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+  }
+
+  void resetAllCircles(
+      Color color, double width, double height, int activeValue) {
+    setState(() {
+      for (var circle in circles) {
+        circle.color = color;
+        circle.circleWidth = width;
+        circle.circleHeight = height;
+      }
+      for (int i = 0; i < activeValues.length; i++) {
+        activeValues[i] = activeValue;
+      }
+    });
+  }
+
+  void updateCirclePropertiesNoteOnset(List<int> squares, bool isActive) {
+    final double size = isActive ? 40.0 : 20.0;
+    final int activeValue = isActive ? 1 : 0;
+
+    for (int i = 0; i < squares.length; i++) {
+      circles[squares[i]].circleWidth = size;
+      circles[squares[i]].circleHeight = size;
+      circles[squares[i]].color = isActive ? Colors.green : Colors.blue;
+      activeValues[squares[i]] = activeValue;
+    }
+  }
+
+  void updateCircleProperties(List<int> squares, bool isActive) {
+    final double size = isActive ? 40.0 : 20.0;
+    final int activeValue = isActive ? 1 : 0;
+
+    for (int i = 0; i < squares.length; i++) {
+      circles[squares[i]].circleWidth = size;
+      circles[squares[i]].circleHeight = size;
+      circles[squares[i]].color = isActive ? Colors.yellow : Colors.blue;
+      activeValues[squares[i]] = activeValue;
+    }
+  }
+
+  void loadBlocks(String audioData) async {
+    String data = await rootBundle.loadString(audioData);
+    final List<dynamic> blockJson = json.decode(data);
+    blocks = blockJson.map((json) => AudioData.fromJson(json)).toList();
+  }
+
+  void togglePlay(String audioFile) async {
+    if (isPlaying) {
+      await audioPlayer.pause();
+    } else {
+      await audioPlayer.play(AssetSource(audioFile));
+    }
+    setState(() {
+      isPlaying = !isPlaying;
+    });
   }
 }

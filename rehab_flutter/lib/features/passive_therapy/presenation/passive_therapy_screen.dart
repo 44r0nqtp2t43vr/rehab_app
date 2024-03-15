@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
-import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/passive_therapy/data/pattern_bools_provider.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/helper_functions/bluetooth_functions.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/pattern_bools.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/widgets/pattern_grid.dart';
-import 'package:rehab_flutter/injection_container.dart';
 
 class PassiveTherapyScreen extends StatefulWidget {
   const PassiveTherapyScreen({Key? key}) : super(key: key);
@@ -20,37 +18,36 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   final PatternBoolsProvider patternBoolsProvider = PatternBoolsProvider();
 
 // COUNTDOWN TIMER
-  static int COUNTDOWN_DURATION = 20;
-  static String COUNTDOWN_TEXT = '20:00';
+  static int countdownDuration = 90;
+  static String countdownText = '1:30';
   Timer? _countdownTimer;
   Duration _duration = Duration(
-      minutes:
-          COUNTDOWN_DURATION); // Initialize the countdown duration to 8 minutes
-  String _countdownText = COUNTDOWN_TEXT; // Initial countdown text display
+      seconds:
+          countdownDuration); // Initialize the countdown duration to 8 minutes
+  String _countdownText = countdownText; // Initial countdown text display
 
 // PATTERN CHANGING
-  static int PATTERN_CHANGE_DURATION = 60;
-  static String PATTERN_CHANGE_COUNTDOWN_TEXT = '1:00';
+  static int patternChangeDuration = 10;
+  static String patternChangeDurationText = '0:10';
   Timer? _patternChangeTimer;
-  Duration _patternChangeDuration = Duration(seconds: PATTERN_CHANGE_DURATION);
+  Duration _patternChangeDuration = Duration(seconds: patternChangeDuration);
   String _patternChangeCountdownText =
-      PATTERN_CHANGE_COUNTDOWN_TEXT; // Initial text display for pattern change countdown
-  int patternIndex = 0;
-
+      patternChangeDurationText; // Initial text display for pattern change countdown
+  int patternIndex = 7;
 // ANIMATION SPEED
-  static int ANIMATION_SPEED_DURATION = 30;
-  static String ANIMATION_SPEED_COUNTDOWN_TEXT = '0:30';
-  static int ANIMATION_SPEED_SLOW = 500;
-  static int ANIMATION_SPEED_FAST = 100;
-  int _animationSpeed = ANIMATION_SPEED_SLOW;
+  static int animationSpeedDuration = 5;
+  static String animationSpeedCountdownText = '0:05';
+  static int animationSpeedSlow = 500;
+  static int animationSpeedFast = 100;
+  int _animationSpeed = animationSpeedSlow;
   Timer? _animationSpeedTimer;
   Timer? _animationSpeedChangeTimer;
   Duration _animationSpeedChangeDuration =
-      Duration(seconds: ANIMATION_SPEED_DURATION);
-  String _animationSpeedChangeCountdownText = ANIMATION_SPEED_COUNTDOWN_TEXT;
+      Duration(seconds: animationSpeedDuration);
+  String _animationSpeedChangeCountdownText = animationSpeedCountdownText;
 
 // PATTERNS
-  late var pattern;
+  late PatternBools pattern;
   List<int> sumOneIndices = [0, 1, 4, 5, 8, 9, 12, 13];
   List<int> fingerBool = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   List<int> values = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
@@ -67,18 +64,19 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     pattern = patternBoolsProvider.patternBools[patternIndex];
 
     // Countdown Timer
-    _countdownTimer = Timer.periodic(Duration(seconds: 1), _handleCountdown);
+    _countdownTimer =
+        Timer.periodic(const Duration(seconds: 1), _handleCountdown);
 
     // Animation Speed Timer
     _initializeAnimationSpeedTimer();
 
     // Animation Speed Change Timer
     _animationSpeedChangeTimer =
-        Timer.periodic(Duration(seconds: 1), _handleAnimationSpeedChange);
+        Timer.periodic(const Duration(seconds: 1), _handleAnimationSpeedChange);
 
     // Pattern Change Timer
     _patternChangeTimer =
-        Timer.periodic(Duration(seconds: 1), _handlePatternChange);
+        Timer.periodic(const Duration(seconds: 1), _handlePatternChange);
   }
 
   void _handleCountdown(Timer timer) {
@@ -87,7 +85,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
       _cleanupTimers();
     } else {
       setState(() {
-        _duration -= Duration(seconds: 1);
+        _duration -= const Duration(seconds: 1);
         _countdownText = formatDuration(_duration);
       });
     }
@@ -104,10 +102,10 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
       _toggleAnimationSpeed();
       _initializeAnimationSpeedTimer();
       _animationSpeedChangeDuration =
-          Duration(seconds: ANIMATION_SPEED_DURATION - 1);
+          Duration(seconds: animationSpeedDuration - 1);
     } else {
       setState(() {
-        _animationSpeedChangeDuration -= Duration(seconds: 1);
+        _animationSpeedChangeDuration -= const Duration(seconds: 1);
         _animationSpeedChangeCountdownText =
             formatDuration(_animationSpeedChangeDuration);
       });
@@ -119,7 +117,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
       if (_patternChangeDuration.inSeconds == 0) {
         _resetPatternChangeTimer();
       } else {
-        _patternChangeDuration -= Duration(seconds: 1);
+        _patternChangeDuration -= const Duration(seconds: 1);
         _patternChangeCountdownText = formatDuration(_patternChangeDuration);
       }
     });
@@ -147,8 +145,8 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   }
 
   void _resetPatternChangeTimer() {
-    _patternChangeDuration = Duration(seconds: PATTERN_CHANGE_DURATION - 1);
-    _patternChangeCountdownText = PATTERN_CHANGE_COUNTDOWN_TEXT;
+    _patternChangeDuration = Duration(seconds: patternChangeDuration - 1);
+    _patternChangeCountdownText = _patternChangeCountdownText;
     patternIndex =
         (patternIndex + 1) % patternBoolsProvider.patternBools.length;
     pattern = patternBoolsProvider.patternBools[patternIndex];
@@ -158,11 +156,11 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   void _toggleAnimationSpeed() {
     // Toggle animation speed between slow and fast, start with slow
     _animationSpeedTimer?.cancel();
-    _animationSpeed = _animationSpeed == ANIMATION_SPEED_SLOW
-        ? ANIMATION_SPEED_FAST
-        : ANIMATION_SPEED_SLOW;
+    _animationSpeed = _animationSpeed == animationSpeedSlow
+        ? animationSpeedFast
+        : animationSpeedSlow;
     _animationSpeedChangeDuration =
-        Duration(seconds: ANIMATION_SPEED_DURATION - 1); // Reset countdown
+        Duration(seconds: animationSpeedDuration - 1); // Reset countdown
   }
 
   @override
@@ -181,7 +179,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter Squares Demo'),
+          title: const Text('Flutter Squares Demo'),
         ),
         body: Center(
           child: Column(
@@ -189,18 +187,22 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
             children: <Widget>[
               Text(
                 'Countdown: $_countdownText',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Text(
                 'Pattern Change Countdown: $_patternChangeCountdownText',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Text(
                 "Speed Countdown: $_animationSpeedChangeCountdownText",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Text("Pattern Name: ${pattern.name}",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

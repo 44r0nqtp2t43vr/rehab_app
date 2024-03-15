@@ -18,10 +18,9 @@ import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
-import 'package:rehab_flutter/features/visualizer_therapy/presentation/screens/visualizer_screen.dart';
+
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/song_selection.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
-import 'package:rehab_flutter/screens/test.dart';
 
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
@@ -85,12 +84,10 @@ class AppRoutes {
         return _materialRoute(const ScrollActuators());
 
       case '/VisualizerSlider':
-        return _materialRoute(SongsListScreen());
+        return _materialRoute(const SongsListScreen());
 
       // case '/ViewDevices':
       //   return _materialRoute(const ViewDevices());
-      case '/Visualizer':
-        return _materialRoute(const VisualizerScreen());
 
       case '/PassiveTherapy':
         return _materialRoute(const PassiveTherapyScreen());

@@ -13,7 +13,7 @@ class MusicTherapyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 500),
+        const SizedBox(height: 500),
         AppButton(
           onPressed: () => _onBackButtonPressed(context),
           child: const Text('Back'),

@@ -9,6 +9,7 @@ import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_container.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class PlayGame extends StatefulWidget {
@@ -20,7 +21,8 @@ class PlayGame extends StatefulWidget {
   State<PlayGame> createState() => _PlayGameState();
 }
 
-class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin {
+class _PlayGameState extends State<PlayGame>
+    with SingleTickerProviderStateMixin {
   final AudioPlayer player = AudioPlayer();
   late AnimationController animationController;
   late List<Note> notes;
@@ -67,7 +69,8 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     } else {
       const String off = "000000";
       const String on = "255255";
-      String data = "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
+      String data =
+          "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
       await Future.delayed(const Duration(milliseconds: 10));
       sl<BluetoothBloc>().add(WriteDataEvent(data));
     }
@@ -81,12 +84,15 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
       currentNoteIndex = 0;
     });
     animationController.reset();
-    player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+    player
+        .play(AssetSource(widget.song.audioSource))
+        .then((value) => animationController.forward());
   }
 
   void _onEnd() {
     player.stop();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     showDialog(
       context: context,
       builder: (context) {
@@ -147,8 +153,10 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
       EdgeInsets safeAreaInsets = MediaQuery.of(context).padding;
 
       // Calculate the available screen size excluding the safe area
-      double availableScreenWidth = screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
-      double availableScreenHeight = screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
+      double availableScreenWidth =
+          screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
+      double availableScreenHeight =
+          screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
 
       setState(() {
         tileWidth = availableScreenWidth / 5;
@@ -176,19 +184,21 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
         } else {
           setState(() {
             currentNoteIndex++;
-            notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
+            notesToRender =
+                notes.sublist(currentNoteIndex, currentNoteIndex + 4);
           });
-          _onPass();
+          // _onPass();
           animationController.forward(from: 0);
         }
       }
     });
 
-    animationController.addListener(() {
-      if ((animationController.value * 10).round() == 9) {
-        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-      }
-    });
+    // animationController.addListener(() {
+    //   if ((animationController.value * 10).round() == 9) {
+    //     sl<BluetoothBloc>()
+    //         .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    //   }
+    // });
 
     // player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
     animationController.forward();
@@ -197,7 +207,8 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
 
   @override
   void dispose() {
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
     player.dispose();
     super.dispose();
@@ -228,7 +239,16 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                       child: const Text('Basic'),
                     ),
                     AppButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VisualizerScreenSlider(
+                              songData: widget.song,
+                            ),
+                          ),
+                        );
+                      },
                       child: const Text('Intermediate'),
                     ),
                     AppIconButton(
@@ -268,14 +288,16 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
+                        Text(secToMinSec(
+                            notes[currentNoteIndex].orderNumber * 0.3)),
                         const SizedBox(width: 20),
                         Expanded(
                           child: SongSlider(
                             currentDuration: currentNoteIndex * 0.3,
                             minDuration: 0,
                             maxDuration: widget.song.duration,
-                            onDurationChanged: (value) => _onDurationChanged(value),
+                            onDurationChanged: (value) =>
+                                _onDurationChanged(value),
                           ),
                         ),
                         const SizedBox(width: 20),
@@ -296,7 +318,9 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                         ),
                         AppIconButton(
                           icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                          onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                          onPressed: () => isPlaying
+                              ? _pauseAnimation()
+                              : _resumeAnimation(),
                         ),
                         AppIconButton(
                           icon: Icons.arrow_forward,
@@ -317,4 +341,8 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
       ),
     );
   }
+}
+
+void _onIntermediateButtonPressed(Song song) {
+// visualizerScreenSlider(songData: song);
 }
