@@ -38,16 +38,16 @@ class Session {
     return Session(
       sessionId: '',
       planId: '',
-      date: DateTime.now(),
+      date: DateTime(0),
       activityOneType: '',
       activityOneSpeed: '',
-      activityOneTime: 0,
+      activityOneTime: 1,
       activityOneCurrentTime: 0,
       activityTwoIntensity: '',
       activityTwoCurrentTime: 0,
       activityThreeType: '',
       activityThreeSpeed: '',
-      activityThreeTime: 0,
+      activityThreeTime: 1,
       activityThreeCurrentTime: 0,
     );
   }
