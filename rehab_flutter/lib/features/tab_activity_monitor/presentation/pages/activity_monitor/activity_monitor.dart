@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
-import 'package:rehab_flutter/core/resources/formatters.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_list.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ActivityMonitor extends StatefulWidget {
@@ -12,7 +12,11 @@ class ActivityMonitor extends StatefulWidget {
 }
 
 class _ActivityMonitorState extends State<ActivityMonitor> {
+  late Session currentSession;
   late Map<DateTime, Color?> dateColorsMap;
+  CalendarFormat _calendarFormat = CalendarFormat.week;
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
 
   // Sample data
   final List<Session> sessions = [
@@ -20,32 +24,53 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
       sessionId: "session_1",
       planId: "plan_1",
       date: DateTime.utc(2024, 3, 7),
-      activityOneType: "textures",
+      activityOneType: "Texture Therapy",
       activityOneSpeed: "slow",
       activityOneTime: 60,
       activityOneCurrentTime: 60,
       activityTwoIntensity: "high",
       activityTwoCurrentTime: 1200,
-      activityThreeType: "patterns",
+      activityThreeType: "Pattern Therapy",
       activityThreeSpeed: "fast",
       activityThreeTime: 60,
       activityThreeCurrentTime: 60,
       pretestScore: 100,
       posttestScore: 100,
     ),
+    Session(
+      sessionId: "session_2",
+      planId: "plan_1",
+      date: DateTime.utc(2024, 3, 8),
+      activityOneType: "Texture Therapy",
+      activityOneSpeed: "slow",
+      activityOneTime: 60,
+      activityOneCurrentTime: 0,
+      activityTwoIntensity: "high",
+      activityTwoCurrentTime: 0,
+      activityThreeType: "Pattern Therapy",
+      activityThreeSpeed: "fast",
+      activityThreeTime: 60,
+      activityThreeCurrentTime: 0,
+      pretestScore: 95,
+      posttestScore: null,
+    ),
   ];
+
+  List<bool> getEventConditions(Session session) {
+    return [
+      session.pretestScore != null,
+      session.activityOneCurrentTime >= session.activityOneTime,
+      session.activityTwoCurrentTime >= 1200,
+      session.activityThreeCurrentTime >= session.activityThreeTime,
+      session.posttestScore != null,
+    ];
+  }
 
   Map<DateTime, Color?> sessionsToDateColorsMap() {
     Map<DateTime, Color?> dateColorsMap = {};
 
     for (var sesh in sessions) {
-      final List<bool> conditions = [
-        sesh.pretestScore != null,
-        sesh.activityOneCurrentTime >= sesh.activityOneTime,
-        sesh.activityTwoCurrentTime >= 1200,
-        sesh.activityThreeCurrentTime >= sesh.activityThreeTime,
-        sesh.posttestScore != null,
-      ];
+      final List<bool> conditions = getEventConditions(sesh);
 
       if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
         dateColorsMap[sesh.date] = const Color.fromRGBO(0, 128, 0, 1.0);
@@ -65,110 +90,75 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     return dateColorsMap;
   }
 
+  bool _selectedDayPredicate(DateTime day) {
+    return isSameDay(_selectedDay, day);
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
+      currentSession = sessions.firstWhere(
+        (session) => session.date == _selectedDay,
+        orElse: () => Session.empty(),
+      );
+    });
+  }
+
+  void _onPageChanged(DateTime focusedDay) {
+    _focusedDay = focusedDay;
+  }
+
+  void _onToggleFormat() {
+    setState(() {
+      _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     dateColorsMap = sessionsToDateColorsMap();
+    currentSession = sessions.firstWhere(
+      (session) => session.date == _selectedDay,
+      orElse: () => Session.empty(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TableCalendar(
-          firstDay: DateTime.utc(2024, 1, 1),
-          lastDay: DateTime.utc(2024, 12, 31),
-          focusedDay: DateTime.now(),
-          onDaySelected: (selectedDay, focusedDay) {
-            _showDateDialog(context, selectedDay);
-          },
-          headerStyle: const HeaderStyle(
-            formatButtonVisible: false,
-          ),
-          calendarBuilders: CalendarBuilders(
-            // Customize the appearance of individual calendar cells
-            defaultBuilder: (context, date, _) {
-              final color = dateColorsMap[date];
-              if (color != null) {
-                // If the date has custom colors defined, use them
-                return Container(
-                  margin: const EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: color,
-                  ),
-                  child: Center(
-                    child: Text(
-                      date.day.toString(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              } else {
-                // If there are no custom colors defined, use the default style
-                return null;
-              }
-            },
-            // Customize the appearance of the focused day
-            todayBuilder: (context, date, _) {
-              final color = dateColorsMap[date];
-              if (color != null) {
-                // If the date has custom colors defined, use them
-                return Container(
-                  margin: const EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: color,
-                  ),
-                  child: Center(
-                    child: Text(
-                      date.day.toString(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              } else {
-                // If there are no custom colors defined, use the default style
-                return null;
-              }
-            },
+        const Text(
+          "Activity Monitor",
+          style: TextStyle(fontSize: 32),
+        ),
+        const Text(
+          "Monthly Progress",
+          style: TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 32),
+        Calendar(
+          dateColorsMap: dateColorsMap,
+          calendarFormat: _calendarFormat,
+          focusedDay: _focusedDay,
+          selectedDay: _selectedDay,
+          selectedDayPredicate: _selectedDayPredicate,
+          onDaySelected: _onDaySelected,
+          onPageChanged: _onPageChanged,
+          onToggleFormat: _onToggleFormat,
+        ),
+        const SizedBox(height: 32),
+        Expanded(
+          child: EventList(
+            dayColor: dateColorsMap[currentSession.date] ?? Colors.white,
+            selectedDay: _selectedDay,
+            currentSession: currentSession,
+            conditions: getEventConditions(currentSession),
           ),
         ),
       ],
-    );
-  }
-
-  void _showDateDialog(BuildContext context, DateTime selectedDay) {
-    final sesh = sessions.firstWhere(
-      (session) => session.date == selectedDay,
-      orElse: () => Session.empty(),
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(DateFormat.yMMMMd().format(selectedDay)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Pretest score: ${sesh.pretestScore ?? "TBD"}%"),
-              Text("Activity 1 time: ${secToMinSec(sesh.activityOneCurrentTime.toDouble())}"),
-              Text("Activity 2 time: ${secToMinSec(sesh.activityTwoCurrentTime.toDouble())}"),
-              Text("Activity 3 time: ${secToMinSec(sesh.activityThreeCurrentTime.toDouble())}"),
-              Text("Posttest score: ${sesh.posttestScore ?? "TBD"}%"),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
