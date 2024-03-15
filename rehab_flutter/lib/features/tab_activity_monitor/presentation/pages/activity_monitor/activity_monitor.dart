@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
-import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ActivityMonitor extends StatefulWidget {
@@ -13,6 +11,9 @@ class ActivityMonitor extends StatefulWidget {
 
 class _ActivityMonitorState extends State<ActivityMonitor> {
   late Map<DateTime, Color?> dateColorsMap;
+  CalendarFormat _calendarFormat = CalendarFormat.week;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
 
   // Sample data
   final List<Session> sessions = [
@@ -65,6 +66,21 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     return dateColorsMap;
   }
 
+  bool _selectedDayPredicate(DateTime day) {
+    return isSameDay(_selectedDay, day);
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
+    });
+  }
+
+  void _onPageChanged(DateTime focusedDay) {
+    _focusedDay = focusedDay;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,16 +90,30 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const Text(
+          "Activity Monitor",
+          style: TextStyle(fontSize: 32),
+        ),
+        const Text(
+          "Monthly Progress",
+          style: TextStyle(fontSize: 16),
+        ),
         TableCalendar(
           firstDay: DateTime.utc(2024, 1, 1),
           lastDay: DateTime.utc(2024, 12, 31),
-          focusedDay: DateTime.now(),
-          onDaySelected: (selectedDay, focusedDay) {
-            _showDateDialog(context, selectedDay);
-          },
+          focusedDay: _focusedDay,
+          calendarFormat: _calendarFormat,
+          selectedDayPredicate: _selectedDayPredicate,
+          onDaySelected: _onDaySelected,
+          onPageChanged: _onPageChanged,
           headerStyle: const HeaderStyle(
             formatButtonVisible: false,
+          ),
+          calendarStyle: const CalendarStyle(
+            todayDecoration: BoxDecoration(color: Color(0xFF9FA8DA), shape: BoxShape.rectangle),
+            selectedDecoration: BoxDecoration(color: Color(0xFF5C6BC0), shape: BoxShape.rectangle),
           ),
           calendarBuilders: CalendarBuilders(
             // Customize the appearance of individual calendar cells
@@ -134,41 +164,49 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
             },
           ),
         ),
+        IconButton(
+          icon: Icon(_calendarFormat == CalendarFormat.week ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+          onPressed: () {
+            setState(() {
+              _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
+            });
+          },
+        ),
       ],
     );
   }
 
-  void _showDateDialog(BuildContext context, DateTime selectedDay) {
-    final sesh = sessions.firstWhere(
-      (session) => session.date == selectedDay,
-      orElse: () => Session.empty(),
-    );
+  // void _showDateDialog(BuildContext context, DateTime selectedDay) {
+  //   final sesh = sessions.firstWhere(
+  //     (session) => session.date == selectedDay,
+  //     orElse: () => Session.empty(),
+  //   );
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(DateFormat.yMMMMd().format(selectedDay)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Pretest score: ${sesh.pretestScore ?? "TBD"}%"),
-              Text("Activity 1 time: ${secToMinSec(sesh.activityOneCurrentTime.toDouble())}"),
-              Text("Activity 2 time: ${secToMinSec(sesh.activityTwoCurrentTime.toDouble())}"),
-              Text("Activity 3 time: ${secToMinSec(sesh.activityThreeCurrentTime.toDouble())}"),
-              Text("Posttest score: ${sesh.posttestScore ?? "TBD"}%"),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text(DateFormat.yMMMMd().format(selectedDay)),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             Text("Pretest score: ${sesh.pretestScore ?? "TBD"}%"),
+  //             Text("Activity 1 time: ${secToMinSec(sesh.activityOneCurrentTime.toDouble())}"),
+  //             Text("Activity 2 time: ${secToMinSec(sesh.activityTwoCurrentTime.toDouble())}"),
+  //             Text("Activity 3 time: ${secToMinSec(sesh.activityThreeCurrentTime.toDouble())}"),
+  //             Text("Posttest score: ${sesh.posttestScore ?? "TBD"}%"),
+  //           ],
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: const Text('Close'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }
