@@ -100,77 +100,89 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
           "Monthly Progress",
           style: TextStyle(fontSize: 16),
         ),
-        TableCalendar(
-          firstDay: DateTime.utc(2024, 1, 1),
-          lastDay: DateTime.utc(2024, 12, 31),
-          focusedDay: _focusedDay,
-          calendarFormat: _calendarFormat,
-          selectedDayPredicate: _selectedDayPredicate,
-          onDaySelected: _onDaySelected,
-          onPageChanged: _onPageChanged,
-          headerStyle: const HeaderStyle(
-            formatButtonVisible: false,
+        const SizedBox(height: 32),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+            border: Border.all(color: Colors.black), // Adjust border color as needed
           ),
-          calendarStyle: const CalendarStyle(
-            todayDecoration: BoxDecoration(color: Color(0xFF9FA8DA), shape: BoxShape.rectangle),
-            selectedDecoration: BoxDecoration(color: Color(0xFF5C6BC0), shape: BoxShape.rectangle),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TableCalendar(
+                firstDay: DateTime.utc(2024, 1, 1),
+                lastDay: DateTime.utc(2024, 12, 31),
+                focusedDay: _focusedDay,
+                calendarFormat: _calendarFormat,
+                selectedDayPredicate: _selectedDayPredicate,
+                onDaySelected: _onDaySelected,
+                onPageChanged: _onPageChanged,
+                headerStyle: const HeaderStyle(
+                  formatButtonVisible: false,
+                ),
+                calendarStyle: const CalendarStyle(
+                  todayDecoration: BoxDecoration(color: Color(0xFF9FA8DA), shape: BoxShape.rectangle),
+                  selectedDecoration: BoxDecoration(color: Color(0xFF5C6BC0), shape: BoxShape.rectangle),
+                ),
+                calendarBuilders: CalendarBuilders(
+                  // Customize the appearance of individual calendar cells
+                  defaultBuilder: (context, date, _) {
+                    final color = dateColorsMap[date];
+                    if (color != null) {
+                      // If the date has custom colors defined, use them
+                      return Container(
+                        margin: const EdgeInsets.all(4.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: color,
+                        ),
+                        child: Center(
+                          child: Text(
+                            date.day.toString(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    } else {
+                      // If there are no custom colors defined, use the default style
+                      return null;
+                    }
+                  },
+                  // Customize the appearance of the focused day
+                  todayBuilder: (context, date, _) {
+                    final color = dateColorsMap[date];
+                    if (color != null) {
+                      // If the date has custom colors defined, use them
+                      return Container(
+                        margin: const EdgeInsets.all(4.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: color,
+                        ),
+                        child: Center(
+                          child: Text(
+                            date.day.toString(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    } else {
+                      // If there are no custom colors defined, use the default style
+                      return null;
+                    }
+                  },
+                ),
+              ),
+              IconButton(
+                icon: Icon(_calendarFormat == CalendarFormat.week ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+                onPressed: () {
+                  setState(() {
+                    _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
+                  });
+                },
+              ),
+            ],
           ),
-          calendarBuilders: CalendarBuilders(
-            // Customize the appearance of individual calendar cells
-            defaultBuilder: (context, date, _) {
-              final color = dateColorsMap[date];
-              if (color != null) {
-                // If the date has custom colors defined, use them
-                return Container(
-                  margin: const EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: color,
-                  ),
-                  child: Center(
-                    child: Text(
-                      date.day.toString(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              } else {
-                // If there are no custom colors defined, use the default style
-                return null;
-              }
-            },
-            // Customize the appearance of the focused day
-            todayBuilder: (context, date, _) {
-              final color = dateColorsMap[date];
-              if (color != null) {
-                // If the date has custom colors defined, use them
-                return Container(
-                  margin: const EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: color,
-                  ),
-                  child: Center(
-                    child: Text(
-                      date.day.toString(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              } else {
-                // If there are no custom colors defined, use the default style
-                return null;
-              }
-            },
-          ),
-        ),
-        IconButton(
-          icon: Icon(_calendarFormat == CalendarFormat.week ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
-          onPressed: () {
-            setState(() {
-              _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
-            });
-          },
         ),
       ],
     );
