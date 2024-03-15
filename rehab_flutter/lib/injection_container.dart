@@ -36,7 +36,9 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<SongController>(SongController());
 
-  Get.put<SongController>(sl<SongController>());
+  Get.put<NavigationController>(sl());
+
+  Get.put<SongController>(sl());
 
   // UseCases
   sl.registerSingleton<ScanDevicesUseCase>(ScanDevicesUseCase(sl()));
