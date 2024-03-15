@@ -22,7 +22,6 @@ import 'package:rehab_flutter/features/visualizer_therapy/presentation/screens/v
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/song_selection.dart';
 import 'package:rehab_flutter/injection_container.dart';
 import 'package:rehab_flutter/screens/menu_screen.dart';
-import 'package:rehab_flutter/screens/test.dart';
 
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
@@ -46,8 +45,7 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());

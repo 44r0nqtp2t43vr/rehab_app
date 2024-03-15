@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
@@ -37,8 +38,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
     );
   }
 
-  Widget getScreenFromTabTherapy() {
-    switch (sl<NavigationController>().currentTherapyTab) {
+  Widget getScreenFromTabTherapy(TabTherapyEnum currentTabTherapy) {
+    switch (currentTabTherapy) {
       case TabTherapyEnum.home:
         return buildTherapyScreenHome();
       case TabTherapyEnum.music:
@@ -52,7 +53,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return getScreenFromTabTherapy();
+    return GetX<NavigationController>(
+      builder: (context) {
+        final currentTabTherapy = sl<NavigationController>().getTherapyTab();
+        return getScreenFromTabTherapy(currentTabTherapy);
+      },
+    );
   }
 
   void _onMTButtonPressed() {

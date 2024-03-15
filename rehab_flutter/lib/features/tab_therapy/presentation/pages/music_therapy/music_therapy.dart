@@ -96,10 +96,6 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
             ],
           ),
         ),
-        AppButton(
-          onPressed: () => _onPassiveTherapyButtonPressed(context),
-          child: const Text('Passive Therapy'),
-        ),
       ],
     );
   }
@@ -143,9 +139,5 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
         screenState = MTScreen.playlist;
       });
     }
-  }
-
-  void _onPassiveTherapyButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/PassiveTherapy');
   }
 }
