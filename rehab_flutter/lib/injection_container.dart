@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
@@ -8,8 +9,10 @@ import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/interface/actuators_repository.dart';
 import 'package:rehab_flutter/core/interface/bluetooth_repository.dart';
+import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/repository/actuators_repository.dart';
 import 'package:rehab_flutter/core/repository/bluetooth_repository.dart';
+import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecases/connect_device.dart';
 import 'package:rehab_flutter/core/usecases/disconnect_device.dart';
 import 'package:rehab_flutter/core/usecases/init_actuators.dart';
@@ -58,7 +61,11 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LoadImageUseCase>(LoadImageUseCase(sl()));
 
   // Blocs
-  sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<BluetoothBloc>(
+      () => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
+
+  sl.registerSingleton<FirebaseInterface>(
+      FirebaseRepository(FirebaseFirestore.instance));
 }
