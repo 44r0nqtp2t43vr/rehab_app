@@ -4,12 +4,12 @@ import 'package:rehab_flutter/core/enums/genre_enum.dart';
 class SongProvider {
   List<Song> songs = [
     Song(
-      title: "VivaLaVida",
+      title: "VivaLaVida (available for intermediate)",
       artist: "Coldplay",
       audioSource: 'audio/vivalavida.mp3',
       genre: Genre.classical,
       tempo: 83.35433468,
-      duration: 73.67691609977324,
+      duration: 241,
       metaDataUrl: 'assets/data/vivalavida.json',
       noteFrames: [
         2,
@@ -321,7 +321,7 @@ class SongProvider {
       ],
     ),
     Song(
-      title: "Forest Of Blocks",
+      title: "Forest Of Blocks (available for intermediate)",
       artist: "Confei Wei",
       audioSource: 'audio/forestofblocks.mp3',
       genre: Genre.classical,
@@ -2322,7 +2322,7 @@ class SongProvider {
       ],
     ),
     Song(
-      title: "Ode To Joy",
+      title: "Ode To Joy (available for intermediate)",
       artist: "Ludwig van Beethoven",
       audioSource: 'audio/odetojoy.mp3',
       genre: Genre.classical,
@@ -3512,7 +3512,7 @@ class SongProvider {
       ],
     ),
     Song(
-      title: "Canon in D",
+      title: "Canon in D (available for intermediate)",
       artist: "Johann Pachelbel",
       audioSource: 'audio/canon.mp3',
       genre: Genre.classical,
@@ -5309,7 +5309,7 @@ class SongProvider {
       ],
     ),
     Song(
-      title: "Cancan",
+      title: "Cancan (available for intermediate)",
       artist: "Jacques Offenbach",
       audioSource: 'audio/cancan.mp3',
       metaDataUrl: "assets/data/cancan.json",

@@ -30,9 +30,9 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
     sl<SongController>().setNoteIndex(0);
 
     if (mtType == MusicTherapy.basic) {
-      Navigator.pushNamed(context, '/PlayGame');
+      Navigator.pushReplacementNamed(context, '/PlayGame');
     } else if (mtType == MusicTherapy.intermediate) {
-      Navigator.pushNamed(context, '/VisualizerSlider');
+      Navigator.pushReplacementNamed(context, '/VisualizerScreen');
     }
   }
 

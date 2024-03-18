@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: const Text('TEST'),
               ),
               AppButton(
-                onPressed: () => _onVisualizerScreenTap(context),
+                onPressed: () => _onBlueToothScreenTap(context),
                 child: const Text('SKIP'),
               ),
             ],

@@ -11,13 +11,15 @@ import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_container.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
+
 import 'package:rehab_flutter/injection_container.dart';
 
 class PlayGame extends StatefulWidget {
   final Song song;
   final int startingNoteIndex;
 
-  const PlayGame({super.key, required this.song, required this.startingNoteIndex});
+  const PlayGame(
+      {super.key, required this.song, required this.startingNoteIndex});
 
   @override
   State<PlayGame> createState() => _PlayGameState();
@@ -52,7 +54,8 @@ class _PlayGameState extends State<PlayGame>
   }
 
   void _onDurationChanged(double value) {
-    value = value <= widget.song.duration - 1 ? value : widget.song.duration - 1;
+    value =
+        value <= widget.song.duration - 1 ? value : widget.song.duration - 1;
     setState(() {
       currentNoteIndex = value ~/ 0.3;
       notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
@@ -91,7 +94,8 @@ class _PlayGameState extends State<PlayGame>
 
   void _onEnd() {
     player.pause();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     setState(() {
       isPlaying = false;
     });
@@ -197,20 +201,22 @@ class _PlayGameState extends State<PlayGame>
             notesToRender =
                 notes.sublist(currentNoteIndex, currentNoteIndex + 4);
           });
-          // _onPass();
+          _onPass();
           animationController.forward(from: 0);
         }
       }
     });
 
-    // animationController.addListener(() {
-    //   if ((animationController.value * 10).round() == 9) {
-    //     sl<BluetoothBloc>()
-    //         .add(const WriteDataEvent("<000000000000000000000000000000>"));
-    //   }
-    // });
+    animationController.addListener(() {
+      if ((animationController.value * 10).round() == 9) {
+        sl<BluetoothBloc>()
+            .add(const WriteDataEvent("<000000000000000000000000000000>"));
+      }
+    });
 
-    // player.play(AssetSource(widget.song.audioSource)).then((value) => animationController.forward());
+    player
+        .play(AssetSource(widget.song.audioSource))
+        .then((value) => animationController.forward());
     animationController.forward();
     player.seek(Duration(milliseconds: currentNoteIndex * 300));
     player.play(AssetSource(widget.song.audioSource));
@@ -255,11 +261,21 @@ class _PlayGameState extends State<PlayGame>
                         onPressed: () => _onMinimize(context),
                       ),
                       AppButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/PlayGame');
+                        },
                         child: const Text('Basic'),
                       ),
                       AppButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  VisualizerScreenSlider(songData: widget.song),
+                            ),
+                          );
+                        },
                         child: const Text('Intermediate'),
                       ),
                       AppIconButton(
@@ -299,14 +315,16 @@ class _PlayGameState extends State<PlayGame>
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          Text(secToMinSec(notes[currentNoteIndex].orderNumber * 0.3)),
+                          Text(secToMinSec(
+                              notes[currentNoteIndex].orderNumber * 0.3)),
                           const SizedBox(width: 20),
                           Expanded(
                             child: SongSlider(
                               currentDuration: currentNoteIndex * 0.3,
                               minDuration: 0,
                               maxDuration: widget.song.duration,
-                              onDurationChanged: (value) => _onDurationChanged(value),
+                              onDurationChanged: (value) =>
+                                  _onDurationChanged(value),
                             ),
                           ),
                           const SizedBox(width: 20),
@@ -327,7 +345,9 @@ class _PlayGameState extends State<PlayGame>
                           ),
                           AppIconButton(
                             icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                            onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                            onPressed: () => isPlaying
+                                ? _pauseAnimation()
+                                : _resumeAnimation(),
                           ),
                           AppIconButton(
                             icon: Icons.arrow_forward,
@@ -349,8 +369,4 @@ class _PlayGameState extends State<PlayGame>
       ),
     );
   }
-}
-
-void _onIntermediateButtonPressed(Song song) {
-// visualizerScreenSlider(songData: song);
 }

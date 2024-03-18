@@ -8,6 +8,7 @@ import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/ray_painter_state.dart';
 
@@ -205,7 +206,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
         });
       } else if (noteOnset == 1) {
         updateCirclePropertiesNoteOnset(outerSquare, true);
-        // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+        lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
       } else if (activeValues
           .every((value) => value == 0)) //active values is all 0
       {
@@ -221,16 +222,10 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
             brillianceSquare, getBrillianceBoolValue(brilliance));
       }
 
-      // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+      lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
 
     // Ensure a rebuild to reflect color and size changes
-  }
-
-  void _onDurationChanged(double value) {
-    // Seek the audio player to the new value
-    audioPlayer.seek(Duration(seconds: value.toInt()));
-    // Update any state related to the current playback position, if necessary
   }
 
   @override
@@ -245,9 +240,6 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ray Painter Animation'),
-      ),
       body: Column(
         children: [
           Expanded(
@@ -259,10 +251,14 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                 children: [
                   AppIconButton(
                     icon: Icons.arrow_drop_down,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed("/MainScreen");
+                    },
                   ),
                   AppButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/PlayGame');
+                    },
                     child: const Text('Basic'),
                   ),
                   AppButton(
@@ -360,6 +356,12 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
   }
 
+  void _onDurationChanged(double value) {
+    // Seek the audio player to the new value
+    audioPlayer.seek(Duration(seconds: value.toInt()));
+    // Update any state related to the current playback position, if necessary
+  }
+
   List<Widget> buildRayPainterRows() {
     List<Widget> rows = [];
     int itemsPerRow = 4; // Number of RayPainters per row
@@ -400,7 +402,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
 
       activeValues[index] = activeValue;
     });
-    // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+    lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
   void resetAllCircles(
