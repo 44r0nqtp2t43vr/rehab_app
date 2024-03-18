@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,6 +60,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () => _onBlueToothScreenTap(context),
                 child: const Text('SKIP'),
               ),
+              AppButton(
+                onPressed: () => _onLogsTap(context),
+                child: const Text('LOGS'),
+              ),
             ],
           ),
         ),
@@ -72,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onLoginButtonPressed() async {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
+    final firebaseRepo = sl<FirebaseInterface>(); // Get the FirebaseRepository
 
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
@@ -80,21 +87,22 @@ class _LoginScreenState extends State<LoginScreen> {
           email: email,
           password: password,
         );
-        // Directly using this.context after checking for mounted
-        // ensures that we are safely referring to the current context.
+        // Log the successful login attempt
+        await firebaseRepo.logLoginAttempt(email, true);
+
         if (!mounted) return;
-        // If login is successful, navigate to the Bluetooth screen
         Navigator.pushNamed(context, '/BluetoothConnect');
       } catch (e) {
         if (!mounted) return;
-        // Use this.context to refer to the current BuildContext
+        // Log the failed login attempt
+        await firebaseRepo.logLoginAttempt(email, false);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to login: ${e.toString()}')),
         );
       }
     } else {
       if (!mounted) return;
-      // Showing an error message using this.context
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
       );
@@ -111,6 +119,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onVisualizerScreenTap(BuildContext context) {
     Navigator.pushNamed(context, '/VisualizerSlider');
+  }
+
+  void _onLogsTap(BuildContext context) {
+    Navigator.pushNamed(context, '/LogsScreen');
   }
 
   @override
