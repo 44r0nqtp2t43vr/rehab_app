@@ -9,6 +9,7 @@ import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/s
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
+import 'package:rehab_flutter/features/logs_screen/presentation/logs_screen.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
@@ -22,7 +23,6 @@ import 'package:rehab_flutter/features/texture_therapy/presentation/pages/textur
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/song_selection.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/screens/menu_screen.dart';
 
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
@@ -73,8 +73,8 @@ class AppRoutes {
       case '/TextureTherapy':
         return _materialRoute(const TextureTherapy());
 
-      case '/MenuScreen':
-        return _materialRoute(MenuScreen());
+      case '/LogsScreen':
+        return _materialRoute(const LogsScreen());
 
       case '/BgSongSelect':
         return _materialRoute(const BgSongSelect());

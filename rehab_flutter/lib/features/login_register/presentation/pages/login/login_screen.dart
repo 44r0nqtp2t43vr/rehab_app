@@ -60,6 +60,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () => _onBlueToothScreenTap(context),
                 child: const Text('SKIP'),
               ),
+              AppButton(
+                onPressed: () => _onLogsTap(context),
+                child: const Text('LOGS'),
+              ),
             ],
           ),
         ),
@@ -115,6 +119,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onVisualizerScreenTap(BuildContext context) {
     Navigator.pushNamed(context, '/VisualizerSlider');
+  }
+
+  void _onLogsTap(BuildContext context) {
+    Navigator.pushNamed(context, '/LogsScreen');
   }
 
   @override

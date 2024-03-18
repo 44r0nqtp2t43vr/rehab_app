@@ -14,4 +14,20 @@ class FirebaseRepository implements FirebaseInterface {
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
+
+  @override
+  Future<void> logLogoutAttempt(String email, bool success) async {
+    await db.collection('logoutAttempts').add({
+      'email': email,
+      'success': success,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getLoginLogs() async {
+    final snapshot = await db.collection('loginAttempts').get();
+    return snapshot.docs;
+  }
 }

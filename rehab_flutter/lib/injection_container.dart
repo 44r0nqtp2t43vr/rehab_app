@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/logs/logs_bloc.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
@@ -15,6 +16,9 @@ import 'package:rehab_flutter/core/repository/bluetooth_repository.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecases/connect_device.dart';
 import 'package:rehab_flutter/core/usecases/disconnect_device.dart';
+import 'package:rehab_flutter/core/usecases/firebase/FetchLoginLogsUseCase.dart';
+import 'package:rehab_flutter/core/usecases/firebase/LogLoginAttemptUseCase.dart';
+import 'package:rehab_flutter/core/usecases/firebase/LogLogoutAttemptUseCase.dart';
 import 'package:rehab_flutter/core/usecases/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/load_image.dart';
 import 'package:rehab_flutter/core/usecases/scan_devices.dart';
@@ -68,4 +72,13 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<FirebaseInterface>(
       FirebaseRepository(FirebaseFirestore.instance));
+
+  // Register use cases
+  sl.registerFactory(() => FetchLoginLogsUseCase(sl()));
+  sl.registerFactory(() => LogLoginAttemptUseCase(sl()));
+  sl.registerFactory(() => LogLogoutAttemptUseCase(sl()));
+
+  // Register BLoCs with use cases
+  sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
+  // Add other BLoCs as needed
 }
