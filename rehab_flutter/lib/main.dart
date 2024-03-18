@@ -11,11 +11,11 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDependencies();
-  runApp(const MyApp());
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await initializeDependencies();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -42,8 +42,7 @@ class WelcomeScreen extends StatelessWidget {
         title: const Text('Haplos'),
       ),
       body: GestureDetector(
-        behavior: HitTestBehavior
-            .opaque, // Ensures the GestureDetector is as large as its parent
+        behavior: HitTestBehavior.opaque, // Ensures the GestureDetector is as large as its parent
 
         onTap: () =>
             // _onATButtonPressed(context),
