@@ -6,10 +6,10 @@ class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -95,9 +95,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      Navigator.pushNamed(context, '/Login');
-      // Optionally show a success message or handle the new user further
+      if (!mounted) return; // Check if the widget is still in the tree
+      if (userCredential.user != null) {
+        Navigator.pushNamed(context, '/Login');
+        // Optionally, show a success message or handle the new user further
+      }
     } catch (e) {
+      if (!mounted) return; // Check if the widget is still in the tree
       // Handle errors, such as email already in use, weak password, etc.
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));

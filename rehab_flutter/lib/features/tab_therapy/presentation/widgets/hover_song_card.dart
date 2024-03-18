@@ -61,7 +61,7 @@ class HoverSongCard extends GetView<SongController> {
     if (mtType == MusicTherapy.basic) {
       Navigator.pushNamed(context, '/PlayGame');
     } else if (mtType == MusicTherapy.intermediate) {
-      Navigator.pushNamed(context, '/VisualizerSlider');
+      Navigator.pushNamed(context, '/VisualizerScreen');
     }
   }
 }

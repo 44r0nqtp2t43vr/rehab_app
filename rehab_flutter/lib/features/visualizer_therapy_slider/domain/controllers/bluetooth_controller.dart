@@ -4,6 +4,7 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 Map<String, int> sendUpdatedPattern(activeValues, lastSentPattern) {
+  lastSentPattern ??= {'left': 0, 'right': 0};
   var sums = calculateSumsOfActuators(activeValues);
   if (sums != lastSentPattern) {
     // Enough time has passed; send the pattern now

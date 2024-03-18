@@ -29,11 +29,11 @@ String sendPattern(List<int> first, List<int> second, List<int> third,
   }
 }
 
-void printSums(List<List<int>> sums) {
-  for (int i = 0; i < sums.length; i++) {
-    print("Finger ${i + 1}: sum1: ${sums[i][0]}, sum2: ${sums[i][1]}");
-  }
-}
+// void printSums(List<List<int>> sums) {
+//   for (int i = 0; i < sums.length; i++) {
+//     print("Finger ${i + 1}: sum1: ${sums[i][0]}, sum2: ${sums[i][1]}");
+//   }
+// }
 
 List<int> calculateSums(List<List<int>> fingerPatterns, int currentFrame,
     List<int> values, List<int> sumOneIndices) {
@@ -51,11 +51,11 @@ List<int> calculateSums(List<List<int>> fingerPatterns, int currentFrame,
   return [sumOne, sumTwo];
 }
 
-void _printFingerSums(List<List<int>> sums) {
-  for (int i = 0; i < sums.length; i++) {
-    print("finger${i + 1}: sum1: ${sums[i][0]}, sum2: ${sums[i][1]}");
-  }
-}
+// void _printFingerSums(List<List<int>> sums) {
+//   for (int i = 0; i < sums.length; i++) {
+//     print("finger${i + 1}: sum1: ${sums[i][0]}, sum2: ${sums[i][1]}");
+//   }
+// }
 
 String formatDuration(Duration duration) {
   return '${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';

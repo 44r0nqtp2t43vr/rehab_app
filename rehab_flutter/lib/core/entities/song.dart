@@ -13,6 +13,7 @@ class Song {
   final double duration;
   final List<int> noteFrames;
   final List<int> noteCounts;
+  final String metaDataUrl;
 
   Song({
     required this.title,
@@ -23,6 +24,7 @@ class Song {
     required this.duration,
     required this.noteFrames,
     required this.noteCounts,
+    this.metaDataUrl = '',
   });
 
   String get songTime {
@@ -43,7 +45,8 @@ class Song {
     }
 
     for (int i = 0; i < songLastNote + 5; i++) {
-      if (noteFrameIndex > noteFrames.length - 1 || i != noteFrames[noteFrameIndex]) {
+      if (noteFrameIndex > noteFrames.length - 1 ||
+          i != noteFrames[noteFrameIndex]) {
         notes.add(Note(i, []));
         continue;
       }

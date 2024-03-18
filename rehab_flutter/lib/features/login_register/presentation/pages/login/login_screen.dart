@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               TextField(
                 controller: _passwordController,
                 decoration: const InputDecoration(
@@ -41,9 +41,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               AppButton(
-                onPressed: () => _onLoginButtonPressed(context),
+                onPressed: () => _onLoginButtonPressed(),
                 child: const Text('Login'),
               ),
               AppButton(
@@ -69,28 +69,34 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushNamed(context, '/Test');
   }
 
-  void _onLoginButtonPressed(BuildContext context) async {
-    try {
-      final String email = _emailController.text.trim();
-      final String password = _passwordController.text.trim();
+  void _onLoginButtonPressed() async {
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
 
-      if (email.isNotEmpty && password.isNotEmpty) {
+    if (email.isNotEmpty && password.isNotEmpty) {
+      try {
         // Perform Firebase login
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
+        // Directly using this.context after checking for mounted
+        // ensures that we are safely referring to the current context.
+        if (!mounted) return;
         // If login is successful, navigate to the Bluetooth screen
-        _onBlueToothScreenTap(context);
-      } else {
-        // Show error message
+        Navigator.pushNamed(context, '/BluetoothConnect');
+      } catch (e) {
+        if (!mounted) return;
+        // Use this.context to refer to the current BuildContext
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill in all fields')),
+          SnackBar(content: Text('Failed to login: ${e.toString()}')),
         );
       }
-    } catch (e) {
+    } else {
+      if (!mounted) return;
+      // Showing an error message using this.context
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to login: ${e.toString()}')),
+        const SnackBar(content: Text('Please fill in all fields')),
       );
     }
   }
@@ -101,6 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onBlueToothScreenTap(BuildContext context) {
     Navigator.pushNamed(context, '/BluetoothConnect');
+  }
+
+  void _onVisualizerScreenTap(BuildContext context) {
+    Navigator.pushNamed(context, '/VisualizerSlider');
   }
 
   @override
