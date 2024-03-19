@@ -9,6 +9,7 @@ import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/s
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
+import 'package:rehab_flutter/features/logs_screen/presentation/logs_screen.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
@@ -18,11 +19,8 @@ import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
-
-import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/song_selection.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
-import 'package:rehab_flutter/screens/menu_screen.dart';
 
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
@@ -46,8 +44,7 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -73,8 +70,8 @@ class AppRoutes {
       case '/TextureTherapy':
         return _materialRoute(const TextureTherapy());
 
-      case '/MenuScreen':
-        return _materialRoute(MenuScreen());
+      case '/LogsScreen':
+        return _materialRoute(const LogsScreen());
 
       case '/BgSongSelect':
         return _materialRoute(const BgSongSelect());
@@ -86,8 +83,7 @@ class AppRoutes {
         return _materialRoute(const ScrollActuators());
 
       case '/VisualizerScreen':
-        return _materialRoute(VisualizerScreenSlider(
-            songData: sl<SongController>().getCurrentSong()!));
+        return _materialRoute(VisualizerScreenSlider(songData: sl<SongController>().getCurrentSong()!));
       // case '/ViewDevices':
       //   return _materialRoute(const ViewDevices());
 

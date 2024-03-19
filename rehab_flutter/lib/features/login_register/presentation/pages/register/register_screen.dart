@@ -1,6 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/bloc/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/user/user_event.dart';
+import 'package:rehab_flutter/core/bloc/user/user_state.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,98 +20,99 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final Bloc<UserEvent, UserState> userBloc = sl<UserBloc>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email address';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration:
-                      const InputDecoration(labelText: 'Confirm Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                AppButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _registerUser();
-                    }
-                  },
-                  child: const Text('Register'),
-                ),
-                AppButton(
-                  onPressed: () => _onLoginButtonPressed(context),
-                  child: const Text('Already have an account? Login'),
-                ),
-              ],
-            ),
-          ),
+    return BlocProvider(
+      create: (_) => sl<UserBloc>(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Register'),
         ),
+        body: _buildBody(),
       ),
     );
   }
 
-  void _registerUser() async {
-    try {
-      final UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      if (!mounted) return; // Check if the widget is still in the tree
-      if (userCredential.user != null) {
-        Navigator.pushNamed(context, '/Login');
-        // Optionally, show a success message or handle the new user further
-      }
-    } catch (e) {
-      if (!mounted) return; // Check if the widget is still in the tree
-      // Handle errors, such as email already in use, weak password, etc.
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
+  Widget _buildBody() {
+    return BlocBuilder<UserBloc, UserState>(
+      builder: (_, state) {
+        if (state is UserLoading) {
+          return const Center(child: CupertinoActivityIndicator());
+        }
+        if (state is UserNone) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      decoration: const InputDecoration(labelText: 'Confirm Password'),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    AppButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _registerUser();
+                        }
+                      },
+                      child: const Text('Register'),
+                    ),
+                    AppButton(
+                      onPressed: () => _onLoginButtonPressed(context),
+                      child: const Text('Already have an account? Login'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
+    );
+  }
+
+  void _registerUser() {
+    sl<UserBloc>().add(RegisterEvent(context, RegisterData(email: _emailController.text, password: _passwordController.text)));
   }
 
   void _onLoginButtonPressed(BuildContext context) {
