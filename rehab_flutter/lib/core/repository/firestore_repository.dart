@@ -28,8 +28,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-      getLoginLogs() async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs() async {
     final snapshot = await db.collection('loginAttempts').get();
     return snapshot.docs;
   }
@@ -51,9 +50,10 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<void> loginUser(LoginData data) async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
       password: data.password,
     );
+    print(userCredential.user!.uid);
   }
 }
