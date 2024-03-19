@@ -31,12 +31,20 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildBody() {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserNone && state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+        if (state is UserDone) {
+          Navigator.of(context).pushNamed('/Login');
+        }
+      },
       builder: (context, state) {
         if (state is UserLoading) {
           return const Center(child: CupertinoActivityIndicator());
         }
-        if (state is UserNone) {
+        if (state is UserNone || state is UserDone) {
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -107,7 +115,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _registerUser(BuildContext context) {
-    BlocProvider.of<UserBloc>(context).add(RegisterEvent(context, RegisterData(email: _emailController.text, password: _passwordController.text)));
+    BlocProvider.of<UserBloc>(context).add(RegisterEvent(RegisterData(email: _emailController.text, password: _passwordController.text)));
   }
 
   void _onLoginButtonPressed(BuildContext context) {
