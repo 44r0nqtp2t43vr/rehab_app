@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rehab_flutter/core/interface/firestore_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
-import 'package:rehab_flutter/injection_container.dart';
+import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -21,53 +25,93 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text('Login'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Enter your email',
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserNone && state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+        if (state is UserDone) {
+          Navigator.pushNamed(context, '/BluetoothConnect');
+        }
+      },
+      builder: (context, state) {
+        if (state is UserLoading) {
+          return const Center(child: CupertinoActivityIndicator());
+        }
+        if (state is UserNone || state is UserDone) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'Enter your email',
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        hintText: 'Enter your password',
+                      ),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    AppButton(
+                      onPressed: () => _onLoginButtonPressed(),
+                      child: const Text('Login'),
+                    ),
+                    AppButton(
+                      onPressed: () => _onSignUpButtonPressed(context),
+                      child: const Text('Sign up'),
+                    ),
+                    AppButton(
+                      onPressed: () => _onPassiveButton(context),
+                      child: const Text('TEST'),
+                    ),
+                    AppButton(
+                      onPressed: () => _onBlueToothScreenTap(context),
+                      child: const Text('SKIP'),
+                    ),
+                    AppButton(
+                      onPressed: () => _onLogsTap(context),
+                      child: const Text('LOGS'),
+                    ),
+                  ],
                 ),
-                keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your password',
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 20),
-              AppButton(
-                onPressed: () => _onLoginButtonPressed(),
-                child: const Text('Login'),
-              ),
-              AppButton(
-                onPressed: () => _onSignUpButtonPressed(context),
-                child: const Text('Sign up'),
-              ),
-              AppButton(
-                onPressed: () => _onPassiveButton(context),
-                child: const Text('TEST'),
-              ),
-              AppButton(
-                onPressed: () => _onBlueToothScreenTap(context),
-                child: const Text('SKIP'),
-              ),
-              AppButton(
-                onPressed: () => _onLogsTap(context),
-                child: const Text('LOGS'),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 
@@ -76,36 +120,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onLoginButtonPressed() async {
-    final String email = _emailController.text.trim();
-    final String password = _passwordController.text.trim();
-    final firebaseRepo = sl<FirebaseRepository>(); // Get the FirebaseRepository
+    if (_formKey.currentState!.validate()) {
+      final String email = _emailController.text.trim();
+      final String password = _passwordController.text.trim();
 
-    if (email.isNotEmpty && password.isNotEmpty) {
-      try {
-        // Perform Firebase login
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        // Log the successful login attempt
-        await firebaseRepo.logLoginAttempt(email, true);
-
-        if (!mounted) return;
-        Navigator.pushNamed(context, '/BluetoothConnect');
-      } catch (e) {
-        if (!mounted) return;
-        // Log the failed login attempt
-        await firebaseRepo.logLoginAttempt(email, false);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to login: ${e.toString()}')),
-        );
-      }
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
+      BlocProvider.of<UserBloc>(context).add(LoginEvent(LoginData(email: email, password: password)));
     }
   }
 
@@ -115,10 +134,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onBlueToothScreenTap(BuildContext context) {
     Navigator.pushNamed(context, '/BluetoothConnect');
-  }
-
-  void _onVisualizerScreenTap(BuildContext context) {
-    Navigator.pushNamed(context, '/VisualizerSlider');
   }
 
   void _onLogsTap(BuildContext context) {

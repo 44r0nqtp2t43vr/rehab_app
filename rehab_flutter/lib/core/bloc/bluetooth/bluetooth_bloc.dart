@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_state.dart';
-import 'package:rehab_flutter/core/usecases/connect_device.dart';
-import 'package:rehab_flutter/core/usecases/disconnect_device.dart';
-import 'package:rehab_flutter/core/usecases/scan_devices.dart';
-import 'package:rehab_flutter/core/usecases/update_chara.dart';
-import 'package:rehab_flutter/core/usecases/write_data.dart';
+import 'package:rehab_flutter/core/usecases/bluetooth/connect_device.dart';
+import 'package:rehab_flutter/core/usecases/bluetooth/disconnect_device.dart';
+import 'package:rehab_flutter/core/usecases/bluetooth/scan_devices.dart';
+import 'package:rehab_flutter/core/usecases/bluetooth/update_chara.dart';
+import 'package:rehab_flutter/core/usecases/bluetooth/write_data.dart';
 
 class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothAppState> {
   final ScanDevicesUseCase _scanDevicesUseCase;
@@ -28,33 +28,28 @@ class BluetoothBloc extends Bloc<BluetoothEvent, BluetoothAppState> {
     on<WriteDataEvent>(onWriteData);
   }
 
-  void onScanDevices(
-      ScanDevicesEvent event, Emitter<BluetoothAppState> emit) async {
+  void onScanDevices(ScanDevicesEvent event, Emitter<BluetoothAppState> emit) async {
     final scanResults = await _scanDevicesUseCase();
     emit(BluetoothDone(scanResults: scanResults));
   }
 
-  void onConnectDevice(
-      ConnectDeviceEvent event, Emitter<BluetoothAppState> emit) async {
+  void onConnectDevice(ConnectDeviceEvent event, Emitter<BluetoothAppState> emit) async {
     final services = await _connectDeviceUseCase(params: event.targetDevice);
     emit(BluetoothDone(services: services));
   }
 
-  void onDisconnectDevice(
-      DisconnectDeviceEvent event, Emitter<BluetoothAppState> emit) async {
+  void onDisconnectDevice(DisconnectDeviceEvent event, Emitter<BluetoothAppState> emit) async {
     await _disconnectDeviceUseCase();
     emit(const BluetoothDone());
   }
 
-  void onUpdateChara(
-      UpdateCharaEvent event, Emitter<BluetoothAppState> emit) async {
+  void onUpdateChara(UpdateCharaEvent event, Emitter<BluetoothAppState> emit) async {
     await _updateCharaUseCase(params: event.targetCharacteristic);
 
     emit(const BluetoothDone());
   }
 
-  void onWriteData(
-      WriteDataEvent event, Emitter<BluetoothAppState> emit) async {
+  void onWriteData(WriteDataEvent event, Emitter<BluetoothAppState> emit) async {
     await _writeDataUseCase(params: event.data);
     emit(const BluetoothDone());
   }
