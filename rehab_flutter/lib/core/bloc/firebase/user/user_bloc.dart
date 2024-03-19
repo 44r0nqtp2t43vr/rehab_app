@@ -25,7 +25,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(const UserLoading());
     try {
       await _registerUserUseCase(params: event.registerData);
-      emit(const UserDone());
+      emit(const UserDone(currentUser: null));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }
@@ -34,8 +34,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onLoginUser(LoginEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      await _loginUserUseCase(params: event.loginData);
-      emit(const UserDone());
+      final currentUser = await _loginUserUseCase(params: event.loginData);
+      emit(UserDone(currentUser: currentUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }

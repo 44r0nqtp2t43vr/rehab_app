@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -6,14 +9,23 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AppButton(
-          onPressed: () => _onTestingButtonPressed(context),
-          child: const Text('Pretest'),
-        ),
-      ],
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state is UserDone) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(state.currentUser!.userId),
+              AppButton(
+                onPressed: () => _onTestingButtonPressed(context),
+                child: const Text('Pretest'),
+              ),
+            ],
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 

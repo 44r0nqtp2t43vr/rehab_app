@@ -1,12 +1,14 @@
 import 'package:equatable/equatable.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 
 abstract class UserState extends Equatable {
+  final AppUser? currentUser;
   final String? errorMessage;
 
-  const UserState({this.errorMessage});
+  const UserState({this.currentUser, this.errorMessage});
 
   @override
-  List<Object> get props => [errorMessage!];
+  List<Object> get props => [currentUser!, errorMessage!];
 }
 
 class UserNone extends UserState {
@@ -18,5 +20,5 @@ class UserLoading extends UserState {
 }
 
 class UserDone extends UserState {
-  const UserDone() : super();
+  const UserDone({AppUser? currentUser}) : super(currentUser: currentUser);
 }
