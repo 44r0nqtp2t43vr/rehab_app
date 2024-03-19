@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+
 import 'package:rehab_flutter/core/bloc/firebase/logs/logs_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
@@ -34,7 +35,8 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Dependencies
 
-  sl.registerSingleton<FirebaseRepository>(FirebaseRepositoryImpl(FirebaseFirestore.instance));
+  sl.registerSingleton<FirebaseRepository>(
+      FirebaseRepositoryImpl(FirebaseFirestore.instance));
 
   sl.registerSingleton<BluetoothController>(BluetoothController());
 
@@ -80,7 +82,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LoginUserUseCase>(LoginUserUseCase(sl()));
 
   // Blocs
-  sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<BluetoothBloc>(
+      () => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 

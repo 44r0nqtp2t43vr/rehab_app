@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
 
-import 'package:rehab_flutter/core/usecases/firebase/FetchLoginLogsUseCase.dart';
 import 'logs_event.dart';
 import 'logs_state.dart';
 
