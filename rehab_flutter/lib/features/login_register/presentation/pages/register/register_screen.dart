@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rehab_flutter/core/bloc/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/user/user_event.dart';
-import 'package:rehab_flutter/core/bloc/user/user_state.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
-import 'package:rehab_flutter/injection_container.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,28 +19,33 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final Bloc<UserEvent, UserState> userBloc = sl<UserBloc>();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<UserBloc>(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Register'),
-        ),
-        body: _buildBody(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Register'),
       ),
+      body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (_, state) {
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserNone && state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+        if (state is UserDone) {
+          BlocProvider.of<UserBloc>(context).add(const ResetEvent());
+          Navigator.of(context).pushNamed('/Login');
+        }
+      },
+      builder: (context, state) {
         if (state is UserLoading) {
           return const Center(child: CupertinoActivityIndicator());
         }
-        if (state is UserNone) {
+        if (state is UserNone || state is UserDone) {
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -91,7 +95,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                     AppButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          _registerUser();
+                          _registerUser(context);
                         }
                       },
                       child: const Text('Register'),
@@ -111,8 +115,8 @@ class RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _registerUser() {
-    sl<UserBloc>().add(RegisterEvent(context, RegisterData(email: _emailController.text, password: _passwordController.text)));
+  void _registerUser(BuildContext context) {
+    BlocProvider.of<UserBloc>(context).add(RegisterEvent(RegisterData(email: _emailController.text, password: _passwordController.text)));
   }
 
   void _onLoginButtonPressed(BuildContext context) {

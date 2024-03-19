@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
+import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 
 class FirebaseRepositoryImpl implements FirebaseRepository {
@@ -35,6 +36,14 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<void> registerUser(RegisterData data) async {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: data.email,
+      password: data.password,
+    );
+  }
+
+  @override
+  Future<void> loginUser(LoginData data) async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
       password: data.password,
     );

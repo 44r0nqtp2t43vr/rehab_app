@@ -1,14 +1,16 @@
 import 'package:equatable/equatable.dart';
 
 abstract class UserState extends Equatable {
-  const UserState();
+  final String? errorMessage;
+
+  const UserState({this.errorMessage});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [errorMessage!];
 }
 
 class UserNone extends UserState {
-  const UserNone();
+  const UserNone({String? errorMessage}) : super(errorMessage: errorMessage);
 }
 
 class UserLoading extends UserState {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'firebase_options.dart';
 import 'package:rehab_flutter/injection_container.dart';
 import 'package:rehab_flutter/config/routes/routes.dart';
@@ -20,11 +22,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Haplos',
-      theme: theme(),
-      onGenerateRoute: AppRoutes.onGenerateRoutes,
-      home: const OnboardingScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserBloc>(
+          create: (BuildContext context) => sl(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Haplos',
+        theme: theme(),
+        onGenerateRoute: AppRoutes.onGenerateRoutes,
+        home: const OnboardingScreen(),
+      ),
     );
   }
 }
