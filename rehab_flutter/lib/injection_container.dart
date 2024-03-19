@@ -18,6 +18,8 @@ import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
+import 'package:rehab_flutter/core/usecases/firebase/log_login_attempt.dart';
+import 'package:rehab_flutter/core/usecases/firebase/log_logout_attempt.dart';
 import 'package:rehab_flutter/core/usecases/firebase/login_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_user.dart';
 import 'package:rehab_flutter/core/usecases/actuators/update_actuators.dart';
@@ -26,8 +28,6 @@ import 'package:rehab_flutter/core/usecases/bluetooth/disconnect_device.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/scan_devices.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/update_chara.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/write_data.dart';
-import 'package:rehab_flutter/core/usecases/firebase/LogLoginAttemptUseCase.dart';
-import 'package:rehab_flutter/core/usecases/firebase/LogLogoutAttemptUseCase.dart';
 
 final sl = GetIt.instance;
 
