@@ -37,6 +37,7 @@ class RegisterScreenState extends State<RegisterScreen> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
+          BlocProvider.of<UserBloc>(context).add(const ResetEvent());
           Navigator.of(context).pushNamed('/Login');
         }
       },

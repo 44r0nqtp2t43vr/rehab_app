@@ -17,6 +17,7 @@ import 'package:rehab_flutter/core/repository/bluetooth_repository.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
+import 'package:rehab_flutter/core/usecases/firebase/login_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_user.dart';
 import 'package:rehab_flutter/core/usecases/actuators/update_actuators.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/connect_device.dart';
@@ -76,12 +77,14 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<RegisterUserUseCase>(RegisterUserUseCase(sl()));
 
+  sl.registerSingleton<LoginUserUseCase>(LoginUserUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
-  sl.registerFactory<UserBloc>(() => UserBloc(sl()));
+  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl()));
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 }
