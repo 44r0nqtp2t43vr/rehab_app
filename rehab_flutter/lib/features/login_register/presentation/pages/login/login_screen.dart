@@ -117,10 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushNamed(context, '/BluetoothConnect');
   }
 
-  void _onVisualizerScreenTap(BuildContext context) {
-    Navigator.pushNamed(context, '/VisualizerSlider');
-  }
-
   void _onLogsTap(BuildContext context) {
     Navigator.pushNamed(context, '/LogsScreen');
   }

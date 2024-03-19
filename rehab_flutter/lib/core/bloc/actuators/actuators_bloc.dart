@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_state.dart';
-import 'package:rehab_flutter/core/usecases/init_actuators.dart';
-import 'package:rehab_flutter/core/usecases/load_image.dart';
-import 'package:rehab_flutter/core/usecases/update_actuators.dart';
+import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
+import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
+import 'package:rehab_flutter/core/usecases/actuators/update_actuators.dart';
 
 class ActuatorsBloc extends Bloc<ActuatorsEvent, ActuatorsState> {
   final InitActuatorsUseCase _initActuatorsUseCase;
