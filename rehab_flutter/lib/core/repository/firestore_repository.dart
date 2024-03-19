@@ -67,6 +67,19 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       email: data.email,
       password: data.password,
     );
-    print(userCredential.user!.uid);
+
+    // Example of logging the login attempt (success case)
+    await logLoginAttempt(data.email, true);
+
+    // Optionally fetch and do something with the user's document from Firestore
+    // For example, retrieving the user's profile information
+    DocumentSnapshot<Map<String, dynamic>> userDoc =
+        await db.collection('users').doc(userCredential.user!.uid).get();
+
+    if (!userDoc.exists) {
+      throw Exception('User document does not exist in Firestore.');
+    }
+
+    print('User logged in with data: ${userDoc.data()}');
   }
 }
