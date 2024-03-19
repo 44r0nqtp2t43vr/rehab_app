@@ -15,7 +15,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   void onRegisterUser(RegisterEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
-    await Future.delayed(const Duration(seconds: 5));
     try {
       await _registerUserUseCase(params: event.registerData);
       emit(const UserNone());

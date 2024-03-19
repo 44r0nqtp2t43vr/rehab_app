@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/firebase/logs/logs_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/logs/logs_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/logs/logs_state.dart';
@@ -34,8 +33,7 @@ class LogsScreen extends StatelessWidget {
                   final timestamp = (log['timestamp'] as Timestamp).toDate();
                   return ListTile(
                     title: Text(log['email'] ?? 'Unknown User'),
-                    subtitle: Text(
-                        'Attempted on $timestamp'), // Consider formatting this date
+                    subtitle: Text('Attempted on $timestamp'), // Consider formatting this date
                   );
                 },
               );

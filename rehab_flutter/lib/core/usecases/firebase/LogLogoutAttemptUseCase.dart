@@ -9,14 +9,13 @@ class LogLogoutAttemptParams {
 }
 
 class LogLogoutAttemptUseCase extends UseCase<void, LogLogoutAttemptParams> {
-  final FirebaseInterface _repository;
+  final FirebaseRepository _repository;
 
   LogLogoutAttemptUseCase(this._repository);
 
   @override
   Future<void> call({LogLogoutAttemptParams? params}) async {
-    if (params == null)
-      throw Exception("Params cannot be null for LogLogoutAttemptUseCase");
+    if (params == null) throw Exception("Params cannot be null for LogLogoutAttemptUseCase");
     await _repository.logLogoutAttempt(params.email, params.success);
   }
 }

@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
@@ -26,8 +25,7 @@ class VisualizerScreenSlider extends StatefulWidget {
   VisualizerScreenStateSlider createState() => VisualizerScreenStateSlider();
 }
 
-class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
-    with SingleTickerProviderStateMixin {
+class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with SingleTickerProviderStateMixin {
 //  controllers
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
@@ -130,8 +128,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
         currentPositionSec = position.inSeconds.toDouble();
       });
 
-      useClosestBlock(
-          position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
+      useClosestBlock(position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
     });
   }
 
@@ -139,12 +136,10 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     if (blocks.isEmpty) return;
 
     for (int i = 0; i < blocks.length; i++) {
-      if (i == blocks.length - 1 ||
-          (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
+      if (i == blocks.length - 1 || (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
         if (i != currentIndex) {
           setState(() {
-            prevIndex =
-                currentIndex; // Save the current index as previous before updating
+            prevIndex = currentIndex; // Save the current index as previous before updating
             currentIndex = i; // Now update the current index
           });
           break;
@@ -168,21 +163,12 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       print("Time: ${blocks[currentIndex].time}");
       print("Position: $positionSec");
 
-      if (noteOnset == 1 &&
-          blocks[prevIndex].noteOnset == 0 &&
-          blocks[prevIndex - 1].noteOnset == 0 &&
-          blocks[prevIndex - 2].noteOnset == 0 &&
-          blocks[prevIndex - 3].noteOnset == 0) {
+      if (noteOnset == 1 && blocks[prevIndex].noteOnset == 0 && blocks[prevIndex - 1].noteOnset == 0 && blocks[prevIndex - 2].noteOnset == 0 && blocks[prevIndex - 3].noteOnset == 0) {
         for (int i = 0; i < activeValues.length; i++) {
           activeValues[i] = 0;
         }
         int delay = 0; // Initial delay is 0ms for the first column
-        List<List<int>> columns = [
-          firstCol,
-          secondCol,
-          thirdCol,
-          fourthCol
-        ]; // List of column groups for iteration
+        List<List<int>> columns = [firstCol, secondCol, thirdCol, fourthCol]; // List of column groups for iteration
 
         for (var column in columns) {
           Timer(Duration(milliseconds: delay), () {
@@ -191,8 +177,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
               for (int i = 0; i < activeValues.length; i++) {
                 activeValues[i] = 0;
               }
-              updateCircleState(
-                  index, Colors.green, 40.0, 40.0, 1); // Mark as active
+              updateCircleState(index, Colors.green, 40.0, 40.0, 1); // Mark as active
             }
           });
 
@@ -207,19 +192,15 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       } else if (noteOnset == 1) {
         updateCirclePropertiesNoteOnset(outerSquare, true);
         lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
-      } else if (activeValues
-          .every((value) => value == 0)) //active values is all 0
+      } else if (activeValues.every((value) => value == 0)) //active values is all 0
       {
         updateCircleProperties(bassSquare, getBassBoolValue(bass));
         updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
-        updateCircleProperties(
-            lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
+        updateCircleProperties(lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
         updateCircleProperties(subBassSquare, getSubBassBoolValue(subBass));
         updateCircleProperties(presenceSquare, getPresenceBoolValue(presence));
-        updateCircleProperties(
-            higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
-        updateCircleProperties(
-            brillianceSquare, getBrillianceBoolValue(brilliance));
+        updateCircleProperties(higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
+        updateCircleProperties(brillianceSquare, getBrillianceBoolValue(brilliance));
       }
 
       lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
@@ -297,16 +278,14 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      Text(secToMinSec(
-                          currentPositionSec)), // Display current playback position
+                      Text(secToMinSec(currentPositionSec)), // Display current playback position
                       const SizedBox(width: 20),
                       Expanded(
                         child: SongSlider(
                           currentDuration: currentPositionSec,
                           minDuration: 0,
                           maxDuration: widget.songData.duration,
-                          onDurationChanged: (value) =>
-                              _onDurationChanged(value),
+                          onDurationChanged: (value) => _onDurationChanged(value),
                         ),
                       ),
                       const SizedBox(width: 20),
@@ -366,9 +345,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     List<Widget> rows = [];
     int itemsPerRow = 4; // Number of RayPainters per row
     for (int i = 0; i < circles.length; i += itemsPerRow) {
-      List<Widget> rowItems = circles
-          .sublist(i, min(i + itemsPerRow, circles.length))
-          .map((circleState) {
+      List<Widget> rowItems = circles.sublist(i, min(i + itemsPerRow, circles.length)).map((circleState) {
         return SizedBox(
           width: 100,
           height: 100,
@@ -386,15 +363,12 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
           ),
         );
       }).toList();
-      rows.add(Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: rowItems));
+      rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: rowItems));
     }
     return rows;
   }
 
-  void updateCircleState(
-      int index, Color color, double width, double height, int activeValue) {
+  void updateCircleState(int index, Color color, double width, double height, int activeValue) {
     setState(() {
       circles[index].color = color;
       circles[index].circleWidth = width;
@@ -405,8 +379,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
-  void resetAllCircles(
-      Color color, double width, double height, int activeValue) {
+  void resetAllCircles(Color color, double width, double height, int activeValue) {
     setState(() {
       for (var circle in circles) {
         circle.color = color;

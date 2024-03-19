@@ -9,14 +9,13 @@ class LogLoginAttemptParams {
 }
 
 class LogLoginAttemptUseCase extends UseCase<void, LogLoginAttemptParams> {
-  final FirebaseInterface _repository;
+  final FirebaseRepository _repository;
 
   LogLoginAttemptUseCase(this._repository);
 
   @override
   Future<void> call({LogLoginAttemptParams? params}) async {
-    if (params == null)
-      throw Exception("Params cannot be null for LogLoginAttemptUseCase");
+    if (params == null) throw Exception("Params cannot be null for LogLoginAttemptUseCase");
     await _repository.logLoginAttempt(params.email, params.success);
   }
 }

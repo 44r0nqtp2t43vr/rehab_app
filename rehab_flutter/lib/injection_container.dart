@@ -12,10 +12,8 @@ import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/interface/actuators_repository.dart';
 import 'package:rehab_flutter/core/interface/bluetooth_repository.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
-import 'package:rehab_flutter/core/interface/firebase_repository.dart' as fb;
 import 'package:rehab_flutter/core/repository/actuators_repository.dart';
 import 'package:rehab_flutter/core/repository/bluetooth_repository.dart';
-import 'package:rehab_flutter/core/repository/firebase_repository.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecases/connect_device.dart';
 import 'package:rehab_flutter/core/usecases/disconnect_device.dart';
@@ -35,7 +33,7 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Dependencies
 
-  sl.registerSingleton<fb.FirebaseRepository>(FirestoreRepositoryImpl());
+  sl.registerSingleton<FirebaseRepository>(FirebaseRepositoryImpl(FirebaseFirestore.instance));
 
   sl.registerSingleton<BluetoothController>(BluetoothController());
 
@@ -70,6 +68,12 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<LoadImageUseCase>(LoadImageUseCase(sl()));
 
+  sl.registerSingleton<FetchLoginLogsUseCase>(FetchLoginLogsUseCase(sl()));
+
+  sl.registerSingleton<LogLoginAttemptUseCase>(LogLoginAttemptUseCase(sl()));
+
+  sl.registerSingleton<LogLogoutAttemptUseCase>(LogLogoutAttemptUseCase(sl()));
+
   sl.registerSingleton<RegisterUserUseCase>(RegisterUserUseCase(sl()));
 
   // Blocs
@@ -78,14 +82,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
   sl.registerFactory<UserBloc>(() => UserBloc(sl()));
-  sl.registerSingleton<FirebaseInterface>(FirebaseRepository(FirebaseFirestore.instance));
 
-  // Register use cases
-  sl.registerFactory(() => FetchLoginLogsUseCase(sl()));
-  sl.registerFactory(() => LogLoginAttemptUseCase(sl()));
-  sl.registerFactory(() => LogLogoutAttemptUseCase(sl()));
-
-  // Register BLoCs with use cases
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
-  // Add other BLoCs as needed
 }

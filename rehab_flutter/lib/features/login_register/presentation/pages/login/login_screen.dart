@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onLoginButtonPressed() async {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
-    final firebaseRepo = sl<FirebaseInterface>(); // Get the FirebaseRepository
+    final firebaseRepo = sl<FirebaseRepository>(); // Get the FirebaseRepository
 
     if (email.isNotEmpty && password.isNotEmpty) {
       try {

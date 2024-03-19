@@ -1,4 +1,4 @@
-import 'package:rehab_flutter/core/interface/firebase_repository.dart';
+import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecase/usecase.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 
