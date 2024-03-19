@@ -34,7 +34,8 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Dependencies
 
-  sl.registerSingleton<FirebaseRepository>(FirebaseRepositoryImpl(FirebaseFirestore.instance));
+  sl.registerSingleton<FirebaseRepository>(
+      FirebaseRepositoryImpl(FirebaseFirestore.instance));
 
   sl.registerSingleton<BluetoothController>(BluetoothController());
 
@@ -80,7 +81,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LoginUserUseCase>(LoginUserUseCase(sl()));
 
   // Blocs
-  sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<BluetoothBloc>(
+      () => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 

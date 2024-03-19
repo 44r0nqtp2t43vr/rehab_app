@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
@@ -28,7 +29,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs() async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getLoginLogs() async {
     final snapshot = await db.collection('loginAttempts').get();
     return snapshot.docs;
   }
@@ -39,18 +41,29 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       email: data.email,
       password: data.password,
     );
-    await db.collection('users').add({
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    String formattedBirthDate = DateFormat('MM/dd/yyyy').format(data.birthDate);
+
+    String userID =
+        FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+
+    await db.collection('users').doc(userID).set({
+      'userID': userID,
       'email': data.email,
       'firstName': data.firstName,
       'lastName': data.lastName,
+      'gender': data.gender,
       'phoneNumber': data.phoneNumber,
       'city': data.city,
+      'birthDate': formattedBirthDate, // Use the formatted string
+      'conditions': data.conditions,
     });
   }
 
   @override
   Future<void> loginUser(LoginData data) async {
-    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+    final UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
       password: data.password,
     );
