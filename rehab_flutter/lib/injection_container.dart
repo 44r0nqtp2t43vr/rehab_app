@@ -3,9 +3,8 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
-
-import 'package:rehab_flutter/core/bloc/firebase/logs/logs_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firestore/logs/logs_bloc.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/controller/bluetooth_controller.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
@@ -18,6 +17,7 @@ import 'package:rehab_flutter/core/repository/bluetooth_repository.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
+import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
 import 'package:rehab_flutter/core/usecases/firebase/login_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_user.dart';
 import 'package:rehab_flutter/core/usecases/actuators/update_actuators.dart';
@@ -26,7 +26,6 @@ import 'package:rehab_flutter/core/usecases/bluetooth/disconnect_device.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/scan_devices.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/update_chara.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/write_data.dart';
-import 'package:rehab_flutter/core/usecases/firebase/FetchLoginLogsUseCase.dart';
 import 'package:rehab_flutter/core/usecases/firebase/LogLoginAttemptUseCase.dart';
 import 'package:rehab_flutter/core/usecases/firebase/LogLogoutAttemptUseCase.dart';
 
@@ -35,8 +34,7 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Dependencies
 
-  sl.registerSingleton<FirebaseRepository>(
-      FirebaseRepositoryImpl(FirebaseFirestore.instance));
+  sl.registerSingleton<FirebaseRepository>(FirebaseRepositoryImpl(FirebaseFirestore.instance));
 
   sl.registerSingleton<BluetoothController>(BluetoothController());
 
@@ -82,8 +80,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LoginUserUseCase>(LoginUserUseCase(sl()));
 
   // Blocs
-  sl.registerFactory<BluetoothBloc>(
-      () => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
