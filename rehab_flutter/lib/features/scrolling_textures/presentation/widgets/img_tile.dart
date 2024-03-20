@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 
 class ImgTile extends StatelessWidget {
   final double height;

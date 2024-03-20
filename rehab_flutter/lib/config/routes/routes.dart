@@ -16,12 +16,12 @@ import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/plan_selection/presentation/plan_selection.dart';
+import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy/texture_therapy.dart';
 import 'package:rehab_flutter/features/pre_test_dummy/presentation/pre_test_dummy.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/pages/scroll_actuators/scroll_actuators.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_song_select/bg_song_select.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
-import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -47,8 +47,7 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -59,7 +58,7 @@ class AppRoutes {
       case '/PlayGame':
         return _materialRoute(PlayGame(
           song: sl<SongController>().getCurrentSong()!,
-          startingNoteIndex: sl<SongController>().getCurrentNoteIndex(),
+          startingNoteIndex: sl<SongController>().getCurrentDuration() ~/ 0.3,
         ));
 
       case '/ActuatorTherapy':
@@ -77,18 +76,12 @@ class AppRoutes {
       case '/LogsScreen':
         return _materialRoute(const LogsScreen());
 
-      case '/BgSongSelect':
-        return _materialRoute(const BgSongSelect());
-
       case '/ScrollTextures':
-        return _materialRoute(ScrollTextures(song: settings.arguments as Song));
-
-      case '/ScrollActuators':
-        return _materialRoute(const ScrollActuators());
+        return _materialRoute(const ScrollTextures());
 
       case '/VisualizerScreen':
-        return _materialRoute(VisualizerScreenSlider(
-            songData: sl<SongController>().getCurrentSong()!));
+        return _materialRoute(VisualizerScreenSlider(songData: sl<SongController>().getCurrentSong()!));
+
       case '/PlanSelection':
         return _materialRoute(PlanSelection());
 

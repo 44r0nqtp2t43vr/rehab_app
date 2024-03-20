@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image/image.dart' as img;
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
@@ -11,26 +10,23 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
-import 'package:rehab_flutter/core/entities/song.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
+import 'package:rehab_flutter/core/widgets/app_iconbuttontext.dart';
 import 'package:rehab_flutter/features/scrolling_textures/domain/enums/animation_state.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/gallery.dart';
-import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
+import 'package:rehab_flutter/core/data_sources/image_texture_provider.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class ScrollTextures extends StatefulWidget {
-  final Song song;
-
-  const ScrollTextures({super.key, required this.song});
+  const ScrollTextures({super.key});
 
   @override
   State<ScrollTextures> createState() => _ScrollTexturesState();
 }
 
 class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStateMixin {
-  final AudioPlayer player = AudioPlayer();
   late List<ImageTexture> imageTextures;
   late AnimationController animationController;
   late AnimationController animationControllerHoriz;
@@ -251,13 +247,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: true)].texture, preload: true, resetActuators: false, rotateFactor: rotateFactor)));
     }
 
-    player.play(AssetSource(widget.song.audioSource)).then((value) {
-      if (animationState != AnimationState.upward) {
-        animationController.forward();
-      } else if (animationState != AnimationState.downward) {
-        animationController.reverse(from: 1);
-      }
-    });
+    if (animationState != AnimationState.upward) {
+      animationController.forward();
+    } else if (animationState != AnimationState.downward) {
+      animationController.reverse(from: 1);
+    }
   }
 
   void _onPass(BuildContext context) {
@@ -298,11 +292,6 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       }
     });
 
-    player.onPlayerComplete.listen((event) {
-      player.seek(Duration.zero);
-      player.play(AssetSource(widget.song.audioSource));
-    });
-
     int indexToLoad = getIndexToLoad(preload: false);
     if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
       sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: false)].texture, preload: false, resetActuators: false, rotateFactor: rotateFactor)));
@@ -320,13 +309,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       _onPass(context);
     });
 
-    player.play(AssetSource(widget.song.audioSource)).then((value) {
-      if (animationState == AnimationState.downward) {
-        animationController.forward();
-      } else if (animationState == AnimationState.upward) {
-        animationController.reverse(from: 1);
-      }
-    });
+    if (animationState == AnimationState.downward) {
+      animationController.forward();
+    } else if (animationState == AnimationState.upward) {
+      animationController.reverse(from: 1);
+    }
   }
 
   @override
@@ -334,7 +321,6 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
     animationControllerHoriz.dispose();
-    player.dispose();
     super.dispose();
   }
 
@@ -372,6 +358,15 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
                   children: <Widget>[
                     _drawGallery(imgHeight, imgWidth),
                   ],
+                ),
+                Positioned(
+                  top: 20,
+                  left: 20,
+                  child: AppIconButtonText(
+                    icon: const Icon(Icons.chevron_left),
+                    text: const Text("Back"),
+                    onPressed: () => _onBackButtonPressed(context),
+                  ),
                 ),
                 Positioned(
                   top: 20,
@@ -423,7 +418,7 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     );
   }
 
-  _drawGallery(double imgHeight, double imgWidth) {
+  Widget _drawGallery(double imgHeight, double imgWidth) {
     List<ImageTexture> currentImageTextures = [];
     if (animationState == AnimationState.downward) {
       currentImageTextures = imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
@@ -449,5 +444,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
         key: GlobalKey(),
       ),
     );
+  }
+
+  void _onBackButtonPressed(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed("/TextureTherapy");
   }
 }

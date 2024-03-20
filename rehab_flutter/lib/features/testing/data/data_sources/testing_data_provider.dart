@@ -1,6 +1,6 @@
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 
 class TestingDataProvider {
   static final List<StaticPattern> staticPatterns = [

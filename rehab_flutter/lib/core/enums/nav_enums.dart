@@ -1,3 +1,3 @@
 enum TabEnum { home, therapy, activityMonitor, profile }
 
-enum TabTherapyEnum { home, music, cutaneous }
+enum TabTherapyEnum { home, music }

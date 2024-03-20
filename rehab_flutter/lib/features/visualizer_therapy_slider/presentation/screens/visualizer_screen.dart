@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rehab_flutter/core/controller/song_controller.dart';
+import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
@@ -14,6 +16,7 @@ import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/r
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/helper_functions.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class VisualizerScreenSlider extends StatefulWidget {
   final Song songData;
@@ -220,110 +223,116 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppIconButton(
-                    icon: Icons.arrow_drop_down,
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed("/MainScreen");
-                    },
-                  ),
-                  AppButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/PlayGame');
-                    },
-                    child: const Text('Basic'),
-                  ),
-                  AppButton(
-                    onPressed: () {},
-                    child: const Text('Intermediate'),
-                  ),
-                  AppIconButton(
-                    icon: Icons.more_vert,
-                    onPressed: () => {},
-                  ),
-                ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
+        sl<SongController>().setSong(null);
+        Navigator.of(context).pushReplacementNamed("/MainScreen");
+      },
+      child: Scaffold(
+        body: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppIconButton(
+                      icon: Icons.arrow_drop_down,
+                      onPressed: () => _onMinimize(context),
+                    ),
+                    AppButton(
+                      onPressed: () => _onSwitch(context),
+                      child: const Text('Basic'),
+                    ),
+                    const AppButton(
+                      onPressed: null,
+                      child: Text('Intermediate'),
+                    ),
+                    AppIconButton(
+                      icon: Icons.more_vert,
+                      onPressed: () => {},
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Column(
-            children: [
-              ...buildRayPainterRows(),
-            ],
-          ),
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    widget.songData.title,
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                  Text(
-                    widget.songData.artist,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Text(secToMinSec(currentPositionSec)), // Display current playback position
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: SongSlider(
-                          currentDuration: currentPositionSec,
-                          minDuration: 0,
-                          maxDuration: widget.songData.duration,
-                          onDurationChanged: (value) => _onDurationChanged(value),
+            Column(
+              children: [
+                ...buildRayPainterRows(),
+              ],
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20),
+                    Text(
+                      widget.songData.title,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    Text(
+                      widget.songData.artist,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(secToMinSec(currentPositionSec)), // Display current playback position
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: SongSlider(
+                            currentDuration: currentPositionSec,
+                            minDuration: 0,
+                            maxDuration: widget.songData.duration,
+                            onDurationChanged: (value) => _onDurationChanged(value),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 20),
-                      Text(widget.songData.songTime),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AppIconButton(
-                        icon: Icons.shuffle,
-                        onPressed: () {},
-                      ),
-                      AppIconButton(
-                        icon: Icons.arrow_back,
-                        onPressed: () {},
-                      ),
-                      AppIconButton(
-                          icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                          onPressed: () => {
-                                togglePlay(widget.songData.audioSource),
-                              }),
-                      AppIconButton(
-                        icon: Icons.arrow_forward,
-                        onPressed: () {},
-                      ),
-                      AppIconButton(
-                        icon: Icons.playlist_play,
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 20),
+                        Text(widget.songData.songTime),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AppIconButton(
+                          icon: Icons.shuffle,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: Icons.arrow_back,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                            icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                            onPressed: () => {
+                                  togglePlay(widget.songData.audioSource),
+                                }),
+                        AppIconButton(
+                          icon: Icons.arrow_forward,
+                          onPressed: () {},
+                        ),
+                        AppIconButton(
+                          icon: Icons.playlist_play,
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -333,6 +342,17 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     int minutes = roundedSeconds ~/ 60;
     int remainingSeconds = roundedSeconds % 60;
     return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
+  }
+
+  void _onMinimize(BuildContext context) {
+    sl<SongController>().setCurrentDuration(currentPositionSec);
+    Navigator.of(context).pushReplacementNamed("/MainScreen");
+  }
+
+  void _onSwitch(BuildContext context) {
+    sl<SongController>().setCurrentDuration(0);
+    sl<SongController>().setMTType(MusicTherapy.basic);
+    Navigator.of(context).pushReplacementNamed("/PlayGame");
   }
 
   void _onDurationChanged(double value) {

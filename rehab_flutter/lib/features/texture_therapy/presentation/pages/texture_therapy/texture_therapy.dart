@@ -8,24 +8,25 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
-import 'package:rehab_flutter/features/scrolling_actuators/domain/enums/animation_direction.dart';
-import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/animation_slider.dart';
-import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/scroll_texture_frame.dart';
-import 'package:rehab_flutter/features/texture_therapy/data/image_texture_provider.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
+import 'package:rehab_flutter/core/widgets/app_iconbuttontext.dart';
+import 'package:rehab_flutter/features/texture_therapy/domain/enums/animation_direction.dart';
+import 'package:rehab_flutter/core/data_sources/image_texture_provider.dart';
+import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/animation_slider.dart';
+import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/scroll_texture_frame.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/texture_name_selector.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
-class ScrollActuators extends StatefulWidget {
-  const ScrollActuators({Key? key}) : super(key: key);
+class TextureTherapy extends StatefulWidget {
+  const TextureTherapy({Key? key}) : super(key: key);
 
   @override
-  State<ScrollActuators> createState() => _ScrollActuatorsState();
+  State<TextureTherapy> createState() => _TextureTherapyState();
 }
 
-class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProviderStateMixin {
+class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
   final ImageTextureProvider imageTextureProvider = ImageTextureProvider();
   late AnimationController animationController;
@@ -175,6 +176,11 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
                       icon: const Icon(Icons.swap_calls),
                       onPressed: () => _toggleAniDirection(),
                     ),
+                    AppIconButtonText(
+                      icon: const Icon(Icons.chevron_right),
+                      text: const Text("Scroll Textures"),
+                      onPressed: () => _onSTButtonPressed(context),
+                    ),
                   ],
                 ),
                 const Spacer(flex: 2),
@@ -185,5 +191,9 @@ class _ScrollActuatorsState extends State<ScrollActuators> with SingleTickerProv
         return Container();
       },
     );
+  }
+
+  void _onSTButtonPressed(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed("/ScrollTextures");
   }
 }

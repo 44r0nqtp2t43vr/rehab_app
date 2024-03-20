@@ -27,7 +27,7 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
   void setSong(BuildContext context, Song song) {
     MusicTherapy mtType = sl<SongController>().currentMTType;
     sl<SongController>().setSong(song);
-    sl<SongController>().setNoteIndex(0);
+    sl<SongController>().setCurrentDuration(0);
 
     if (mtType == MusicTherapy.basic) {
       Navigator.pushReplacementNamed(context, '/PlayGame');

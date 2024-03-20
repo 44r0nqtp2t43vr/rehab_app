@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
@@ -13,7 +14,6 @@ import 'package:rehab_flutter/features/testing/presentation/widgets/static_patte
 import 'package:rehab_flutter/features/testing/presentation/widgets/testing_finish.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/textures_intro.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/textures_tester.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class TestingScreen extends StatefulWidget {
