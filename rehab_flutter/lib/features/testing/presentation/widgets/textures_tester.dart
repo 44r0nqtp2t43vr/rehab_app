@@ -8,7 +8,7 @@ import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
-import 'package:rehab_flutter/features/scrolling_actuators/data/data_sources/anipattern_provider.dart';
+import 'package:rehab_flutter/core/data_sources/anipattern_provider.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/injection_container.dart';

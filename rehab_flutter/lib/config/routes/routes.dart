@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
-import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
@@ -16,7 +15,6 @@ import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actua
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/plan_selection/presentation/plan_selection.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/pages/scroll_actuators/scroll_actuators.dart';
-import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_song_select/bg_song_select.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy_screen.dart';
@@ -45,8 +43,7 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -75,18 +72,14 @@ class AppRoutes {
       case '/LogsScreen':
         return _materialRoute(const LogsScreen());
 
-      case '/BgSongSelect':
-        return _materialRoute(const BgSongSelect());
-
       case '/ScrollTextures':
-        return _materialRoute(ScrollTextures(song: settings.arguments as Song));
+        return _materialRoute(const ScrollTextures());
 
       case '/ScrollActuators':
         return _materialRoute(const ScrollActuators());
 
       case '/VisualizerScreen':
-        return _materialRoute(VisualizerScreenSlider(
-            songData: sl<SongController>().getCurrentSong()!));
+        return _materialRoute(VisualizerScreenSlider(songData: sl<SongController>().getCurrentSong()!));
       case '/PlanSelection':
         return _materialRoute(PlanSelection());
 
