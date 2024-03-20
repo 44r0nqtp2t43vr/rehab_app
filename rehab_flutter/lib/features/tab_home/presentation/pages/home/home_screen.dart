@@ -21,6 +21,9 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () => _onTestingButtonPressed(context),
                 child: const Text('Pretest'),
               ),
+              AppButton(
+                  onPressed: () => _onPlanSelectionButtonPressed(context),
+                  child: const Text('Select Plan'))
             ],
           );
         }
@@ -31,5 +34,9 @@ class HomeScreen extends StatelessWidget {
 
   void _onTestingButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Testing');
+  }
+
+  void _onPlanSelectionButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PlanSelection');
   }
 }
