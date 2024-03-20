@@ -7,7 +7,6 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
-import 'package:rehab_flutter/injection_container.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -26,8 +25,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _phoneNumberController = TextEditingController();
   final _cityController = TextEditingController();
   final _genderController = TextEditingController();
-  final _birthdateController =
-      TextEditingController(); // Consider using a DatePicker
+  final _birthdateController = TextEditingController(); // Consider using a DatePicker
 
   List<String> _availableConditions = [
     'Condition 1',
@@ -51,12 +49,12 @@ class RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
-          BlocProvider.of<UserBloc>(context).add(const ResetEvent());
-          Navigator.of(context).pushNamed('/Login');
+          Navigator.of(context).pushNamed('/Login').then((value) {
+            BlocProvider.of<UserBloc>(context).add(const ResetEvent());
+          });
         }
       },
       builder: (context, state) {
@@ -193,8 +191,7 @@ class RegisterScreenState extends State<RegisterScreen> {
             _currentCondition = newValue!;
           });
         },
-        items:
-            _availableConditions.map<DropdownMenuItem<String>>((String value) {
+        items: _availableConditions.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value),
@@ -266,8 +263,7 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   void _registerUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate =
-        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     RegisterData registerData = RegisterData(
@@ -277,14 +273,13 @@ class RegisterScreenState extends State<RegisterScreen> {
       lastName: _lastNameController.text,
       phoneNumber: _phoneNumberController.text,
       city: _cityController.text,
-      gender:
-          _genderController.text, // Assuming gender is included in RegisterData
+      gender: _genderController.text, // Assuming gender is included in RegisterData
       birthDate: birthdate,
       conditions: _selectedConditions,
     );
 
     // Dispatch the event to the bloc
-    sl<UserBloc>().add(RegisterEvent(registerData));
+    BlocProvider.of<UserBloc>(context).add(RegisterEvent(registerData));
   }
 
   void _onLoginButtonPressed(BuildContext context) {
