@@ -5,7 +5,6 @@ import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
-import 'package:rehab_flutter/features/tab_therapy/presentation/pages/cutaneous_therapy/cutaneous_therapy.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/music_therapy/music_therapy.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -27,6 +26,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AppButton(
+          onPressed: () => _onPassiveTherapyButtonPressed(context),
+          child: const Text('Passive Therapy'),
+        ),
+        AppButton(
           onPressed: () => _onMTButtonPressed(),
           child: const Text('Music Therapy'),
         ),
@@ -44,8 +47,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
         return buildTherapyScreenHome();
       case TabTherapyEnum.music:
         return MusicTherapyScreen(callback: setTabTherapy);
-      case TabTherapyEnum.cutaneous:
-        return CutaneousTherapyScreen(callback: setTabTherapy);
       default:
         return buildTherapyScreenHome();
     }
@@ -64,22 +65,34 @@ class _TherapyScreenState extends State<TherapyScreen> {
   void _onMTButtonPressed() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
           title: const Text("Music Therapy"),
-          actions: <Widget>[
-            ElevatedButton(
-              onPressed: () => _onBasicMTButtonPressed(context),
-              child: const Text("Basic"),
-            ),
-            ElevatedButton(
-              onPressed: () => _onIntermediateMTButtonPressed(context),
-              child: const Text("Intermediate"),
-            ),
-          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () => _onBasicMTButtonPressed(context),
+                child: const Text("Basic"),
+              ),
+              ElevatedButton(
+                onPressed: () => _onIntermediateMTButtonPressed(context),
+                child: const Text("Intermediate"),
+              ),
+              ElevatedButton(
+                onPressed: () => _onBackButtonPressed(context),
+                child: const Text("Cancel"),
+              ),
+            ],
+          ),
         );
       },
     );
+  }
+
+  void _onPassiveTherapyButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PassiveTherapy');
   }
 
   void _onBasicMTButtonPressed(BuildContext context) {
@@ -97,6 +110,54 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   void _onCTButtonPressed() {
-    setTabTherapy(TabTherapyEnum.cutaneous);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Cutaneous Therapy"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () => _onATButtonPressed(context),
+                child: const Text('Actuator Therapy'),
+              ),
+              ElevatedButton(
+                onPressed: () => _onPTButtonPressed(context),
+                child: const Text('Pattern Therapy'),
+              ),
+              ElevatedButton(
+                onPressed: () => _onTTButtonPressed(context),
+                child: const Text('Texture Therapy'),
+              ),
+              ElevatedButton(
+                onPressed: () => _onBackButtonPressed(context),
+                child: const Text("Cancel"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _onATButtonPressed(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.pushNamed(context, '/ActuatorTherapy');
+  }
+
+  void _onPTButtonPressed(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.pushNamed(context, '/PatternTherapy');
+  }
+
+  void _onTTButtonPressed(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.pushNamed(context, '/TextureTherapy');
+  }
+
+  void _onBackButtonPressed(BuildContext context) {
+    Navigator.of(context).pop();
   }
 }

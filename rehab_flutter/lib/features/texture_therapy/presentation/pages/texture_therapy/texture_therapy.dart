@@ -11,6 +11,7 @@ import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
 import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
+import 'package:rehab_flutter/core/widgets/app_iconbuttontext.dart';
 import 'package:rehab_flutter/features/texture_therapy/domain/enums/animation_direction.dart';
 import 'package:rehab_flutter/core/data_sources/image_texture_provider.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/animation_slider.dart';
@@ -175,6 +176,11 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
                       icon: const Icon(Icons.swap_calls),
                       onPressed: () => _toggleAniDirection(),
                     ),
+                    AppIconButtonText(
+                      icon: const Icon(Icons.chevron_right),
+                      text: const Text("Scroll Textures"),
+                      onPressed: () => _onSTButtonPressed(context),
+                    ),
                   ],
                 ),
                 const Spacer(flex: 2),
@@ -185,5 +191,9 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
         return Container();
       },
     );
+  }
+
+  void _onSTButtonPressed(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed("/ScrollTextures");
   }
 }
