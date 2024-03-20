@@ -62,46 +62,46 @@ class EventList extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              currentSession.date == DateTime(0)
-                  ? const Text("You have no sessions for today")
-                  : Column(
-                      children: [
-                        EventCard(
-                          isCompleted: conditions[0],
-                          leftValue: currentSession.pretestScore ?? 0,
-                          rightValue: "Take the Pretest",
-                          eventType: EventType.test,
-                        ),
-                        const SizedBox(height: 16),
-                        EventCard(
-                          isCompleted: conditions[1],
-                          leftValue: currentSession.activityOneCurrentTime.toDouble(),
-                          rightValue: "Do a ${currentSession.activityOneSpeed} ${currentSession.activityOneType} session for at least ${secToMinSec(currentSession.activityOneTime.toDouble())}",
-                          eventType: EventType.timed,
-                        ),
-                        const SizedBox(height: 16),
-                        EventCard(
-                          isCompleted: conditions[2],
-                          leftValue: currentSession.activityTwoCurrentTime.toDouble(),
-                          rightValue: "Complete a 20-minute ${currentSession.activityTwoIntensity}-intensity passive therapy session",
-                          eventType: EventType.timed,
-                        ),
-                        const SizedBox(height: 16),
-                        EventCard(
-                          isCompleted: conditions[3],
-                          leftValue: currentSession.activityThreeCurrentTime.toDouble(),
-                          rightValue: "Do a ${currentSession.activityThreeSpeed} ${currentSession.activityThreeType} session for at least ${secToMinSec(currentSession.activityThreeTime.toDouble())}",
-                          eventType: EventType.timed,
-                        ),
-                        const SizedBox(height: 16),
-                        EventCard(
-                          isCompleted: conditions[4],
-                          leftValue: currentSession.posttestScore ?? 0,
-                          rightValue: "Take the Posttest",
-                          eventType: EventType.test,
-                        ),
-                      ],
-                    ),
+              // currentSession.date == DateTime(0)
+              //     ? const Text("You have no sessions for today")
+              //     : Column(
+              //         children: [
+              //           EventCard(
+              //             isCompleted: conditions[0],
+              //             leftValue: currentSession.pretestScore ?? 0,
+              //             rightValue: "Take the Pretest",
+              //             eventType: EventType.test,
+              //           ),
+              //           const SizedBox(height: 16),
+              //           EventCard(
+              //             isCompleted: conditions[1],
+              //             leftValue: currentSession.activityOneCurrentTime.toDouble(),
+              //             rightValue: "Do a ${currentSession.activityOneSpeed} ${currentSession.activityOneType} session for at least ${secToMinSec(currentSession.activityOneTime.toDouble())}",
+              //             eventType: EventType.timed,
+              //           ),
+              //           const SizedBox(height: 16),
+              //           EventCard(
+              //             isCompleted: conditions[2],
+              //             leftValue: currentSession.activityTwoCurrentTime.toDouble(),
+              //             rightValue: "Complete a 20-minute ${currentSession.activityTwoIntensity}-intensity passive therapy session",
+              //             eventType: EventType.timed,
+              //           ),
+              //           const SizedBox(height: 16),
+              //           EventCard(
+              //             isCompleted: conditions[3],
+              //             leftValue: currentSession.activityThreeCurrentTime.toDouble(),
+              //             rightValue: "Do a ${currentSession.activityThreeSpeed} ${currentSession.activityThreeType} session for at least ${secToMinSec(currentSession.activityThreeTime.toDouble())}",
+              //             eventType: EventType.timed,
+              //           ),
+              //           const SizedBox(height: 16),
+              //           EventCard(
+              //             isCompleted: conditions[4],
+              //             leftValue: currentSession.posttestScore ?? 0,
+              //             rightValue: "Take the Posttest",
+              //             eventType: EventType.test,
+              //           ),
+              //         ],
+              //       ),
             ],
           ),
         ),
