@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
+import 'package:rehab_flutter/core/entities/song.dart';
+import 'package:rehab_flutter/features/todays_session/presentation/todays_session.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
@@ -15,6 +17,9 @@ import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actua
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/plan_selection/presentation/plan_selection.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy/texture_therapy.dart';
+import 'package:rehab_flutter/features/pre_test_dummy/presentation/pre_test_dummy.dart';
+import 'package:rehab_flutter/features/scrolling_actuators/presentation/pages/scroll_actuators/scroll_actuators.dart';
+import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/bg_song_select/bg_song_select.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
@@ -83,6 +88,10 @@ class AppRoutes {
       case '/PassiveTherapy':
         return _materialRoute(const PassiveTherapyScreen());
 
+      case '/PreTestDummy':
+        return _materialRoute(PreTestDummy());
+      case '/TodaysSession':
+        return _materialRoute(TodaySessionScreen());
       default:
         return _materialRoute(const OnboardingScreen());
     }

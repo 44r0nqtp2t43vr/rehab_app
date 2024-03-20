@@ -23,13 +23,29 @@ class HomeScreen extends StatelessWidget {
               ),
               AppButton(
                   onPressed: () => _onPlanSelectionButtonPressed(context),
-                  child: const Text('Select Plan'))
+                  child: const Text('Select Plan')),
+              AppButton(
+                onPressed: () => _onPreTestDummyPressed(context),
+                child: const Text('Pretest Dummy'),
+              ),
+              AppButton(
+                onPressed: () => _onTodaysSessionPressed(context),
+                child: const Text('Today\'s Session'),
+              )
             ],
           );
         }
         return const SizedBox();
       },
     );
+  }
+
+  void _onPreTestDummyPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PreTestDummy');
+  }
+
+  void _onTodaysSessionPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/TodaysSession');
   }
 
   void _onTestingButtonPressed(BuildContext context) {
