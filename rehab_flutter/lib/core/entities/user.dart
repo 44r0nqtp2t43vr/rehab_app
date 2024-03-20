@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 
 class AppUser {

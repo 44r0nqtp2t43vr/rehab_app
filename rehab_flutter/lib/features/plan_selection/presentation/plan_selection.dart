@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/session.dart'; // Assuming this is your Session entity
-import 'package:rehab_flutter/core/entities/plan.dart';
 
 class PlanSelection extends StatefulWidget {
   @override
@@ -41,10 +40,7 @@ class _PlanSelectionState extends State<PlanSelection> {
     final DateTime endDate = startDate.add(Duration(days: daysToAdd));
 
     // Assuming sequential naming without checking Firestore. This needs proper management.
-    final plansCollection = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans');
+    final plansCollection = FirebaseFirestore.instance.collection('users').doc(userId).collection('plans');
     final int planNumber = (await plansCollection.get()).docs.length + 1;
     final String planDocumentName = 'plan$planNumber';
 
@@ -58,8 +54,7 @@ class _PlanSelectionState extends State<PlanSelection> {
     };
 
     await plansCollection.doc(planDocumentName).set(planData).then((_) async {
-      print(
-          'Plan $planName created for user $userId with ID $planDocumentName');
+      print('Plan $planName created for user $userId with ID $planDocumentName');
 
       // Create sessions
       for (int i = 0; i < daysToAdd; i++) {
@@ -80,11 +75,7 @@ class _PlanSelectionState extends State<PlanSelection> {
           posttestScore: null,
         );
 
-        await plansCollection
-            .doc(planDocumentName)
-            .collection('sessions')
-            .doc(sessionDocumentName)
-            .set(session.toMap());
+        await plansCollection.doc(planDocumentName).collection('sessions').doc(sessionDocumentName).set(session.toMap());
       }
 
       Navigator.of(context).pop();

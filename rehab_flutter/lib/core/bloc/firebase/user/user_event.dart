@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 
@@ -19,8 +17,7 @@ class ResetEvent extends UserEvent {
 }
 
 class RegisterEvent extends UserEvent {
-  const RegisterEvent(RegisterData registerData)
-      : super(registerData: registerData);
+  const RegisterEvent(RegisterData registerData) : super(registerData: registerData);
 }
 
 class LoginEvent extends UserEvent {

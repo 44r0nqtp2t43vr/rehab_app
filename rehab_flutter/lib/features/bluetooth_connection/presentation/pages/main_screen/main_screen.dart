@@ -18,7 +18,7 @@ class MainScreen extends StatelessWidget {
       case TabEnum.therapy:
         return const TherapyScreen();
       case TabEnum.activityMonitor:
-      // return const ActivityMonitor();
+        return const ActivityMonitor();
       case TabEnum.profile:
         return const HomeScreen();
       default:
@@ -40,8 +40,7 @@ class MainScreen extends StatelessWidget {
               return;
             }
 
-            if (currentTab == TabEnum.therapy &&
-                currentTabTherapy == TabTherapyEnum.music) {
+            if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.music) {
               sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
             } else {
               Navigator.of(context).pop();
