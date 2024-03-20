@@ -32,10 +32,6 @@ class CutaneousTherapyScreen extends StatelessWidget {
           child: const Text('Scrolling Textures'),
         ),
         AppButton(
-          onPressed: () => _onSAButtonPressed(context),
-          child: const Text('Scrolling Actuators'),
-        ),
-        AppButton(
           onPressed: () => _onPassiveTherapyButtonPressed(context),
           child: const Text('Passive Therapy'),
         ),
@@ -60,11 +56,7 @@ class CutaneousTherapyScreen extends StatelessWidget {
   }
 
   void _onSTButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/BgSongSelect');
-  }
-
-  void _onSAButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/ScrollActuators');
+    Navigator.pushNamed(context, '/ScrollTextures');
   }
 
   void _onPassiveTherapyButtonPressed(BuildContext context) {
