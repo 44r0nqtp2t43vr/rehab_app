@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Session {
   final String sessionId;
-  final String planId;
   final DateTime date;
 
   // Standard 1
@@ -23,7 +24,6 @@ class Session {
 
   Session({
     required this.sessionId,
-    required this.planId,
     required this.date,
     required this.standardOneType,
     required this.standardOneIntensity,
@@ -41,7 +41,6 @@ class Session {
   static Session empty() {
     return Session(
       sessionId: '',
-      planId: '',
       date: DateTime.now(),
       standardOneType: '',
       standardOneIntensity: '',
@@ -57,7 +56,6 @@ class Session {
   Map<String, dynamic> toMap() {
     return {
       'sessionId': sessionId,
-      'planId': planId,
       'date': date,
       'standardOneType': standardOneType,
       'standardOneIntensity': standardOneIntensity,
@@ -71,8 +69,24 @@ class Session {
       'posttestScore': posttestScore,
     };
   }
-}
 
+  factory Session.fromMap(Map<String, dynamic> map) {
+    return Session(
+      sessionId: map['sessionId'],
+      date: (map['date'] as Timestamp).toDate(),
+      standardOneType: map['standardOneType'],
+      standardOneIntensity: map['standardOneIntensity'],
+      isStandardOneDone: map['isStandardOneDone'],
+      passiveIntensity: map['passiveIntensity'],
+      isPassiveDone: map['isPassiveDone'],
+      standardTwoType: map['standardTwoType'],
+      standardTwoIntensity: map['standardTwoIntensity'],
+      isStandardTwoDone: map['isStandardTwoDone'],
+      pretestScore: map['pretestScore'],
+      posttestScore: map['posttestScore'],
+    );
+  }
+}
 // Session Provider
 // Sessions are categorized by 1, 2, 3, 4, and 5
 // 1 is each standard therapy is 1 and the passive therapy is 4 minutes

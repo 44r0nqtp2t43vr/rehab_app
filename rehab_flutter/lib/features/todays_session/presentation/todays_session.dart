@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
 
 class TodaySessionScreen extends StatelessWidget {
   @override
@@ -22,27 +23,22 @@ class TodaySessionScreen extends StatelessWidget {
             return Center(child: Text("User not found."));
           }
 
-          return FutureBuilder<DocumentSnapshot>(
+          return FutureBuilder<Session>(
             future: _fetchTodaySession(userId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
 
-              if (!snapshot.hasData || snapshot.data!.data() == null) {
+              if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              }
+
+              if (!snapshot.hasData) {
                 return Center(child: Text("No session found for today."));
               }
 
-              final data = snapshot.data!.data() as Map<String, dynamic>;
-              final pretestScore =
-                  data['pretestScore']?.toString() ?? 'Not available';
-              final standardOneType =
-                  data['standardOneType'] ?? 'Not available';
-              final standardTwoType =
-                  data['standardTwoType'] ?? 'Not available';
-              final passiveIntensity =
-                  data['passiveIntensity'] ?? 'Not available';
-
+              final session = snapshot.data!;
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -51,10 +47,11 @@ class TodaySessionScreen extends StatelessWidget {
                     Text("Today's routine:",
                         style: Theme.of(context).textTheme.headline5),
                     SizedBox(height: 20),
-                    Text("Pretest Score: $pretestScore"),
-                    Text("Standard One: $standardOneType"),
-                    Text("Passive Intensity: $passiveIntensity"),
-                    Text("Standard Two: $standardTwoType"),
+                    Text(
+                        "Pretest Score: ${session.pretestScore ?? 'Not available'}"),
+                    Text("Standard One: ${session.standardOneType}"),
+                    Text("Passive Intensity: ${session.passiveIntensity}"),
+                    Text("Standard Two: ${session.standardTwoType}"),
                   ],
                 ),
               );
@@ -65,36 +62,33 @@ class TodaySessionScreen extends StatelessWidget {
     );
   }
 
-  Future<DocumentSnapshot> _fetchTodaySession(String userId) async {
+  Future<Session> _fetchTodaySession(String userId) async {
     final DateTime now = DateTime.now();
-    // Start of today
     final DateTime startOfDay = DateTime(now.year, now.month, now.day);
-    // End of today
     final DateTime endOfDay =
         DateTime(now.year, now.month, now.day, 23, 59, 59);
-
     final String activePlanId = await _fetchActivePlanId(userId);
 
-    // Adjust the query to look for sessions within the date range of today
     final querySnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('plans')
         .doc(activePlanId)
         .collection('sessions')
-        .where('date', isGreaterThanOrEqualTo: startOfDay)
-        .where('date', isLessThanOrEqualTo: endOfDay)
+        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+        .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+        .limit(1)
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first;
+      final data = querySnapshot.docs.first.data();
+      return Session.fromMap(data);
     } else {
       throw Exception("No session found for today.");
     }
   }
 
   Future<String> _fetchActivePlanId(String userId) async {
-    // Fetch the active plan ID
     final planSnapshot = await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
@@ -104,7 +98,7 @@ class TodaySessionScreen extends StatelessWidget {
         .get();
 
     if (planSnapshot.docs.isNotEmpty) {
-      return planSnapshot.docs.first.id; // Return the active plan ID
+      return planSnapshot.docs.first.id;
     } else {
       throw Exception("No active plan found.");
     }

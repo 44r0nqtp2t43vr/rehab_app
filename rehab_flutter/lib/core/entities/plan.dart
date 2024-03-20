@@ -6,6 +6,8 @@ class Plan {
   final String planName;
   final DateTime startDate;
   final DateTime endDate;
+  final bool isActive;
+  final int sessionCount;
   final List<Session> sessions;
 
   Plan({
@@ -14,6 +16,8 @@ class Plan {
     required this.startDate,
     required this.endDate,
     required this.sessions,
+    this.isActive = false,
+    this.sessionCount = 0,
   });
 }
 

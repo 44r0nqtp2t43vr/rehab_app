@@ -67,7 +67,6 @@ class _PlanSelectionState extends State<PlanSelection> {
         final String sessionDocumentName = 'session${i + 1}';
         Session session = Session(
           sessionId: sessionDocumentName,
-          planId: planDocumentName,
           date: sessionDate,
           standardOneType: '',
           standardOneIntensity: '',
