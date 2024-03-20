@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/img_tile.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 
 class Gallery extends AnimatedWidget {
   final double imgHeight;

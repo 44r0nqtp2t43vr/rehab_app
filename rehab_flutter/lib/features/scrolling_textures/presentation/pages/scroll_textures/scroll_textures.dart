@@ -10,12 +10,12 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
 import 'package:rehab_flutter/features/scrolling_textures/domain/enums/animation_state.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/gallery.dart';
 import 'package:rehab_flutter/core/data_sources/image_texture_provider.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class ScrollTextures extends StatefulWidget {

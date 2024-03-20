@@ -3,8 +3,8 @@ import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/data_sources/anipattern_provider.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/domain/enums/animation_direction.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class ScrollTextureFrame extends StatefulWidget {

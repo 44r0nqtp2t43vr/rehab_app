@@ -8,13 +8,13 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/domain/enums/animation_direction.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/animation_slider.dart';
 import 'package:rehab_flutter/features/scrolling_actuators/presentation/widgets/scroll_texture_frame.dart';
 import 'package:rehab_flutter/core/data_sources/image_texture_provider.dart';
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/widgets/texture_name_selector.dart';
 import 'package:rehab_flutter/injection_container.dart';
 

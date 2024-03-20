@@ -1,4 +1,4 @@
-import 'package:rehab_flutter/features/texture_therapy/domain/entities/image_texture.dart';
+import 'package:rehab_flutter/core/entities/image_texture.dart';
 
 class ImageTextureProvider {
   List<ImageTexture> imageTextures = [
