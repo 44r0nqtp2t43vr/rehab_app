@@ -17,7 +17,8 @@ class ResetEvent extends UserEvent {
 }
 
 class RegisterEvent extends UserEvent {
-  const RegisterEvent(RegisterData registerData) : super(registerData: registerData);
+  const RegisterEvent(RegisterData registerData)
+      : super(registerData: registerData);
 }
 
 class LoginEvent extends UserEvent {

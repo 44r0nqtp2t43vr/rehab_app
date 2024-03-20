@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/session.dart'; // Assuming this is your Session entity
+import 'package:rehab_flutter/core/entities/plan.dart';
 
 class PlanSelection extends StatefulWidget {
   @override
@@ -12,27 +14,85 @@ class PlanSelection extends StatefulWidget {
 
 class _PlanSelectionState extends State<PlanSelection> {
   Future<void> _selectPlan(String planName) async {
-    // Retrieve the current user's ID
     final String? userId = FirebaseAuth.instance.currentUser?.uid;
-
     if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("No user logged in."),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No user logged in.")),
+      );
       return;
     }
 
-    // Update the user's plan in Firestore
-    await FirebaseFirestore.instance.collection('users').doc(userId).update({
-      'plan': planName,
-    }).then((_) {
-      print('Plan updated to $planName for user $userId');
-      // Pop the screen after successfully updating the plan
+    int daysToAdd;
+    switch (planName) {
+      case 'One Week':
+        daysToAdd = 7;
+        break;
+      case 'One Month':
+        daysToAdd = 30;
+        break;
+      case 'Three Months':
+        daysToAdd = 90;
+        break;
+      default:
+        daysToAdd = 7; // Default to one week if plan name doesn't match
+    }
+
+    final DateTime startDate = DateTime.now();
+    final DateTime endDate = startDate.add(Duration(days: daysToAdd));
+
+    // Assuming sequential naming without checking Firestore. This needs proper management.
+    final plansCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('plans');
+    final int planNumber = (await plansCollection.get()).docs.length + 1;
+    final String planDocumentName = 'plan$planNumber';
+
+    final planData = {
+      'planId': planDocumentName,
+      'planName': planName,
+      'startDate': startDate,
+      'endDate': endDate,
+      'session_count': daysToAdd,
+      'isActive': true,
+    };
+
+    await plansCollection.doc(planDocumentName).set(planData).then((_) async {
+      print(
+          'Plan $planName created for user $userId with ID $planDocumentName');
+
+      // Create sessions
+      for (int i = 0; i < daysToAdd; i++) {
+        DateTime sessionDate = startDate.add(Duration(days: i));
+        final String sessionDocumentName = 'session${i + 1}';
+        Session session = Session(
+          sessionId: sessionDocumentName,
+          planId: planDocumentName,
+          date: sessionDate,
+          standardOneType: '',
+          standardOneIntensity: '',
+          isStandardOneDone: false,
+          passiveIntensity: '',
+          isPassiveDone: false,
+          standardTwoType: '',
+          standardTwoIntensity: '',
+          isStandardTwoDone: false,
+          pretestScore: null,
+          posttestScore: null,
+        );
+
+        await plansCollection
+            .doc(planDocumentName)
+            .collection('sessions')
+            .doc(sessionDocumentName)
+            .set(session.toMap());
+      }
+
       Navigator.of(context).pop();
     }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to update plan: $error"),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to create plan: $error")),
+      );
     });
   }
 

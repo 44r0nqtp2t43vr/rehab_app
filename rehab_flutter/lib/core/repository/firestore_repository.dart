@@ -30,7 +30,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs() async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getLoginLogs() async {
     final snapshot = await db.collection('loginAttempts').get();
     return snapshot.docs;
   }
@@ -42,9 +43,13 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       password: data.password,
     );
     FirebaseFirestore db = FirebaseFirestore.instance;
-    String formattedBirthDate = DateFormat('MM/dd/yyyy').format(data.birthDate);
 
-    String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+    String userID =
+        FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+
+    // Normalize birthDate to just the date part (year, month, day) in UTC
+    DateTime birthDateJustDate = DateTime.utc(
+        data.birthDate.year, data.birthDate.month, data.birthDate.day);
 
     await db.collection('users').doc(userID).set({
       'userID': userID,
@@ -54,14 +59,17 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'gender': data.gender,
       'phoneNumber': data.phoneNumber,
       'city': data.city,
-      'birthDate': formattedBirthDate, // Use the formatted string
+      'birthDate': birthDateJustDate, // Use the normalized DateTime object
+      'registerDate': FieldValue
+          .serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
       'conditions': data.conditions,
     });
   }
 
   @override
   Future<AppUser> loginUser(LoginData data) async {
-    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+    final UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
       password: data.password,
     );
@@ -71,7 +79,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     // Optionally fetch and do something with the user's document from Firestore
     // For example, retrieving the user's profile information
-    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userCredential.user!.uid).get();
+    DocumentSnapshot<Map<String, dynamic>> userDoc =
+        await db.collection('users').doc(userCredential.user!.uid).get();
 
     if (!userDoc.exists) {
       throw Exception('User document does not exist in Firestore.');
@@ -87,7 +96,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       email: userDoc.data()!['email'],
       phoneNumber: userDoc.data()!['phoneNumber'],
       city: userDoc.data()!['city'],
-      birthDate: DateTime.now(),
+      birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+      registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
       conditions: [],
     );
 
