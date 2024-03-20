@@ -53,7 +53,7 @@ class AppRoutes {
       case '/PlayGame':
         return _materialRoute(PlayGame(
           song: sl<SongController>().getCurrentSong()!,
-          startingNoteIndex: sl<SongController>().getCurrentNoteIndex(),
+          startingNoteIndex: sl<SongController>().getCurrentDuration() ~/ 0.3,
         ));
 
       case '/ActuatorTherapy':

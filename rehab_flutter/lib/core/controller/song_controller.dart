@@ -4,11 +4,11 @@ import 'package:rehab_flutter/core/enums/song_enums.dart';
 
 class SongController extends GetxController {
   late MusicTherapy currentMTType;
-  Rx<int> currentNoteIndex = 0.obs;
+  Rx<double> currentDuration = 0.0.obs;
   Rx<Song?> currentSong = Rx<Song?>(null);
 
-  int getCurrentNoteIndex() {
-    return currentNoteIndex.value;
+  double getCurrentDuration() {
+    return currentDuration.value;
   }
 
   Song? getCurrentSong() {
@@ -19,8 +19,8 @@ class SongController extends GetxController {
     currentMTType = newMTType;
   }
 
-  void setNoteIndex(int newNoteIndex) {
-    currentNoteIndex.value = newNoteIndex;
+  void setCurrentDuration(double newDuration) {
+    currentDuration.value = newDuration;
   }
 
   void setSong(Song? newSong) {
