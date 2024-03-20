@@ -21,9 +21,7 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () => _onTestingButtonPressed(context),
                 child: const Text('Pretest'),
               ),
-              AppButton(
-                  onPressed: () => _onPlanSelectionButtonPressed(context),
-                  child: const Text('Select Plan')),
+              AppButton(onPressed: () => _onPlanSelectionButtonPressed(context), child: const Text('Select Plan')),
               AppButton(
                 onPressed: () => _onPreTestDummyPressed(context),
                 child: const Text('Pretest Dummy'),

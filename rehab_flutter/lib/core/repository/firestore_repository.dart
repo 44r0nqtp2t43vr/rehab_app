@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
+import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
@@ -30,8 +31,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-      getLoginLogs() async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs() async {
     final snapshot = await db.collection('loginAttempts').get();
     return snapshot.docs;
   }
@@ -44,12 +44,10 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     );
     FirebaseFirestore db = FirebaseFirestore.instance;
 
-    String userID =
-        FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+    String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
 
     // Normalize birthDate to just the date part (year, month, day) in UTC
-    DateTime birthDateJustDate = DateTime.utc(
-        data.birthDate.year, data.birthDate.month, data.birthDate.day);
+    DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
 
     await db.collection('users').doc(userID).set({
       'userID': userID,
@@ -60,16 +58,14 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'phoneNumber': data.phoneNumber,
       'city': data.city,
       'birthDate': birthDateJustDate, // Use the normalized DateTime object
-      'registerDate': FieldValue
-          .serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
+      'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
       'conditions': data.conditions,
     });
   }
 
   @override
   Future<AppUser> loginUser(LoginData data) async {
-    final UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
       password: data.password,
     );
@@ -79,14 +75,36 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     // Optionally fetch and do something with the user's document from Firestore
     // For example, retrieving the user's profile information
-    DocumentSnapshot<Map<String, dynamic>> userDoc =
-        await db.collection('users').doc(userCredential.user!.uid).get();
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userCredential.user!.uid).get();
 
     if (!userDoc.exists) {
       throw Exception('User document does not exist in Firestore.');
     }
 
     print('User logged in with data: ${userDoc.data()}');
+
+    // Query Plans for the User
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
+
+    List<Plan> plansWithSessions = [];
+
+    for (var planDoc in plansSnapshot.docs) {
+      // For each Plan, Query Sessions
+      QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
+
+      List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
+
+      // Combine Plan with its Sessions
+      Plan planWithSessions = Plan(
+        planId: planDoc.data()['planId'],
+        planName: planDoc.data()['planName'],
+        startDate: planDoc.data()['startDate'].toDate() as DateTime,
+        endDate: planDoc.data()['endDate'].toDate() as DateTime,
+        sessions: sessions,
+      );
+
+      plansWithSessions.add(planWithSessions);
+    }
 
     final currentUser = AppUser(
       userId: userDoc.id,
@@ -99,6 +117,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
       registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
       conditions: [],
+      plans: plansWithSessions,
     );
 
     return currentUser;

@@ -18,6 +18,16 @@ class Plan {
     this.isActive = false,
     this.sessionCount = 0,
   });
+
+  static Plan empty() {
+    return Plan(
+      planId: '',
+      planName: '',
+      startDate: DateTime.now(),
+      endDate: DateTime.now(),
+      sessions: [],
+    );
+  }
 }
 
 // Plan Provider

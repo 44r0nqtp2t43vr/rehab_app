@@ -87,6 +87,7 @@ class AppRoutes {
 
       case '/PreTestDummy':
         return _materialRoute(PreTestDummy());
+
       case '/TodaysSession':
         return _materialRoute(TodaySessionScreen());
       default:
