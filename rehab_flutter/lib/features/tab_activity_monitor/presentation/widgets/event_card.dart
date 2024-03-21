@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/domain/enums/event_enum.dart';
 
 class EventCard extends StatelessWidget {
   final bool isCompleted;
-  final double leftValue;
+  final double? leftValue;
   final String rightValue;
   final EventType eventType;
 
@@ -16,13 +15,13 @@ class EventCard extends StatelessWidget {
     required this.eventType,
   });
 
-  Widget getLeftWidget(double leftValue, EventType eventType) {
+  Widget getLeftWidget(double? leftValue, EventType eventType) {
     if (eventType == EventType.test) {
       return RichText(
         text: TextSpan(
           children: [
             TextSpan(
-              text: leftValue.toStringAsFixed(0),
+              text: leftValue!.toStringAsFixed(0),
               style: const TextStyle(
                 fontSize: 24,
                 color: Colors.black,
@@ -39,12 +38,7 @@ class EventCard extends StatelessWidget {
         ),
       );
     } else if (eventType == EventType.timed) {
-      return Text(
-        secToMinSec(leftValue),
-        style: const TextStyle(
-          fontSize: 20,
-        ),
-      );
+      return isCompleted ? const Icon(Icons.check, color: Colors.black) : const Icon(Icons.close, color: Colors.black);
     }
     return const SizedBox();
   }
@@ -71,7 +65,7 @@ class EventCard extends StatelessWidget {
                     onChanged: (value) {},
                   ),
                   Expanded(
-                    child: getLeftWidget(leftValue, eventType),
+                    child: getLeftWidget(leftValue!, eventType),
                   ),
                 ],
               ),

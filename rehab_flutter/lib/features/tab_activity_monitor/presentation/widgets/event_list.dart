@@ -7,7 +7,7 @@ import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets
 class EventList extends StatelessWidget {
   final Color dayColor;
   final DateTime selectedDay;
-  final Session currentSession;
+  final Session? currentSession;
   final List<bool> conditions;
 
   const EventList({
@@ -20,6 +20,8 @@ class EventList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(conditions);
+    print(currentSession.toString());
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
@@ -62,46 +64,52 @@ class EventList extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              // currentSession.date == DateTime(0)
-              //     ? const Text("You have no sessions for today")
-              //     : Column(
-              //         children: [
-              //           EventCard(
-              //             isCompleted: conditions[0],
-              //             leftValue: currentSession.pretestScore ?? 0,
-              //             rightValue: "Take the Pretest",
-              //             eventType: EventType.test,
-              //           ),
-              //           const SizedBox(height: 16),
-              //           EventCard(
-              //             isCompleted: conditions[1],
-              //             leftValue: currentSession.activityOneCurrentTime.toDouble(),
-              //             rightValue: "Do a ${currentSession.activityOneSpeed} ${currentSession.activityOneType} session for at least ${secToMinSec(currentSession.activityOneTime.toDouble())}",
-              //             eventType: EventType.timed,
-              //           ),
-              //           const SizedBox(height: 16),
-              //           EventCard(
-              //             isCompleted: conditions[2],
-              //             leftValue: currentSession.activityTwoCurrentTime.toDouble(),
-              //             rightValue: "Complete a 20-minute ${currentSession.activityTwoIntensity}-intensity passive therapy session",
-              //             eventType: EventType.timed,
-              //           ),
-              //           const SizedBox(height: 16),
-              //           EventCard(
-              //             isCompleted: conditions[3],
-              //             leftValue: currentSession.activityThreeCurrentTime.toDouble(),
-              //             rightValue: "Do a ${currentSession.activityThreeSpeed} ${currentSession.activityThreeType} session for at least ${secToMinSec(currentSession.activityThreeTime.toDouble())}",
-              //             eventType: EventType.timed,
-              //           ),
-              //           const SizedBox(height: 16),
-              //           EventCard(
-              //             isCompleted: conditions[4],
-              //             leftValue: currentSession.posttestScore ?? 0,
-              //             rightValue: "Take the Posttest",
-              //             eventType: EventType.test,
-              //           ),
-              //         ],
-              //       ),
+              currentSession == null
+                  ? const Text("You have no sessions for today")
+                  : Column(
+                      children: [
+                        EventCard(
+                          isCompleted: conditions[0],
+                          leftValue: currentSession!.pretestScore ?? 0,
+                          rightValue: "Take the Pretest",
+                          eventType: EventType.test,
+                        ),
+                        const SizedBox(height: 16),
+                        conditions[0]
+                            ? Column(
+                                children: [
+                                  EventCard(
+                                    isCompleted: conditions[1],
+                                    leftValue: null,
+                                    rightValue: "Do an intensity-${currentSession!.standardOneIntensity} ${currentSession!.standardOneType} session",
+                                    eventType: EventType.timed,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  EventCard(
+                                    isCompleted: conditions[2],
+                                    leftValue: null,
+                                    rightValue: "Complete a 20-minute intensity-${currentSession!.passiveIntensity} passive therapy session",
+                                    eventType: EventType.timed,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  EventCard(
+                                    isCompleted: conditions[3],
+                                    leftValue: null,
+                                    rightValue: "Do an intensity-${currentSession!.standardTwoIntensity} ${currentSession!.standardTwoType} session",
+                                    eventType: EventType.timed,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  EventCard(
+                                    isCompleted: conditions[4],
+                                    leftValue: currentSession!.posttestScore ?? 0,
+                                    rightValue: "Take the Posttest",
+                                    eventType: EventType.test,
+                                  ),
+                                ],
+                              )
+                            : const Text("Take the Pretest to determine the next steps for this session"),
+                      ],
+                    ),
             ],
           ),
         ),

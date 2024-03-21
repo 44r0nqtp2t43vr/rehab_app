@@ -68,7 +68,7 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
       currentSelectedSession = widget.sessions.firstWhere(
-        (session) => session.date == _selectedDay,
+        (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
         orElse: () => Session.empty(),
       );
     });
@@ -89,7 +89,7 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     super.initState();
     dateColorsMap = sessionsToDateColorsMap();
     currentSelectedSession = widget.sessions.firstWhere(
-      (session) => session.date == _selectedDay,
+      (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
       orElse: () => Session.empty(),
     );
   }
@@ -103,6 +103,7 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is UserDone) {
+          final currentSelectedSessionDateString = "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -128,9 +129,9 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
               const SizedBox(height: 32),
               Expanded(
                 child: EventList(
-                  dayColor: dateColorsMap[currentSelectedSession.date] ?? Colors.white,
+                  dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
                   selectedDay: _selectedDay,
-                  currentSession: currentSelectedSession,
+                  currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
                   conditions: getEventConditions(currentSelectedSession),
                 ),
               ),
