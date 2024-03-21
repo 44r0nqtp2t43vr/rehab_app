@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatelessWidget {
-  final Map<DateTime, Color?> dateColorsMap;
+  final Map<String, Color?> dateColorsMap;
   final CalendarFormat calendarFormat;
   final DateTime focusedDay;
   final DateTime selectedDay;
@@ -51,7 +51,8 @@ class Calendar extends StatelessWidget {
             calendarBuilders: CalendarBuilders(
               // Customize the appearance of individual calendar cells
               defaultBuilder: (context, date, _) {
-                final color = dateColorsMap[date];
+                final dateString = "${date.year}${date.month}${date.day}";
+                final color = dateColorsMap[dateString];
                 if (color != null) {
                   // If the date has custom colors defined, use them
                   return Container(
