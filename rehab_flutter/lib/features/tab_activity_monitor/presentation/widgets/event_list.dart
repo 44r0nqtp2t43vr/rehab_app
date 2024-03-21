@@ -20,8 +20,6 @@ class EventList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(conditions);
-    print(currentSession.toString());
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
