@@ -3,8 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/entities/session.dart'; // Assuming this is your Session entity
+import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/plan_selection/presentation/add_plan_data.dart';
+import 'package:rehab_flutter/injection_container.dart'; // Assuming this is your Session entity
 
 class PlanSelection extends StatefulWidget {
   @override
@@ -12,15 +17,7 @@ class PlanSelection extends StatefulWidget {
 }
 
 class _PlanSelectionState extends State<PlanSelection> {
-  Future<void> _selectPlan(String planName) async {
-    final String? userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No user logged in.")),
-      );
-      return;
-    }
-
+  Future<void> _selectPlan(String planName, AppUser user) async {
     int daysToAdd;
     switch (planName) {
       case 'One Week':
@@ -35,55 +32,8 @@ class _PlanSelectionState extends State<PlanSelection> {
       default:
         daysToAdd = 7; // Default to one week if plan name doesn't match
     }
-
-    final DateTime startDate = DateTime.now();
-    final DateTime endDate = startDate.add(Duration(days: daysToAdd));
-
-    // Assuming sequential naming without checking Firestore. This needs proper management.
-    final plansCollection = FirebaseFirestore.instance.collection('users').doc(userId).collection('plans');
-    final int planNumber = (await plansCollection.get()).docs.length + 1;
-    final String planDocumentName = 'plan$planNumber';
-
-    final planData = {
-      'planId': planDocumentName,
-      'planName': planName,
-      'startDate': startDate,
-      'endDate': endDate,
-      'session_count': daysToAdd,
-      'isActive': true,
-    };
-
-    await plansCollection.doc(planDocumentName).set(planData).then((_) async {
-      print('Plan $planName created for user $userId with ID $planDocumentName');
-
-      // Create sessions
-      for (int i = 0; i < daysToAdd; i++) {
-        DateTime sessionDate = startDate.add(Duration(days: i));
-        final String sessionDocumentName = 'session${i + 1}';
-        Session session = Session(
-          sessionId: sessionDocumentName,
-          date: sessionDate,
-          standardOneType: '',
-          standardOneIntensity: '',
-          isStandardOneDone: false,
-          passiveIntensity: '',
-          isPassiveDone: false,
-          standardTwoType: '',
-          standardTwoIntensity: '',
-          isStandardTwoDone: false,
-          pretestScore: null,
-          posttestScore: null,
-        );
-
-        await plansCollection.doc(planDocumentName).collection('sessions').doc(sessionDocumentName).set(session.toMap());
-      }
-
-      Navigator.of(context).pop();
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to create plan: $error")),
-      );
-    });
+    sl<UserBloc>()
+        .add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
   }
 
   @override
@@ -97,25 +47,28 @@ class _PlanSelectionState extends State<PlanSelection> {
           // Listener implementation, if needed
         },
         builder: (context, state) {
-          final userId = state.currentUser?.userId;
+          AppUser? currentUser = state.currentUser;
 
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(userId!), // Displaying the user ID for demonstration
+                Text(currentUser!
+                    .getUserUid()), // Displaying the user ID for demonstration
                 ElevatedButton(
-                  onPressed: () => _selectPlan('Plan 1: One Week'),
+                  onPressed: () => _selectPlan('Plan 1: One Week', currentUser),
                   child: Text('Plan 1: One Week'),
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => _selectPlan('Plan 2: One Month'),
+                  onPressed: () =>
+                      _selectPlan('Plan 2: One Month', currentUser),
                   child: Text('Plan 2: One Month'),
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => _selectPlan('Plan 3: Three Months'),
+                  onPressed: () =>
+                      _selectPlan('Plan 3: Three Months', currentUser),
                   child: Text('Plan 3: Three Months'),
                 ),
               ],

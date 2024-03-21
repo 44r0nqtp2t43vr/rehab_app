@@ -37,6 +37,10 @@ class AppUser {
     return currentPlan == Plan.empty() ? null : currentPlan;
   }
 
+  String getUserUid() {
+    return userId;
+  }
+
   Session? getCurrentSession() {
     final DateTime today = DateTime.now();
     final Plan? currentPlan = getCurrentPlan();
@@ -44,7 +48,10 @@ class AppUser {
       return null;
     } else {
       final Session currentSession = currentPlan.sessions.firstWhere(
-        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+        (session) =>
+            session.date.year == today.year &&
+            session.date.month == today.month &&
+            session.date.day == today.day,
         orElse: () => Session.empty(),
       );
       return currentSession == Session.empty() ? null : currentSession;
