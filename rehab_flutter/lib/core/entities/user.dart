@@ -50,4 +50,8 @@ class AppUser {
       return currentSession == Session.empty() ? null : currentSession;
     }
   }
+
+  List<Session> getAllSessionsFromAllPlans() {
+    return plans.expand((plan) => plan.sessions).toList();
+  }
 }

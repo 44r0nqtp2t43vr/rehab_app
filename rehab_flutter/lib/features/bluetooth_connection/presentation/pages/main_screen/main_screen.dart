@@ -1,6 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/pages/activity_monitor/activity_monitor.dart';
@@ -11,14 +16,14 @@ import 'package:rehab_flutter/injection_container.dart';
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
-  Widget getScreenFromTab(TabEnum currentTab) {
+  Widget getScreenFromTab(TabEnum currentTab, AppUser currentUser) {
     switch (currentTab) {
       case TabEnum.home:
         return const HomeScreen();
       case TabEnum.therapy:
         return const TherapyScreen();
       case TabEnum.activityMonitor:
-        return const ActivityMonitor();
+        return ActivityMonitor(sessions: currentUser.getAllSessionsFromAllPlans());
       case TabEnum.profile:
         return const HomeScreen();
       default:
@@ -28,56 +33,67 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetX<NavigationController>(
-      builder: (_) {
-        final currentTab = sl<NavigationController>().getTab();
-        final currentTabTherapy = sl<NavigationController>().getTherapyTab();
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (BuildContext context, UserState state) {},
+      builder: (BuildContext context, UserState state) {
+        if (state is UserLoading) {
+          return const Center(child: CupertinoActivityIndicator());
+        }
+        if (state is UserDone) {
+          return GetX<NavigationController>(
+            builder: (_) {
+              final currentTab = sl<NavigationController>().getTab();
+              final currentTabTherapy = sl<NavigationController>().getTherapyTab();
 
-        return PopScope(
-          canPop: false,
-          onPopInvoked: (didPop) {
-            if (didPop) {
-              return;
-            }
+              return PopScope(
+                canPop: false,
+                onPopInvoked: (didPop) {
+                  if (didPop) {
+                    return;
+                  }
 
-            if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.music) {
-              sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-          child: Scaffold(
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: getScreenFromTab(currentTab),
+                  if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.music) {
+                    sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Scaffold(
+                  body: SafeArea(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: getScreenFromTab(currentTab, state.currentUser!),
+                        ),
+                        Row(
+                          children: [
+                            AppButton(
+                              onPressed: () => _onHomeButtonPressed(currentTab),
+                              child: const Text('Home'),
+                            ),
+                            AppButton(
+                              onPressed: () => _onTherapyButtonPressed(currentTab),
+                              child: const Text('Therapy'),
+                            ),
+                            AppButton(
+                              onPressed: () => _onActivityButtonPressed(currentTab),
+                              child: const Text('Activity'),
+                            ),
+                            AppButton(
+                              onPressed: () => _onProfileButtonPressed(currentTab),
+                              child: const Text('Profile'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      AppButton(
-                        onPressed: () => _onHomeButtonPressed(currentTab),
-                        child: const Text('Home'),
-                      ),
-                      AppButton(
-                        onPressed: () => _onTherapyButtonPressed(currentTab),
-                        child: const Text('Therapy'),
-                      ),
-                      AppButton(
-                        onPressed: () => _onActivityButtonPressed(currentTab),
-                        child: const Text('Activity'),
-                      ),
-                      AppButton(
-                        onPressed: () => _onProfileButtonPressed(currentTab),
-                        child: const Text('Profile'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+                ),
+              );
+            },
+          );
+        }
+        return const SizedBox();
       },
     );
   }

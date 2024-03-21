@@ -22,7 +22,7 @@ class Session {
   final double? pretestScore;
   final double? posttestScore;
 
-  Session({
+  const Session({
     required this.sessionId,
     required this.date,
     required this.standardOneType,
