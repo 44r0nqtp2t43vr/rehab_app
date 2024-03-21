@@ -38,7 +38,13 @@ class EventCard extends StatelessWidget {
         ),
       );
     } else if (eventType == EventType.timed) {
-      return isCompleted ? const Icon(Icons.check, color: Colors.black) : const Icon(Icons.close, color: Colors.black);
+      return const Text(
+        "TBD",
+        style: TextStyle(
+          fontSize: 24,
+          color: Colors.black,
+        ),
+      );
     }
     return const SizedBox();
   }
@@ -65,7 +71,7 @@ class EventCard extends StatelessWidget {
                     onChanged: (value) {},
                   ),
                   Expanded(
-                    child: getLeftWidget(leftValue!, eventType),
+                    child: getLeftWidget(leftValue, eventType),
                   ),
                 ],
               ),
