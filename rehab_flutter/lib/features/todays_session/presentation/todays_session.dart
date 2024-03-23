@@ -22,7 +22,8 @@ class TodaySessionScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is UserDone) {
-            final Session? todaySession = state.currentUser!.getCurrentSession();
+            final Session? todaySession =
+                state.currentUser!.getCurrentSession();
             if (todaySession == null) {
               return const Center(child: Text("No session found for today."));
             } else {
@@ -31,9 +32,11 @@ class TodaySessionScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Today's routine:", style: Theme.of(context).textTheme.headline5),
+                    Text("Today's routine:",
+                        style: Theme.of(context).textTheme.headline5),
                     const SizedBox(height: 20),
-                    Text("Pretest Score: ${todaySession.pretestScore ?? 'Not available'}"),
+                    Text(
+                        "Pretest Score: ${todaySession.pretestScore ?? 'Not available'}"),
                     Text("Standard One: ${todaySession.standardOneType}"),
                     Text("Passive Intensity: ${todaySession.passiveIntensity}"),
                     Text("Standard Two: ${todaySession.standardTwoType}"),

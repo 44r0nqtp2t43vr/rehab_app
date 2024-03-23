@@ -56,19 +56,17 @@ class _PlanSelectionState extends State<PlanSelection> {
                 Text(currentUser!
                     .getUserUid()), // Displaying the user ID for demonstration
                 ElevatedButton(
-                  onPressed: () => _selectPlan('Plan 1: One Week', currentUser),
+                  onPressed: () => _selectPlan('One Week', currentUser),
                   child: Text('Plan 1: One Week'),
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () =>
-                      _selectPlan('Plan 2: One Month', currentUser),
+                  onPressed: () => _selectPlan('One Month', currentUser),
                   child: Text('Plan 2: One Month'),
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () =>
-                      _selectPlan('Plan 3: Three Months', currentUser),
+                  onPressed: () => _selectPlan('Three Months', currentUser),
                   child: Text('Plan 3: Three Months'),
                 ),
               ],

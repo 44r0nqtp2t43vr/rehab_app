@@ -3,6 +3,7 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/generate_session.dart';
+
 import 'package:rehab_flutter/core/usecases/firebase/login_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_user.dart';
 
@@ -10,16 +11,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final RegisterUserUseCase _registerUserUseCase;
   final LoginUserUseCase _loginUserUseCase;
   final AddPlanUseCase _addPlanUseCase;
-  // final GenerateSessionUseCase _generateSessionUseCase;
+  final GenerateSessionUseCase _generateSessionUseCase;
 
-  UserBloc(
-      this._registerUserUseCase, this._loginUserUseCase, this._addPlanUseCase)
+  UserBloc(this._registerUserUseCase, this._loginUserUseCase,
+      this._addPlanUseCase, this._generateSessionUseCase)
       : super(const UserNone()) {
     on<ResetEvent>(onResetUser);
     on<RegisterEvent>(onRegisterUser);
     on<LoginEvent>(onLoginUser);
     on<AddPlanEvent>(onAddPlan);
-    // on<GenerateSessionEvent>(onGenerateSession);
+    on<GenerateSessionEvent>(onGenerateSession);
   }
 
   void onResetUser(ResetEvent event, Emitter<UserState> emit) {
@@ -42,12 +43,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       final currentUser = await _loginUserUseCase(params: event.loginData);
       emit(UserDone(currentUser: currentUser));
     } catch (e) {
+      print("What's up");
       emit(UserNone(errorMessage: e.toString()));
     }
   }
 
   void onAddPlan(AddPlanEvent event, Emitter<UserState> emit) async {
-    emit(const UserLoading());
     try {
       await _addPlanUseCase(params: event.addPlanData);
       emit(const PlanAdded());
@@ -56,14 +57,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
   }
 
-  // Future<void> onGenerateSession(
-  //     GenerateSessionEvent event, Emitter<UserState> emit) async {
-  //   emit(const UserLoading());
-  //   try {
-  //     await _generateSessionUseCase(params: event.pretestData);
-  //     emit(const SessionGenerated());
-  //   } catch (e) {
-  //     emit(UserNone(errorMessage: e.toString()));
-  //   }
-  // }
+  void onGenerateSession(
+      GenerateSessionEvent event, Emitter<UserState> emit) async {
+    try {
+      await _generateSessionUseCase(params: event.pretestData);
+      emit(const SessionGenerated());
+    } catch (e) {
+      emit(UserNone(errorMessage: e.toString()));
+    }
+  }
 }

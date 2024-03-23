@@ -84,7 +84,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<AddPlanUseCase>(AddPlanUseCase(sl()));
 
-  // sl.registerSingleton<GenerateSessionUseCase>(GenerateSessionUseCase(sl()));
+  sl.registerSingleton<GenerateSessionUseCase>(GenerateSessionUseCase(sl()));
 
   // Blocs
   sl.registerFactory<BluetoothBloc>(
@@ -92,7 +92,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
-  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl()));
+  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl()));
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 }

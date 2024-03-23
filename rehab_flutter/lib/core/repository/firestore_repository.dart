@@ -146,6 +146,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<void> addPlan(AddPlanData data) async {
     // TODO: implement addPlan
+
     final userId = data.user.userId;
 
     final DateTime startDate = DateTime.now();
@@ -210,63 +211,63 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     });
   }
 
-  // @override
-  // Future<void> generateSession(PretestData data) async {
-  //   final Random random = Random();
-  //   // Creating a list of all StandardTherapy values and shuffling it
-  //   List<StandardTherapy> allTherapies = StandardTherapy.values;
-  //   List<StandardTherapy> shuffledTherapies = List.of(allTherapies)
-  //     ..shuffle(random);
+  @override
+  Future<void> generateSession(PretestData data) async {
+    final Random random = Random();
+    // Creating a list of all StandardTherapy values and shuffling it
+    List<StandardTherapy> allTherapies = StandardTherapy.values;
+    List<StandardTherapy> shuffledTherapies = List.of(allTherapies)
+      ..shuffle(random);
 
-  //   String standardOneType = shuffledTherapies[0].name;
-  //   String standardTwoType = shuffledTherapies[1].name;
-  //   final userId = data.user.userId;
-  //   final score = data.score;
-  //   String intensityLevel = ((score / 20).ceil().clamp(1, 5)).toString();
+    String standardOneType = shuffledTherapies[0].name;
+    String standardTwoType = shuffledTherapies[1].name;
+    final userId = data.user.userId;
+    final score = data.score;
+    String intensityLevel = ((score / 20).ceil().clamp(1, 5)).toString();
 
-  //   final DateTime today = DateTime.now();
-  //   final DateTime startOfDay = DateTime(today.year, today.month, today.day);
-  //   final DateTime endOfDay =
-  //       DateTime(today.year, today.month, today.day, 23, 59, 59);
+    final DateTime today = DateTime.now();
+    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    final DateTime endOfDay =
+        DateTime(today.year, today.month, today.day, 23, 59, 59);
 
-  //   // Identify the active plan
-  //   final querySnapshot = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('plans')
-  //       .where('isActive', isEqualTo: true)
-  //       .limit(1)
-  //       .get();
+    // Identify the active plan
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('plans')
+        .where('isActive', isEqualTo: true)
+        .limit(1)
+        .get();
 
-  //   final activePlanId = querySnapshot.docs.first.id;
+    final activePlanId = querySnapshot.docs.first.id;
 
-  //   // Fetch sessions for the current date within the active plan
-  //   final sessionSnapshot = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('plans')
-  //       .doc(activePlanId)
-  //       .collection('sessions')
-  //       .where('date', isGreaterThanOrEqualTo: startOfDay)
-  //       .where('date', isLessThanOrEqualTo: endOfDay)
-  //       .get();
+    // Fetch sessions for the current date within the active plan
+    final sessionSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('plans')
+        .doc(activePlanId)
+        .collection('sessions')
+        .where('date', isGreaterThanOrEqualTo: startOfDay)
+        .where('date', isLessThanOrEqualTo: endOfDay)
+        .get();
 
-  //   // Assuming we update the first session of the day
-  //   final sessionDoc = sessionSnapshot.docs.first;
-  //   await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(userId)
-  //       .collection('plans')
-  //       .doc(activePlanId)
-  //       .collection('sessions')
-  //       .doc(sessionDoc.id)
-  //       .update({
-  //     'pretestScore': score,
-  //     'standardOneType': standardOneType,
-  //     'standardOneIntensity': intensityLevel,
-  //     'standardTwoType': standardTwoType,
-  //     'standardTwoIntensity': intensityLevel,
-  //     'passiveIntensity': intensityLevel,
-  //   });
-  // }
+    // Assuming we update the first session of the day
+    final sessionDoc = sessionSnapshot.docs.first;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('plans')
+        .doc(activePlanId)
+        .collection('sessions')
+        .doc(sessionDoc.id)
+        .update({
+      'pretestScore': score,
+      'standardOneType': standardOneType,
+      'standardOneIntensity': intensityLevel,
+      'standardTwoType': standardTwoType,
+      'standardTwoIntensity': intensityLevel,
+      'passiveIntensity': intensityLevel,
+    });
+  }
 }

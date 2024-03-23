@@ -21,7 +21,7 @@ class _PreTestDummyState extends State<PreTestDummy> {
   final TextEditingController _controller = TextEditingController();
 
   void _submit(AppUser user) async {
-    final score = double.tryParse(_controller.text)?.toInt();
+    final score = double.tryParse(_controller.text);
 
     if (score == null || score < 0 || score > 100) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,9 +39,8 @@ class _PreTestDummyState extends State<PreTestDummy> {
       return;
     }
 
-    // sl<UserBloc>().add(GenerateSessionEvent(
-    //   PretestData(user: user, score: score),
-    // ));
+    sl<UserBloc>()
+        .add(GenerateSessionEvent(PretestData(user: user, score: score)));
   }
 
   @override
