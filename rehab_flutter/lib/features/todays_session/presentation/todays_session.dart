@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 
 class TodaySessionScreen extends StatelessWidget {
   const TodaySessionScreen({super.key});
@@ -40,6 +41,32 @@ class TodaySessionScreen extends StatelessWidget {
                     Text("Standard One: ${todaySession.standardOneType}"),
                     Text("Passive Intensity: ${todaySession.passiveIntensity}"),
                     Text("Standard Two: ${todaySession.standardTwoType}"),
+                    ElevatedButton(
+                      // Disable the button if todaySession.isStandardOneDone is true
+                      onPressed: todaySession.isStandardOneDone
+                          ? null
+                          : () => _onStandardPressed(context,
+                              _toStandardTherapy(todaySession.standardOneType)),
+                      child: Text(todaySession.standardOneType),
+                    ),
+                    ElevatedButton(
+                      // Disable the button if todaySession.isPassiveDone is true
+                      onPressed: todaySession.isPassiveDone
+                          ? null
+                          : () => _onPassiveTherapyPressed(context),
+                      child: Text('Start Passive Therapy'),
+                      style: ElevatedButton.styleFrom(
+                          // Additional styling can go here, if needed
+                          ),
+                    ),
+                    ElevatedButton(
+                      // Disable the button if todaySession.isStandardTwoDone is true
+                      onPressed: todaySession.isStandardTwoDone
+                          ? null
+                          : () => _onStandardPressed(context,
+                              _toStandardTherapy(todaySession.standardTwoType)),
+                      child: Text(todaySession.standardTwoType),
+                    ),
                   ],
                 ),
               );
@@ -51,29 +78,52 @@ class TodaySessionScreen extends StatelessWidget {
     );
   }
 
-  // Future<Session> _fetchTodaySession(String userId) async {
-  //   final DateTime now = DateTime.now();
-  //   final DateTime startOfDay = DateTime(now.year, now.month, now.day);
-  //   final DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
-  //   final String activePlanId = await _fetchActivePlanId(userId);
+  void _onStandardPressed(BuildContext context, StandardTherapy therapy) {
+    switch (therapy) {
+      case StandardTherapy.actuatorTherapy:
+        _onActuatorTherapyPressed(context);
+        break;
+      case StandardTherapy.pianoTiles:
+        _onPianoTilesPressed(context);
+        break;
+      case StandardTherapy.patternTherapy:
+        _onPatternPressed(context);
+        break;
+      case StandardTherapy.textureTherapy:
+        _onTexturePressed(context);
+        break;
 
-  //   final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay)).where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay)).limit(1).get();
+      // Add more cases for other therapy types as needed
+      default:
+        // Handle any cases that are not explicitly covered, if necessary
+        break;
+    }
+  }
 
-  //   if (querySnapshot.docs.isNotEmpty) {
-  //     final data = querySnapshot.docs.first.data();
-  //     return Session.fromMap(data);
-  //   } else {
-  //     throw Exception("No session found for today.");
-  //   }
-  // }
+  void _onPassiveTherapyPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PassiveTherapy');
+  }
 
-  // Future<String> _fetchActivePlanId(String userId) async {
-  //   final planSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('isActive', isEqualTo: true).limit(1).get();
+  void _onActuatorTherapyPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/ActuatorTherapy');
+  }
 
-  //   if (planSnapshot.docs.isNotEmpty) {
-  //     return planSnapshot.docs.first.id;
-  //   } else {
-  //     throw Exception("No active plan found.");
-  //   }
-  // }
+  void _onPianoTilesPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PianoTiles');
+  }
+
+  void _onPatternPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/PatternTherapy');
+  }
+
+  void _onTexturePressed(BuildContext context) {
+    Navigator.pushNamed(context, '/TextureTherapy');
+  }
+
+  StandardTherapy _toStandardTherapy(String therapyType) {
+    return StandardTherapy.values.firstWhere(
+      (e) => e.toString().split('.').last == therapyType,
+      orElse: () => throw Exception('Invalid therapy type'),
+    );
+  }
 }

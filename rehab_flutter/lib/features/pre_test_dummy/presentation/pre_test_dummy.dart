@@ -86,3 +86,11 @@ class _PreTestDummyState extends State<PreTestDummy> {
     super.dispose();
   }
 }
+
+void _onActuatorTherapyPressed(BuildContext context) {
+  Navigator.pushNamed(context, '/ActuatorTherapy');
+}
+
+void _onPianoTilesPressed(BuildContext context) {
+  Navigator.pushNamed(context, '/PianoTiles');
+}
