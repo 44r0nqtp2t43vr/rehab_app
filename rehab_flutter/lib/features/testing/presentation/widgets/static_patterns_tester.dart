@@ -9,8 +9,9 @@ import 'package:rehab_flutter/injection_container.dart';
 class StaticPatternsTester extends StatefulWidget {
   final void Function(double) onResponse;
   final StaticPattern currentStaticPattern;
+  final int currentItemInd;
 
-  const StaticPatternsTester({super.key, required this.onResponse, required this.currentStaticPattern});
+  const StaticPatternsTester({super.key, required this.onResponse, required this.currentStaticPattern, required this.currentItemInd});
 
   @override
   State<StaticPatternsTester> createState() => _StaticPatternsTesterState();
@@ -130,6 +131,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Text("Item #${widget.currentItemInd + 1}"),
         Expanded(
           flex: 2,
           child: GestureDetector(

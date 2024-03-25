@@ -19,7 +19,7 @@ import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
-import 'package:rehab_flutter/core/usecases/firebase/generate_session.dart';
+import 'package:rehab_flutter/core/usecases/firebase/submit_pretest.dart';
 import 'package:rehab_flutter/core/usecases/firebase/log_login_attempt.dart';
 import 'package:rehab_flutter/core/usecases/firebase/log_logout_attempt.dart';
 import 'package:rehab_flutter/core/usecases/firebase/login_user.dart';
@@ -36,8 +36,7 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Dependencies
 
-  sl.registerSingleton<FirebaseRepository>(
-      FirebaseRepositoryImpl(FirebaseFirestore.instance));
+  sl.registerSingleton<FirebaseRepository>(FirebaseRepositoryImpl(FirebaseFirestore.instance));
 
   sl.registerSingleton<BluetoothController>(BluetoothController());
 
@@ -84,11 +83,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<AddPlanUseCase>(AddPlanUseCase(sl()));
 
-  sl.registerSingleton<GenerateSessionUseCase>(GenerateSessionUseCase(sl()));
+  sl.registerSingleton<SubmitPretestUseCase>(SubmitPretestUseCase(sl()));
 
   // Blocs
-  sl.registerFactory<BluetoothBloc>(
-      () => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 

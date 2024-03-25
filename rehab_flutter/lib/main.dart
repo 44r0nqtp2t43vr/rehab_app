@@ -53,10 +53,7 @@ class WelcomeScreen extends StatelessWidget {
         behavior: HitTestBehavior
             .opaque, // Ensures the GestureDetector is as large as its parent
 
-        onTap: () =>
-            // _onATButtonPressed(context),
-            // _onBlueToothScreenTap(context),
-            _onTest(context),
+        onTap: () => _onBlueToothScreenTap(context),
 
         child: const Center(
           child: Text(
@@ -71,10 +68,4 @@ class WelcomeScreen extends StatelessWidget {
 
 void _onBlueToothScreenTap(BuildContext context) {
   Navigator.pushNamed(context, '/BluetoothScreen');
-}
-
-void _onTest(BuildContext context) {
-  // Navigator.pushNamed(context, '/ScrollActuators');
-
-  Navigator.pushNamed(context, '/VisualizerSlider');
 }

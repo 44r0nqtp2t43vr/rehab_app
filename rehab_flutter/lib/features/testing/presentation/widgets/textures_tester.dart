@@ -16,8 +16,9 @@ import 'package:rehab_flutter/injection_container.dart';
 class TexturesTester extends StatefulWidget {
   final void Function(double) onResponse;
   final ImageTexture currentImageTexture;
+  final int currentItemInd;
 
-  const TexturesTester({super.key, required this.onResponse, required this.currentImageTexture});
+  const TexturesTester({super.key, required this.onResponse, required this.currentImageTexture, required this.currentItemInd});
 
   @override
   State<TexturesTester> createState() => _TexturesTesterState();
@@ -103,6 +104,7 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
         ))),
       child: Column(
         children: [
+          Text("Item #${widget.currentItemInd + 1}"),
           Expanded(
             flex: 2,
             child: _buildBody(widget.currentImageTexture, desiredSize),

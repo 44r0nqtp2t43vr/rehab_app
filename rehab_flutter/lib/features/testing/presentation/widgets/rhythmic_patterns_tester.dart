@@ -10,8 +10,9 @@ import 'package:rehab_flutter/injection_container.dart';
 class RhythmicPatternsTester extends StatefulWidget {
   final void Function(double) onResponse;
   final RhythmicPattern currentRhythmicPattern;
+  final int currentItemInd;
 
-  const RhythmicPatternsTester({super.key, required this.onResponse, required this.currentRhythmicPattern});
+  const RhythmicPatternsTester({super.key, required this.onResponse, required this.currentRhythmicPattern, required this.currentItemInd});
 
   @override
   State<RhythmicPatternsTester> createState() => _RhythmicPatternsTesterState();
@@ -67,6 +68,7 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Text("Item #${widget.currentItemInd + 1}"),
         const Expanded(
           flex: 2,
           child: Center(child: Text("What pattern do you feel right now?")),

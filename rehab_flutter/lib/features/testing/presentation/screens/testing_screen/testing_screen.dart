@@ -61,22 +61,12 @@ class _TestingScreenState extends State<TestingScreen> {
     debugPrint(accuracyList.toString());
   }
 
-  Widget getItemNumFromTestingState() {
-    switch (testingState) {
-      case TestingState.staticPatterns:
-      case TestingState.textures:
-      case TestingState.rhythmicPatterns:
-        return Text("Item #${currentItemInd + 1}");
-      default:
-        return const SizedBox();
-    }
-  }
-
   Widget getWidgetFromTestingState() {
     switch (testingState) {
       case TestingState.staticPatterns:
         return StaticPatternsTester(
           onResponse: onResponse,
+          currentItemInd: currentItemInd,
           currentStaticPattern: staticPatternsList[currentItemInd],
         );
       case TestingState.texturesIntro:
@@ -84,6 +74,7 @@ class _TestingScreenState extends State<TestingScreen> {
       case TestingState.textures:
         return TexturesTester(
           onResponse: onResponse,
+          currentItemInd: currentItemInd,
           currentImageTexture: imageTexturesList[currentItemInd - numOfStaticPatternsItems],
         );
       case TestingState.rhythmicPatternsIntro:
@@ -91,6 +82,7 @@ class _TestingScreenState extends State<TestingScreen> {
       case TestingState.rhythmicPatterns:
         return RhythmicPatternsTester(
           onResponse: onResponse,
+          currentItemInd: currentItemInd,
           currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
         );
       case TestingState.finished:
@@ -129,12 +121,7 @@ class _TestingScreenState extends State<TestingScreen> {
       appBar: AppBar(
         title: const Text('Testing'),
       ),
-      body: Column(
-        children: [
-          getItemNumFromTestingState(),
-          Expanded(child: currentTestingWidget),
-        ],
-      ),
+      body: currentTestingWidget,
     );
   }
 }
