@@ -54,6 +54,8 @@ class MainScreen extends StatelessWidget {
 
                   if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.music) {
                     sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
+                  } else if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.specificGenre) {
+                    sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
                   } else {
                     Navigator.of(context).pop();
                   }

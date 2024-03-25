@@ -97,10 +97,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Text('TEST'),
                     ),
                     AppButton(
-                      onPressed: () => _onBlueToothScreenTap(context),
-                      child: const Text('SKIP'),
-                    ),
-                    AppButton(
                       onPressed: () => _onLogsTap(context),
                       child: const Text('LOGS'),
                     ),
@@ -130,10 +126,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onSignUpButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Register');
-  }
-
-  void _onBlueToothScreenTap(BuildContext context) {
-    Navigator.pushNamed(context, '/BluetoothConnect');
   }
 
   void _onLogsTap(BuildContext context) {
