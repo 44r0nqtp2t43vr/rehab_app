@@ -33,7 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           Navigator.pushNamed(context, '/BluetoothConnect');
@@ -120,7 +121,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
 
-      BlocProvider.of<UserBloc>(context).add(LoginEvent(LoginData(email: email, password: password)));
+      BlocProvider.of<UserBloc>(context)
+          .add(LoginEvent(LoginData(email: email, password: password)));
     }
   }
 
