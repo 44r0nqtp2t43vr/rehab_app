@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
@@ -16,20 +17,67 @@ class HomeScreen extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(state.currentUser!.userId),
-              AppButton(
-                onPressed: () => _onTestingButtonPressed(context),
-                child: const Text('Pretest'),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          "Hi, ${state.currentUser!.firstName.capitalize!}",
+                          style: const TextStyle(
+                            fontSize: 24,
+                          ),
+                        ),
+                        const Text(
+                          "Welcome to cu.touch",
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              AppButton(onPressed: () => _onPlanSelectionButtonPressed(context), child: const Text('Select Plan')),
-              AppButton(
-                onPressed: () => _onPreTestDummyPressed(context),
-                child: const Text('Pretest Dummy'),
+              Expanded(
+                flex: 1,
+                child: AppButton(
+                  onPressed: () => _onTestingButtonPressed(context),
+                  child: const Text('Pretest'),
+                ),
               ),
-              AppButton(
-                onPressed: () => _onTodaysSessionPressed(context),
-                child: const Text('Today\'s Session'),
-              )
+              const Text(
+                "Today's Activity",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(),
+              ),
+              const Text(
+                "Activity Monitor",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    AppButton(onPressed: () => _onPlanSelectionButtonPressed(context), child: const Text('Select Plan')),
+                    AppButton(
+                      onPressed: () => _onPreTestDummyPressed(context),
+                      child: const Text('Pretest Dummy'),
+                    ),
+                    AppButton(
+                      onPressed: () => _onTodaysSessionPressed(context),
+                      child: const Text('Today\'s Session'),
+                    )
+                  ],
+                ),
+              ),
             ],
           );
         }
