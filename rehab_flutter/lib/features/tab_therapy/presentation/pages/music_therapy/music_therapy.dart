@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/core/controller/song_controller.dart';
-import 'package:rehab_flutter/core/entities/song.dart';
+import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
-import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/tab_therapy/domain/enums/mtscreen_enums.dart';
@@ -13,27 +11,24 @@ import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen
 import 'package:rehab_flutter/injection_container.dart';
 
 class MusicTherapyScreen extends StatefulWidget {
-  final void Function(TabTherapyEnum) callback;
-
-  const MusicTherapyScreen({super.key, required this.callback});
+  const MusicTherapyScreen({super.key});
 
   @override
   State<MusicTherapyScreen> createState() => _MusicTherapyScreenState();
 }
 
 class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
-  MTScreen screenState = MTScreen.all;
+  late MTScreen screenState;
 
-  void setSong(BuildContext context, Song song) {
-    MusicTherapy mtType = sl<SongController>().currentMTType;
-    sl<SongController>().setSong(song);
-    sl<SongController>().setCurrentDuration(0);
+  @override
+  void initState() {
+    final selectedGenre = sl<NavigationController>().getSelectedGenre();
+    screenState = selectedGenre == null ? MTScreen.all : MTScreen.genres;
 
-    if (mtType == MusicTherapy.basic) {
-      Navigator.pushReplacementNamed(context, '/PlayGame');
-    } else if (mtType == MusicTherapy.intermediate) {
-      Navigator.pushReplacementNamed(context, '/VisualizerScreen');
-    }
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      sl<NavigationController>().setSelectedGenre(null);
+    });
   }
 
   @override
@@ -57,7 +52,7 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
                     ),
                   ),
                   Text(
-                    "Music",
+                    "Stimulation",
                     style: TextStyle(
                       fontSize: 16,
                     ),
@@ -103,7 +98,7 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
   Widget _getWidgetFromMTScreenState() {
     switch (screenState) {
       case MTScreen.all:
-        return MTScreenAll(callback: setSong);
+        return const MTScreenAll();
       case MTScreen.genres:
         return const MTScreenGenres();
       case MTScreen.playlist:
@@ -114,7 +109,7 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
   }
 
   void _onBackButtonPressed(BuildContext context) {
-    widget.callback(TabTherapyEnum.home);
+    sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
   }
 
   void _onAllButtonPressed(BuildContext context) {

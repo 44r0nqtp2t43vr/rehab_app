@@ -1,1 +1,1 @@
-enum Genre { classical }
+enum Genre { classical, pop }

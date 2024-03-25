@@ -2,12 +2,12 @@ import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/enums/genre_enum.dart';
 
 class SongProvider {
-  List<Song> songs = [
+  static List<Song> songs = [
     Song(
       title: "VivaLaVida (available for intermediate)",
       artist: "Coldplay",
       audioSource: 'audio/vivalavida.mp3',
-      genre: Genre.classical,
+      genre: Genre.pop,
       tempo: 83.35433468,
       duration: 241,
       metaDataUrl: 'assets/data/vivalavida.json',

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/data_sources/song_provider.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
+import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/song_card.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class MTScreenAll extends StatelessWidget {
-  final Function(BuildContext, Song) callback;
-
-  const MTScreenAll({super.key, required this.callback});
+  const MTScreenAll({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +19,7 @@ class MTScreenAll extends StatelessWidget {
   }
 
   List<Widget> _getSongs(BuildContext context) {
-    SongProvider songProvider = SongProvider();
-
-    return songProvider.songs.map((song) {
+    return SongProvider.songs.map((song) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: SongCard(
@@ -32,6 +31,14 @@ class MTScreenAll extends StatelessWidget {
   }
 
   void _onSongTapped(BuildContext context, Song song) {
-    callback(context, song);
+    MusicTherapy mtType = sl<SongController>().currentMTType;
+    sl<SongController>().setSong(song);
+    sl<SongController>().setCurrentDuration(0);
+
+    if (mtType == MusicTherapy.basic) {
+      Navigator.pushReplacementNamed(context, '/PlayGame');
+    } else if (mtType == MusicTherapy.intermediate) {
+      Navigator.pushReplacementNamed(context, '/VisualizerScreen');
+    }
   }
 }

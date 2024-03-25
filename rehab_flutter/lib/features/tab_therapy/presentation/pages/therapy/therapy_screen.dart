@@ -6,6 +6,7 @@ import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/music_therapy/music_therapy.dart';
+import 'package:rehab_flutter/features/tab_therapy/presentation/pages/specific_genre/specific_genre.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class TherapyScreen extends StatefulWidget {
@@ -16,11 +17,6 @@ class TherapyScreen extends StatefulWidget {
 }
 
 class _TherapyScreenState extends State<TherapyScreen> {
-  void setTabTherapy(TabTherapyEnum newTabTherapy) {
-    sl<NavigationController>().setTherapyTab(newTabTherapy);
-    setState(() {});
-  }
-
   Widget buildTherapyScreenHome() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +42,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
       case TabTherapyEnum.home:
         return buildTherapyScreenHome();
       case TabTherapyEnum.music:
-        return MusicTherapyScreen(callback: setTabTherapy);
+        return const MusicTherapyScreen();
+      case TabTherapyEnum.specificGenre:
+        return const SpecificGenre();
       default:
         return buildTherapyScreenHome();
     }
@@ -99,14 +97,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
     Navigator.of(context).pop();
     sl<SongController>().setMTType(MusicTherapy.basic);
     sl<SongController>().setSong(null);
-    setTabTherapy(TabTherapyEnum.music);
+    sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
   }
 
   void _onIntermediateMTButtonPressed(BuildContext context) {
     Navigator.of(context).pop();
     sl<SongController>().setMTType(MusicTherapy.intermediate);
     sl<SongController>().setSong(null);
-    setTabTherapy(TabTherapyEnum.music);
+    sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
   }
 
   void _onCTButtonPressed() {
