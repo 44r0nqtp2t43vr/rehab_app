@@ -16,7 +16,6 @@ import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actua
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/plan_selection/presentation/plan_selection.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy/texture_therapy.dart';
-import 'package:rehab_flutter/features/pre_test_dummy/presentation/pre_test_dummy.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/screens/visualizer_screen.dart';
@@ -44,8 +43,7 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -78,8 +76,7 @@ class AppRoutes {
         return _materialRoute(const ScrollTextures());
 
       case '/VisualizerScreen':
-        return _materialRoute(VisualizerScreenSlider(
-            songData: sl<SongController>().getCurrentSong()!));
+        return _materialRoute(VisualizerScreenSlider(songData: sl<SongController>().getCurrentSong()!));
 
       case '/PlanSelection':
         return _materialRoute(PlanSelection());
@@ -87,17 +84,14 @@ class AppRoutes {
       case '/PassiveTherapy':
         return _materialRoute(const PassiveTherapyScreen());
 
-      case '/PreTestDummy':
-        return _materialRoute(PreTestDummy());
-
       case '/TodaysSession':
-        return _materialRoute(TodaySessionScreen());
+        return _materialRoute(const TodaySessionScreen());
       default:
         return _materialRoute(const OnboardingScreen());
     }
   }
 
   static Route<dynamic> _materialRoute(Widget view) {
-    return MaterialPageRoute(builder: (_) => view);
+    return MaterialPageRoute(builder: (_) => view, maintainState: false);
   }
 }

@@ -10,7 +10,7 @@ import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/plan_selection/presentation/add_plan_data.dart';
-import 'package:rehab_flutter/features/pre_test_dummy/pretest_session_generation_data.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/pretest_data.dart';
 
 class FirebaseRepositoryImpl implements FirebaseRepository {
   final FirebaseFirestore db;
@@ -189,7 +189,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<void> submitPretest(PretestData data) async {
+  Future<AppUser> submitPretest(PretestData data) async {
     final Random random = Random();
     // Creating a list of all StandardTherapy values and shuffling it
     List<StandardTherapy> allTherapies = StandardTherapy.values;
@@ -223,5 +223,52 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'standardTwoIntensity': intensityLevel,
       'passiveIntensity': intensityLevel,
     });
+
+    // Optionally fetch and do something with the user's document from Firestore
+    // For example, retrieving the user's profile information
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
+
+    if (!userDoc.exists) {
+      throw Exception('User document does not exist in Firestore.');
+    }
+
+    // Query Plans for the User
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
+
+    List<Plan> plansWithSessions = [];
+
+    for (var planDoc in plansSnapshot.docs) {
+      // For each Plan, Query Sessions
+      QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
+
+      List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
+
+      // Combine Plan with its Sessions
+      Plan planWithSessions = Plan(
+        planId: planDoc.data()['planId'],
+        planName: planDoc.data()['planName'],
+        startDate: planDoc.data()['startDate'].toDate() as DateTime,
+        endDate: planDoc.data()['endDate'].toDate() as DateTime,
+        sessions: sessions,
+      );
+
+      plansWithSessions.add(planWithSessions);
+    }
+
+    final currentUser = AppUser(
+      userId: userDoc.id,
+      firstName: userDoc.data()!['firstName'],
+      lastName: userDoc.data()!['lastName'],
+      gender: userDoc.data()!['gender'],
+      email: userDoc.data()!['email'],
+      phoneNumber: userDoc.data()!['phoneNumber'],
+      city: userDoc.data()!['city'],
+      birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+      registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+      conditions: [],
+      plans: plansWithSessions,
+    );
+
+    return currentUser;
   }
 }

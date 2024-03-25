@@ -41,7 +41,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       final currentUser = await _loginUserUseCase(params: event.loginData);
       emit(UserDone(currentUser: currentUser));
     } catch (e) {
-      print("What's up");
       emit(UserNone(errorMessage: e.toString()));
     }
   }
@@ -56,9 +55,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   void onSubmitPretest(SubmitPretestEvent event, Emitter<UserState> emit) async {
+    emit(const UserLoading());
+    await Future.delayed(Duration(seconds: 2));
     try {
-      await _submitPretestUseCase(params: event.pretestData);
-      emit(const SessionGenerated());
+      final updatedUser = await _submitPretestUseCase(params: event.pretestData);
+      emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }

@@ -20,6 +20,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -33,8 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           Navigator.pushNamed(context, '/BluetoothConnect');
@@ -121,8 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
 
-      BlocProvider.of<UserBloc>(context)
-          .add(LoginEvent(LoginData(email: email, password: password)));
+      BlocProvider.of<UserBloc>(context).add(LoginEvent(LoginData(email: email, password: password)));
     }
   }
 
@@ -132,12 +142,5 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onLogsTap(BuildContext context) {
     Navigator.pushNamed(context, '/LogsScreen');
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 }

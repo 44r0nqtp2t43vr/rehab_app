@@ -26,8 +26,3 @@ class UserDone extends UserState {
 class PlanAdded extends UserState {
   const PlanAdded({AppUser? currentUser}) : super(currentUser: currentUser);
 }
-
-class SessionGenerated extends UserState {
-  const SessionGenerated({AppUser? currentUser})
-      : super(currentUser: currentUser);
-}
