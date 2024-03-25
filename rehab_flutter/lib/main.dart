@@ -9,7 +9,8 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure plugin services are initialized
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure plugin services are initialized
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   ); // Initialize Firebase here
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Haplos',
         theme: theme(),
+        debugShowCheckedModeBanner: false,
         onGenerateRoute: AppRoutes.onGenerateRoutes,
         home: const OnboardingScreen(),
       ),
@@ -48,7 +50,8 @@ class WelcomeScreen extends StatelessWidget {
         title: const Text('Haplos'),
       ),
       body: GestureDetector(
-        behavior: HitTestBehavior.opaque, // Ensures the GestureDetector is as large as its parent
+        behavior: HitTestBehavior
+            .opaque, // Ensures the GestureDetector is as large as its parent
 
         onTap: () =>
             // _onATButtonPressed(context),
