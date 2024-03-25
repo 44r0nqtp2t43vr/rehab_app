@@ -101,6 +101,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
         ))),
       child: Column(
         children: [
+          Text(currentImageTexture.name),
           Expanded(
             flex: 2,
             child: _buildBody(currentImageTexture, desiredSize),

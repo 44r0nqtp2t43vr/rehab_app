@@ -75,6 +75,7 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Text(currentRhythmicPattern.name),
         Expanded(
           flex: 2,
           child: Center(child: Text(currentRhythmicPattern.name)),
