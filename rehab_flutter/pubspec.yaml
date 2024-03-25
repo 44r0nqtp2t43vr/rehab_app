@@ -51,6 +51,7 @@ dependencies:
   firebase_core: ^2.24.2
   firebase_auth: ^4.17.7
   cloud_firestore: ^4.15.8
+  smooth_page_indicator: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -92,11 +93,26 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+  fonts:
+    - family: Sailec Bold
+      fonts:
+        - asset: assets/fonts/Sailec Bold.ttf
+          weight: 700
+
+    - family: Sailec Medium
+      fonts:
+        - asset: assets/fonts/Sailec Medium.ttf
+          weight: 500
+
+    - family: Sailec Light
+      fonts:
+        - asset: assets/fonts/Sailec Light.ttf
+          weight: 300
+
+    - family: Sailec Italic
+      fonts:
+        - asset: assets/fonts/Sailec Regular Italic.ttf
+        - asset: assets/fonts/Sailec Thin.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
