@@ -2,23 +2,23 @@ import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecase/usecase.dart';
 import 'package:rehab_flutter/features/pre_test_dummy/pretest_session_generation_data.dart';
 
-class GenerateSessionUseCase implements UseCase<void, PretestData> {
+class SubmitPretestUseCase implements UseCase<void, PretestData> {
   final FirebaseRepository _firebaseRepository;
 
-  GenerateSessionUseCase(this._firebaseRepository);
+  SubmitPretestUseCase(this._firebaseRepository);
 
   @override
   Future<void> call({PretestData? params}) {
     try {
-      return _firebaseRepository.generateSession(params!);
+      return _firebaseRepository.submitPretest(params!);
     } catch (e) {
-      throw GenerateSessionException(e.toString());
+      throw SubmitPretestException(e.toString());
     }
   }
 }
 
-class GenerateSessionException implements Exception {
+class SubmitPretestException implements Exception {
   final String message;
 
-  GenerateSessionException(this.message);
+  SubmitPretestException(this.message);
 }

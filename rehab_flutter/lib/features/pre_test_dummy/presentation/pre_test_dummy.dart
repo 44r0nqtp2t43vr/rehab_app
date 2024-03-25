@@ -25,8 +25,7 @@ class _PreTestDummyState extends State<PreTestDummy> {
 
     if (score == null || score < 0 || score > 100) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text("Please enter a valid score between 0 and 100.")),
+        SnackBar(content: Text("Please enter a valid score between 0 and 100.")),
       );
       return;
     }
@@ -39,8 +38,7 @@ class _PreTestDummyState extends State<PreTestDummy> {
       return;
     }
 
-    sl<UserBloc>()
-        .add(GenerateSessionEvent(PretestData(user: user, score: score)));
+    sl<UserBloc>().add(SubmitPretestEvent(PretestData(user: user, score: score)));
   }
 
   @override
@@ -68,8 +66,7 @@ class _PreTestDummyState extends State<PreTestDummy> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed:
-                      currentUser != null ? () => _submit(currentUser) : null,
+                  onPressed: currentUser != null ? () => _submit(currentUser) : null,
                   child: Text('Submit'),
                 ),
               ],
