@@ -86,6 +86,16 @@ class Session {
       posttestScore: map['posttestScore'],
     );
   }
+
+  List<bool> getSessionConditions() {
+    return [
+      pretestScore != null,
+      isStandardOneDone,
+      isPassiveDone,
+      isStandardTwoDone,
+      posttestScore != null,
+    ];
+  }
 }
 // Session Provider
 // Sessions are categorized by 1, 2, 3, 4, and 5

@@ -66,8 +66,8 @@ class EventCard extends StatelessWidget {
               child: Row(
                 children: [
                   Radio(
-                    value: true,
-                    groupValue: isCompleted,
+                    value: isCompleted,
+                    groupValue: true,
                     onChanged: (value) {},
                   ),
                   Expanded(

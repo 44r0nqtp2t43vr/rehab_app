@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/widgets/app_button.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/daily_progress_card.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/mini_calendar.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,83 +18,73 @@ class HomeScreen extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         if (state is UserDone) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
-                          "Hi, ${state.currentUser!.firstName.capitalize!}",
-                          style: const TextStyle(
-                            fontSize: 24,
-                          ),
-                        ),
-                        const Text(
-                          "Welcome to cu.touch",
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+          final Session? todaySession = state.currentUser!.getCurrentSession();
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                WelcomeCard(userFirstName: state.currentUser!.firstName),
+                const SizedBox(height: 20),
+                Expanded(
+                  flex: 1,
+                  child: ContinueCard(
+                    user: state.currentUser!,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Today's Activity",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
                   ),
-                ],
-              ),
-              Expanded(
-                flex: 1,
-                child: AppButton(
-                  onPressed: () => _onTestingButtonPressed(context),
-                  child: const Text('Pretest'),
                 ),
-              ),
-              const Text(
-                "Today's Activity",
-                style: TextStyle(
-                  fontSize: 16,
+                const SizedBox(height: 8),
+                Expanded(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: DailyProgressCard(
+                          todaySession: todaySession,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      const Expanded(
+                        flex: 5,
+                        child: ActivityChartCard(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(),
-              ),
-              const Text(
-                "Activity Monitor",
-                style: TextStyle(
-                  fontSize: 16,
+                const SizedBox(height: 20),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Activity Monitor",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    AppButton(onPressed: () => _onPlanSelectionButtonPressed(context), child: const Text('Select Plan')),
-                    AppButton(
-                      onPressed: () => _onTodaysSessionPressed(context),
-                      child: const Text('Today\'s Session'),
-                    )
-                  ],
+                const SizedBox(height: 8),
+                Expanded(
+                  flex: 2,
+                  child: MiniCalendar(user: state.currentUser!),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
         return const SizedBox();
       },
     );
-  }
-
-  void _onTodaysSessionPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/TodaysSession');
-  }
-
-  void _onTestingButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/Testing');
-  }
-
-  void _onPlanSelectionButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/PlanSelection');
   }
 }
