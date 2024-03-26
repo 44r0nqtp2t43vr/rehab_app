@@ -14,16 +14,8 @@ class MiniCalendar extends StatelessWidget {
           onPressed: () => _onPlanSelectionButtonPressed(context),
           child: const Text('Select Plan'),
         ),
-        ElevatedButton(
-          onPressed: () => _onTodaysSessionPressed(context),
-          child: const Text('Today\'s Session'),
-        )
       ],
     );
-  }
-
-  void _onTodaysSessionPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/TodaysSession');
   }
 
   void _onPlanSelectionButtonPressed(BuildContext context) {
