@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_state.dart';
@@ -12,6 +13,7 @@ import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/data_sources/anipattern_provider.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
+import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
 
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -101,7 +103,9 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
         ))),
       child: Column(
         children: [
-          Text(currentImageTexture.name),
+          const SizedBox(height: 32),
+          TestLabel(label: currentImageTexture.name.capitalize!),
+          const SizedBox(height: 16),
           Expanded(
             flex: 2,
             child: _buildBody(currentImageTexture, desiredSize),
@@ -157,7 +161,6 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
                     ...sl<ActuatorsController>().buildActuators(),
                   ],
                 ),
-                Text(currentImageTexture.name),
                 const Spacer(),
               ],
             ),

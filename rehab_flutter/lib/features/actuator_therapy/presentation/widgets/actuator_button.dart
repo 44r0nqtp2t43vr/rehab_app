@@ -17,9 +17,7 @@ class ActuatorButton extends StatelessWidget {
     return Container(
       key: circleKeys[index], // Use the passed index
       decoration: BoxDecoration(
-        color: circleStates[index]
-            ? Colors.green
-            : Colors.red, // Use the passed index
+        color: circleStates[index] ? Colors.green : Colors.white, // Use the passed index
         shape: BoxShape.circle,
       ),
     );

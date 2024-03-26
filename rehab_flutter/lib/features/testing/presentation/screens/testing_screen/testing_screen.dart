@@ -61,12 +61,32 @@ class _TestingScreenState extends State<TestingScreen> {
     debugPrint(accuracyList.toString());
   }
 
+  String getTitleFromTestingState() {
+    switch (testingState) {
+      case TestingState.staticPatterns:
+        return "Static Patterns Test";
+      case TestingState.texturesIntro:
+        return "Textures Introduction";
+      case TestingState.textures:
+        return "Textures Test";
+      case TestingState.rhythmicPatternsIntro:
+        return "Rhythmic Patterns Introduction";
+      case TestingState.rhythmicPatterns:
+        return "Rhythmic Patterns Test";
+      case TestingState.finished:
+        return "Results";
+      default:
+        return "";
+    }
+  }
+
   Widget getWidgetFromTestingState() {
     switch (testingState) {
       case TestingState.staticPatterns:
         return StaticPatternsTester(
           onResponse: onResponse,
-          currentItemInd: currentItemInd,
+          currentItemNo: currentItemInd + 1,
+          totalItemNo: numOfStaticPatternsItems,
           currentStaticPattern: staticPatternsList[currentItemInd],
         );
       case TestingState.texturesIntro:
@@ -74,7 +94,8 @@ class _TestingScreenState extends State<TestingScreen> {
       case TestingState.textures:
         return TexturesTester(
           onResponse: onResponse,
-          currentItemInd: currentItemInd,
+          currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems,
+          totalItemNo: numOfTexturesItems,
           currentImageTexture: imageTexturesList[currentItemInd - numOfStaticPatternsItems],
         );
       case TestingState.rhythmicPatternsIntro:
@@ -82,7 +103,8 @@ class _TestingScreenState extends State<TestingScreen> {
       case TestingState.rhythmicPatterns:
         return RhythmicPatternsTester(
           onResponse: onResponse,
-          currentItemInd: currentItemInd,
+          currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems - numOfTexturesItems,
+          totalItemNo: numOfRhythmicPatternsItems,
           currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
         );
       case TestingState.finished:
@@ -118,10 +140,33 @@ class _TestingScreenState extends State<TestingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Testing'),
-      ),
+      appBar: _buildAppBar(),
       body: currentTestingWidget,
+    );
+  }
+
+  _buildAppBar() {
+    return AppBar(
+      centerTitle: false,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Pre-test",
+            style: TextStyle(
+              fontSize: 32,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            getTitleFromTestingState(),
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
