@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
@@ -31,8 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         if (state is UserDone) {
-          final Session? todaySession = state.currentUser!.getCurrentSession();
-
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
@@ -62,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         flex: 4,
                         child: DailyProgressCard(
-                          todaySession: todaySession,
+                          todaySession: state.currentUser!.getCurrentSession(),
                         ),
                       ),
                       const SizedBox(width: 20),
@@ -95,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 8),
                   MiniCalendar(
                     user: state.currentUser!,
-                    dateColorsMap: {},
+                    dateColorsMap: state.currentUser!.getDateColorsMap(),
                     focusedDay: focusedDay,
                     onPageChanged: _onCalendarPageChanged,
                   ),

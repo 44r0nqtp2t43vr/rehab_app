@@ -4,8 +4,8 @@ import 'package:table_calendar/table_calendar.dart';
 
 class MiniCalendar extends StatelessWidget {
   final AppUser? user;
-  final Map<String, Color?> dateColorsMap;
   final DateTime focusedDay;
+  final Map<String, Color?> dateColorsMap;
   final Function(DateTime) onPageChanged;
 
   const MiniCalendar({super.key, required this.user, required this.dateColorsMap, required this.focusedDay, required this.onPageChanged});
@@ -32,8 +32,8 @@ class MiniCalendar extends StatelessWidget {
           // Customize the appearance of individual calendar cells
           defaultBuilder: (context, date, _) {
             final dateString = "${date.year}${date.month}${date.day}";
-            // final color = dateColorsMap[dateString];
-            final color = null;
+            final color = dateColorsMap[dateString];
+
             if (color != null) {
               // If the date has custom colors defined, use them
               return Container(
@@ -56,8 +56,8 @@ class MiniCalendar extends StatelessWidget {
           },
           // Customize the appearance of the focused day
           todayBuilder: (context, date, _) {
-            // final color = dateColorsMap[date];
-            final color = null;
+            final color = dateColorsMap[date];
+
             if (color != null) {
               // If the date has custom colors defined, use them
               return Container(
