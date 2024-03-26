@@ -9,16 +9,7 @@ class MiniCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        ElevatedButton(
-          onPressed: () => _onPlanSelectionButtonPressed(context),
-          child: const Text('Select Plan'),
-        ),
-      ],
+      children: [],
     );
-  }
-
-  void _onPlanSelectionButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/PlanSelection');
   }
 }

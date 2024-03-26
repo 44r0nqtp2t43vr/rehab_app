@@ -14,8 +14,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UserBloc, UserState>(
-      listener: (context, state) {},
+    return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         if (state is UserDone) {
           final Session? todaySession = state.currentUser!.getCurrentSession();
