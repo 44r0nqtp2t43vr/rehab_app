@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
-import 'package:rehab_flutter/features/todays_session/presentation/todays_session.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
@@ -84,8 +83,6 @@ class AppRoutes {
       case '/PassiveTherapy':
         return _materialRoute(const PassiveTherapyScreen());
 
-      case '/TodaysSession':
-        return _materialRoute(const TodaySessionScreen());
       default:
         return _materialRoute(const OnboardingScreen());
     }

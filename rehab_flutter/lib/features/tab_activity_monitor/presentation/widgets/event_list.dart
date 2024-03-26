@@ -23,7 +23,7 @@ class EventList extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Colors.white),
       ),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -40,7 +40,7 @@ class EventList extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: dayColor,
                       borderRadius: BorderRadius.circular(5.0),
-                      border: Border.all(color: Colors.black),
+                      border: Border.all(color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -50,11 +50,11 @@ class EventList extends StatelessWidget {
                       children: [
                         Text(
                           getDayOfWeek(selectedDay.weekday),
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14, color: Colors.white),
                         ),
                         Text(
                           selectedDay.day.toString(),
-                          style: const TextStyle(fontSize: 24),
+                          style: const TextStyle(fontSize: 24, color: Colors.white),
                         ),
                       ],
                     ),

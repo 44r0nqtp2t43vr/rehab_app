@@ -24,25 +24,17 @@ class EventCard extends StatelessWidget {
               text: leftValue!.toStringAsFixed(0),
               style: const TextStyle(
                 fontSize: 24,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
             const TextSpan(
               text: '%',
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ],
-        ),
-      );
-    } else if (eventType == EventType.timed) {
-      return const Text(
-        "TBD",
-        style: TextStyle(
-          fontSize: 24,
-          color: Colors.black,
         ),
       );
     }
@@ -55,46 +47,74 @@ class EventCard extends StatelessWidget {
       height: 68,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.black),
+        border: Border.all(color: Colors.white),
       ),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: Row(
           children: [
-            Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  Radio(
-                    value: true,
-                    groupValue: isCompleted,
-                    onChanged: (value) {},
-                  ),
-                  Expanded(
-                    child: getLeftWidget(leftValue, eventType),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 1.0,
-              height: double.infinity,
-              color: Colors.black,
-            ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: Text(
-                  rightValue,
-                  maxLines: 2,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ),
+            ...leftValue == null
+                ? [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Radio(
+                            value: isCompleted,
+                            groupValue: true,
+                            onChanged: (value) {},
+                          ),
+                          Expanded(
+                            child: Text(
+                              rightValue,
+                              maxLines: 2,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]
+                : [
+                    Expanded(
+                      flex: 3,
+                      child: Row(
+                        children: [
+                          Radio(
+                            value: isCompleted,
+                            groupValue: true,
+                            onChanged: (value) {},
+                          ),
+                          Expanded(
+                            child: getLeftWidget(leftValue, eventType),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 1.0,
+                      height: double.infinity,
+                      color: Colors.white,
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Text(
+                          rightValue,
+                          maxLines: 2,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
           ],
         ),
       ),

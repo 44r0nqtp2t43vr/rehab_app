@@ -24,22 +24,12 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
 
-  List<bool> getEventConditions(Session session) {
-    return [
-      session.pretestScore != null,
-      session.isStandardOneDone,
-      session.isPassiveDone,
-      session.isStandardTwoDone,
-      session.posttestScore != null,
-    ];
-  }
-
   Map<String, Color?> sessionsToDateColorsMap() {
     Map<String, Color?> dateColorsMap = {};
 
     for (var sesh in widget.sessions) {
       final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
-      final List<bool> conditions = getEventConditions(sesh);
+      final List<bool> conditions = sesh.getSessionConditions();
 
       if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
         dateColorsMap[dateString] = const Color.fromRGBO(0, 128, 0, 1.0);
@@ -96,46 +86,49 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UserBloc, UserState>(
-      listener: (BuildContext context, UserState state) {},
+    return BlocBuilder<UserBloc, UserState>(
       builder: (BuildContext context, UserState state) {
         if (state is UserLoading) {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is UserDone) {
           final currentSelectedSessionDateString = "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Activity Monitor",
-                style: TextStyle(fontSize: 32),
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Activity Monitor",
+                    style: TextStyle(fontSize: 32, color: Colors.white),
+                  ),
+                  const Text(
+                    "Monthly Progress",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  const SizedBox(height: 32),
+                  Calendar(
+                    dateColorsMap: dateColorsMap,
+                    calendarFormat: _calendarFormat,
+                    focusedDay: _focusedDay,
+                    selectedDay: _selectedDay,
+                    selectedDayPredicate: _selectedDayPredicate,
+                    onDaySelected: _onDaySelected,
+                    onPageChanged: _onPageChanged,
+                    onToggleFormat: _onToggleFormat,
+                  ),
+                  const SizedBox(height: 32),
+                  EventList(
+                    dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
+                    selectedDay: _selectedDay,
+                    currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
+                    conditions: currentSelectedSession.getSessionConditions(),
+                  ),
+                ],
               ),
-              const Text(
-                "Monthly Progress",
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 32),
-              Calendar(
-                dateColorsMap: dateColorsMap,
-                calendarFormat: _calendarFormat,
-                focusedDay: _focusedDay,
-                selectedDay: _selectedDay,
-                selectedDayPredicate: _selectedDayPredicate,
-                onDaySelected: _onDaySelected,
-                onPageChanged: _onPageChanged,
-                onToggleFormat: _onToggleFormat,
-              ),
-              const SizedBox(height: 32),
-              Expanded(
-                child: EventList(
-                  dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
-                  selectedDay: _selectedDay,
-                  currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
-                  conditions: getEventConditions(currentSelectedSession),
-                ),
-              ),
-            ],
+            ),
           );
         }
         return const SizedBox();

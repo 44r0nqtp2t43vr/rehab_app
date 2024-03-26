@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
+import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class RhythmicPatternsIntro extends StatefulWidget {
@@ -75,7 +77,9 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(currentRhythmicPattern.name),
+        const SizedBox(height: 32),
+        TestLabel(label: currentRhythmicPattern.name.capitalize!),
+        const SizedBox(height: 16),
         Expanded(
           flex: 2,
           child: Center(child: Text(currentRhythmicPattern.name)),

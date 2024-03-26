@@ -11,14 +11,22 @@ import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/data_sources/anipattern_provider.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
+import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class TexturesTester extends StatefulWidget {
   final void Function(double) onResponse;
   final ImageTexture currentImageTexture;
-  final int currentItemInd;
+  final int currentItemNo;
+  final int totalItemNo;
 
-  const TexturesTester({super.key, required this.onResponse, required this.currentImageTexture, required this.currentItemInd});
+  const TexturesTester({
+    super.key,
+    required this.onResponse,
+    required this.currentImageTexture,
+    required this.currentItemNo,
+    required this.totalItemNo,
+  });
 
   @override
   State<TexturesTester> createState() => _TexturesTesterState();
@@ -104,11 +112,22 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
         ))),
       child: Column(
         children: [
-          Text("Item #${widget.currentItemInd + 1}"),
+          const SizedBox(height: 32),
+          TestLabel(label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
+          const SizedBox(height: 16),
           Expanded(
             flex: 2,
             child: _buildBody(widget.currentImageTexture, desiredSize),
           ),
+          const SizedBox(height: 16),
+          const Text(
+            "What texture do you feel?",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
           Expanded(
             flex: 1,
             child: Wrap(
@@ -151,7 +170,7 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
                       //   ),
                       // ),
                     ),
-                    ...sl<ActuatorsController>().buildActuators(),
+                    ...sl<ActuatorsController>().buildActuatorsConstColor(),
                   ],
                 ),
                 const Spacer(),

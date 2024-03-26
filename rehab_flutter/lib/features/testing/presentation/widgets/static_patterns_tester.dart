@@ -4,14 +4,22 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/widgets/actuator_grid.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
+import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class StaticPatternsTester extends StatefulWidget {
   final void Function(double) onResponse;
   final StaticPattern currentStaticPattern;
-  final int currentItemInd;
+  final int currentItemNo;
+  final int totalItemNo;
 
-  const StaticPatternsTester({super.key, required this.onResponse, required this.currentStaticPattern, required this.currentItemInd});
+  const StaticPatternsTester({
+    super.key,
+    required this.onResponse,
+    required this.currentStaticPattern,
+    required this.currentItemNo,
+    required this.totalItemNo,
+  });
 
   @override
   State<StaticPatternsTester> createState() => _StaticPatternsTesterState();
@@ -131,39 +139,47 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("Item #${widget.currentItemInd + 1}"),
+        const SizedBox(height: 32),
+        TestLabel(label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
+        const SizedBox(height: 16),
         Expanded(
           flex: 2,
-          child: GestureDetector(
-            onPanStart: (DragStartDetails details) {
-              // Capture initial state of circles
-              _updateCircleStateBasedOnPosition(details.globalPosition);
-              setState(() {
-                for (int i = 0; i < _isCircleStateUpdated.length; i++) {
-                  _isCircleStateUpdated[i] = false;
-                }
-              });
-            },
-            onPanUpdate: (DragUpdateDetails details) => _updateCircleStateBasedOnPosition(details.globalPosition),
-            onPanEnd: (DragEndDetails details) {
-              // Reset the flag when the touch ends
-              setState(() {
-                for (int i = 0; i < _isCircleStateUpdated.length; i++) {
-                  _isCircleStateUpdated[i] = true;
-                }
-              });
-            },
-            child: Center(
-              // Use Center to align the child widget in the middle
-              child: ActuatorGrid(
-                circleKeys: _circleKeys,
-                circleStates: _circleStates,
-                permanentGreen: _circleStates,
-                updateState: (int index, bool value) {
+          child: Center(
+            child: Container(
+              color: Colors.black,
+              padding: const EdgeInsets.all(48.0),
+              child: GestureDetector(
+                onPanStart: (DragStartDetails details) {
+                  // Capture initial state of circles
+                  _updateCircleStateBasedOnPosition(details.globalPosition);
                   setState(() {
-                    _circleStates[index] = value;
+                    for (int i = 0; i < _isCircleStateUpdated.length; i++) {
+                      _isCircleStateUpdated[i] = false;
+                    }
                   });
                 },
+                onPanUpdate: (DragUpdateDetails details) => _updateCircleStateBasedOnPosition(details.globalPosition),
+                onPanEnd: (DragEndDetails details) {
+                  // Reset the flag when the touch ends
+                  setState(() {
+                    for (int i = 0; i < _isCircleStateUpdated.length; i++) {
+                      _isCircleStateUpdated[i] = true;
+                    }
+                  });
+                },
+                child: Center(
+                  // Use Center to align the child widget in the middle
+                  child: ActuatorGrid(
+                    circleKeys: _circleKeys,
+                    circleStates: _circleStates,
+                    permanentGreen: _circleStates,
+                    updateState: (int index, bool value) {
+                      setState(() {
+                        _circleStates[index] = value;
+                      });
+                    },
+                  ),
+                ),
               ),
             ),
           ),

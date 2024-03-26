@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 
@@ -48,10 +49,7 @@ class AppUser {
       return null;
     } else {
       final Session currentSession = currentPlan.sessions.firstWhere(
-        (session) =>
-            session.date.year == today.year &&
-            session.date.month == today.month &&
-            session.date.day == today.day,
+        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
         orElse: () => Session.empty(),
       );
       return currentSession == Session.empty() ? null : currentSession;
@@ -60,5 +58,31 @@ class AppUser {
 
   List<Session> getAllSessionsFromAllPlans() {
     return plans.expand((plan) => plan.sessions).toList();
+  }
+
+  Map<String, Color?> getDateColorsMap() {
+    Map<String, Color?> dateColorsMap = {};
+    List<Session> sessions = getAllSessionsFromAllPlans();
+
+    for (var sesh in sessions) {
+      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+      final List<bool> conditions = sesh.getSessionConditions();
+
+      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
+        dateColorsMap[dateString] = const Color.fromRGBO(0, 128, 0, 1.0);
+      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
+        dateColorsMap[dateString] = const Color.fromRGBO(32, 160, 32, 1.0);
+      } else if (conditions[0] && conditions[1] && conditions[2]) {
+        dateColorsMap[dateString] = const Color.fromRGBO(64, 128, 64, 1.0);
+      } else if (conditions[0] && conditions[1]) {
+        dateColorsMap[dateString] = const Color.fromRGBO(96, 192, 96, 1.0);
+      } else if (conditions[0]) {
+        dateColorsMap[dateString] = const Color.fromRGBO(128, 255, 128, 1.0);
+      } else {
+        dateColorsMap[dateString] = null;
+      }
+    }
+
+    return dateColorsMap;
   }
 }

@@ -84,6 +84,20 @@ class ActuatorsController extends GetxController {
     return actuators;
   }
 
+  List<Widget> buildActuatorsConstColor() {
+    List<Widget> actuators = [];
+    for (int i = 0; i < numOfFingersIntFromEnum(); i++) {
+      for (int j = 0; j < positionsMap[i]!.length; j++) {
+        actuators.add(Actuator(
+          tapPosition: positionsMap[i]![j],
+          tappedColor: Colors.white,
+          size: actuatorSize,
+        ));
+      }
+    }
+    return actuators;
+  }
+
   void resetActuators() {
     positionsMap.forEach((key, value) {
       value.clear();
