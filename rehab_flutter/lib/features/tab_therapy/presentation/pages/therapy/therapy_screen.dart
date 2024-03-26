@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/music_therapy/music_therapy.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/specific_genre/specific_genre.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -18,22 +22,33 @@ class TherapyScreen extends StatefulWidget {
 
 class _TherapyScreenState extends State<TherapyScreen> {
   Widget buildTherapyScreenHome() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AppButton(
-          onPressed: () => _onPassiveTherapyButtonPressed(context),
-          child: const Text('Passive Therapy'),
-        ),
-        AppButton(
-          onPressed: () => _onMTButtonPressed(),
-          child: const Text('Music Therapy'),
-        ),
-        AppButton(
-          onPressed: () => _onCTButtonPressed(),
-          child: const Text('Cutaneous Therapy'),
-        ),
-      ],
+    return BlocBuilder<UserBloc, UserState>(
+      builder: (context, state) {
+        if (state is UserDone) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ContinueCard(user: state.currentUser!),
+                AppButton(
+                  onPressed: () => _onPassiveTherapyButtonPressed(context),
+                  child: const Text('Passive Therapy'),
+                ),
+                AppButton(
+                  onPressed: () => _onMTButtonPressed(),
+                  child: const Text('Music Therapy'),
+                ),
+                AppButton(
+                  onPressed: () => _onCTButtonPressed(),
+                  child: const Text('Cutaneous Therapy'),
+                ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 

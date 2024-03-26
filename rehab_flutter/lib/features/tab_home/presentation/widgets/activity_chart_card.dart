@@ -6,6 +6,7 @@ class ActivityChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 240,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(color: Colors.white),

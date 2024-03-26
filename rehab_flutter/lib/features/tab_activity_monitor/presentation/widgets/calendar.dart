@@ -28,7 +28,7 @@ class Calendar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
-        border: Border.all(color: Colors.black), // Adjust border color as needed
+        border: Border.all(color: Colors.white), // Adjust border color as needed
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +99,7 @@ class Calendar extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: Icon(calendarFormat == CalendarFormat.week ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+            icon: Icon(calendarFormat == CalendarFormat.week ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up, color: Colors.white),
             onPressed: () => onToggleFormat(),
           ),
         ],

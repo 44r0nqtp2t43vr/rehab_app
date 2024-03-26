@@ -11,6 +11,7 @@ class ContinueCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => _onTap(context),
       child: Container(
+        height: 124,
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),

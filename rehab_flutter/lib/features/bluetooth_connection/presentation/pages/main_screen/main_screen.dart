@@ -17,14 +17,14 @@ import 'package:rehab_flutter/injection_container.dart';
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
-  Widget getScreenFromTab(TabEnum currentTab, AppUser currentUser) {
+  Widget getScreenFromTab(TabEnum currentTab, AppUser user) {
     switch (currentTab) {
       case TabEnum.home:
         return const HomeScreen();
       case TabEnum.therapy:
         return const TherapyScreen();
       case TabEnum.activityMonitor:
-        return ActivityMonitor(sessions: currentUser.getAllSessionsFromAllPlans());
+        return ActivityMonitor(sessions: user.getAllSessionsFromAllPlans());
       case TabEnum.profile:
         return const ProfileScreen();
       default:

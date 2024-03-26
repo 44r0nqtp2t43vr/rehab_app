@@ -18,6 +18,7 @@ class DailyProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 240,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
