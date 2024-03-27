@@ -24,8 +24,9 @@ class TestingScreen extends StatefulWidget {
 }
 
 class _TestingScreenState extends State<TestingScreen> {
+  final List<String> itemList = [];
   final List<double> accuracyList = [];
-  final int numOfStaticPatternsItems = 5;
+  final int numOfStaticPatternsItems = 10;
   final int numOfTexturesItems = 5;
   final int numOfRhythmicPatternsItems = 5;
   late Widget currentTestingWidget;
@@ -42,8 +43,9 @@ class _TestingScreenState extends State<TestingScreen> {
     });
   }
 
-  void onResponse(double newAccuracy) {
+  void onResponse(double newAccuracy, String newItem) {
     setState(() {
+      itemList.add(newItem);
       accuracyList.add(newAccuracy);
       currentItemInd++;
 
@@ -108,7 +110,7 @@ class _TestingScreenState extends State<TestingScreen> {
           currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
         );
       case TestingState.finished:
-        return TestingFinish(accuracyList: accuracyList);
+        return TestingFinish(itemList: itemList, accuracyList: accuracyList);
       default:
         return Container();
     }

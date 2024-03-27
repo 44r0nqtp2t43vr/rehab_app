@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuators_display_container.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/pattern_button.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/pattern_slider.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -16,16 +17,45 @@ class PatternTherapy extends StatefulWidget {
 }
 
 class _PatternTherapyState extends State<PatternTherapy> {
+  bool isLeftHand = true;
   bool isDeviceConnected = false;
   bool isPatternActive = false;
   int? activePattern;
   int patternDelay = 500; // Start with a default delay of 500ms
   Timer? _patternTimer; // Timer to handle the looping of patterns
+  List<bool> circleStates = List.generate(16, (_) => false);
   PatternProvider patternProvider = PatternProvider();
 
-  @override
-  void initState() {
-    super.initState();
+  int sideAndValueToCircleStateIndex(bool isLeft, int value) {
+    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
+  }
+
+  List<bool> patternToCircleStates(String pattern) {
+    final actuatorValues = [128, 64, 32, 16, 8, 4, 2, 1];
+    final circleStates = List.generate(16, (_) => false);
+
+    if (pattern.isEmpty) {
+      return circleStates;
+    }
+
+    String firstHalf = pattern.substring(1, 4);
+    String secondHalf = pattern.substring(4, 7);
+    int left = int.parse(firstHalf);
+    int right = int.parse(secondHalf);
+
+    for (int i = 0; i < actuatorValues.length; i++) {
+      if (left - actuatorValues[i] >= 0) {
+        left -= actuatorValues[i];
+        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
+      }
+      if (right - actuatorValues[i] >= 0) {
+        right -= actuatorValues[i];
+        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
+      }
+    }
+
+    return circleStates;
   }
 
   void sendPattern(String data) {
@@ -43,7 +73,11 @@ class _PatternTherapyState extends State<PatternTherapy> {
     _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms or as per the requirement
       if (isPatternActive && activePattern == patternIndex) {
-        sendPattern(currentPatternData[timer.tick % currentPatternData.length]);
+        final String patternToSend = currentPatternData[timer.tick % currentPatternData.length];
+        setState(() {
+          circleStates = patternToCircleStates(patternToSend);
+        });
+        sendPattern(patternToSend);
       } else {
         timer.cancel();
       }
@@ -54,7 +88,15 @@ class _PatternTherapyState extends State<PatternTherapy> {
     isPatternActive = false;
     activePattern = null;
     _patternTimer?.cancel();
+    setState(() {
+      circleStates = List.generate(16, (_) => false);
+    });
     sendPattern("<000000000000000000000000000000>");
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -66,14 +108,36 @@ class _PatternTherapyState extends State<PatternTherapy> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double gridSize = (screenWidth - 40) / 3;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bluetooth Device Connector'),
-      ),
-      body: Center(
+      appBar: _buildAppBar(),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            const SizedBox(height: 28),
+            ActuatorsDisplayContainer(
+              height: screenWidth,
+              gridSize: gridSize,
+              isLeftHand: isLeftHand,
+              circleStates: circleStates,
+            ),
+            const SizedBox(height: 28),
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                ...patternProvider.patterns.map((pattern) {
+                  return PatternButton(
+                    buttonText: pattern.name,
+                    onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
+                  );
+                }).toList(),
+              ],
+            ),
+            const SizedBox(height: 28),
             PatternDelaySlider(
               patternDelay: patternDelay.toDouble(),
               onDelayChanged: (double value) {
@@ -85,12 +149,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                 });
               },
             ),
-            ...patternProvider.patterns.map((pattern) {
-              return PatternButton(
-                buttonText: pattern.name,
-                onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
-              );
-            }).toList(),
+            const SizedBox(height: 28),
             PatternButton(
               buttonText: 'Stop Pattern',
               onPressed: stopPattern,
@@ -99,5 +158,63 @@ class _PatternTherapyState extends State<PatternTherapy> {
         ),
       ),
     );
+  }
+
+  _buildAppBar() {
+    return AppBar(
+      centerTitle: false,
+      title: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Cutaneous",
+            style: TextStyle(
+              fontSize: 32,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "Pattern Therapy",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Container(
+          height: 44,
+          width: 44,
+          decoration: BoxDecoration(
+            color: Colors.green,
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: IconButton(
+            icon: isLeftHand
+                ? Transform(
+                    alignment: Alignment.center, // or Alignment.centerLeft
+                    transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+                    child: const Icon(
+                      Icons.back_hand,
+                      color: Colors.white,
+                    ), // Your icon here
+                  )
+                : const Icon(
+                    Icons.back_hand,
+                    color: Colors.white,
+                  ),
+            onPressed: () => _onHandButtonPressed(),
+          ),
+        ),
+        const SizedBox(width: 20),
+      ],
+    );
+  }
+
+  void _onHandButtonPressed() {
+    setState(() {
+      isLeftHand = !isLeftHand;
+    });
   }
 }

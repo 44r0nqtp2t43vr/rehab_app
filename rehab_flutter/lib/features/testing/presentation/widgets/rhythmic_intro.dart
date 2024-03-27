@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
+import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuators_display_container.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
@@ -24,8 +25,41 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
   final int patternDelay = 500;
   final int durationPerRhythmicPattern = 10;
   RhythmicPattern currentRhythmicPattern = TestingDataProvider.rhythmicPatterns[0];
+  List<bool> circleStates = List.generate(16, (_) => false);
   int currentRhythmicPatternInd = 0;
   Timer? _patternTimer;
+
+  int sideAndValueToCircleStateIndex(bool isLeft, int value) {
+    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
+  }
+
+  List<bool> patternToCircleStates(String pattern) {
+    final actuatorValues = [128, 64, 32, 16, 8, 4, 2, 1];
+    final circleStates = List.generate(16, (_) => false);
+
+    if (pattern.isEmpty) {
+      return circleStates;
+    }
+
+    String firstHalf = pattern.substring(1, 4);
+    String secondHalf = pattern.substring(4, 7);
+    int left = int.parse(firstHalf);
+    int right = int.parse(secondHalf);
+
+    for (int i = 0; i < actuatorValues.length; i++) {
+      if (left - actuatorValues[i] >= 0) {
+        left -= actuatorValues[i];
+        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
+      }
+      if (right - actuatorValues[i] >= 0) {
+        right -= actuatorValues[i];
+        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
+      }
+    }
+
+    return circleStates;
+  }
 
   void _onAnimationFinish() {
     if (currentRhythmicPatternInd == TestingDataProvider.rhythmicPatterns.length - 1) {
@@ -46,7 +80,11 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
 
   void startPattern() {
     _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
-      sendPattern(currentRhythmicPattern.pattern[timer.tick % currentRhythmicPattern.pattern.length]);
+      final String patternToSend = currentRhythmicPattern.pattern[timer.tick % currentRhythmicPattern.pattern.length];
+      setState(() {
+        circleStates = patternToCircleStates(patternToSend);
+      });
+      sendPattern(patternToSend);
 
       // Check if the elapsed time exceeds the specified duration
       if (timer.tick * patternDelay >= (durationPerRhythmicPattern * 1000)) {
@@ -57,6 +95,9 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
 
   void stopPattern() {
     _patternTimer?.cancel();
+    setState(() {
+      circleStates = List.generate(16, (_) => false);
+    });
     sendPattern("<000000000000000000000000000000>");
   }
 
@@ -75,17 +116,21 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double gridSize = (screenWidth - 40) / 3;
+
     return Column(
       children: [
         const SizedBox(height: 32),
         TestLabel(label: currentRhythmicPattern.name.capitalize!),
         const SizedBox(height: 16),
-        Expanded(
-          flex: 2,
-          child: Center(child: Text(currentRhythmicPattern.name)),
+        ActuatorsDisplayContainer(
+          height: screenWidth,
+          gridSize: gridSize,
+          isLeftHand: false,
+          circleStates: circleStates,
         ),
         Expanded(
-          flex: 1,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
