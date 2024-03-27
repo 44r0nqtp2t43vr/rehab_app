@@ -6,15 +6,6 @@ class DailyProgressCard extends StatelessWidget {
 
   const DailyProgressCard({super.key, required this.todaySession});
 
-  double getPercentFromTodaySession() {
-    if (todaySession == null) {
-      return 0;
-    }
-
-    final List<bool> conditions = todaySession!.getSessionConditions();
-    return conditions.where((condition) => condition == true).length * (100 / conditions.length);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,7 +25,7 @@ class DailyProgressCard extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                "${getPercentFromTodaySession().toStringAsFixed(0)}%",
+                "${todaySession == null ? 0 : todaySession!.getSessionPercentCompletion().toStringAsFixed(0)}%",
                 style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,

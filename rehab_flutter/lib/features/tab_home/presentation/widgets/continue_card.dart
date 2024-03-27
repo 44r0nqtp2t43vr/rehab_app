@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
 class ContinueCard extends StatelessWidget {
@@ -8,6 +9,8 @@ class ContinueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Plan? currentPlan = user.getCurrentPlan();
+
     return GestureDetector(
       onTap: () => _onTap(context),
       child: Container(
@@ -17,19 +20,19 @@ class ContinueCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
           border: Border.all(color: Colors.white),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                "85",
-                style: TextStyle(
+                "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
+                style: const TextStyle(
                   fontSize: 48,
                   color: Colors.white,
                 ),
               ),
             ),
-            Expanded(
+            const Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +61,7 @@ class ContinueCard extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(right: 12.0),
               child: Icon(
                 Icons.chevron_right,

@@ -28,6 +28,18 @@ class Plan {
       sessions: [],
     );
   }
+
+  double getPlanPercentCompletion() {
+    double percent = 0;
+    if (sessions.isEmpty) {
+      return percent;
+    }
+
+    for (var session in sessions) {
+      percent += session.getSessionPercentCompletion();
+    }
+    return percent / sessions.length;
+  }
 }
 
 // Plan Provider

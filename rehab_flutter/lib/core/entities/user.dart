@@ -29,17 +29,17 @@ class AppUser {
     this.plans = const [], // Default empty list if not provided
   });
 
+  String getUserUid() {
+    return userId;
+  }
+
   Plan? getCurrentPlan() {
     final DateTime today = DateTime.now();
     final Plan currentPlan = plans.lastWhere(
-      (plan) => plan.endDate.isAfter(today),
+      (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
       orElse: () => Plan.empty(),
     );
-    return currentPlan == Plan.empty() ? null : currentPlan;
-  }
-
-  String getUserUid() {
-    return userId;
+    return currentPlan.planId.isEmpty ? null : currentPlan;
   }
 
   Session? getCurrentSession() {

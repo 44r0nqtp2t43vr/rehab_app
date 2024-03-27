@@ -96,6 +96,11 @@ class Session {
       posttestScore != null,
     ];
   }
+
+  double getSessionPercentCompletion() {
+    final List<bool> conditions = getSessionConditions();
+    return conditions.where((condition) => condition == true).length * (100 / conditions.length);
+  }
 }
 // Session Provider
 // Sessions are categorized by 1, 2, 3, 4, and 5
