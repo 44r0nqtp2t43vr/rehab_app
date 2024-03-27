@@ -42,7 +42,8 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(
+            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -75,7 +76,10 @@ class AppRoutes {
         return _materialRoute(const ScrollTextures());
 
       case '/VisualizerScreen':
-        return _materialRoute(VisualizerScreenSlider(songData: sl<SongController>().getCurrentSong()!));
+        return _materialRoute(VisualizerScreenSlider(
+          songData: sl<SongController>().getCurrentSong()!,
+          currentPositionSec: sl<SongController>().getCurrentDuration(),
+        ));
 
       case '/PlanSelection':
         return _materialRoute(PlanSelection());
