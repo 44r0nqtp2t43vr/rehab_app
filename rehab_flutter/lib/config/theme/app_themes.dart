@@ -23,6 +23,7 @@ TextTheme darkTextTheme() {
     headlineLarge: TextStyle(
       fontFamily: 'Sailec Bold',
       fontSize: 30,
+      height: 1.2,
       color: Colors.white,
     ),
     headlineMedium: TextStyle(
@@ -38,6 +39,11 @@ TextTheme darkTextTheme() {
     displayMedium: TextStyle(
       fontFamily: 'Sailec Light',
       fontSize: 22,
+      color: Colors.white,
+    ),
+    displaySmall: TextStyle(
+      fontFamily: 'Sailec Medium',
+      fontSize: 15,
       color: Colors.white,
     ),
   );
@@ -172,6 +178,30 @@ final ThemeData loginButtonTheme = ThemeData(
       ),
       fixedSize: MaterialStateProperty.all<Size>(
         const Size(60, 60),
+      ),
+    ),
+  ),
+);
+
+final ThemeData smallIconButtonTheme = ThemeData(
+  iconButtonTheme: IconButtonThemeData(
+    style: ButtonStyle(
+      iconSize: MaterialStateProperty.all<double>(
+        20,
+      ),
+      backgroundColor: MaterialStateProperty.all<Color>(
+        Colors.white,
+      ),
+      foregroundColor: MaterialStateProperty.all<Color>(
+        const Color(0XFF275492),
+      ),
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      fixedSize: MaterialStateProperty.all<Size>(
+        const Size(40, 40),
       ),
     ),
   ),

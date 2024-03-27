@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -70,7 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           Navigator.pushNamed(context, '/BluetoothConnect');
@@ -266,7 +265,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
 
-      BlocProvider.of<UserBloc>(context).add(LoginEvent(LoginData(email: email, password: password)));
+      BlocProvider.of<UserBloc>(context)
+          .add(LoginEvent(LoginData(email: email, password: password)));
     }
   }
 
