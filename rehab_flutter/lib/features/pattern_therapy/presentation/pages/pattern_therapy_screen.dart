@@ -23,11 +23,40 @@ class _PatternTherapyState extends State<PatternTherapy> {
   int? activePattern;
   int patternDelay = 500; // Start with a default delay of 500ms
   Timer? _patternTimer; // Timer to handle the looping of patterns
+  String patternToSend = "";
+  List<bool> circleStates = List.generate(16, (_) => false);
   PatternProvider patternProvider = PatternProvider();
 
-  @override
-  void initState() {
-    super.initState();
+  int sideAndValueToCircleStateIndex(bool isLeft, int value) {
+    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
+  }
+
+  List<bool> patternToCircleStates(String pattern) {
+    final actuatorValues = [128, 64, 32, 16, 8, 4, 2, 1];
+    final circleStates = List.generate(16, (_) => false);
+
+    if (pattern.isEmpty) {
+      return circleStates;
+    }
+
+    String firstHalf = pattern.substring(1, 4);
+    String secondHalf = pattern.substring(4, 7);
+    int left = int.parse(firstHalf);
+    int right = int.parse(secondHalf);
+
+    for (int i = 0; i < actuatorValues.length; i++) {
+      if (left - actuatorValues[i] >= 0) {
+        left -= actuatorValues[i];
+        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
+      }
+      if (right - actuatorValues[i] >= 0) {
+        right -= actuatorValues[i];
+        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
+      }
+    }
+
+    return circleStates;
   }
 
   void sendPattern(String data) {
@@ -45,7 +74,11 @@ class _PatternTherapyState extends State<PatternTherapy> {
     _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms or as per the requirement
       if (isPatternActive && activePattern == patternIndex) {
-        sendPattern(currentPatternData[timer.tick % currentPatternData.length]);
+        setState(() {
+          patternToSend = currentPatternData[timer.tick % currentPatternData.length];
+          circleStates = patternToCircleStates(patternToSend);
+        });
+        sendPattern(patternToSend);
       } else {
         timer.cancel();
       }
@@ -57,6 +90,11 @@ class _PatternTherapyState extends State<PatternTherapy> {
     activePattern = null;
     _patternTimer?.cancel();
     sendPattern("<000000000000000000000000000000>");
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -94,27 +132,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                           children: [
                             ActuatorDisplayGrid(
                               size: gridSize,
-                              patternData: const [
-                                [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                ]
-                              ],
-                              currentFrame: 0,
+                              patternData: circleStates,
                             ),
                             const SizedBox(height: 12),
                             Text(
@@ -131,27 +149,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                           children: [
                             ActuatorDisplayGrid(
                               size: gridSize,
-                              patternData: const [
-                                [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                ]
-                              ],
-                              currentFrame: 0,
+                              patternData: circleStates,
                             ),
                             const SizedBox(height: 12),
                             Text(
@@ -168,27 +166,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                           children: [
                             ActuatorDisplayGrid(
                               size: gridSize,
-                              patternData: const [
-                                [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                ]
-                              ],
-                              currentFrame: 0,
+                              patternData: circleStates,
                             ),
                             const SizedBox(height: 12),
                             const Text(
@@ -212,27 +190,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                           children: [
                             ActuatorDisplayGrid(
                               size: gridSize,
-                              patternData: const [
-                                [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                ]
-                              ],
-                              currentFrame: 0,
+                              patternData: circleStates,
                             ),
                             const SizedBox(height: 12),
                             Text(
@@ -249,27 +207,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                           children: [
                             ActuatorDisplayGrid(
                               size: gridSize,
-                              patternData: const [
-                                [
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                  false,
-                                ]
-                              ],
-                              currentFrame: 0,
+                              patternData: circleStates,
                             ),
                             const SizedBox(height: 12),
                             Text(
@@ -354,16 +292,17 @@ class _PatternTherapyState extends State<PatternTherapy> {
           ),
           child: IconButton(
             icon: isLeftHand
-                ? const Icon(
-                    Icons.back_hand,
-                    color: Colors.white,
-                  )
-                : Transform(
+                ? Transform(
+                    alignment: Alignment.center, // or Alignment.centerLeft
                     transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
                     child: const Icon(
                       Icons.back_hand,
                       color: Colors.white,
-                    ),
+                    ), // Your icon here
+                  )
+                : const Icon(
+                    Icons.back_hand,
+                    color: Colors.white,
                   ),
             onPressed: () => _onHandButtonPressed(),
           ),

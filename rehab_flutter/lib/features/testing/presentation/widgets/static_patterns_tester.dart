@@ -29,7 +29,6 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   final List<GlobalKey> _circleKeys = List.generate(16, (index) => GlobalKey());
   final List<bool> _circleStates = List.generate(16, (_) => false);
   final List<bool> _isCircleStateUpdated = List.generate(16, (_) => false);
-  final List<int> _cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
 
   void _sendPattern() {
     String currentPatternString = widget.currentStaticPattern.pattern;
@@ -40,7 +39,8 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   }
 
   int _sideAndValueToCircleStateIndex(bool isLeft, int value) {
-    return isLeft ? _cursorValues.indexOf(value) : _cursorValues.lastIndexOf(value);
+    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
   }
 
   List<bool> _patternToCircleStates(String pattern) {
