@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuator_display_grid.dart';
+import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuators_display_container.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/pattern_button.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/pattern_slider.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -23,7 +23,6 @@ class _PatternTherapyState extends State<PatternTherapy> {
   int? activePattern;
   int patternDelay = 500; // Start with a default delay of 500ms
   Timer? _patternTimer; // Timer to handle the looping of patterns
-  String patternToSend = "";
   List<bool> circleStates = List.generate(16, (_) => false);
   PatternProvider patternProvider = PatternProvider();
 
@@ -74,8 +73,8 @@ class _PatternTherapyState extends State<PatternTherapy> {
     _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms or as per the requirement
       if (isPatternActive && activePattern == patternIndex) {
+        final String patternToSend = currentPatternData[timer.tick % currentPatternData.length];
         setState(() {
-          patternToSend = currentPatternData[timer.tick % currentPatternData.length];
           circleStates = patternToCircleStates(patternToSend);
         });
         sendPattern(patternToSend);
@@ -89,6 +88,9 @@ class _PatternTherapyState extends State<PatternTherapy> {
     isPatternActive = false;
     activePattern = null;
     _patternTimer?.cancel();
+    setState(() {
+      circleStates = List.generate(16, (_) => false);
+    });
     sendPattern("<000000000000000000000000000000>");
   }
 
@@ -117,113 +119,11 @@ class _PatternTherapyState extends State<PatternTherapy> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const SizedBox(height: 28),
-            Container(
+            ActuatorsDisplayContainer(
               height: screenWidth,
-              width: double.infinity,
-              color: Colors.black,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ActuatorDisplayGrid(
-                              size: gridSize,
-                              patternData: circleStates,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              isLeftHand ? "Pinky" : "Thumb",
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ActuatorDisplayGrid(
-                              size: gridSize,
-                              patternData: circleStates,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              isLeftHand ? "Ring" : "Index",
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ActuatorDisplayGrid(
-                              size: gridSize,
-                              patternData: circleStates,
-                            ),
-                            const SizedBox(height: 12),
-                            const Text(
-                              "Middle",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ActuatorDisplayGrid(
-                              size: gridSize,
-                              patternData: circleStates,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              isLeftHand ? "Index" : "Ring",
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ActuatorDisplayGrid(
-                              size: gridSize,
-                              patternData: circleStates,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              isLeftHand ? "Thumb" : "Pinky",
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              gridSize: gridSize,
+              isLeftHand: isLeftHand,
+              circleStates: circleStates,
             ),
             const SizedBox(height: 28),
             Wrap(

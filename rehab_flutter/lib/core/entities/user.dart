@@ -52,7 +52,7 @@ class AppUser {
         (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
         orElse: () => Session.empty(),
       );
-      return currentSession == Session.empty() ? null : currentSession;
+      return currentSession.sessionId.isEmpty ? null : currentSession;
     }
   }
 
