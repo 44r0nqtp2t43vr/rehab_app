@@ -8,7 +8,7 @@ import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.d
 import 'package:rehab_flutter/injection_container.dart';
 
 class StaticPatternsTester extends StatefulWidget {
-  final void Function(double) onResponse;
+  final void Function(double, String) onResponse;
   final StaticPattern currentStaticPattern;
   final int currentItemNo;
   final int totalItemNo;
@@ -107,7 +107,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   }
 
   void _onSubmit() {
-    widget.onResponse(_calculateAccuracy());
+    widget.onResponse(_calculateAccuracy(), widget.currentStaticPattern.name);
     setState(() {
       for (int i = 0; i < _circleStates.length; i++) {
         _circleStates[i] = false;

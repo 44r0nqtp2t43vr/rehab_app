@@ -4,11 +4,17 @@ import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.da
 
 class TestingDataProvider {
   static final List<StaticPattern> staticPatterns = [
-    StaticPattern(name: "all", pattern: "255255"),
-    StaticPattern(name: "firstColVertLine", pattern: "071000"),
-    StaticPattern(name: "secondColVertLine", pattern: "184000"),
-    StaticPattern(name: "thirdColVertLine", pattern: "000071"),
-    StaticPattern(name: "fourthColVertLine", pattern: "000184"),
+    StaticPattern(name: "All", pattern: "255255"),
+    StaticPattern(name: "Outer Box", pattern: "207249"),
+    StaticPattern(name: "Inner Box", pattern: "048006"),
+    StaticPattern(name: "Vertical Line, First Column", pattern: "071000"),
+    StaticPattern(name: "Vertical Line, Second Column", pattern: "184000"),
+    StaticPattern(name: "Vertical Line, Third Column", pattern: "000071"),
+    StaticPattern(name: "Vertical Line, Fourth Column", pattern: "000184"),
+    StaticPattern(name: "Horizontal Line, First Row", pattern: "009009"),
+    StaticPattern(name: "Horizontal Line, Second Row", pattern: "018018"),
+    StaticPattern(name: "Horizontal Line, Third Row", pattern: "036036"),
+    StaticPattern(name: "Horizontal Line, Fourth Row", pattern: "192192"),
   ];
 
   static final List<ImageTexture> imageTextures = [

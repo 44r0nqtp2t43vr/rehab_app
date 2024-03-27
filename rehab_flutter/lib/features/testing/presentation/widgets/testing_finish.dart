@@ -8,9 +8,10 @@ import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/pretest_data.dart';
 
 class TestingFinish extends StatefulWidget {
+  final List<String> itemList;
   final List<double> accuracyList;
 
-  const TestingFinish({super.key, required this.accuracyList});
+  const TestingFinish({super.key, required this.itemList, required this.accuracyList});
 
   @override
   State<TestingFinish> createState() => _TestingFinishState();
@@ -49,6 +50,7 @@ class _TestingFinishState extends State<TestingFinish> {
                   children: [
                     Text(score.toStringAsFixed(2)),
                     Text(widget.accuracyList.toString()),
+                    Text(widget.itemList.toString()),
                   ],
                 ),
               ),

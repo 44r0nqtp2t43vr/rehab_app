@@ -9,7 +9,7 @@ import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.d
 import 'package:rehab_flutter/injection_container.dart';
 
 class RhythmicPatternsTester extends StatefulWidget {
-  final void Function(double) onResponse;
+  final void Function(double, String) onResponse;
   final RhythmicPattern currentRhythmicPattern;
   final int currentItemNo;
   final int totalItemNo;
@@ -47,7 +47,7 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
 
   void _onSubmit(String value) {
     stopPattern();
-    widget.onResponse(value == widget.currentRhythmicPattern.name ? 100 : 0);
+    widget.onResponse(value == widget.currentRhythmicPattern.name ? 100 : 0, widget.currentRhythmicPattern.name);
   }
 
   @override
