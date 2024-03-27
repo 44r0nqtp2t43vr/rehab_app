@@ -120,3 +120,100 @@ final ThemeData skipButtonTheme = ThemeData(
     ),
   ),
 );
+
+final ThemeData textButtonTheme = ThemeData(
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all<Color>(
+        Colors.white,
+      ),
+      textStyle: MaterialStateProperty.all<TextStyle>(
+        const TextStyle(
+          fontFamily: 'Sailec Medium',
+          fontSize: 12,
+        ),
+      ),
+    ),
+  ),
+);
+
+final ThemeData signupButtonTheme = ThemeData(
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
+      foregroundColor: MaterialStateProperty.all<Color>(
+        Colors.white,
+      ),
+      textStyle: MaterialStateProperty.all<TextStyle>(
+        const TextStyle(
+          fontFamily: 'Sailec Medium',
+          fontSize: 15,
+        ),
+      ),
+    ),
+  ),
+);
+
+final ThemeData loginButtonTheme = ThemeData(
+  iconButtonTheme: IconButtonThemeData(
+    style: ButtonStyle(
+      iconSize: MaterialStateProperty.all<double>(
+        40,
+      ),
+      backgroundColor: MaterialStateProperty.all<Color>(
+        Colors.white,
+      ),
+      foregroundColor: MaterialStateProperty.all<Color>(
+        const Color(0XFF275492),
+      ),
+      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      fixedSize: MaterialStateProperty.all<Size>(
+        const Size(60, 60),
+      ),
+    ),
+  ),
+);
+
+InputDecoration customInputDecoration = InputDecoration(
+  labelStyle: const TextStyle(
+    color: Color(0XFFD1D1D1),
+  ),
+  floatingLabelStyle: const TextStyle(
+    color: Color(0XFF275492),
+    backgroundColor: Colors.white,
+  ),
+  hintStyle: const TextStyle(
+    color: Colors.white,
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Color(0XFFd1d1d1), width: 2),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Color(0XFF275492), width: 2),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(
+      color: Colors.red,
+      width: 2,
+    ),
+  ),
+  errorStyle: const TextStyle(
+    color: Colors.red,
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(
+      color: Colors.red,
+      width: 2,
+    ),
+  ),
+  filled: true,
+  fillColor: Colors.white,
+  contentPadding: const EdgeInsets.all(15.0),
+);

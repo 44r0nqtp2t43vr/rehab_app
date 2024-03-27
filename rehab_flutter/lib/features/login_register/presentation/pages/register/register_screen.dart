@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
@@ -25,7 +27,8 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _phoneNumberController = TextEditingController();
   final _cityController = TextEditingController();
   final _genderController = TextEditingController();
-  final _birthdateController = TextEditingController(); // Consider using a DatePicker
+  final _birthdateController =
+      TextEditingController(); // Consider using a DatePicker
 
   List<String> _availableConditions = [
     'Condition 1',
@@ -38,10 +41,54 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Register'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 120,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Signup',
+                style: darkTextTheme().headlineLarge,
+              ),
+              Text(
+                "Create an account to get started.",
+                style: darkTextTheme().headlineSmall,
+              ),
+            ],
+          ),
+        ),
       ),
-      body: _buildBody(),
+      body: SizedBox.expand(
+        child: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF01FF99),
+                    Color(0xFF128BED),
+                    Color(0xFF16478B),
+                  ],
+                  stops: [0.0, 0.8, 1.0],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+            Container(
+              color: Colors.black.withOpacity(0.3),
+            ),
+            _buildBody(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -49,7 +96,8 @@ class RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           Navigator.of(context).pushNamed('/Login').then((value) {
@@ -62,13 +110,18 @@ class RegisterScreenState extends State<RegisterScreen> {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is UserNone || state is UserDone) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: _buildFormFields(),
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: _buildFormFields(),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -81,153 +134,258 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   List<Widget> _buildFormFields() {
     return [
-      TextFormField(
-        controller: _firstNameController,
-        decoration: const InputDecoration(labelText: 'First Name'),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your first name';
-          }
-          return null;
-        },
-      ),
-      TextFormField(
-        controller: _lastNameController,
-        decoration: const InputDecoration(labelText: 'Last Name'),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your last name';
-          }
-          return null;
-        },
-      ),
-      TextFormField(
-          controller: _genderController,
-          decoration: const InputDecoration(labelText: "Gender"),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter gender';
-            }
-            return null;
-          }),
-      TextFormField(
-        controller: _emailController,
-        decoration: const InputDecoration(labelText: 'Email'),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your email';
-          }
-          return null;
-        },
-      ),
-      TextFormField(
-        controller: _passwordController,
-        decoration: const InputDecoration(labelText: 'Password'),
-        obscureText: true,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your password';
-          }
-          return null;
-        },
-      ),
-      TextFormField(
-        controller: _confirmPasswordController,
-        decoration: const InputDecoration(labelText: 'Confirm Password'),
-        obscureText: true,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please confirm your password';
-          }
-          if (value != _passwordController.text) {
-            return 'Passwords do not match';
-          }
-          return null;
-        },
-      ),
-      TextFormField(
-        controller: _phoneNumberController,
-        decoration: const InputDecoration(labelText: 'Phone Number'),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your phone number';
-          }
-          return null;
-        },
-      ),
-      TextFormField(
-        controller: _cityController,
-        decoration: const InputDecoration(labelText: 'City'),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter your city';
-          }
-          return null;
-        },
-      ),
-      InkWell(
-        onTap: () => _selectDate(context),
-        child: IgnorePointer(
-          child: TextFormField(
-            controller: _birthdateController,
-            decoration: InputDecoration(
-              labelText: 'Birthdate (YYYY-MM-DD)',
-              hintText: 'Tap to select date',
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your birthdate';
-              }
-              return null;
-            },
+      GlassContainer(
+        blur: 4,
+        color: Colors.white.withOpacity(0.25),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _firstNameController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'First Name',
+                  hintText: 'Enter your First Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your first name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _lastNameController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Last Name',
+                  hintText: 'Enter your Last Name',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your last name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _genderController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Gender',
+                  hintText: 'Enter your Gender',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter gender';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _emailController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Email',
+                  hintText: 'Enter your Email Address',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _passwordController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Password',
+                  hintText: 'Enter your Password',
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _confirmPasswordController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Confirm Password',
+                  hintText: 'Confirm your Password',
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your password';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _phoneNumberController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Phone Number',
+                  hintText: 'Enter your Phone Number',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _cityController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Location',
+                  hintText: 'Enter your Location',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your city';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () => _selectDate(context),
+                child: IgnorePointer(
+                  child: TextFormField(
+                    controller: _birthdateController,
+                    decoration: customInputDecoration.copyWith(
+                      labelText: 'Birthdate',
+                      hintText: 'Birthdate (YYY-MM-DD)',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your birthdate';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: _currentCondition,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Select Condition',
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _currentCondition = newValue!;
+                  });
+                },
+                items: _availableConditions
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              ElevatedButton(
+                onPressed: _addCondition,
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(14),
+                ),
+                child: const Icon(Icons.add),
+              ),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: _selectedConditions
+                    .map((condition) => Chip(
+                          label: Text(condition),
+                          onDeleted: () => _removeCondition(condition),
+                        ))
+                    .toList(),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: Theme(
+                  data: darkButtonTheme,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _registerUser();
+                      }
+                    },
+                    child: const Text('Register'),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'or Login with',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontFamily: 'Sailec Light',
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Theme(
+                    data: loginButtonTheme,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.apple),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Theme(
+                    data: loginButtonTheme,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.one_x_mobiledata),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Theme(
+                    data: loginButtonTheme,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.facebook),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
-      DropdownButtonFormField<String>(
-        value: _currentCondition,
-        decoration: const InputDecoration(labelText: 'Select Condition'),
-        onChanged: (String? newValue) {
-          setState(() {
-            _currentCondition = newValue!;
-          });
-        },
-        items: _availableConditions.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-      ),
-      ElevatedButton(
-        onPressed: _addCondition,
-        child: const Icon(Icons.add),
-        style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(14),
-        ),
-      ),
-      Wrap(
-        spacing: 8.0,
-        runSpacing: 4.0,
-        children: _selectedConditions
-            .map((condition) => Chip(
-                  label: Text(condition),
-                  onDeleted: () => _removeCondition(condition),
-                ))
-            .toList(),
-      ),
-      const SizedBox(height: 20),
-      AppButton(
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            _registerUser();
-          }
-        },
-        child: const Text('Register'),
-      ),
-      AppButton(
-        onPressed: () => _onLoginButtonPressed(context),
-        child: const Text('Already have an account? Login'),
+      const SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Already have an account?",
+            style: darkTextTheme().headlineSmall,
+          ),
+          Theme(
+            data: signupButtonTheme,
+            child: TextButton(
+              onPressed: () => _onLoginButtonPressed(context),
+              child: const Text('Login'),
+            ),
+          ),
+        ],
       ),
     ];
   }
@@ -263,7 +421,8 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   void _registerUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate =
+        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     RegisterData registerData = RegisterData(
@@ -273,7 +432,8 @@ class RegisterScreenState extends State<RegisterScreen> {
       lastName: _lastNameController.text,
       phoneNumber: _phoneNumberController.text,
       city: _cityController.text,
-      gender: _genderController.text, // Assuming gender is included in RegisterData
+      gender:
+          _genderController.text, // Assuming gender is included in RegisterData
       birthDate: birthdate,
       conditions: _selectedConditions,
     );
