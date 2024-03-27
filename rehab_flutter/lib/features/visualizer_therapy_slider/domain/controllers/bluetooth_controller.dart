@@ -8,7 +8,7 @@ Map<String, int> sendUpdatedPattern(activeValues, lastSentPattern) {
   var sums = calculateSumsOfActuators(activeValues);
   if (sums != lastSentPattern) {
     // Enough time has passed; send the pattern now
-    sendPattern(sums['left']!, sums['right']!);
+    // sendPattern(sums['left']!, sums['right']!);
     lastSentPattern = sums;
   } else {
     debugPrint("Same pattern; Not sending");

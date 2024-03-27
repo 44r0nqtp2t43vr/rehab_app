@@ -46,7 +46,8 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
   void sendPattern(int left, int right) {
     String leftString = left.toString().padLeft(3, '0');
     String rightString = right.toString().padLeft(3, '0');
-    String data = "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+    String data =
+        "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
 
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
@@ -77,12 +78,16 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
 
   void _updateCircleStateBasedOnPosition(Offset globalPosition, bool isStart) {
     for (int i = 0; i < _circleKeys.length; i++) {
-      final RenderBox? box = _circleKeys[i].currentContext?.findRenderObject() as RenderBox?;
+      final RenderBox? box =
+          _circleKeys[i].currentContext?.findRenderObject() as RenderBox?;
       if (box != null) {
         final position = box.localToGlobal(Offset.zero);
         final size = box.size;
 
-        if (globalPosition.dx >= position.dx && globalPosition.dx <= position.dx + size.width && globalPosition.dy >= position.dy && globalPosition.dy <= position.dy + size.height) {
+        if (globalPosition.dx >= position.dx &&
+            globalPosition.dx <= position.dx + size.width &&
+            globalPosition.dy >= position.dy &&
+            globalPosition.dy <= position.dy + size.height) {
           setState(() {
             if (isStart && _circleStates[i] == false) {
               _circleStates[i] = true;
@@ -120,7 +125,8 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
 
   @override
   void dispose() {
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -136,7 +142,8 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
           _initialCircleStates = List.from(_circleStates);
           _updateCircleStateBasedOnPosition(details.globalPosition, true);
         },
-        onPanUpdate: (DragUpdateDetails details) => _updateCircleStateBasedOnPosition(details.globalPosition, false),
+        onPanUpdate: (DragUpdateDetails details) =>
+            _updateCircleStateBasedOnPosition(details.globalPosition, false),
         onPanEnd: (DragEndDetails details) {
           setState(() {
             _resetNonPermanentCircles();

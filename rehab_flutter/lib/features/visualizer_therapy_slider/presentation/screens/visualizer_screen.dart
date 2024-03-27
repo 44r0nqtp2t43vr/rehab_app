@@ -20,15 +20,21 @@ import 'package:rehab_flutter/injection_container.dart';
 
 class VisualizerScreenSlider extends StatefulWidget {
   final Song songData;
+  final double currentPositionSec; // Add this line
 
-  // Constructor
-  const VisualizerScreenSlider({super.key, required this.songData});
+  // Update constructor
+  const VisualizerScreenSlider({
+    Key? key,
+    required this.songData,
+    this.currentPositionSec = 0.0, // Default to 0.0 if not provided
+  }) : super(key: key);
 
   @override
   VisualizerScreenStateSlider createState() => VisualizerScreenStateSlider();
 }
 
-class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with SingleTickerProviderStateMixin {
+class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
+    with SingleTickerProviderStateMixin {
 //  controllers
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
@@ -92,13 +98,24 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
   void initState() {
     super.initState();
 
-    audioPlayer = AudioPlayer();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 850),
     )..addListener(() {
         setState(() {});
       });
+    audioPlayer = AudioPlayer();
+    isPlaying = true;
+    // Start playing the audio
+
+    audioPlayer.setSource(AssetSource(widget.songData.audioSource)).then((_) {
+      audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
+      audioPlayer.resume();
+    });
+
+    audioPlayer.play(AssetSource(widget.songData.audioSource),
+        position: Duration(seconds: widget.currentPositionSec.toInt()));
+
     _controller.repeat(reverse: true);
     circles = List.generate(16, (index) {
       // Assuming you want 16 blocks as per your UI setup
@@ -126,90 +143,29 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     // Load blocks from forest_of_blocks.json
     loadBlocks(widget.songData.metaDataUrl);
     // Subscribe to the onPositionChanged event
+
     positionSubscription = audioPlayer.onPositionChanged.listen((position) {
       setState(() {
         currentPositionSec = position.inSeconds.toDouble();
       });
 
-      useClosestBlock(position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
+      useClosestBlock(
+          position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
     });
   }
 
-  void useClosestBlock(double positionSec) {
-    if (blocks.isEmpty) return;
-
-    for (int i = 0; i < blocks.length; i++) {
-      if (i == blocks.length - 1 || (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
-        if (i != currentIndex) {
-          setState(() {
-            prevIndex = currentIndex; // Save the current index as previous before updating
-            currentIndex = i; // Now update the current index
-          });
-          break;
-        }
-      }
-    }
-    var midRange = blocks[currentIndex].midrange;
-    var higherMidrange = blocks[currentIndex].higherMidrange;
-    var bass = blocks[currentIndex].bass;
-    var subBass = blocks[currentIndex].subBass;
-    var lowerMidrange = blocks[currentIndex].lowerMidrange;
-    var presence = blocks[currentIndex].presence;
-    var noteOnset = blocks[currentIndex].noteOnset;
-    var brilliance = blocks[currentIndex].brilliance;
-
+  void _pauseAnimation() {
+    audioPlayer.pause();
     setState(() {
-      // 0 for item in ActiveValues
-      for (int i = 0; i < activeValues.length; i++) {
-        activeValues[i] = 0;
-      }
-      print("Time: ${blocks[currentIndex].time}");
-      print("Position: $positionSec");
-
-      if (noteOnset == 1 && blocks[prevIndex].noteOnset == 0 && blocks[prevIndex - 1].noteOnset == 0 && blocks[prevIndex - 2].noteOnset == 0 && blocks[prevIndex - 3].noteOnset == 0) {
-        for (int i = 0; i < activeValues.length; i++) {
-          activeValues[i] = 0;
-        }
-        int delay = 0; // Initial delay is 0ms for the first column
-        List<List<int>> columns = [firstCol, secondCol, thirdCol, fourthCol]; // List of column groups for iteration
-
-        for (var column in columns) {
-          Timer(Duration(milliseconds: delay), () {
-            for (var index in column) {
-              // Reset active values before setting the current column as active
-              for (int i = 0; i < activeValues.length; i++) {
-                activeValues[i] = 0;
-              }
-              updateCircleState(index, Colors.green, 40.0, 40.0, 1); // Mark as active
-            }
-          });
-
-          // Increase delay by 200ms for the next column
-          delay += 200;
-        }
-        print(noteOnset);
-// Schedule the reset to blue for all circles, to happen after the last column has turned green
-        Timer(Duration(milliseconds: delay), () {
-          resetAllCircles(Colors.blue, 20.0, 20.0, 0); // Mark all as inactive
-        });
-      } else if (noteOnset == 1) {
-        updateCirclePropertiesNoteOnset(outerSquare, true);
-        lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
-      } else if (activeValues.every((value) => value == 0)) //active values is all 0
-      {
-        updateCircleProperties(bassSquare, getBassBoolValue(bass));
-        updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
-        updateCircleProperties(lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
-        updateCircleProperties(subBassSquare, getSubBassBoolValue(subBass));
-        updateCircleProperties(presenceSquare, getPresenceBoolValue(presence));
-        updateCircleProperties(higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
-        updateCircleProperties(brillianceSquare, getBrillianceBoolValue(brilliance));
-      }
-
-      lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+      isPlaying = false;
     });
+  }
 
-    // Ensure a rebuild to reflect color and size changes
+  void _resumeAnimation() {
+    audioPlayer.resume();
+    setState(() {
+      isPlaying = true;
+    });
   }
 
   @override
@@ -286,14 +242,16 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        Text(secToMinSec(currentPositionSec)), // Display current playback position
+                        Text(secToMinSec(
+                            currentPositionSec)), // Display current playback position
                         const SizedBox(width: 20),
                         Expanded(
                           child: SongSlider(
                             currentDuration: currentPositionSec,
                             minDuration: 0,
                             maxDuration: widget.songData.duration,
-                            onDurationChanged: (value) => _onDurationChanged(value),
+                            onDurationChanged: (value) =>
+                                _onDurationChanged(value),
                           ),
                         ),
                         const SizedBox(width: 20),
@@ -313,10 +271,11 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                           onPressed: () {},
                         ),
                         AppIconButton(
-                            icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                            onPressed: () => {
-                                  togglePlay(widget.songData.audioSource),
-                                }),
+                          icon: isPlaying ? Icons.pause : Icons.play_arrow,
+                          onPressed: () => isPlaying
+                              ? _pauseAnimation()
+                              : _resumeAnimation(),
+                        ),
                         AppIconButton(
                           icon: Icons.arrow_forward,
                           onPressed: () {},
@@ -365,7 +324,9 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     List<Widget> rows = [];
     int itemsPerRow = 4; // Number of RayPainters per row
     for (int i = 0; i < circles.length; i += itemsPerRow) {
-      List<Widget> rowItems = circles.sublist(i, min(i + itemsPerRow, circles.length)).map((circleState) {
+      List<Widget> rowItems = circles
+          .sublist(i, min(i + itemsPerRow, circles.length))
+          .map((circleState) {
         return SizedBox(
           width: 100,
           height: 100,
@@ -383,12 +344,15 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
           ),
         );
       }).toList();
-      rows.add(Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: rowItems));
+      rows.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: rowItems));
     }
     return rows;
   }
 
-  void updateCircleState(int index, Color color, double width, double height, int activeValue) {
+  void updateCircleState(
+      int index, Color color, double width, double height, int activeValue) {
     setState(() {
       circles[index].color = color;
       circles[index].circleWidth = width;
@@ -399,7 +363,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
-  void resetAllCircles(Color color, double width, double height, int activeValue) {
+  void resetAllCircles(
+      Color color, double width, double height, int activeValue) {
     setState(() {
       for (var circle in circles) {
         circle.color = color;
@@ -442,14 +407,96 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     blocks = blockJson.map((json) => AudioData.fromJson(json)).toList();
   }
 
-  void togglePlay(String audioFile) async {
-    if (isPlaying) {
-      await audioPlayer.pause();
-    } else {
-      await audioPlayer.play(AssetSource(audioFile));
+  void useClosestBlock(double positionSec) {
+    if (blocks.isEmpty) return;
+
+    for (int i = 0; i < blocks.length; i++) {
+      if (i == blocks.length - 1 ||
+          (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
+        if (i != currentIndex) {
+          setState(() {
+            prevIndex =
+                currentIndex; // Save the current index as previous before updating
+            currentIndex = i; // Now update the current index
+          });
+          break;
+        }
+      }
     }
+    var midRange = blocks[currentIndex].midrange;
+    var higherMidrange = blocks[currentIndex].higherMidrange;
+    var bass = blocks[currentIndex].bass;
+    var subBass = blocks[currentIndex].subBass;
+    var lowerMidrange = blocks[currentIndex].lowerMidrange;
+    var presence = blocks[currentIndex].presence;
+    var noteOnset = blocks[currentIndex].noteOnset;
+    var brilliance = blocks[currentIndex].brilliance;
+
     setState(() {
-      isPlaying = !isPlaying;
+      // 0 for item in ActiveValues
+      for (int i = 0; i < activeValues.length; i++) {
+        activeValues[i] = 0;
+      }
+      print("Time: ${blocks[currentIndex].time}");
+      print("Position: $positionSec");
+
+      if (noteOnset == 1 &&
+          blocks[prevIndex].noteOnset == 0 &&
+          blocks[prevIndex - 1].noteOnset == 0 &&
+          blocks[prevIndex - 2].noteOnset == 0 &&
+          blocks[prevIndex - 3].noteOnset == 0) {
+        for (int i = 0; i < activeValues.length; i++) {
+          activeValues[i] = 0;
+        }
+        int delay = 0; // Initial delay is 0ms for the first column
+        List<List<int>> columns = [
+          firstCol,
+          secondCol,
+          thirdCol,
+          fourthCol
+        ]; // List of column groups for iteration
+
+        for (var column in columns) {
+          Timer(Duration(milliseconds: delay), () {
+            for (var index in column) {
+              // Reset active values before setting the current column as active
+              for (int i = 0; i < activeValues.length; i++) {
+                activeValues[i] = 0;
+              }
+              updateCircleState(
+                  index, Colors.green, 40.0, 40.0, 1); // Mark as active
+            }
+          });
+
+          // Increase delay by 200ms for the next column
+          delay += 200;
+        }
+        print(noteOnset);
+// Schedule the reset to blue for all circles, to happen after the last column has turned green
+        Timer(Duration(milliseconds: delay), () {
+          resetAllCircles(Colors.blue, 20.0, 20.0, 0); // Mark all as inactive
+        });
+      } else if (noteOnset == 1) {
+        updateCirclePropertiesNoteOnset(outerSquare, true);
+        lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+      } else if (activeValues
+          .every((value) => value == 0)) //active values is all 0
+      {
+        updateCircleProperties(bassSquare, getBassBoolValue(bass));
+        updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
+        updateCircleProperties(
+            lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
+        updateCircleProperties(subBassSquare, getSubBassBoolValue(subBass));
+        updateCircleProperties(presenceSquare, getPresenceBoolValue(presence));
+        updateCircleProperties(
+            higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
+        updateCircleProperties(
+            brillianceSquare, getBrillianceBoolValue(brilliance));
+      }
+
+      lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
+
+    // Ensure a rebuild to reflect color and size changes
   }
 }
