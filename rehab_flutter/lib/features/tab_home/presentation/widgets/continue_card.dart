@@ -12,7 +12,7 @@ class ContinueCard extends StatelessWidget {
 
   const ContinueCard({super.key, required this.user});
 
-  Future<void> _selectPlan(BuildContext context, String planName, AppUser user) async {
+  void _selectPlan(BuildContext context, String planName, AppUser user) {
     int daysToAdd;
     switch (planName) {
       case 'One Week':
@@ -27,6 +27,7 @@ class ContinueCard extends StatelessWidget {
       default:
         daysToAdd = 7;
     }
+    Navigator.of(context).pop();
     BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
   }
 
@@ -125,17 +126,17 @@ class ContinueCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 28),
                 ElevatedButton(
-                  onPressed: () => _selectPlan(context, 'One Week', user).then((value) => Navigator.of(context).pop()),
+                  onPressed: () => _selectPlan(context, 'One Week', user),
                   child: const Text('Plan 1: One Week'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () => _selectPlan(context, 'One Month', user).then((value) => Navigator.of(context).pop()),
+                  onPressed: () => _selectPlan(context, 'One Month', user),
                   child: const Text('Plan 2: One Month'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: () => _selectPlan(context, 'Three Months', user).then((value) => Navigator.of(context).pop()),
+                  onPressed: () => _selectPlan(context, 'Three Months', user),
                   child: const Text('Plan 3: Three Months'),
                 ),
                 const SizedBox(height: 28),

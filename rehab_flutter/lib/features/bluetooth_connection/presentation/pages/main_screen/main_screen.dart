@@ -38,7 +38,9 @@ class MainScreen extends StatelessWidget {
       listener: (BuildContext context, UserState state) {},
       builder: (BuildContext context, UserState state) {
         if (state is UserLoading) {
-          return const Center(child: CupertinoActivityIndicator());
+          return const Scaffold(
+            body: Center(child: CupertinoActivityIndicator(color: Colors.white)),
+          );
         }
         if (state is UserDone) {
           return GetX<NavigationController>(
