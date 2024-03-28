@@ -29,20 +29,12 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     Map<String, Color?> dateColorsMap = {};
 
     for (var sesh in widget.sessions) {
-      final String dateString =
-          "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
       final List<bool> conditions = sesh.getSessionConditions();
 
-      if (conditions[0] &&
-          conditions[1] &&
-          conditions[2] &&
-          conditions[3] &&
-          conditions[4]) {
+      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
         dateColorsMap[dateString] = heatmap5;
-      } else if (conditions[0] &&
-          conditions[1] &&
-          conditions[2] &&
-          conditions[3]) {
+      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
         dateColorsMap[dateString] = heatmap4;
       } else if (conditions[0] && conditions[1] && conditions[2]) {
         dateColorsMap[dateString] = heatmap3;
@@ -67,10 +59,7 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
       currentSelectedSession = widget.sessions.firstWhere(
-        (session) =>
-            session.date.year == _selectedDay.year &&
-            session.date.month == _selectedDay.month &&
-            session.date.day == _selectedDay.day,
+        (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
         orElse: () => Session.empty(),
       );
     });
@@ -82,9 +71,7 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
 
   void _onToggleFormat() {
     setState(() {
-      _calendarFormat = _calendarFormat == CalendarFormat.week
-          ? CalendarFormat.month
-          : CalendarFormat.week;
+      _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
     });
   }
 
@@ -93,10 +80,7 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     super.initState();
     dateColorsMap = sessionsToDateColorsMap();
     currentSelectedSession = widget.sessions.firstWhere(
-      (session) =>
-          session.date.year == _selectedDay.year &&
-          session.date.month == _selectedDay.month &&
-          session.date.day == _selectedDay.day,
+      (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
       orElse: () => Session.empty(),
     );
   }
@@ -109,13 +93,11 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is UserDone) {
-          final currentSelectedSessionDateString =
-              "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
+          final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -149,12 +131,9 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
                   ),
                   const SizedBox(height: 32),
                   EventList(
-                    dayColor: dateColorsMap[currentSelectedSessionDateString] ??
-                        Colors.white,
+                    dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
                     selectedDay: _selectedDay,
-                    currentSession: currentSelectedSession.sessionId.isEmpty
-                        ? null
-                        : currentSelectedSession,
+                    currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
                     conditions: currentSelectedSession.getSessionConditions(),
                   ),
                 ],
