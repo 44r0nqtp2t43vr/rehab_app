@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
-import 'package:rehab_flutter/features/plan_selection/presentation/add_plan_data.dart';
+import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/injection_container.dart'; // Assuming this is your Session entity
 
 class PlanSelection extends StatefulWidget {
@@ -32,8 +28,7 @@ class _PlanSelectionState extends State<PlanSelection> {
       default:
         daysToAdd = 7; // Default to one week if plan name doesn't match
     }
-    sl<UserBloc>()
-        .add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+    sl<UserBloc>().add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
   }
 
   @override
@@ -53,8 +48,7 @@ class _PlanSelectionState extends State<PlanSelection> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(currentUser!
-                    .getUserUid()), // Displaying the user ID for demonstration
+                Text(currentUser!.getUserUid()), // Displaying the user ID for demonstration
                 ElevatedButton(
                   onPressed: () => _selectPlan('One Week', currentUser),
                   child: Text('Plan 1: One Week'),

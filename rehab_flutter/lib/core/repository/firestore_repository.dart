@@ -9,7 +9,7 @@ import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
-import 'package:rehab_flutter/features/plan_selection/presentation/add_plan_data.dart';
+import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/pretest_data.dart';
 
 class FirebaseRepositoryImpl implements FirebaseRepository {
@@ -42,51 +42,16 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<void> registerUser(RegisterData data) async {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: data.email,
-      password: data.password,
-    );
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
-
-    // Normalize birthDate to just the date part (year, month, day) in UTC
-    DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
-
-    await db.collection('users').doc(userID).set({
-      'userID': userID,
-      'email': data.email,
-      'firstName': data.firstName,
-      'lastName': data.lastName,
-      'gender': data.gender,
-      'phoneNumber': data.phoneNumber,
-      'city': data.city,
-      'birthDate': birthDateJustDate, // Use the normalized DateTime object
-      'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
-      'conditions': data.conditions,
-    });
-  }
-
-  @override
-  Future<AppUser> loginUser(LoginData data) async {
-    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: data.email,
-      password: data.password,
-    );
-
-    // Example of logging the login attempt (success case)
-    await logLoginAttempt(data.email, true);
-
+  Future<AppUser> getUser(String userId) async {
     // Optionally fetch and do something with the user's document from Firestore
     // For example, retrieving the user's profile information
-    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userCredential.user!.uid).get();
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
 
     if (!userDoc.exists) {
       throw Exception('User document does not exist in Firestore.');
     }
 
-    print('User logged in with data: ${userDoc.data()}');
+    print('Got user with data: ${userDoc.data()}');
 
     // Query Plans for the User
     QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
@@ -129,9 +94,52 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<void> addPlan(AddPlanData data) async {
-    // TODO: implement addPlan
+  Future<void> registerUser(RegisterData data) async {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: data.email,
+      password: data.password,
+    );
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
+    String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+
+    // Normalize birthDate to just the date part (year, month, day) in UTC
+    DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
+
+    await db.collection('users').doc(userID).set({
+      'userID': userID,
+      'email': data.email,
+      'firstName': data.firstName,
+      'lastName': data.lastName,
+      'gender': data.gender,
+      'phoneNumber': data.phoneNumber,
+      'city': data.city,
+      'birthDate': birthDateJustDate, // Use the normalized DateTime object
+      'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
+      'conditions': data.conditions,
+    });
+  }
+
+  @override
+  Future<AppUser> loginUser(LoginData data) async {
+    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: data.email,
+      password: data.password,
+    );
+
+    if (userCredential.user == null) {
+      throw Exception('User does not exist in FirebaseAuth.');
+    }
+
+    // Example of logging the login attempt (success case)
+    await logLoginAttempt(data.email, true);
+
+    final AppUser user = await getUser(userCredential.user!.uid);
+    return user;
+  }
+
+  @override
+  Future<AppUser> addPlan(AddPlanData data) async {
     final userId = data.user.userId;
 
     final DateTime startDate = DateTime.now();
@@ -186,6 +194,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         await plansCollection.doc(planDocumentName).collection('sessions').doc(plan.sessions[i].sessionId).set(plan.sessions[i].toMap()); // Assuming Session class has a toMap method for serialization
       }
     });
+
+    final AppUser user = await getUser(userId);
+    return user;
   }
 
   @override
@@ -224,51 +235,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'passiveIntensity': intensityLevel,
     });
 
-    // Optionally fetch and do something with the user's document from Firestore
-    // For example, retrieving the user's profile information
-    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
-
-    if (!userDoc.exists) {
-      throw Exception('User document does not exist in Firestore.');
-    }
-
-    // Query Plans for the User
-    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
-
-    List<Plan> plansWithSessions = [];
-
-    for (var planDoc in plansSnapshot.docs) {
-      // For each Plan, Query Sessions
-      QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
-
-      List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
-
-      // Combine Plan with its Sessions
-      Plan planWithSessions = Plan(
-        planId: planDoc.data()['planId'],
-        planName: planDoc.data()['planName'],
-        startDate: planDoc.data()['startDate'].toDate() as DateTime,
-        endDate: planDoc.data()['endDate'].toDate() as DateTime,
-        sessions: sessions,
-      );
-
-      plansWithSessions.add(planWithSessions);
-    }
-
-    final currentUser = AppUser(
-      userId: userDoc.id,
-      firstName: userDoc.data()!['firstName'],
-      lastName: userDoc.data()!['lastName'],
-      gender: userDoc.data()!['gender'],
-      email: userDoc.data()!['email'],
-      phoneNumber: userDoc.data()!['phoneNumber'],
-      city: userDoc.data()!['city'],
-      birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
-      registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
-      conditions: [],
-      plans: plansWithSessions,
-    );
-
-    return currentUser;
+    final AppUser user = await getUser(userId);
+    return user;
   }
 }

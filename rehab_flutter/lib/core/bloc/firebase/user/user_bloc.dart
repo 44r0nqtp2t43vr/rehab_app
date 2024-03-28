@@ -46,9 +46,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   void onAddPlan(AddPlanEvent event, Emitter<UserState> emit) async {
+    emit(const UserLoading());
     try {
-      await _addPlanUseCase(params: event.addPlanData);
-      emit(const PlanAdded());
+      final currentUser = await _addPlanUseCase(params: event.addPlanData);
+      emit(UserDone(currentUser: currentUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }
@@ -56,7 +57,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   void onSubmitPretest(SubmitPretestEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
-    await Future.delayed(Duration(seconds: 2));
     try {
       final updatedUser = await _submitPretestUseCase(params: event.pretestData);
       emit(UserDone(currentUser: updatedUser));

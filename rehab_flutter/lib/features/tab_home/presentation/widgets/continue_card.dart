@@ -1,19 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 
 class ContinueCard extends StatelessWidget {
   final AppUser user;
 
   const ContinueCard({super.key, required this.user});
 
+  Future<void> _selectPlan(BuildContext context, String planName, AppUser user) async {
+    int daysToAdd;
+    switch (planName) {
+      case 'One Week':
+        daysToAdd = 7;
+        break;
+      case 'One Month':
+        daysToAdd = 30;
+        break;
+      case 'Three Months':
+        daysToAdd = 90;
+        break;
+      default:
+        daysToAdd = 7;
+    }
+    BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final Plan? currentPlan = user.getCurrentPlan();
 
     return GestureDetector(
-      onTap: () => _onTap(context, currentPlan),
+      onTap: () => _onTap(context, user, currentPlan),
       child: Container(
         height: 124,
         width: double.infinity,
@@ -76,7 +98,7 @@ class ContinueCard extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context, Plan? currentPlan) {
+  void _onTap(BuildContext context, AppUser user, Plan? currentPlan) {
     if (currentPlan == null) {
       showDialog(
         context: context,
@@ -102,11 +124,19 @@ class ContinueCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 28),
-                const Text(
-                  "You have no sessions for today",
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
+                ElevatedButton(
+                  onPressed: () => _selectPlan(context, 'One Week', user).then((value) => Navigator.of(context).pop()),
+                  child: const Text('Plan 1: One Week'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () => _selectPlan(context, 'One Month', user).then((value) => Navigator.of(context).pop()),
+                  child: const Text('Plan 2: One Month'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () => _selectPlan(context, 'Three Months', user).then((value) => Navigator.of(context).pop()),
+                  child: const Text('Plan 3: Three Months'),
                 ),
                 const SizedBox(height: 28),
                 ElevatedButton(
