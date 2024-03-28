@@ -27,10 +27,6 @@ class LoginEvent extends UserEvent {
   const LoginEvent(LoginData loginData) : super(loginData: loginData);
 }
 
-class FetchTodaySessionEvent extends UserEvent {
-  const FetchTodaySessionEvent();
-}
-
 class AddPlanEvent extends UserEvent {
   const AddPlanEvent(AddPlanData addPlanData) : super(addPlanData: addPlanData);
 }

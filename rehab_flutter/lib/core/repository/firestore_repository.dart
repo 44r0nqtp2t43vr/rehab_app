@@ -217,7 +217,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
 
     // Identify the active plan
-    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('isActive', isEqualTo: true).limit(1).get();
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: today).limit(1).get();
 
     final activePlanId = querySnapshot.docs.first.id;
 

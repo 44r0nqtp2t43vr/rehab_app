@@ -13,7 +13,6 @@ import 'package:rehab_flutter/features/passive_therapy/presenation/passive_thera
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
-import 'package:rehab_flutter/features/plan_selection/presentation/plan_selection.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy/texture_therapy.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
@@ -42,8 +41,7 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
@@ -80,9 +78,6 @@ class AppRoutes {
           songData: sl<SongController>().getCurrentSong()!,
           currentPositionSec: sl<SongController>().getCurrentDuration(),
         ));
-
-      case '/PlanSelection':
-        return _materialRoute(PlanSelection());
 
       case '/PassiveTherapy':
         return _materialRoute(const PassiveTherapyScreen());
