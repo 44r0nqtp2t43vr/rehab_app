@@ -1,4 +1,3 @@
-import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
 class AddPlanData {

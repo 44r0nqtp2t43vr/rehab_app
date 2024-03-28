@@ -22,7 +22,3 @@ class UserLoading extends UserState {
 class UserDone extends UserState {
   const UserDone({AppUser? currentUser}) : super(currentUser: currentUser);
 }
-
-class PlanAdded extends UserState {
-  const PlanAdded({AppUser? currentUser}) : super(currentUser: currentUser);
-}

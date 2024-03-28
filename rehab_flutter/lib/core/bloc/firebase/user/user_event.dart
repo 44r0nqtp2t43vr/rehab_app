@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
-import 'package:rehab_flutter/features/plan_selection/presentation/add_plan_data.dart';
+import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/pretest_data.dart';
 
 abstract class UserEvent extends Equatable {
@@ -25,10 +25,6 @@ class RegisterEvent extends UserEvent {
 
 class LoginEvent extends UserEvent {
   const LoginEvent(LoginData loginData) : super(loginData: loginData);
-}
-
-class FetchTodaySessionEvent extends UserEvent {
-  const FetchTodaySessionEvent();
 }
 
 class AddPlanEvent extends UserEvent {

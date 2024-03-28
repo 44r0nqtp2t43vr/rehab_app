@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
@@ -38,7 +39,7 @@ class _TestingFinishState extends State<TestingFinish> {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Center(child: CupertinoActivityIndicator());
+          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
         if (state is UserDone) {
           return Column(

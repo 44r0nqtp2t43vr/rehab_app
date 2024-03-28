@@ -68,8 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           Navigator.pushNamed(context, '/BluetoothConnect');
@@ -115,16 +114,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                     children: [
                                       TextFormField(
                                         controller: _emailController,
-                                        decoration:
-                                            customInputDecoration.copyWith(
+                                        decoration: customInputDecoration.copyWith(
                                           labelText: 'Email',
                                           hintText: 'Enter your Email',
                                         ),
-                                        keyboardType:
-                                            TextInputType.emailAddress,
+                                        keyboardType: TextInputType.emailAddress,
                                         validator: (value) {
-                                          if (value == null ||
-                                              value.trim().isEmpty) {
+                                          if (value == null || value.trim().isEmpty) {
                                             return 'Please enter your email';
                                           }
                                           if (!value.contains('@')) {
@@ -136,15 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                       const SizedBox(height: 20),
                                       TextFormField(
                                         controller: _passwordController,
-                                        decoration:
-                                            customInputDecoration.copyWith(
+                                        decoration: customInputDecoration.copyWith(
                                           labelText: 'Password',
                                           hintText: 'Enter your password',
                                         ),
                                         obscureText: true,
                                         validator: (value) {
-                                          if (value == null ||
-                                              value.trim().isEmpty) {
+                                          if (value == null || value.trim().isEmpty) {
                                             return 'Please enter your password';
                                           }
                                           return null;
@@ -156,8 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           data: textButtonTheme,
                                           child: TextButton(
                                             onPressed: () {},
-                                            child:
-                                                const Text('Forgot Password?'),
+                                            child: const Text('Forgot Password?'),
                                           ),
                                         ),
                                       ),
@@ -167,8 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         child: Theme(
                                           data: darkButtonTheme,
                                           child: ElevatedButton(
-                                            onPressed: () =>
-                                                _onLoginButtonPressed(),
+                                            onPressed: () => _onLoginButtonPressed(),
                                             child: const Text('Login'),
                                           ),
                                         ),
@@ -184,8 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       const SizedBox(height: 12),
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Theme(
                                             data: loginButtonTheme,
@@ -199,8 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             data: loginButtonTheme,
                                             child: IconButton(
                                               onPressed: () {},
-                                              icon: const Icon(
-                                                  Icons.one_x_mobiledata),
+                                              icon: const Icon(Icons.one_x_mobiledata),
                                             ),
                                           ),
                                           const SizedBox(width: 8),
@@ -238,8 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Theme(
                                 data: signupButtonTheme,
                                 child: TextButton(
-                                  onPressed: () =>
-                                      _onSignUpButtonPressed(context),
+                                  onPressed: () => _onSignUpButtonPressed(context),
                                   child: const Text('Sign Up'),
                                 ),
                               ),
@@ -259,25 +248,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onPassiveButton(BuildContext context) {
-    Navigator.pushNamed(context, '/Test');
-  }
-
   void _onLoginButtonPressed() async {
     if (_formKey.currentState!.validate()) {
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
 
-      BlocProvider.of<UserBloc>(context)
-          .add(LoginEvent(LoginData(email: email, password: password)));
+      BlocProvider.of<UserBloc>(context).add(LoginEvent(LoginData(email: email, password: password)));
     }
   }
 
   void _onSignUpButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Register');
-  }
-
-  void _onLogsTap(BuildContext context) {
-    Navigator.pushNamed(context, '/LogsScreen');
   }
 }
