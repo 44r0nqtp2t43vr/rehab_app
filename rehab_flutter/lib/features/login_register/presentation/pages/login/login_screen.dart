@@ -77,7 +77,10 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Center(child: CupertinoActivityIndicator());
+          return const Center(
+              child: CupertinoActivityIndicator(
+            color: Colors.white,
+          ));
         }
         if (state is UserNone || state is UserDone) {
           return SafeArea(
