@@ -123,7 +123,6 @@ class Calendar extends StatelessWidget {
                 );
               },
               defaultBuilder: (context, date, _) {
-                final dateString = "${date.year}${date.month}${date.day}";
                 return Container(
                   margin: const EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
@@ -207,11 +206,7 @@ class Calendar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: Icon(
-                    calendarFormat == CalendarFormat.week
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_up,
-                    color: Colors.white),
+                icon: Icon(calendarFormat == CalendarFormat.week ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up, color: Colors.white),
                 onPressed: () => onToggleFormat(),
               ),
               Padding(
@@ -221,10 +216,7 @@ class Calendar extends StatelessWidget {
                   children: [
                     const Text(
                       'LESS',
-                      style: TextStyle(
-                          fontFamily: 'Sailec Light',
-                          fontSize: 10,
-                          color: Colors.white),
+                      style: TextStyle(fontFamily: 'Sailec Light', fontSize: 10, color: Colors.white),
                     ),
                     const SizedBox(width: 4),
                     _buildLegendItem(heatmap1),
@@ -235,10 +227,7 @@ class Calendar extends StatelessWidget {
                     const SizedBox(width: 4),
                     const Text(
                       'MORE',
-                      style: TextStyle(
-                          fontFamily: 'Sailec Light',
-                          fontSize: 10,
-                          color: Colors.white),
+                      style: TextStyle(fontFamily: 'Sailec Light', fontSize: 10, color: Colors.white),
                     ),
                   ],
                 ),
