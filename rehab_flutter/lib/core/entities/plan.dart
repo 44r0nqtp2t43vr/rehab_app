@@ -40,6 +40,16 @@ class Plan {
     }
     return percent / sessions.length;
   }
+
+  Session? getCurrentSession() {
+    final DateTime today = DateTime.now();
+
+    final Session currentSession = sessions.firstWhere(
+      (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+      orElse: () => Session.empty(),
+    );
+    return currentSession.sessionId.isEmpty ? null : currentSession;
+  }
 }
 
 // Plan Provider

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
 class ContinueCard extends StatelessWidget {
@@ -12,7 +13,7 @@ class ContinueCard extends StatelessWidget {
     final Plan? currentPlan = user.getCurrentPlan();
 
     return GestureDetector(
-      onTap: () => _onTap(context),
+      onTap: () => _onTap(context, currentPlan),
       child: Container(
         height: 124,
         width: double.infinity,
@@ -75,7 +76,118 @@ class ContinueCard extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context) {
-    Navigator.pushNamed(context, '/Testing');
+  void _onTap(BuildContext context, Plan? currentPlan) {
+    if (currentPlan == null) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.arrow_upward,
+                      size: 40,
+                    ),
+                    Text(
+                      "Select Plan",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 28),
+                const Text(
+                  "You have no sessions for today",
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                ElevatedButton(
+                  onPressed: () => _onCloseButtonPressed(context),
+                  child: const Text("CLOSE"),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      Session? currentSession = currentPlan.getCurrentSession();
+      if (currentSession == null) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text(
+                    "You have no sessions for today",
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    onPressed: () => _onCloseButtonPressed(context),
+                    child: const Text("CLOSE"),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      } else {
+        List<bool> conditions = currentSession.getSessionConditions();
+        if (!conditions[0]) {
+          Navigator.pushNamed(context, '/Testing');
+        } else if (!conditions[1]) {
+          Navigator.pushNamed(context, '/Testing');
+        } else if (!conditions[2]) {
+          Navigator.pushNamed(context, '/Testing');
+        } else if (!conditions[3]) {
+          Navigator.pushNamed(context, '/Testing');
+        } else if (!conditions[4]) {
+          Navigator.pushNamed(context, '/Testing');
+        } else {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text(
+                      "You have completed all sessions today",
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    ElevatedButton(
+                      onPressed: () => _onCloseButtonPressed(context),
+                      child: const Text("CLOSE"),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        }
+      }
+    }
+  }
+
+  void _onCloseButtonPressed(BuildContext context) {
+    Navigator.of(context).pop();
   }
 }
