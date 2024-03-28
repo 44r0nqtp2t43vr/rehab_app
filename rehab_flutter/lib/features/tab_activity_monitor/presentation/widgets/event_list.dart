@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/domain/enums/event_enum.dart';
@@ -20,11 +22,11 @@ class EventList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.white),
-      ),
+    return GlassContainer(
+      shadowStrength: 2,
+      shadowColor: Colors.black,
+      blur: 4,
+      color: Colors.white.withOpacity(0.25),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -40,7 +42,6 @@ class EventList extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: dayColor,
                       borderRadius: BorderRadius.circular(5.0),
-                      border: Border.all(color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -50,11 +51,13 @@ class EventList extends StatelessWidget {
                       children: [
                         Text(
                           getDayOfWeek(selectedDay.weekday),
-                          style: const TextStyle(fontSize: 14, color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.white),
                         ),
                         Text(
                           selectedDay.day.toString(),
-                          style: const TextStyle(fontSize: 24, color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 24, color: Colors.white),
                         ),
                       ],
                     ),
@@ -63,7 +66,11 @@ class EventList extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               currentSession == null
-                  ? const Text("You have no sessions for today")
+                  ? Text(
+                      "You have no sessions for today",
+                      style: darkTextTheme().headlineSmall,
+                      textAlign: TextAlign.center,
+                    )
                   : Column(
                       children: [
                         EventCard(
@@ -79,33 +86,41 @@ class EventList extends StatelessWidget {
                                   EventCard(
                                     isCompleted: conditions[1],
                                     leftValue: null,
-                                    rightValue: "Do an intensity-${currentSession!.standardOneIntensity} ${currentSession!.standardOneType} session",
+                                    rightValue:
+                                        "Do an intensity-${currentSession!.standardOneIntensity} ${currentSession!.standardOneType} session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[2],
                                     leftValue: null,
-                                    rightValue: "Complete a 20-minute intensity-${currentSession!.passiveIntensity} passive therapy session",
+                                    rightValue:
+                                        "Complete a 20-minute intensity-${currentSession!.passiveIntensity} passive therapy session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[3],
                                     leftValue: null,
-                                    rightValue: "Do an intensity-${currentSession!.standardTwoIntensity} ${currentSession!.standardTwoType} session",
+                                    rightValue:
+                                        "Do an intensity-${currentSession!.standardTwoIntensity} ${currentSession!.standardTwoType} session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[4],
-                                    leftValue: currentSession!.posttestScore ?? 0,
+                                    leftValue:
+                                        currentSession!.posttestScore ?? 0,
                                     rightValue: "Take the Posttest",
                                     eventType: EventType.test,
                                   ),
                                 ],
                               )
-                            : const Text("Take the Pretest to determine the next steps for this session"),
+                            : Text(
+                                "Take the Pretest to determine the next steps for this session",
+                                style: darkTextTheme().headlineSmall,
+                                textAlign: TextAlign.center,
+                              ),
                       ],
                     ),
             ],
