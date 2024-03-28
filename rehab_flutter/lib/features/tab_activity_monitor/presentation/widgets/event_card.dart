@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/domain/enums/event_enum.dart';
 
 class EventCard extends StatelessWidget {
@@ -22,17 +24,11 @@ class EventCard extends StatelessWidget {
           children: [
             TextSpan(
               text: leftValue!.toStringAsFixed(0),
-              style: const TextStyle(
-                fontSize: 24,
-                color: Colors.white,
-              ),
+              style: darkTextTheme().headlineMedium,
             ),
-            const TextSpan(
+            TextSpan(
               text: '%',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.white,
-              ),
+              style: darkTextTheme().headlineSmall,
             ),
           ],
         ),
@@ -43,12 +39,10 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassContainer(
       height: 68,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.white),
-      ),
+      blur: 4,
+      color: Colors.white.withOpacity(0.25),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: Row(
@@ -62,16 +56,19 @@ class EventCard extends StatelessWidget {
                             value: isCompleted,
                             groupValue: true,
                             onChanged: (value) {},
+                            fillColor: MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                              return (isCompleted)
+                                  ? const Color(0xff01FF99)
+                                  : Colors.white;
+                            }),
                           ),
                           Expanded(
                             child: Text(
                               rightValue,
                               maxLines: 2,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              overflow: TextOverflow.ellipsis,
+                              style: darkTextTheme().headlineSmall,
                             ),
                           ),
                         ],
@@ -87,6 +84,13 @@ class EventCard extends StatelessWidget {
                             value: isCompleted,
                             groupValue: true,
                             onChanged: (value) {},
+                            activeColor: const Color(0xff01FF99),
+                            fillColor: MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                              return (isCompleted)
+                                  ? const Color(0xff01FF99)
+                                  : Colors.white;
+                            }),
                           ),
                           Expanded(
                             child: getLeftWidget(leftValue, eventType),
@@ -95,7 +99,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      width: 1.0,
+                      width: 2,
                       height: double.infinity,
                       color: Colors.white,
                     ),
@@ -106,11 +110,8 @@ class EventCard extends StatelessWidget {
                         child: Text(
                           rightValue,
                           maxLines: 2,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          overflow: TextOverflow.ellipsis,
+                          style: darkTextTheme().headlineSmall,
                         ),
                       ),
                     ),

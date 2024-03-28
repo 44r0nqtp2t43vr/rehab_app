@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 
@@ -36,7 +37,9 @@ class AppUser {
   Plan? getCurrentPlan() {
     final DateTime today = DateTime.now();
     final Plan currentPlan = plans.lastWhere(
-      (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
+      (plan) =>
+          DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day)
+              .isAfter(today),
       orElse: () => Plan.empty(),
     );
     return currentPlan.planId.isEmpty ? null : currentPlan;
@@ -49,7 +52,10 @@ class AppUser {
       return null;
     } else {
       final Session currentSession = currentPlan.sessions.firstWhere(
-        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+        (session) =>
+            session.date.year == today.year &&
+            session.date.month == today.month &&
+            session.date.day == today.day,
         orElse: () => Session.empty(),
       );
       return currentSession.sessionId.isEmpty ? null : currentSession;
@@ -65,19 +71,27 @@ class AppUser {
     List<Session> sessions = getAllSessionsFromAllPlans();
 
     for (var sesh in sessions) {
-      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+      final String dateString =
+          "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
       final List<bool> conditions = sesh.getSessionConditions();
 
-      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(0, 128, 0, 1.0);
-      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(32, 160, 32, 1.0);
+      if (conditions[0] &&
+          conditions[1] &&
+          conditions[2] &&
+          conditions[3] &&
+          conditions[4]) {
+        dateColorsMap[dateString] = heatmap5;
+      } else if (conditions[0] &&
+          conditions[1] &&
+          conditions[2] &&
+          conditions[3]) {
+        dateColorsMap[dateString] = heatmap4;
       } else if (conditions[0] && conditions[1] && conditions[2]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(64, 128, 64, 1.0);
+        dateColorsMap[dateString] = heatmap3;
       } else if (conditions[0] && conditions[1]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(96, 192, 96, 1.0);
+        dateColorsMap[dateString] = heatmap2;
       } else if (conditions[0]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(128, 255, 128, 1.0);
+        dateColorsMap[dateString] = heatmap1;
       } else {
         dateColorsMap[dateString] = null;
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
@@ -28,19 +29,27 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     Map<String, Color?> dateColorsMap = {};
 
     for (var sesh in widget.sessions) {
-      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+      final String dateString =
+          "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
       final List<bool> conditions = sesh.getSessionConditions();
 
-      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(0, 128, 0, 1.0);
-      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(32, 160, 32, 1.0);
+      if (conditions[0] &&
+          conditions[1] &&
+          conditions[2] &&
+          conditions[3] &&
+          conditions[4]) {
+        dateColorsMap[dateString] = heatmap5;
+      } else if (conditions[0] &&
+          conditions[1] &&
+          conditions[2] &&
+          conditions[3]) {
+        dateColorsMap[dateString] = heatmap4;
       } else if (conditions[0] && conditions[1] && conditions[2]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(64, 128, 64, 1.0);
+        dateColorsMap[dateString] = heatmap3;
       } else if (conditions[0] && conditions[1]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(96, 192, 96, 1.0);
+        dateColorsMap[dateString] = heatmap2;
       } else if (conditions[0]) {
-        dateColorsMap[dateString] = const Color.fromRGBO(128, 255, 128, 1.0);
+        dateColorsMap[dateString] = heatmap1;
       } else {
         dateColorsMap[dateString] = null;
       }
@@ -58,7 +67,10 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
       currentSelectedSession = widget.sessions.firstWhere(
-        (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
+        (session) =>
+            session.date.year == _selectedDay.year &&
+            session.date.month == _selectedDay.month &&
+            session.date.day == _selectedDay.day,
         orElse: () => Session.empty(),
       );
     });
@@ -70,7 +82,9 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
 
   void _onToggleFormat() {
     setState(() {
-      _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
+      _calendarFormat = _calendarFormat == CalendarFormat.week
+          ? CalendarFormat.month
+          : CalendarFormat.week;
     });
   }
 
@@ -79,7 +93,10 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     super.initState();
     dateColorsMap = sessionsToDateColorsMap();
     currentSelectedSession = widget.sessions.firstWhere(
-      (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
+      (session) =>
+          session.date.year == _selectedDay.year &&
+          session.date.month == _selectedDay.month &&
+          session.date.day == _selectedDay.day,
       orElse: () => Session.empty(),
     );
   }
@@ -92,21 +109,32 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is UserDone) {
-          final currentSelectedSessionDateString = "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
+          final currentSelectedSessionDateString =
+              "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Activity Monitor",
-                    style: TextStyle(fontSize: 32, color: Colors.white),
-                  ),
-                  const Text(
-                    "Monthly Progress",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Activity Monitor",
+                          style: darkTextTheme().headlineLarge,
+                        ),
+                        Text(
+                          "Monthly Progress",
+                          style: darkTextTheme().headlineSmall,
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 32),
                   Calendar(
@@ -121,9 +149,12 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
                   ),
                   const SizedBox(height: 32),
                   EventList(
-                    dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
+                    dayColor: dateColorsMap[currentSelectedSessionDateString] ??
+                        Colors.white,
                     selectedDay: _selectedDay,
-                    currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
+                    currentSession: currentSelectedSession.sessionId.isEmpty
+                        ? null
+                        : currentSelectedSession,
                     conditions: currentSelectedSession.getSessionConditions(),
                   ),
                 ],

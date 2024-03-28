@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+const Color heatmap1 = Color(0xFF9CFFD8);
+const Color heatmap2 = Color(0xFF38FFB0);
+const Color heatmap3 = Color(0xFF01B36C);
+const Color heatmap4 = Color(0xFF017B4A);
+const Color heatmap5 = Color(0xFF013420);
+
 ThemeData theme() {
   return ThemeData(
     scaffoldBackgroundColor: const Color(0XFF275492),
