@@ -5,6 +5,7 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 
 class ContinueCard extends StatelessWidget {
@@ -181,11 +182,25 @@ class ContinueCard extends StatelessWidget {
         if (!conditions[0]) {
           Navigator.pushNamed(context, '/Testing');
         } else if (!conditions[1]) {
-          Navigator.pushNamed(context, '/Testing');
+          Navigator.pushNamed(
+            context,
+            '/StandardTherapy',
+            arguments: StandardTherapyData(
+              type: currentSession.getStandardOneType(),
+              intensity: int.parse(currentSession.standardOneIntensity),
+            ),
+          );
         } else if (!conditions[2]) {
           Navigator.pushNamed(context, '/Testing');
         } else if (!conditions[3]) {
-          Navigator.pushNamed(context, '/Testing');
+          Navigator.pushNamed(
+            context,
+            '/StandardTherapy',
+            arguments: StandardTherapyData(
+              type: currentSession.getStandardTwoType(),
+              intensity: int.parse(currentSession.standardTwoIntensity),
+            ),
+          );
         } else if (!conditions[4]) {
           Navigator.pushNamed(context, '/Testing');
         } else {

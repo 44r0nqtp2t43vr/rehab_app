@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 
 class Session {
   final String sessionId;
@@ -100,6 +101,14 @@ class Session {
   double getSessionPercentCompletion() {
     final List<bool> conditions = getSessionConditions();
     return conditions.where((condition) => condition == true).length * (100 / conditions.length);
+  }
+
+  StandardTherapy getStandardOneType() {
+    return stringToStandardTherapyEnum(standardOneType);
+  }
+
+  StandardTherapy getStandardTwoType() {
+    return stringToStandardTherapyEnum(standardTwoType);
   }
 }
 // Session Provider

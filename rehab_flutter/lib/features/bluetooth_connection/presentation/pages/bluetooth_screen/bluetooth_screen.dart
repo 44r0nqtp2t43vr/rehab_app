@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
@@ -132,19 +131,14 @@ class BluetoothScreen extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 // Stream has data
-                final scanResults = snapshot.data!
-                    .where((scanResult) =>
-                        scanResult.device.platformName.contains('Gloves'))
-                    .toList();
+                final scanResults = snapshot.data!.where((scanResult) => scanResult.device.platformName.contains('Gloves')).toList();
                 if (scanResults.isNotEmpty) {
                   return ListView.builder(
                     itemCount: scanResults.length,
                     itemBuilder: (context, index) {
                       final device = scanResults[index].device;
                       return ListTile(
-                        title: Text(device.platformName.isEmpty
-                            ? 'Unknown Device'
-                            : device.platformName),
+                        title: Text(device.platformName.isEmpty ? 'Unknown Device' : device.platformName),
                         subtitle: Text(device.remoteId.toString()),
                         onTap: () => _onDeviceCardPressed(context, device),
                       );
@@ -204,8 +198,7 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
-  void _onDeviceCardPressed(
-      BuildContext context, BluetoothDevice targetDevice) {
+  void _onDeviceCardPressed(BuildContext context, BluetoothDevice targetDevice) {
     Navigator.pushNamed(context, '/ServiceScreen', arguments: targetDevice);
   }
 
