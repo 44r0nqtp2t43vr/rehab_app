@@ -238,4 +238,28 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     final AppUser user = await getUser(userId);
     return user;
   }
+
+  @override
+  Future<AppUser> submitStandardOne(String userId) async {
+    final DateTime today = DateTime.now();
+    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+    // Identify the active plan
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: today).limit(1).get();
+
+    final activePlanId = querySnapshot.docs.first.id;
+
+    // Fetch sessions for the current date within the active plan
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
+
+    // Assuming we update the first session of the day
+    final sessionDoc = sessionSnapshot.docs.first;
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update({
+      'isStandardOneDone': true,
+    });
+
+    final AppUser user = await getUser(userId);
+    return user;
+  }
 }

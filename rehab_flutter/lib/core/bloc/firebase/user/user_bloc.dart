@@ -6,19 +6,28 @@ import 'package:rehab_flutter/core/usecases/firebase/submit_pretest.dart';
 
 import 'package:rehab_flutter/core/usecases/firebase/login_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_user.dart';
+import 'package:rehab_flutter/core/usecases/firebase/submit_standard_one.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final RegisterUserUseCase _registerUserUseCase;
   final LoginUserUseCase _loginUserUseCase;
   final AddPlanUseCase _addPlanUseCase;
   final SubmitPretestUseCase _submitPretestUseCase;
+  final SubmitStandardOneUseCase _submitStandardOneUseCase;
 
-  UserBloc(this._registerUserUseCase, this._loginUserUseCase, this._addPlanUseCase, this._submitPretestUseCase) : super(const UserNone()) {
+  UserBloc(
+    this._registerUserUseCase,
+    this._loginUserUseCase,
+    this._addPlanUseCase,
+    this._submitPretestUseCase,
+    this._submitStandardOneUseCase,
+  ) : super(const UserNone()) {
     on<ResetEvent>(onResetUser);
     on<RegisterEvent>(onRegisterUser);
     on<LoginEvent>(onLoginUser);
     on<AddPlanEvent>(onAddPlan);
     on<SubmitPretestEvent>(onSubmitPretest);
+    on<SubmitStandardOneEvent>(onSubmitStandardOne);
   }
 
   void onResetUser(ResetEvent event, Emitter<UserState> emit) {
@@ -59,6 +68,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(const UserLoading());
     try {
       final updatedUser = await _submitPretestUseCase(params: event.pretestData);
+      emit(UserDone(currentUser: updatedUser));
+    } catch (e) {
+      emit(UserNone(errorMessage: e.toString()));
+    }
+  }
+
+  void onSubmitStandardOne(SubmitStandardOneEvent event, Emitter<UserState> emit) async {
+    emit(const UserLoading());
+    try {
+      final updatedUser = await _submitStandardOneUseCase(params: event.userId);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
