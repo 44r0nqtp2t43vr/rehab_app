@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
@@ -29,7 +30,8 @@ class ContinueCard extends StatelessWidget {
         daysToAdd = 7;
     }
     Navigator.of(context).pop();
-    BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+    BlocProvider.of<UserBloc>(context)
+        .add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
   }
 
   @override
@@ -38,65 +40,118 @@ class ContinueCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => _onTap(context, user, currentPlan),
-      child: Container(
-        height: 124,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(color: Colors.white),
-        ),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
-                style: const TextStyle(
-                  fontSize: 48,
-                  color: Colors.white,
+      child: LayoutBuilder(builder: (context, constraints) {
+        final buttonWidth = constraints.maxWidth;
+        final buttonHeight = constraints.maxHeight;
+
+        final svgWidth = buttonWidth * 0.7;
+        final svgHeight = buttonHeight * 0.7;
+
+        return Container(
+          height: 130,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                spreadRadius: 0,
+                blurRadius: 20,
+                offset: const Offset(4, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF128BED),
+                        Color(0xFF01FF99),
+                      ],
+                      stops: [0.3, 1.0],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "CONTINUE",
+                Container(
+                  color: Colors.black.withOpacity(0.2),
+                ),
+                Positioned(
+                  left: -30,
+                  child: Text(
+                    '%',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
+                      fontFamily: 'Sailec Bold',
+                      fontSize: 150,
+                      color: Colors.white.withOpacity(0.25),
                     ),
                   ),
-                  Text(
-                    "Therapy Plan",
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
+                ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
+                        style: const TextStyle(
+                          fontFamily: 'Sailec Bold',
+                          fontSize: 48,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                  Text(
-                    "Overall Progress",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
+                    const Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "CONTINUE",
+                            style: TextStyle(
+                              fontFamily: 'Sailec Light',
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            "Therapy Plan",
+                            style: TextStyle(
+                              fontFamily: 'Sailec Bold',
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            "Overall Progress",
+                            style: TextStyle(
+                              fontFamily: 'Sailec Light',
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 12.0),
+                      child: Icon(
+                        Icons.chevron_right,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const Padding(
-              padding: EdgeInsets.only(right: 12.0),
-              child: Icon(
-                Icons.chevron_right,
-                color: Colors.white,
-                size: 40,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 
@@ -191,7 +246,7 @@ class ContinueCard extends StatelessWidget {
             ),
           );
         } else if (!conditions[2]) {
-          Navigator.pushNamed(context, '/Testing');
+          Navigator.pushNamed(context, '/PassiveTherapy');
         } else if (!conditions[3]) {
           Navigator.pushNamed(
             context,
