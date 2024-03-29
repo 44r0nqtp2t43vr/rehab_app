@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 
 const Color heatmap1 = Color(0xFF9CFFD8);
 const Color heatmap2 = Color(0xFF38FFB0);
@@ -35,21 +38,25 @@ TextTheme darkTextTheme() {
     headlineMedium: TextStyle(
       fontFamily: 'Sailec Medium',
       fontSize: 22,
+      height: 1.2,
       color: Colors.white,
     ),
     headlineSmall: TextStyle(
       fontFamily: 'Sailec Light',
       fontSize: 15,
+      height: 1.2,
       color: Colors.white,
     ),
     displayMedium: TextStyle(
       fontFamily: 'Sailec Light',
+      height: 1.2,
       fontSize: 22,
       color: Colors.white,
     ),
     displaySmall: TextStyle(
       fontFamily: 'Sailec Medium',
       fontSize: 15,
+      height: 1.2,
       color: Colors.white,
     ),
   );
@@ -253,3 +260,204 @@ InputDecoration customInputDecoration = InputDecoration(
   fillColor: Colors.white,
   contentPadding: const EdgeInsets.all(15.0),
 );
+
+Widget cuButton({
+  required BuildContext context,
+  required VoidCallback onPressed,
+  required String title,
+  required String subTitle,
+  required String svgPath,
+  double borderRadius = 10.0,
+}) {
+  return Expanded(
+    child: LayoutBuilder(builder: (context, constraints) {
+      final buttonWidth = constraints.maxWidth;
+      final buttonHeight = constraints.maxHeight;
+
+      final svgWidth = buttonWidth * 0.7;
+      final svgHeight = buttonHeight * 0.7;
+
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: const Offset(4, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF128BED),
+                      Color(0xFF01FF99),
+                    ],
+                    stops: [0.3, 1.0],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+              Container(
+                color: Colors.black.withOpacity(0.2),
+              ),
+              Positioned(
+                left: -20,
+                bottom: -10,
+                child: SvgPicture.asset(
+                  svgPath,
+                  width: svgWidth,
+                  height: svgHeight,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+              ),
+              Positioned.fill(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: onPressed,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontFamily: 'Sailec Bold',
+                              fontSize: 22,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            subTitle,
+                            style: const TextStyle(
+                              fontFamily: 'Sailec Light',
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }),
+  );
+}
+
+Widget cuButtonDialog({
+  required BuildContext context,
+  required VoidCallback onPressed,
+  required String title,
+  required String svgPath,
+  double svgPercentage = 0.7,
+}) {
+  return GestureDetector(
+    onTap: onPressed,
+    child: LayoutBuilder(builder: (context, constraints) {
+      return Container(
+        height: 72,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: const Offset(4, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF128BED),
+                      Color(0xFF01FF99),
+                    ],
+                    stops: [0.3, 1.0],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                ),
+              ),
+              Container(
+                color: Colors.black.withOpacity(0.2),
+              ),
+              Positioned(
+                left: -20,
+                bottom: -10,
+                child: SvgPicture.asset(
+                  svgPath,
+                  width: 100,
+                  height: 100,
+                  color: Colors.white.withOpacity(0.3),
+                ),
+              ),
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      "",
+                      style: TextStyle(
+                        fontFamily: 'Sailec Bold',
+                        fontSize: 48,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontFamily: 'Sailec Medium',
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 12.0),
+                    child: Icon(
+                      Icons.chevron_right,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }),
+  );
+}
