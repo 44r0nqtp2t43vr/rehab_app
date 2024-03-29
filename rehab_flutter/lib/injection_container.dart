@@ -30,6 +30,7 @@ import 'package:rehab_flutter/core/usecases/bluetooth/disconnect_device.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/scan_devices.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/update_chara.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/write_data.dart';
+import 'package:rehab_flutter/core/usecases/firebase/submit_standard_one.dart';
 
 final sl = GetIt.instance;
 
@@ -85,12 +86,14 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<SubmitPretestUseCase>(SubmitPretestUseCase(sl()));
 
+  sl.registerSingleton<SubmitStandardOneUseCase>(SubmitStandardOneUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
-  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl()));
+  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 }

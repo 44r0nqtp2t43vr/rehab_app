@@ -2,8 +2,12 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuator_display_grid.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
@@ -12,11 +16,13 @@ import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.d
 import 'package:rehab_flutter/injection_container.dart';
 
 class STActuator extends StatefulWidget {
+  final AppUser user;
   final int intensity;
   final int countdownDuration;
 
   const STActuator({
     super.key,
+    required this.user,
     required this.intensity,
     required this.countdownDuration,
   });
@@ -100,6 +106,7 @@ class _STActuatorState extends State<STActuator> {
           setState(() {
             endCountdown();
           });
+          BlocProvider.of<UserBloc>(context).add(SubmitStandardOneEvent(widget.user.userId));
         } else {
           if (countdownDuration % intervalBetweenPatterns == 0) {
             incrementCurrentInd();
@@ -145,13 +152,7 @@ class _STActuatorState extends State<STActuator> {
     return Column(
       children: [
         const SizedBox(height: 32),
-        Text(
-          "Time remaining: ${secToMinSec(countdownDuration.toDouble())}",
-          style: const TextStyle(
-            fontSize: 24,
-            color: Colors.white,
-          ),
-        ),
+        TestLabel(label: countdownDuration == 0 ? "None" : staticPatternsList[currentInd].name),
         const SizedBox(height: 16),
         Container(
           height: screenWidth,
@@ -170,7 +171,13 @@ class _STActuatorState extends State<STActuator> {
           ),
         ),
         const SizedBox(height: 16),
-        TestLabel(label: staticPatternsList[currentInd].name),
+        Text(
+          "Time remaining: ${secToMinSec(countdownDuration.toDouble())}",
+          style: const TextStyle(
+            fontSize: 24,
+            color: Colors.white,
+          ),
+        ),
       ],
     );
   }

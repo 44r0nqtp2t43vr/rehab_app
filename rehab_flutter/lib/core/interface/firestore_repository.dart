@@ -13,5 +13,6 @@ abstract class FirebaseRepository {
   Future<void> registerUser(RegisterData data);
   Future<AppUser> addPlan(AddPlanData data);
   Future<AppUser> submitPretest(PretestData data);
+  Future<AppUser> submitStandardOne(String userId);
   Future<AppUser> loginUser(LoginData data);
 }

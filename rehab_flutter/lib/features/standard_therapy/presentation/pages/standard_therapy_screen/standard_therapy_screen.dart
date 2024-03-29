@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_actuator.dart';
@@ -36,21 +37,23 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
     }
   }
 
-  Widget getWidgetFromType() {
+  Widget getWidgetFromType(AppUser user) {
     switch (widget.data.type) {
       case StandardTherapy.actuatorTherapy:
         return STActuator(
+          user: user,
           intensity: widget.data.intensity,
           countdownDuration: countdownDuration,
         );
       case StandardTherapy.textureTherapy:
-        return Container();
       case StandardTherapy.patternTherapy:
-        return Container();
       case StandardTherapy.pianoTiles:
-        return Container();
       case StandardTherapy.musicVisualizer:
-        return Container();
+        return STActuator(
+          user: user,
+          intensity: widget.data.intensity,
+          countdownDuration: countdownDuration,
+        );
       default:
         return Container();
     }
@@ -68,7 +71,13 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocConsumer<UserBloc, UserState>(
+      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
+      listener: (context, state) {
+        if (state is UserDone) {
+          Navigator.of(context).pop();
+        }
+      },
       builder: (context, state) {
         if (state is UserLoading) {
           return const Scaffold(
@@ -101,7 +110,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
             ),
             body: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: getWidgetFromType(),
+              child: getWidgetFromType(state.currentUser!),
             ),
           );
         }
