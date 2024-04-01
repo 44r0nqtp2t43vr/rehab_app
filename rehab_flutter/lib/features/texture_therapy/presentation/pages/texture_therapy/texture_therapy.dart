@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_state.dart';
@@ -26,7 +27,8 @@ class TextureTherapy extends StatefulWidget {
   State<TextureTherapy> createState() => _TextureTherapyState();
 }
 
-class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProviderStateMixin {
+class _TextureTherapyState extends State<TextureTherapy>
+    with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
   final ImageTextureProvider imageTextureProvider = ImageTextureProvider();
   late AnimationController animationController;
@@ -66,7 +68,9 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
 
   void _toggleAniDirection() {
     setState(() {
-      animationDirection = animationDirection == AnimationDirection.vertical ? AnimationDirection.horizontal : AnimationDirection.vertical;
+      animationDirection = animationDirection == AnimationDirection.vertical
+          ? AnimationDirection.horizontal
+          : AnimationDirection.vertical;
     });
   }
 
@@ -96,13 +100,15 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
   void dispose() {
     _pageController.dispose();
     animationController.dispose();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    ImageTexture currentTexture = imageTextureProvider.imageTextures[currentIndex];
+    ImageTexture currentTexture =
+        imageTextureProvider.imageTextures[currentIndex];
     int desiredSize = MediaQuery.of(context).size.width.toInt();
 
     return BlocProvider(
@@ -126,65 +132,164 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
         if (state is ActuatorsLoading) {
           return const Center(child: CupertinoActivityIndicator());
         } else if (state is ActuatorsDone) {
-          return Center(
-            child: Column(
-              children: <Widget>[
-                const Spacer(flex: 2),
-                ScrollTextureFrame(
-                  imgSize: desiredSize,
-                  isPlaying: isPlaying,
-                  imageTexture: currentTexture,
-                  animationController: animationController,
-                  animationDirection: animationDirection,
-                ),
-                const Spacer(flex: 3),
-                TextureNameSelector(
-                  controller: _pageController,
-                  imageTextures: imageTextureProvider.imageTextures,
-                  onPageChanged: (index) {
-                    setState(() {
-                      currentIndex = index;
-                    });
-                    sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextureProvider.imageTextures[index].texture, preload: false)));
-                  },
-                ),
-                const Spacer(flex: 1),
-                AnimationSlider(
-                  animationDuration: animationDuration,
-                  onDurationChanged: (value) {
-                    setState(() {
-                      animationDuration = value.toInt();
-                      animationController.stop();
-                      animationController.duration = Duration(seconds: animationDuration);
-                      animationController.forward();
-                    });
-                  },
-                ),
-                const Spacer(flex: 1),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    AnimationButton(
-                      icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                      onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+          return SafeArea(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 24, bottom: 12, right: 24),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.chevron_left,
+                            size: 35,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Cutaneous',
+                                style: darkTextTheme().headlineLarge,
+                              ),
+                              Text(
+                                "Texture Therapy",
+                                style: darkTextTheme().headlineSmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    AnimationButton(
-                      icon: const Icon(Icons.stop),
-                      onPressed: () => _stopAnimation(),
-                    ),
-                    AnimationButton(
-                      icon: const Icon(Icons.swap_calls),
-                      onPressed: () => _toggleAniDirection(),
-                    ),
-                    AppIconButtonText(
-                      icon: const Icon(Icons.chevron_right),
-                      text: const Text("Scroll Textures"),
-                      onPressed: () => _onSTButtonPressed(context),
-                    ),
-                  ],
-                ),
-                const Spacer(flex: 2),
-              ],
+                  ),
+                  const Spacer(flex: 1),
+                  ScrollTextureFrame(
+                    imgSize: desiredSize,
+                    isPlaying: isPlaying,
+                    imageTexture: currentTexture,
+                    animationController: animationController,
+                    animationDirection: animationDirection,
+                  ),
+                  const Spacer(flex: 1),
+                  TextureNameSelector(
+                    controller: _pageController,
+                    imageTextures: imageTextureProvider.imageTextures,
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentIndex = index;
+                      });
+                      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+                          src:
+                              imageTextureProvider.imageTextures[index].texture,
+                          preload: false)));
+                    },
+                  ),
+                  const Spacer(flex: 1),
+                  AnimationSlider(
+                    animationDuration: animationDuration,
+                    onDurationChanged: (value) {
+                      setState(() {
+                        animationDuration = value.toInt();
+                        animationController.stop();
+                        animationController.duration =
+                            Duration(seconds: animationDuration);
+                        animationController.forward();
+                      });
+                    },
+                  ),
+                  const Spacer(flex: 1),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        padding: const EdgeInsets.all(0),
+                        icon: Icon(
+                          isPlaying
+                              ? CupertinoIcons.pause_circle_fill
+                              : CupertinoIcons.play_circle_fill,
+                          size: 40,
+                          color: isPlaying
+                              ? const Color(0xff01FF99)
+                              : Colors.white,
+                        ),
+                        onPressed: () =>
+                            isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.all(0),
+                        icon: const Icon(
+                          CupertinoIcons.stop_circle_fill,
+                          size: 40,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => _stopAnimation(),
+                      ),
+                      IconButton(
+                        padding: const EdgeInsets.all(0),
+                        icon: const Icon(
+                          CupertinoIcons.arrow_swap,
+                          size: 40,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => _stopAnimation(),
+                      ),
+                      TextButton.icon(
+                        onPressed: () => _onSTButtonPressed(context),
+                        label: const Text('Scroll'),
+                        icon: const Icon(
+                          CupertinoIcons.arrow_right,
+                          color: Colors.white,
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xFF128BED),
+                          ),
+                          foregroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white,
+                          ),
+                          textStyle: MaterialStateProperty.all<TextStyle>(
+                            const TextStyle(
+                              fontFamily: 'Sailec Medium',
+                              fontSize: 16,
+                            ),
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // AnimationButton(
+                      //   icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                      //   onPressed: () =>
+                      //       isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                      // ),
+                      // AnimationButton(
+                      //   icon: const Icon(Icons.stop),
+                      //   onPressed: () => _stopAnimation(),
+                      // ),
+                      // AnimationButton(
+                      //   icon: const Icon(Icons.swap_calls),
+                      //   onPressed: () => _toggleAniDirection(),
+                      // ),
+                      // AppIconButtonText(
+                      //   icon: const Icon(Icons.chevron_right),
+                      //   text: const Text("Scroll Textures"),
+                      //   onPressed: () => _onSTButtonPressed(context),
+                      // ),
+                    ],
+                  ),
+                  const Spacer(flex: 2),
+                ],
+              ),
             ),
           );
         }

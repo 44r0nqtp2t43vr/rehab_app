@@ -54,6 +54,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   glassmorphism_ui: ^0.3.0
   flutter_svg: ^2.0.10+1
+  marquee: ^2.2.3
 
 dev_dependencies:
   flutter_test:

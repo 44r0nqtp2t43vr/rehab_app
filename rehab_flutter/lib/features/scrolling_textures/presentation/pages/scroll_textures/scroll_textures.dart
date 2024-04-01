@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_state.dart';
@@ -26,7 +29,8 @@ class ScrollTextures extends StatefulWidget {
   State<ScrollTextures> createState() => _ScrollTexturesState();
 }
 
-class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStateMixin {
+class _ScrollTexturesState extends State<ScrollTextures>
+    with TickerProviderStateMixin {
   late List<ImageTexture> imageTextures;
   late AnimationController animationController;
   late AnimationController animationControllerHoriz;
@@ -39,7 +43,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   AnimationState animationState = AnimationState.downward;
 
   void _pauseAnimation() {
-    if (sl<ActuatorsController>().orientation == ActuatorsOrientation.landscape) {
+    if (sl<ActuatorsController>().orientation ==
+        ActuatorsOrientation.landscape) {
       animationController.stop();
     } else {
       animationControllerHoriz.stop();
@@ -69,7 +74,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   void _setDirectionVert() {
     animationControllerHoriz.stop();
     if (isLastVertStateDownward) {
-      animationController.removeStatusListener(_downwardAnimationStatusListener);
+      animationController
+          .removeStatusListener(_downwardAnimationStatusListener);
       animationController.addStatusListener(_upwardAnimationStatusListener);
     } else {
       animationController.removeStatusListener(_upwardAnimationStatusListener);
@@ -92,7 +98,11 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
 
     int indexToLoad = getIndexToLoad(preload: true);
     if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: true)].texture, preload: true, resetActuators: false, rotateFactor: rotateFactor)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: imageTextures[getIndexToLoad(preload: true)].texture,
+          preload: true,
+          resetActuators: false,
+          rotateFactor: rotateFactor)));
     }
     _resumeAnimation();
   }
@@ -107,7 +117,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
         isEnded = false;
         isLastVertStateDownward = false;
       });
-      animationController.removeStatusListener(_downwardAnimationStatusListener);
+      animationController
+          .removeStatusListener(_downwardAnimationStatusListener);
       animationController.addStatusListener(_upwardAnimationStatusListener);
     } else if (animationState == AnimationState.upward) {
       setState(() {
@@ -121,7 +132,9 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     } else if (animationState == AnimationState.sideward) {
       animationControllerHoriz.stop();
       setState(() {
-        animationState = isLastVertStateDownward ? AnimationState.downward : AnimationState.upward;
+        animationState = isLastVertStateDownward
+            ? AnimationState.downward
+            : AnimationState.upward;
         isLastVertStateDownward = isLastVertStateDownward ? true : false;
         sl<ActuatorsController>().orientation = ActuatorsOrientation.landscape;
       });
@@ -129,14 +142,19 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
 
     int indexToLoad = getIndexToLoad(preload: true);
     if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: true)].texture, preload: true, resetActuators: false, rotateFactor: rotateFactor)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: imageTextures[getIndexToLoad(preload: true)].texture,
+          preload: true,
+          resetActuators: false,
+          rotateFactor: rotateFactor)));
     }
     _resumeAnimation();
   }
 
   void _switchDirectionHoriz() {
     setState(() {
-      if (sl<ActuatorsController>().orientation == ActuatorsOrientation.landscape) {
+      if (sl<ActuatorsController>().orientation ==
+          ActuatorsOrientation.landscape) {
         sl<ActuatorsController>().orientation = ActuatorsOrientation.portrait;
       }
 
@@ -167,13 +185,19 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       } else {
         setState(() {
           currentImgIndex++;
-          sl<ActuatorsController>().imagesToScan[0] = sl<ActuatorsController>().imagesToScan[1];
-          sl<ActuatorsController>().imagesToScan[1] = img.Image(height: 0, width: 0);
+          sl<ActuatorsController>().imagesToScan[0] =
+              sl<ActuatorsController>().imagesToScan[1];
+          sl<ActuatorsController>().imagesToScan[1] =
+              img.Image(height: 0, width: 0);
         });
         // _loadImage(preload: true);
         int indexToLoad = getIndexToLoad(preload: true);
         if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-          sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: true)].texture, preload: true, resetActuators: false, rotateFactor: rotateFactor)));
+          sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+              src: imageTextures[getIndexToLoad(preload: true)].texture,
+              preload: true,
+              resetActuators: false,
+              rotateFactor: rotateFactor)));
         }
         animationController.forward(from: 0);
       }
@@ -190,14 +214,20 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
         setState(() {
           currentImgIndex--;
           if (currentImgIndex - 1 > 0) {
-            sl<ActuatorsController>().imagesToScan[2] = sl<ActuatorsController>().imagesToScan[0];
-            sl<ActuatorsController>().imagesToScan[0] = sl<ActuatorsController>().imagesToScan[1];
+            sl<ActuatorsController>().imagesToScan[2] =
+                sl<ActuatorsController>().imagesToScan[0];
+            sl<ActuatorsController>().imagesToScan[0] =
+                sl<ActuatorsController>().imagesToScan[1];
           }
         });
 
         int indexToLoad = getIndexToLoad(preload: true);
         if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-          sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: true)].texture, preload: true, resetActuators: false, rotateFactor: rotateFactor)));
+          sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+              src: imageTextures[getIndexToLoad(preload: true)].texture,
+              preload: true,
+              resetActuators: false,
+              rotateFactor: rotateFactor)));
         }
 
         animationController.reverse(from: 1);
@@ -225,14 +255,23 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
       }
       imageTextures = List.from([
         ...ImageTextureProvider().imageTextures,
-        ...[ImageTexture(name: "", image: "", texture: ""), ImageTexture(name: "", image: "", texture: "")]
+        ...[
+          ImageTexture(name: "", image: "", texture: ""),
+          ImageTexture(name: "", image: "", texture: "")
+        ]
       ]);
       hasStarted = true;
       isPlaying = true;
       isEnded = false;
       sl<ActuatorsController>().resetActuators();
-      sl<ActuatorsController>().imagesToScan = [img.Image(height: 0, width: 0), img.Image(height: 0, width: 0), img.Image(height: 0, width: 0)];
-      animationState = isLastVertStateDownward ? AnimationState.downward : AnimationState.upward;
+      sl<ActuatorsController>().imagesToScan = [
+        img.Image(height: 0, width: 0),
+        img.Image(height: 0, width: 0),
+        img.Image(height: 0, width: 0)
+      ];
+      animationState = isLastVertStateDownward
+          ? AnimationState.downward
+          : AnimationState.upward;
       isLastVertStateDownward = isLastVertStateDownward ? true : false;
       sl<ActuatorsController>().orientation = ActuatorsOrientation.landscape;
     });
@@ -240,11 +279,19 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
 
     int indexToLoad = getIndexToLoad(preload: false);
     if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: false)].texture, preload: false, resetActuators: false, rotateFactor: rotateFactor)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: imageTextures[getIndexToLoad(preload: false)].texture,
+          preload: false,
+          resetActuators: false,
+          rotateFactor: rotateFactor)));
     }
     indexToLoad = getIndexToLoad(preload: true);
     if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: true)].texture, preload: true, resetActuators: false, rotateFactor: rotateFactor)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: imageTextures[getIndexToLoad(preload: true)].texture,
+          preload: true,
+          resetActuators: false,
+          rotateFactor: rotateFactor)));
     }
 
     if (animationState != AnimationState.upward) {
@@ -255,7 +302,10 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   }
 
   void _onPass(BuildContext context) {
-    sl<ActuatorsController>().updateActuatorsScrollingAnimation(animationValue: animationController.value, animationHorizValue: animationControllerHoriz.value, isLastVertStateDownward: isLastVertStateDownward);
+    sl<ActuatorsController>().updateActuatorsScrollingAnimation(
+        animationValue: animationController.value,
+        animationHorizValue: animationControllerHoriz.value,
+        isLastVertStateDownward: isLastVertStateDownward);
     setState(() {});
   }
 
@@ -264,7 +314,10 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
     super.initState();
     imageTextures = List.from([
       ...ImageTextureProvider().imageTextures,
-      ...[ImageTexture(name: "", image: "", texture: ""), ImageTexture(name: "", image: "", texture: "")]
+      ...[
+        ImageTexture(name: "", image: "", texture: ""),
+        ImageTexture(name: "", image: "", texture: "")
+      ]
     ]);
 
     animationController = AnimationController(
@@ -294,11 +347,19 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
 
     int indexToLoad = getIndexToLoad(preload: false);
     if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: false)].texture, preload: false, resetActuators: false, rotateFactor: rotateFactor)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: imageTextures[getIndexToLoad(preload: false)].texture,
+          preload: false,
+          resetActuators: false,
+          rotateFactor: rotateFactor)));
     }
     indexToLoad = getIndexToLoad(preload: true);
     if (!(indexToLoad < 0 || indexToLoad > imageTextures.length - 1)) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextures[getIndexToLoad(preload: true)].texture, preload: true, resetActuators: false, rotateFactor: rotateFactor)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: imageTextures[getIndexToLoad(preload: true)].texture,
+          preload: true,
+          resetActuators: false,
+          rotateFactor: rotateFactor)));
     }
 
     animationController.addListener(() {
@@ -318,7 +379,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
 
   @override
   void dispose() {
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
     animationControllerHoriz.dispose();
     super.dispose();
@@ -360,52 +422,93 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
                   ],
                 ),
                 Positioned(
-                  top: 20,
-                  left: 20,
-                  child: AppIconButtonText(
-                    icon: const Icon(Icons.chevron_left),
-                    text: const Text("Back"),
-                    onPressed: () => _onBackButtonPressed(context),
+                  top: 40,
+                  left: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xff128BED),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(top: 8, right: 16, bottom: 8),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.chevron_left,
+                              size: 35,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => _onBackButtonPressed(context),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Cutaneous',
+                                style: darkTextTheme().headlineLarge,
+                              ),
+                              Text(
+                                "Scrolling Textures",
+                                style: darkTextTheme().headlineSmall,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+                  // AppIconButtonText(
+                  //   icon: const Icon(Icons.chevron_left),
+                  //   text: const Text("Back"),
+                  //   onPressed: () => _onBackButtonPressed(context),
+                  // ),
                 ),
                 Positioned(
-                  top: 20,
+                  top: 40,
                   right: 20,
-                  child: AnimationButton(
-                    onPressed: () => isEnded
-                        ? _restart()
-                        : isPlaying
-                            ? _pauseAnimation()
-                            : _resumeAnimation(),
-                    icon: Icon(isEnded
-                        ? Icons.restart_alt
-                        : isPlaying
-                            ? Icons.pause
-                            : Icons.play_arrow),
-                  ),
-                ),
-                Positioned(
-                  top: 80,
-                  right: 20,
-                  child: AnimationButton(
-                    onPressed: () => animationState == AnimationState.sideward && isEnded ? _setDirectionVert() : _switchDirectionVert(),
-                    icon: const Icon(Icons.swap_vert),
-                  ),
-                ),
-                Positioned(
-                  top: 140,
-                  right: 20,
-                  child: AnimationButton(
-                    onPressed: () => _switchDirectionHoriz(),
-                    icon: const Icon(Icons.swap_horiz),
-                  ),
-                ),
-                Positioned(
-                  top: 200,
-                  right: 20,
-                  child: AnimationButton(
-                    onPressed: () => _incrementRotateFactor(),
-                    icon: const Icon(Icons.rotate_90_degrees_cw),
+                  child: Column(
+                    children: [
+                      AnimationButton(
+                        onPressed: () => isEnded
+                            ? _restart()
+                            : isPlaying
+                                ? _pauseAnimation()
+                                : _resumeAnimation(),
+                        icon: Icon(isEnded
+                            ? Icons.restart_alt
+                            : isPlaying
+                                ? Icons.pause
+                                : Icons.play_arrow),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      AnimationButton(
+                        onPressed: () =>
+                            animationState == AnimationState.sideward && isEnded
+                                ? _setDirectionVert()
+                                : _switchDirectionVert(),
+                        icon: const Icon(Icons.swap_vert),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      AnimationButton(
+                        onPressed: () => _switchDirectionHoriz(),
+                        icon: const Icon(Icons.swap_horiz),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      AnimationButton(
+                        onPressed: () => _incrementRotateFactor(),
+                        icon: const Icon(Icons.rotate_90_degrees_cw),
+                      ),
+                    ],
                   ),
                 ),
                 ...sl<ActuatorsController>().buildActuators(),
@@ -421,14 +524,18 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
   Widget _drawGallery(double imgHeight, double imgWidth) {
     List<ImageTexture> currentImageTextures = [];
     if (animationState == AnimationState.downward) {
-      currentImageTextures = imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
+      currentImageTextures =
+          imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
     } else if (animationState == AnimationState.upward) {
-      currentImageTextures = imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
+      currentImageTextures =
+          imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
     } else if (animationState == AnimationState.sideward) {
       if (isLastVertStateDownward) {
-        currentImageTextures = imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
+        currentImageTextures =
+            imageTextures.sublist(currentImgIndex, currentImgIndex + 3);
       } else {
-        currentImageTextures = imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
+        currentImageTextures =
+            imageTextures.sublist(currentImgIndex - 2, currentImgIndex + 1);
       }
     }
 
@@ -439,7 +546,8 @@ class _ScrollTexturesState extends State<ScrollTextures> with TickerProviderStat
         imageTextures: currentImageTextures,
         currentImgIndex: currentImgIndex,
         rotateFactor: rotateFactor,
-        isActuatorsHorizontal: sl<ActuatorsController>().orientation == ActuatorsOrientation.landscape,
+        isActuatorsHorizontal: sl<ActuatorsController>().orientation ==
+            ActuatorsOrientation.landscape,
         animation: animationController,
         key: GlobalKey(),
       ),

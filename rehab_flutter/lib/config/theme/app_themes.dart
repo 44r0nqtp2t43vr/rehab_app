@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -366,7 +367,7 @@ Widget cuButtonDialog({
   required VoidCallback onPressed,
   required String title,
   required String svgPath,
-  double svgPercentage = 0.7,
+  double svgPercentage = 0.6,
 }) {
   return GestureDetector(
     onTap: onPressed,
@@ -459,5 +460,63 @@ Widget cuButtonDialog({
         ),
       );
     }),
+  );
+}
+
+Widget musicTopButtons({
+  required BuildContext context,
+  required VoidCallback onPressed,
+  required String title,
+  bool isActive = false,
+  required IconData icon,
+}) {
+  return Expanded(
+    child: GestureDetector(
+      onTap: onPressed,
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                spreadRadius: 0,
+                blurRadius: 20,
+                offset: const Offset(4, 4),
+              ),
+            ],
+            color: isActive ? const Color(0xff01FF99) : const Color(0xff128BED),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      icon,
+                      color: isActive ? const Color(0xff275492) : Colors.white,
+                      size: 28,
+                    ),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: 'Sailec Medium',
+                        fontSize: 12,
+                        color:
+                            isActive ? const Color(0xff275492) : Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+    ),
   );
 }

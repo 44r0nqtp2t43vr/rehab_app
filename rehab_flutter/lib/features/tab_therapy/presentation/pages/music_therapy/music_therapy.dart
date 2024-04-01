@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
@@ -35,48 +37,83 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            AppIconButton(
-              icon: Icons.chevron_left,
-              onPressed: () => _onBackButtonPressed(context),
-            ),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Music",
-                    style: TextStyle(
-                      fontSize: 32,
-                    ),
-                  ),
-                  Text(
-                    "Stimulation",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+        Padding(
+          padding: const EdgeInsets.only(top: 24),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.chevron_left,
+                  size: 35,
+                  color: Colors.white,
+                ),
+                onPressed: () => _onBackButtonPressed(context),
               ),
-            ),
-          ],
+              // AppIconButton(
+              //   icon: Icons.chevron_left,
+              //   onPressed: () => _onBackButtonPressed(context),
+              // ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Music",
+                      style: darkTextTheme().headlineLarge,
+                    ),
+                    Text(
+                      "Stimulation",
+                      style: darkTextTheme().headlineSmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        Row(
-          children: [
-            AppButton(
-              onPressed: () => _onAllButtonPressed(context),
-              child: const Text('All'),
-            ),
-            AppButton(
-              onPressed: () => _onGenresButtonPressed(context),
-              child: const Text('Genres'),
-            ),
-            AppButton(
-              onPressed: () => _onPlaylistButtonPressed(context),
-              child: const Text('Playlist'),
-            ),
-          ],
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 12),
+          child: Row(
+            children: [
+              musicTopButtons(
+                context: context,
+                onPressed: () => _onAllButtonPressed(context),
+                icon: CupertinoIcons.music_note_list,
+                title: 'All',
+                isActive: screenState == MTScreen.all,
+              ),
+              const SizedBox(width: 12),
+              musicTopButtons(
+                context: context,
+                onPressed: () => _onGenresButtonPressed(context),
+                icon: CupertinoIcons.music_albums_fill,
+                title: 'Genres',
+                isActive: screenState == MTScreen.genres,
+              ),
+              const SizedBox(width: 12),
+              musicTopButtons(
+                context: context,
+                onPressed: () => _onPlaylistButtonPressed(context),
+                icon: CupertinoIcons.heart_fill,
+                title: 'Playlist',
+                isActive: screenState == MTScreen.playlist,
+              ),
+              // AppButton(
+              //   onPressed: () => _onAllButtonPressed(context),
+              //   child: const Text('All'),
+              // ),
+              // AppButton(
+              //   onPressed: () => _onGenresButtonPressed(context),
+              //   child: const Text('Genres'),
+              // ),
+              // AppButton(
+              //   onPressed: () => _onPlaylistButtonPressed(context),
+              //   child: const Text('Playlist'),
+              // ),
+            ],
+          ),
         ),
         Expanded(
           child: Stack(

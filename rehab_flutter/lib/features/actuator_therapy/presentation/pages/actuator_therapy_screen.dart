@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -133,36 +137,93 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Actuator Therapy'),
-      ),
-      body: GestureDetector(
-        onPanStart: (DragStartDetails details) {
-          // Capture initial state of circles
-          _initialCircleStates = List.from(_circleStates);
-          _updateCircleStateBasedOnPosition(details.globalPosition, true);
-        },
-        onPanUpdate: (DragUpdateDetails details) =>
-            _updateCircleStateBasedOnPosition(details.globalPosition, false),
-        onPanEnd: (DragEndDetails details) {
-          setState(() {
-            _resetNonPermanentCircles();
-          });
-        },
-        child: Center(
-          // Use Center to align the child widget in the middle
-          child: ActuatorGrid(
-            circleKeys: _circleKeys,
-            circleStates: _circleStates,
-            permanentGreen: _permanentGreen,
-            updateState: (int index, bool value) {
-              setState(() {
-                _permanentGreen[index] = value;
-                _circleStates[index] = value;
-              });
-              _sendUpdatedPattern();
-            },
-          ),
+      // appBar: AppBar(
+      //   title: const Text('Actuator Therapy'),
+      // ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.chevron_left,
+                      size: 35,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Cutaneous',
+                          style: darkTextTheme().headlineLarge,
+                        ),
+                        Text(
+                          "Actuator Therapy",
+                          style: darkTextTheme().headlineSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.30),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  'Actuator',
+                  style: darkTextTheme().displaySmall,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            GestureDetector(
+              onPanStart: (DragStartDetails details) {
+                // Capture initial state of circles
+                _initialCircleStates = List.from(_circleStates);
+                _updateCircleStateBasedOnPosition(details.globalPosition, true);
+              },
+              onPanUpdate: (DragUpdateDetails details) =>
+                  _updateCircleStateBasedOnPosition(
+                      details.globalPosition, false),
+              onPanEnd: (DragEndDetails details) {
+                setState(() {
+                  _resetNonPermanentCircles();
+                });
+              },
+              child: Center(
+                // Use Center to align the child widget in the middle
+                child: ActuatorGrid(
+                  circleKeys: _circleKeys,
+                  circleStates: _circleStates,
+                  permanentGreen: _permanentGreen,
+                  updateState: (int index, bool value) {
+                    setState(() {
+                      _permanentGreen[index] = value;
+                      _circleStates[index] = value;
+                    });
+                    _sendUpdatedPattern();
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

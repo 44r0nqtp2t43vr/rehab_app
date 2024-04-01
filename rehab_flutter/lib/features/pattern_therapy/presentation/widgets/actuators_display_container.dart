@@ -20,7 +20,7 @@ class ActuatorsDisplayContainer extends StatelessWidget {
     return Container(
       height: height,
       width: double.infinity,
-      color: Colors.black,
+      color: const Color(0xff223E64),
       child: Column(
         children: [
           Expanded(

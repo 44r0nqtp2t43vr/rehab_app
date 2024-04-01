@@ -17,6 +17,7 @@ class AnimationSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slider(
+      activeColor: const Color(0xff01FF99),
       value: animationDuration.toDouble(),
       min: minDuration.toDouble(),
       max: maxDuration.toDouble(),

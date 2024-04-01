@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:marquee/marquee.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
@@ -12,40 +16,85 @@ class HoverSongCard extends GetView<SongController> {
   Widget build(BuildContext context) {
     return Obx(
       () => controller.currentSong.value != null
-          ? Container(
+          ? GlassContainer(
               height: 60,
-              color: Colors.blue,
+              blur: 20,
+              color: Colors.white.withOpacity(0.35),
               child: Row(
                 children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Icon(
+                      CupertinoIcons.play_rectangle_fill,
+                      size: 36,
+                      color: Colors.white,
+                    ),
+                  ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          controller.currentSong.value!.title,
-                          style: const TextStyle(
-                            fontSize: 16,
+                        SizedBox(
+                          height: 24,
+                          child: Marquee(
+                            text: controller.currentSong.value!.title,
+                            style: const TextStyle(
+                              fontFamily: 'Sailec Medium',
+                              fontSize: 14,
+                              height: 1.2,
+                              color: Colors.white,
+                            ),
+                            scrollAxis: Axis.horizontal,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            blankSpace: 32,
+                            velocity: 60.0,
+                            pauseAfterRound: const Duration(seconds: 2),
+                            startPadding: 5.0,
+                            accelerationDuration: const Duration(seconds: 1),
+                            accelerationCurve: Curves.linear,
+                            decelerationDuration:
+                                const Duration(milliseconds: 500),
+                            decelerationCurve: Curves.easeOut,
+                            showFadingOnlyWhenScrolling: true,
+                            fadingEdgeStartFraction: 0.1,
+                            fadingEdgeEndFraction: 0.1,
                           ),
                         ),
                         Text(
                           controller.currentSong.value!.artist,
                           style: const TextStyle(
+                            fontFamily: 'Sailec Light',
                             fontSize: 12,
+                            height: 1.2,
+                            color: Colors.white,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  AppIconButton(
-                    icon: Icons.play_arrow,
+                  IconButton(
+                    icon: const Icon(
+                      CupertinoIcons.play_arrow_solid,
+                      size: 24,
+                      color: Colors.white,
+                    ),
                     onPressed: () => _onPlayButtonPressed(context),
                   ),
-                  AppIconButton(
-                    icon: Icons.arrow_forward,
+                  IconButton(
+                    icon: const Icon(
+                      CupertinoIcons.forward_end_fill,
+                      size: 24,
+                      color: Colors.white,
+                    ),
                     onPressed: () {},
                   ),
-                  AppIconButton(
-                    icon: Icons.playlist_play,
+                  IconButton(
+                    icon: const Icon(
+                      CupertinoIcons.square_list_fill,
+                      size: 24,
+                      color: Colors.white,
+                    ),
                     onPressed: () {},
                   ),
                 ],

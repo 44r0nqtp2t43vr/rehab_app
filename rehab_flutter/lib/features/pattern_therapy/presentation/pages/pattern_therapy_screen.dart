@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuators_display_container.dart';
@@ -27,8 +29,27 @@ class _PatternTherapyState extends State<PatternTherapy> {
   PatternProvider patternProvider = PatternProvider();
 
   int sideAndValueToCircleStateIndex(bool isLeft, int value) {
-    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
-    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
+    final List<int> cursorValues = [
+      1,
+      8,
+      1,
+      8,
+      2,
+      16,
+      2,
+      16,
+      4,
+      32,
+      4,
+      32,
+      64,
+      128,
+      64,
+      128
+    ];
+    return isLeft
+        ? cursorValues.indexOf(value)
+        : cursorValues.lastIndexOf(value);
   }
 
   List<bool> patternToCircleStates(String pattern) {
@@ -47,11 +68,13 @@ class _PatternTherapyState extends State<PatternTherapy> {
     for (int i = 0; i < actuatorValues.length; i++) {
       if (left - actuatorValues[i] >= 0) {
         left -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
+        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] =
+            true;
       }
       if (right - actuatorValues[i] >= 0) {
         right -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
+        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] =
+            true;
       }
     }
 
@@ -70,10 +93,12 @@ class _PatternTherapyState extends State<PatternTherapy> {
     // Assuming patternProvider is accessible here, if not, it should be passed as a parameter or made globally accessible
     var currentPatternData = patternProvider.patterns[patternIndex].patternData;
 
-    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+    _patternTimer =
+        Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms or as per the requirement
       if (isPatternActive && activePattern == patternIndex) {
-        final String patternToSend = currentPatternData[timer.tick % currentPatternData.length];
+        final String patternToSend =
+            currentPatternData[timer.tick % currentPatternData.length];
         setState(() {
           circleStates = patternToCircleStates(patternToSend);
         });
@@ -102,7 +127,8 @@ class _PatternTherapyState extends State<PatternTherapy> {
   @override
   void dispose() {
     _patternTimer?.cancel();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -112,47 +138,125 @@ class _PatternTherapyState extends State<PatternTherapy> {
     double gridSize = (screenWidth - 40) / 3;
 
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
+      //appBar: _buildAppBar(),
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const SizedBox(height: 28),
-            ActuatorsDisplayContainer(
-              height: screenWidth,
-              gridSize: gridSize,
-              isLeftHand: isLeftHand,
-              circleStates: circleStates,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 24, bottom: 12, right: 24),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.chevron_left,
+                      size: 35,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Cutaneous',
+                          style: darkTextTheme().headlineLarge,
+                        ),
+                        Text(
+                          "Pattern Therapy",
+                          style: darkTextTheme().headlineSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 44,
+                    width: 44,
+                    decoration: BoxDecoration(
+                      color: isLeftHand
+                          ? const Color(0xff128BED)
+                          : const Color(0xff01FF99),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: IconButton(
+                      icon: isLeftHand
+                          ? Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()
+                                ..scale(-1.0, 1.0, 1.0),
+                              child: const Icon(
+                                Icons.back_hand,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Icon(
+                              Icons.back_hand,
+                              color: isLeftHand
+                                  ? Colors.white
+                                  : const Color(0xff275492),
+                            ),
+                      onPressed: () => _onHandButtonPressed(),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 28),
-            Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                ...patternProvider.patterns.map((pattern) {
-                  return PatternButton(
-                    buttonText: pattern.name,
-                    onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
-                  );
-                }).toList(),
-              ],
-            ),
-            const SizedBox(height: 28),
-            PatternDelaySlider(
-              patternDelay: patternDelay.toDouble(),
-              onDelayChanged: (double value) {
-                setState(() {
-                  patternDelay = value.toInt();
-                  if (isPatternActive) {
-                    startPattern(activePattern!);
-                  }
-                });
-              },
-            ),
-            const SizedBox(height: 28),
-            PatternButton(
-              buttonText: 'Stop Pattern',
-              onPressed: stopPattern,
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ActuatorsDisplayContainer(
+                      height: screenWidth,
+                      gridSize: gridSize,
+                      isLeftHand: isLeftHand,
+                      circleStates: circleStates,
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      children: [
+                        ...patternProvider.patterns.map((pattern) {
+                          final isActive = activePattern ==
+                              patternProvider.patterns.indexOf(pattern);
+                          return PatternButton(
+                            buttonText: pattern.name,
+                            onPressed: () => startPattern(
+                                patternProvider.patterns.indexOf(pattern)),
+                            isActive: isActive,
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    PatternDelaySlider(
+                      patternDelay: patternDelay.toDouble(),
+                      onDelayChanged: (double value) {
+                        setState(() {
+                          patternDelay = value.toInt();
+                          if (isPatternActive) {
+                            startPattern(activePattern!);
+                          }
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        CupertinoIcons.stop_circle_fill,
+                        size: 80,
+                        color: Colors.white,
+                      ),
+                      onPressed: stopPattern,
+                    ),
+                    // PatternButton(
+                    //   buttonText: 'Stop Pattern',
+                    //   onPressed: stopPattern,
+                    // ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -160,57 +264,52 @@ class _PatternTherapyState extends State<PatternTherapy> {
     );
   }
 
-  _buildAppBar() {
-    return AppBar(
-      centerTitle: false,
-      title: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Cutaneous",
-            style: TextStyle(
-              fontSize: 32,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            "Pattern Therapy",
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        Container(
-          height: 44,
-          width: 44,
-          decoration: BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: IconButton(
-            icon: isLeftHand
-                ? Transform(
-                    alignment: Alignment.center, // or Alignment.centerLeft
-                    transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
-                    child: const Icon(
-                      Icons.back_hand,
-                      color: Colors.white,
-                    ), // Your icon here
-                  )
-                : const Icon(
-                    Icons.back_hand,
-                    color: Colors.white,
-                  ),
-            onPressed: () => _onHandButtonPressed(),
-          ),
-        ),
-        const SizedBox(width: 20),
-      ],
-    );
-  }
+  // _buildAppBar() {
+  //   return AppBar(
+  //     centerTitle: false,
+  //     title: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const SizedBox(height: 20),
+  //         Text(
+  //           "Cutaneous",
+  //           style: darkTextTheme().headlineLarge,
+  //         ),
+  //         Text(
+  //           "Pattern Therapy",
+  //           style: darkTextTheme().headlineMedium,
+  //         ),
+  //       ],
+  //     ),
+  //     actions: [
+  //       Container(
+  //         height: 44,
+  //         width: 44,
+  //         decoration: BoxDecoration(
+  //           color: Colors.green,
+  //           borderRadius: BorderRadius.circular(10.0),
+  //         ),
+  //         child: IconButton(
+  //           icon: isLeftHand
+  //               ? Transform(
+  //                   alignment: Alignment.center, // or Alignment.centerLeft
+  //                   transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
+  //                   child: const Icon(
+  //                     Icons.back_hand,
+  //                     color: Colors.white,
+  //                   ), // Your icon here
+  //                 )
+  //               : const Icon(
+  //                   Icons.back_hand,
+  //                   color: Colors.white,
+  //                 ),
+  //           onPressed: () => _onHandButtonPressed(),
+  //         ),
+  //       ),
+  //       const SizedBox(width: 20),
+  //     ],
+  //   );
+  // }
 
   void _onHandButtonPressed() {
     setState(() {

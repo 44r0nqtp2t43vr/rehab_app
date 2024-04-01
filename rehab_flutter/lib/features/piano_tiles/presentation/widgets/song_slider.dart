@@ -18,6 +18,7 @@ class SongSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slider(
+      activeColor: const Color(0xff01FF99),
       value: currentDuration,
       min: minDuration,
       max: maxDuration,

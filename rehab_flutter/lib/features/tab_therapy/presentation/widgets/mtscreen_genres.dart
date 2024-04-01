@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/data_sources/song_provider.dart';
 import 'package:rehab_flutter/core/enums/genre_enum.dart';
@@ -14,8 +15,30 @@ class MTScreenGenres extends StatelessWidget {
     final SongProvider songProvider = SongProvider();
 
     return SingleChildScrollView(
-      child: Column(
-        children: _getGenres(songProvider),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'All Songs',
+                  style: darkTextTheme().displaySmall,
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: _getGenres(songProvider),
+            ),
+          ],
+        ),
       ),
     );
   }
