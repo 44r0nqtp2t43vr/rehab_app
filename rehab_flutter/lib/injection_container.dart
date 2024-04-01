@@ -84,9 +84,9 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<AddPlanUseCase>(AddPlanUseCase(sl()));
 
-  sl.registerSingleton<SubmitPretestUseCase>(SubmitPretestUseCase(sl()));
+  sl.registerSingleton<SubmitTestUseCase>(SubmitTestUseCase(sl()));
 
-  sl.registerSingleton<SubmitStandardOneUseCase>(SubmitStandardOneUseCase(sl()));
+  sl.registerSingleton<SubmitStandardUseCase>(SubmitStandardUseCase(sl()));
 
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));

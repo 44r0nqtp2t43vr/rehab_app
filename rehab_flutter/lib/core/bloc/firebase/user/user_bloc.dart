@@ -12,22 +12,22 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final RegisterUserUseCase _registerUserUseCase;
   final LoginUserUseCase _loginUserUseCase;
   final AddPlanUseCase _addPlanUseCase;
-  final SubmitPretestUseCase _submitPretestUseCase;
-  final SubmitStandardOneUseCase _submitStandardOneUseCase;
+  final SubmitTestUseCase _submitTestUseCase;
+  final SubmitStandardUseCase _submitStandardUseCase;
 
   UserBloc(
     this._registerUserUseCase,
     this._loginUserUseCase,
     this._addPlanUseCase,
-    this._submitPretestUseCase,
-    this._submitStandardOneUseCase,
+    this._submitTestUseCase,
+    this._submitStandardUseCase,
   ) : super(const UserNone()) {
     on<ResetEvent>(onResetUser);
     on<RegisterEvent>(onRegisterUser);
     on<LoginEvent>(onLoginUser);
     on<AddPlanEvent>(onAddPlan);
-    on<SubmitPretestEvent>(onSubmitPretest);
-    on<SubmitStandardOneEvent>(onSubmitStandardOne);
+    on<SubmitTestEvent>(onSubmitTest);
+    on<SubmitStandardEvent>(onSubmitStandard);
   }
 
   void onResetUser(ResetEvent event, Emitter<UserState> emit) {
@@ -64,20 +64,20 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
   }
 
-  void onSubmitPretest(SubmitPretestEvent event, Emitter<UserState> emit) async {
+  void onSubmitTest(SubmitTestEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitPretestUseCase(params: event.pretestData);
+      final updatedUser = await _submitTestUseCase(params: event.resultsData);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }
   }
 
-  void onSubmitStandardOne(SubmitStandardOneEvent event, Emitter<UserState> emit) async {
+  void onSubmitStandard(SubmitStandardEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitStandardOneUseCase(params: event.userId);
+      final updatedUser = await _submitStandardUseCase(params: event.standardData);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));

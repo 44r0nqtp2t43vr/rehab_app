@@ -1,12 +1,20 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/data_sources/song_provider.dart';
+import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_actuator.dart';
+import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_patterns.dart';
+import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_pianotiles.dart';
+import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_textures.dart';
+import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_visualizer.dart';
 
 class StandardTherapyScreen extends StatefulWidget {
   final StandardTherapyData data;
@@ -19,6 +27,18 @@ class StandardTherapyScreen extends StatefulWidget {
 
 class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
   int countdownDuration = 59;
+
+  Song getSongFromIntensity() {
+    final random = Random();
+    final songList = SongProvider.songs;
+
+    songList.sort((a, b) => a.noteCountsPerFrame.compareTo(b.noteCountsPerFrame));
+
+    int startIndex = (songList.length * (widget.data.intensity - 1) ~/ 5).toInt();
+    int endIndex = (songList.length * widget.data.intensity ~/ 5).toInt();
+
+    return songList[startIndex + random.nextInt(endIndex - startIndex)];
+  }
 
   String getNameFromType() {
     switch (widget.data.type) {
@@ -40,20 +60,36 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
   Widget getWidgetFromType(AppUser user) {
     switch (widget.data.type) {
       case StandardTherapy.actuatorTherapy:
-        return STActuator(
-          user: user,
-          intensity: widget.data.intensity,
-          countdownDuration: countdownDuration,
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: STActuator(
+            user: user,
+            intensity: widget.data.intensity,
+            countdownDuration: countdownDuration,
+          ),
         );
       case StandardTherapy.textureTherapy:
-      case StandardTherapy.patternTherapy:
-      case StandardTherapy.pianoTiles:
-      case StandardTherapy.musicVisualizer:
-        return STActuator(
-          user: user,
-          intensity: widget.data.intensity,
-          countdownDuration: countdownDuration,
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: STTextures(
+            user: user,
+            intensity: widget.data.intensity,
+            countdownDuration: countdownDuration,
+          ),
         );
+      case StandardTherapy.patternTherapy:
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: STPatterns(
+            user: user,
+            intensity: widget.data.intensity,
+            countdownDuration: countdownDuration,
+          ),
+        );
+      case StandardTherapy.pianoTiles:
+        return STPianoTiles(user: user, song: getSongFromIntensity());
+      case StandardTherapy.musicVisualizer:
+        return STVisualizer(user: user, song: getSongFromIntensity());
       default:
         return Container();
     }
@@ -108,10 +144,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
                 ],
               ),
             ),
-            body: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: getWidgetFromType(state.currentUser!),
-            ),
+            body: getWidgetFromType(state.currentUser!),
           );
         }
         return const SizedBox();

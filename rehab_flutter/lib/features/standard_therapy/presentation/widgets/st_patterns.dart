@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
@@ -9,19 +8,19 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
-import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuator_display_grid.dart';
+import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuators_display_container.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
-import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
-class STActuator extends StatefulWidget {
+class STPatterns extends StatefulWidget {
   final AppUser user;
   final int intensity;
   final int countdownDuration;
 
-  const STActuator({
+  const STPatterns({
     super.key,
     required this.user,
     required this.intensity,
@@ -29,16 +28,19 @@ class STActuator extends StatefulWidget {
   });
 
   @override
-  State<STActuator> createState() => _STActuatorState();
+  State<STPatterns> createState() => _STPatternsState();
 }
 
-class _STActuatorState extends State<STActuator> {
+class _STPatternsState extends State<STPatterns> {
   final Random random = Random();
+  // final int patternDelay = 500;
+  final int durationPerRhythmicPattern = 10;
   late Timer timer;
   late int countdownDuration;
-  late int intervalBetweenPatterns;
-  late List<StaticPattern> staticPatternsList;
+  late int patternDelay;
+  late List<RhythmicPattern> rhythmicPatternsList;
   List<bool> circleStates = List.generate(16, (_) => false);
+  Timer? _patternTimer;
   int currentInd = 0;
 
   int sideAndValueToCircleStateIndex(bool isLeft, int value) {
@@ -73,25 +75,43 @@ class _STActuatorState extends State<STActuator> {
     return circleStates;
   }
 
-  void updateCircleStates(String pattern) {
-    setState(() {
-      circleStates = patternToCircleStates(pattern);
+  void _onAnimationFinish() {
+    stopPattern();
+    incrementCurrentInd();
+    startPattern();
+  }
+
+  void sendPattern(String data) {
+    sl<BluetoothBloc>().add(WriteDataEvent(data));
+  }
+
+  void startPattern() {
+    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+      final String patternToSend = rhythmicPatternsList[currentInd].pattern[timer.tick % rhythmicPatternsList[currentInd].pattern.length];
+      setState(() {
+        circleStates = patternToCircleStates(patternToSend);
+      });
+      sendPattern(patternToSend);
+
+      // Check if the elapsed time exceeds the specified duration
+      if (timer.tick * patternDelay >= (durationPerRhythmicPattern * 1000)) {
+        _onAnimationFinish();
+      }
     });
   }
 
-  void sendPattern() {
-    String currentPatternString = staticPatternsList[currentInd].pattern;
-    String data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
-
-    sl<BluetoothBloc>().add(WriteDataEvent(data));
-    updateCircleStates(data);
-    // debugPrint("Pattern sent: $data");
+  void stopPattern() {
+    _patternTimer?.cancel();
+    setState(() {
+      circleStates = List.generate(16, (_) => false);
+    });
+    sendPattern("<000000000000000000000000000000>");
   }
 
   void incrementCurrentInd() {
     setState(() {
-      if (currentInd + 1 == staticPatternsList.length) {
-        staticPatternsList.shuffle(random);
+      if (currentInd + 1 == rhythmicPatternsList.length) {
+        rhythmicPatternsList.shuffle(random);
         currentInd = 0;
       } else {
         currentInd++;
@@ -107,11 +127,11 @@ class _STActuatorState extends State<STActuator> {
           setState(() {
             endCountdown();
           });
+          stopPattern();
           BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.user.userId, isStandardOne: true)));
         } else {
-          if (countdownDuration % intervalBetweenPatterns == 0) {
+          if (countdownDuration % durationPerRhythmicPattern == 0) {
             incrementCurrentInd();
-            sendPattern();
           }
           setState(() {
             countdownDuration -= 1;
@@ -130,17 +150,18 @@ class _STActuatorState extends State<STActuator> {
   @override
   void initState() {
     countdownDuration = widget.countdownDuration;
-    intervalBetweenPatterns = (6 - widget.intensity) * 2;
-    staticPatternsList = List.from(TestingDataProvider.staticPatterns);
-    staticPatternsList.shuffle(random);
+    patternDelay = (6 - widget.intensity) * 100;
+    rhythmicPatternsList = List.from(TestingDataProvider.rhythmicPatterns);
+    rhythmicPatternsList.shuffle(random);
     startCountdown();
-    sendPattern();
     super.initState();
+    startPattern();
   }
 
   @override
   void dispose() {
     timer.cancel();
+    _patternTimer?.cancel();
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
@@ -148,28 +169,18 @@ class _STActuatorState extends State<STActuator> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double gridSize = screenWidth - 40;
+    double gridSize = (screenWidth - 40) / 3;
 
     return Column(
       children: [
         const SizedBox(height: 32),
-        TestLabel(label: countdownDuration == 0 ? "None" : staticPatternsList[currentInd].name),
+        TestLabel(label: countdownDuration == 0 ? "None" : rhythmicPatternsList[currentInd].name),
         const SizedBox(height: 16),
-        Container(
+        ActuatorsDisplayContainer(
           height: screenWidth,
-          width: double.infinity,
-          color: Colors.black,
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Expanded(
-                child: ActuatorDisplayGrid(
-                  size: gridSize,
-                  patternData: circleStates,
-                ),
-              ),
-            ],
-          ),
+          gridSize: gridSize,
+          isLeftHand: false,
+          circleStates: circleStates,
         ),
         const SizedBox(height: 16),
         Text(

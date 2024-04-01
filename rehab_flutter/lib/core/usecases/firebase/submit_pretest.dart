@@ -1,17 +1,17 @@
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecase/usecase.dart';
-import 'package:rehab_flutter/features/testing/domain/entities/pretest_data.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
-class SubmitPretestUseCase implements UseCase<AppUser, PretestData> {
+class SubmitTestUseCase implements UseCase<AppUser, ResultsData> {
   final FirebaseRepository _firebaseRepository;
 
-  SubmitPretestUseCase(this._firebaseRepository);
+  SubmitTestUseCase(this._firebaseRepository);
 
   @override
-  Future<AppUser> call({PretestData? params}) {
+  Future<AppUser> call({ResultsData? params}) {
     try {
-      return _firebaseRepository.submitPretest(params!);
+      return _firebaseRepository.submitTest(params!);
     } catch (e) {
       throw SubmitPretestException(e.toString());
     }

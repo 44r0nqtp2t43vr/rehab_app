@@ -46,7 +46,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
   }
 
   void _renderActuators(double imageSize) {
-    final Offset animatedPosition = AniPatternProvider().doubleVPattern(imageSize, animationController.value);
+    final Offset animatedPosition = AniPatternProvider.doubleVPattern(imageSize, animationController.value);
     sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
 
     setState(() {});
