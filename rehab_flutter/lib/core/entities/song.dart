@@ -35,6 +35,16 @@ class Song {
     return duration ~/ 0.3;
   }
 
+  double get noteCountsPerFrame {
+    // Calculate the sum of all numbers in the list
+    int sum = noteCounts.reduce((value, noteCount) => value + noteCount);
+
+    // Calculate the average
+    double average = sum / noteCounts.length;
+
+    return average;
+  }
+
   List<Note> get songNotes {
     final List<Note> notes = [];
     final List<int> choiceLines = [0, 1, 2, 3, 4];
@@ -45,8 +55,7 @@ class Song {
     }
 
     for (int i = 0; i < songLastNote + 5; i++) {
-      if (noteFrameIndex > noteFrames.length - 1 ||
-          i != noteFrames[noteFrameIndex]) {
+      if (noteFrameIndex > noteFrames.length - 1 || i != noteFrames[noteFrameIndex]) {
         notes.add(Note(i, []));
         continue;
       }
