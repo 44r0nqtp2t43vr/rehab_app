@@ -7,6 +7,7 @@ import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_actuator.dart';
+import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_textures.dart';
 
 class StandardTherapyScreen extends StatefulWidget {
   final StandardTherapyData data;
@@ -46,6 +47,11 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
           countdownDuration: countdownDuration,
         );
       case StandardTherapy.textureTherapy:
+        return STTextures(
+          user: user,
+          intensity: widget.data.intensity,
+          countdownDuration: countdownDuration,
+        );
       case StandardTherapy.patternTherapy:
       case StandardTherapy.pianoTiles:
       case StandardTherapy.musicVisualizer:

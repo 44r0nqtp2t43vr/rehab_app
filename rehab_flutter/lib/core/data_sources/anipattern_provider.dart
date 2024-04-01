@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 class AniPatternProvider {
-  Offset verticalPattern(double imageSize, double animationValue) {
+  static Offset verticalPattern(double imageSize, double animationValue) {
     const double padding = 30;
     double adjustedX = 0;
     double adjustedY = 0;
@@ -32,7 +32,7 @@ class AniPatternProvider {
     return Offset(adjustedX, adjustedY);
   }
 
-  Offset horizontalPattern(double imageSize, double animationValue) {
+  static Offset horizontalPattern(double imageSize, double animationValue) {
     double adjustedX = 0;
     double adjustedY = 0;
     final List<double> yPoints = [
@@ -59,7 +59,7 @@ class AniPatternProvider {
     return Offset(adjustedX, adjustedY);
   }
 
-  Offset doubleVPattern(double imageSize, double animationValue) {
+  static Offset doubleVPattern(double imageSize, double animationValue) {
     const double padding = 24;
     double xUnit = imageSize / 4;
     double yUnit = imageSize - (padding * 2);

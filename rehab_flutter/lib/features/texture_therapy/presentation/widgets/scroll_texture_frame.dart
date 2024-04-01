@@ -21,8 +21,6 @@ class ScrollTextureFrame extends StatefulWidget {
 }
 
 class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
-  final AniPatternProvider aniPatternProvider = AniPatternProvider();
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +32,7 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
       final Offset localPosition = box.globalToLocal(details.globalPosition);
       sl<ActuatorsBloc>().add(UpdateActuatorsEvent(localPosition));
     } else {
-      final Offset animatedPosition = widget.animationDirection == AnimationDirection.vertical ? aniPatternProvider.verticalPattern(imageSize, widget.animationController.value) : aniPatternProvider.horizontalPattern(imageSize, widget.animationController.value);
+      final Offset animatedPosition = widget.animationDirection == AnimationDirection.vertical ? AniPatternProvider.verticalPattern(imageSize, widget.animationController.value) : AniPatternProvider.horizontalPattern(imageSize, widget.animationController.value);
       sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
     }
 
