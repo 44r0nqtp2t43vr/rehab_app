@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/image_texture.dart';
 
 class TextureNameSelector extends StatelessWidget {
@@ -16,8 +17,8 @@ class TextureNameSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50, // Adjust the height as needed
-      color: Colors.lightBlueAccent, // Add your color here
+      height: 50,
+      color: const Color(0xff128BED),
       child: PageView.builder(
         controller: controller,
         itemCount: imageTextures.length,
@@ -26,7 +27,7 @@ class TextureNameSelector extends StatelessWidget {
           return Center(
             child: Text(
               imageTextures[index].name,
-              style: const TextStyle(fontSize: 20),
+              style: darkTextTheme().headlineMedium,
             ),
           );
         },

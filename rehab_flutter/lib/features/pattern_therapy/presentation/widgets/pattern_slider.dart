@@ -17,6 +17,7 @@ class PatternDelaySlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slider(
+      activeColor: const Color(0xff01FF99),
       value: patternDelay,
       min: minDelay.toDouble(),
       max: maxDelay.toDouble(),

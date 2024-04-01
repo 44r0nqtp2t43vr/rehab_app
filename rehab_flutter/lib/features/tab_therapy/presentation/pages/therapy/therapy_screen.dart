@@ -148,23 +148,98 @@ class _TherapyScreenState extends State<TherapyScreen> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Music Therapy"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => _onBasicMTButtonPressed(context),
-                child: const Text("Basic"),
+          contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          content: GlassContainer(
+            blur: 10,
+            color: Colors.white.withOpacity(0.3),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/wave1.svg',
+                        width: MediaQuery.of(context).size.width * .06,
+                        height: MediaQuery.of(context).size.height * .06,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Music",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Bold',
+                                fontSize: 22,
+                                height: 1.2,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "Stimulation",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Light',
+                                fontSize: 16,
+                                height: 1.2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  cuButtonDialog(
+                    context: context,
+                    onPressed: () => _onBasicMTButtonPressed(context),
+                    title: 'Basic',
+                    svgPath: 'assets/images/basic.svg',
+                  ),
+                  const SizedBox(height: 20),
+                  cuButtonDialog(
+                    context: context,
+                    onPressed: () => _onIntermediateMTButtonPressed(context),
+                    title: 'Intermediate',
+                    svgPath: 'assets/images/intermediate.svg',
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Theme(
+                        data: darkButtonTheme,
+                        child: ElevatedButton(
+                          onPressed: () => _onBackButtonPressed(context),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // const SizedBox(height: 20),
+                  // ElevatedButton(
+                  //   onPressed: () => _onBasicMTButtonPressed(context),
+                  //   child: const Text("Basic"),
+                  // ),
+                  // ElevatedButton(
+                  //   onPressed: () => _onIntermediateMTButtonPressed(context),
+                  //   child: const Text("Intermediate"),
+                  // ),
+                  // ElevatedButton(
+                  //   onPressed: () => _onBackButtonPressed(context),
+                  //   child: const Text("Cancel"),
+                  // ),
+                ],
               ),
-              ElevatedButton(
-                onPressed: () => _onIntermediateMTButtonPressed(context),
-                child: const Text("Intermediate"),
-              ),
-              ElevatedButton(
-                onPressed: () => _onBackButtonPressed(context),
-                child: const Text("Cancel"),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -249,21 +324,21 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     context: context,
                     onPressed: () => _onATButtonPressed(context),
                     title: 'Actuator',
-                    svgPath: 'assets/images/wave1.svg',
+                    svgPath: 'assets/images/actuator.svg',
                   ),
                   const SizedBox(height: 12),
                   cuButtonDialog(
                     context: context,
                     onPressed: () => _onPTButtonPressed(context),
                     title: 'Pattern',
-                    svgPath: 'assets/images/wave1.svg',
+                    svgPath: 'assets/images/pattern.svg',
                   ),
                   const SizedBox(height: 12),
                   cuButtonDialog(
                     context: context,
                     onPressed: () => _onTTButtonPressed(context),
                     title: 'Texture',
-                    svgPath: 'assets/images/wave1.svg',
+                    svgPath: 'assets/images/texture.svg',
                   ),
                   const SizedBox(height: 20),
                   Row(

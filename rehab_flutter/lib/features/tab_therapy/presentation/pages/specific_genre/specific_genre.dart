@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/data_sources/song_provider.dart';
@@ -21,39 +24,96 @@ class SpecificGenre extends StatelessWidget {
 
     return Column(
       children: [
-        Row(
-          children: [
-            AppIconButton(
-              icon: Icons.chevron_left,
-              onPressed: () => _onBackButtonPressed(context),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    selectedGenre.toString().split('.').last.capitalize!,
-                    style: const TextStyle(
-                      fontSize: 32,
-                    ),
-                  ),
-                  const Text(
-                    "Music Genre",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.chevron_left,
+                  size: 35,
+                  color: Colors.white,
+                ),
+                onPressed: () => _onBackButtonPressed(context),
               ),
-            ),
-          ],
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      selectedGenre.toString().split('.').last.capitalize!,
+                      style: darkTextTheme().headlineLarge,
+                    ),
+                    Text(
+                      "Music Genre",
+                      style: darkTextTheme().headlineSmall,
+                    ),
+                  ],
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    Icon(
+                      CupertinoIcons.shuffle,
+                      size: 28,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    Icon(
+                      CupertinoIcons.play_circle_fill,
+                      size: 28,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              // AppIconButton(
+              //   icon: Icons.chevron_left,
+              //   onPressed: () => _onBackButtonPressed(context),
+              // ),
+              // Expanded(
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         selectedGenre.toString().split('.').last.capitalize!,
+              //         style: const TextStyle(
+              //           fontSize: 32,
+              //         ),
+              //       ),
+              //       const Text(
+              //         "Music Genre",
+              //         style: TextStyle(
+              //           fontSize: 16,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
         ),
         Expanded(
           child: Stack(
             children: [
               SingleChildScrollView(
-                child: Column(
-                  children: _getSongs(context, selectedGenre!),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: GlassContainer(
+                    blur: 4,
+                    color: Colors.white.withOpacity(0.25),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Column(
+                        children: _getSongs(context, selectedGenre!),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const Positioned(
@@ -74,7 +134,9 @@ class SpecificGenre extends StatelessWidget {
   }
 
   List<Widget> _getSongs(BuildContext context, Genre selectedGenre) {
-    return SongProvider.songs.where((song) => song.genre == selectedGenre).map((song) {
+    return SongProvider.songs
+        .where((song) => song.genre == selectedGenre)
+        .map((song) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: SongCard(
