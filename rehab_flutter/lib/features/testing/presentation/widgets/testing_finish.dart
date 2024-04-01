@@ -6,7 +6,7 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
-import 'package:rehab_flutter/features/testing/domain/entities/pretest_data.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 class TestingFinish extends StatefulWidget {
   final List<String> itemList;
@@ -22,7 +22,7 @@ class _TestingFinishState extends State<TestingFinish> {
   late double score;
 
   void _submitPretest(AppUser user, double score) {
-    BlocProvider.of<UserBloc>(context).add(SubmitPretestEvent(PretestData(user: user, score: score)));
+    BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(ResultsData(user: user, score: score, isPretest: true)));
   }
 
   @override

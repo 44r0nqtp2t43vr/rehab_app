@@ -9,8 +9,9 @@ import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
+import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
-import 'package:rehab_flutter/features/testing/domain/entities/pretest_data.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 class FirebaseRepositoryImpl implements FirebaseRepository {
   final FirebaseFirestore db;
@@ -200,7 +201,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<AppUser> submitPretest(PretestData data) async {
+  Future<AppUser> submitTest(ResultsData data) async {
     final Random random = Random();
     // Creating a list of all StandardTherapy values and shuffling it
     List<StandardTherapy> allTherapies = StandardTherapy.values;
@@ -240,26 +241,26 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<AppUser> submitStandardOne(String userId) async {
+  Future<AppUser> submitStandard(StandardData data) async {
     final DateTime today = DateTime.now();
     final DateTime startOfDay = DateTime(today.year, today.month, today.day);
     final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
 
     // Identify the active plan
-    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: today).limit(1).get();
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(data.userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: today).limit(1).get();
 
     final activePlanId = querySnapshot.docs.first.id;
 
     // Fetch sessions for the current date within the active plan
-    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(data.userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
 
     // Assuming we update the first session of the day
     final sessionDoc = sessionSnapshot.docs.first;
-    await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update({
+    await FirebaseFirestore.instance.collection('users').doc(data.userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update({
       'isStandardOneDone': true,
     });
 
-    final AppUser user = await getUser(userId);
+    final AppUser user = await getUser(data.userId);
     return user;
   }
 }

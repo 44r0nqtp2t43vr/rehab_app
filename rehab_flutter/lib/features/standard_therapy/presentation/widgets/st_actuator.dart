@@ -10,6 +10,7 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuator_display_grid.dart';
+import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
@@ -106,7 +107,7 @@ class _STActuatorState extends State<STActuator> {
           setState(() {
             endCountdown();
           });
-          BlocProvider.of<UserBloc>(context).add(SubmitStandardOneEvent(widget.user.userId));
+          BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.user.userId, isStandardOne: true)));
         } else {
           if (countdownDuration % intervalBetweenPatterns == 0) {
             incrementCurrentInd();
