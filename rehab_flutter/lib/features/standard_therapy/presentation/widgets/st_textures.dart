@@ -9,8 +9,6 @@ import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_state.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
 import 'package:rehab_flutter/core/data_sources/anipattern_provider.dart';
 import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
@@ -19,7 +17,6 @@ import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
-import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -30,12 +27,14 @@ class STTextures extends StatefulWidget {
   final AppUser user;
   final int intensity;
   final int countdownDuration;
+  final Function() submitCallback;
 
   const STTextures({
     super.key,
     required this.user,
     required this.intensity,
     required this.countdownDuration,
+    required this.submitCallback,
   });
 
   @override
@@ -72,7 +71,7 @@ class _STTexturesState extends State<STTextures> with TickerProviderStateMixin {
           setState(() {
             endCountdown();
           });
-          BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.user.userId, isStandardOne: true)));
+          widget.submitCallback();
         } else {
           setState(() {
             countdownDuration -= 1;

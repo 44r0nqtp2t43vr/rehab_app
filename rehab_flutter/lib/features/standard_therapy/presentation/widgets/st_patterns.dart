@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/widgets/actuators_display_container.dart';
-import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
@@ -19,12 +15,14 @@ class STPatterns extends StatefulWidget {
   final AppUser user;
   final int intensity;
   final int countdownDuration;
+  final Function() submitCallback;
 
   const STPatterns({
     super.key,
     required this.user,
     required this.intensity,
     required this.countdownDuration,
+    required this.submitCallback,
   });
 
   @override
@@ -128,7 +126,7 @@ class _STPatternsState extends State<STPatterns> {
             endCountdown();
           });
           stopPattern();
-          BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.user.userId, isStandardOne: true)));
+          widget.submitCallback();
         } else {
           if (countdownDuration % durationPerRhythmicPattern == 0) {
             incrementCurrentInd();
