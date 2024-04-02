@@ -458,8 +458,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
           .sublist(i, min(i + itemsPerRow, circles.length))
           .map((circleState) {
         return SizedBox(
-          width: 100,
-          height: 100,
+          width: 20,
+          height: 80,
           child: CustomPaint(
             painter: RayPainter(
               progress: circleState.progress,
@@ -490,7 +490,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
 
       activeValues[index] = activeValue;
     });
-    lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+    // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
   void resetAllCircles(
@@ -624,7 +624,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
             brillianceSquare, getBrillianceBoolValue(brilliance));
       }
 
-      lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
+      // lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
 
     // Ensure a rebuild to reflect color and size changes
