@@ -13,13 +13,13 @@ class SubmitTestUseCase implements UseCase<AppUser, ResultsData> {
     try {
       return _firebaseRepository.submitTest(params!);
     } catch (e) {
-      throw SubmitPretestException(e.toString());
+      throw SubmitTestException(e.toString());
     }
   }
 }
 
-class SubmitPretestException implements Exception {
+class SubmitTestException implements Exception {
   final String message;
 
-  SubmitPretestException(this.message);
+  SubmitTestException(this.message);
 }

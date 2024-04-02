@@ -122,6 +122,25 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
+  Future<void> updateCurrentSession(String userId, data) async {
+    final DateTime today = DateTime.now();
+    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+    // Identify the active plan
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: today).limit(1).get();
+
+    final activePlanId = querySnapshot.docs.first.id;
+
+    // Fetch sessions for the current date within the active plan
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
+
+    // Assuming we update the first session of the day
+    final sessionDoc = sessionSnapshot.docs.first;
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update(data);
+  }
+
+  @override
   Future<AppUser> loginUser(LoginData data) async {
     final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
@@ -202,65 +221,46 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<AppUser> submitTest(ResultsData data) async {
-    final Random random = Random();
-    // Creating a list of all StandardTherapy values and shuffling it
-    List<StandardTherapy> allTherapies = StandardTherapy.values;
-    List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
+    if (data.isPretest) {
+      final Random random = Random();
+      // Creating a list of all StandardTherapy values and shuffling it
+      List<StandardTherapy> allTherapies = StandardTherapy.values;
+      List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
 
-    String standardOneType = shuffledTherapies[0].name;
-    String standardTwoType = shuffledTherapies[1].name;
-    final userId = data.user.userId;
-    final score = data.score;
-    String intensityLevel = ((score / 20).ceil().clamp(1, 5)).toString();
+      String standardOneType = shuffledTherapies[0].name;
+      String standardTwoType = shuffledTherapies[1].name;
+      String intensityLevel = ((data.score / 20).ceil().clamp(1, 5)).toString();
 
-    final DateTime today = DateTime.now();
-    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
-    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
+      await updateCurrentSession(data.user.userId, {
+        'pretestScore': data.score,
+        'standardOneType': standardOneType,
+        'standardOneIntensity': intensityLevel,
+        'standardTwoType': standardTwoType,
+        'standardTwoIntensity': intensityLevel,
+        'passiveIntensity': intensityLevel,
+      });
+    } else {
+      await updateCurrentSession(data.user.userId, {'posttestScore': data.score});
+    }
 
-    // Identify the active plan
-    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: today).limit(1).get();
-
-    final activePlanId = querySnapshot.docs.first.id;
-
-    // Fetch sessions for the current date within the active plan
-    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
-
-    // Assuming we update the first session of the day
-    final sessionDoc = sessionSnapshot.docs.first;
-    await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update({
-      'pretestScore': score,
-      'standardOneType': standardOneType,
-      'standardOneIntensity': intensityLevel,
-      'standardTwoType': standardTwoType,
-      'standardTwoIntensity': intensityLevel,
-      'passiveIntensity': intensityLevel,
-    });
-
-    final AppUser user = await getUser(userId);
+    final AppUser user = await getUser(data.user.userId);
     return user;
   }
 
   @override
   Future<AppUser> submitStandard(StandardData data) async {
-    final DateTime today = DateTime.now();
-    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
-    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
-
-    // Identify the active plan
-    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(data.userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: today).limit(1).get();
-
-    final activePlanId = querySnapshot.docs.first.id;
-
-    // Fetch sessions for the current date within the active plan
-    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(data.userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
-
-    // Assuming we update the first session of the day
-    final sessionDoc = sessionSnapshot.docs.first;
-    await FirebaseFirestore.instance.collection('users').doc(data.userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update({
-      'isStandardOneDone': true,
-    });
+    final dataToSend = data.isStandardOne ? {'isStandardOneDone': true} : {'isStandardTwoDone': true};
+    await updateCurrentSession(data.userId, dataToSend);
 
     final AppUser user = await getUser(data.userId);
+    return user;
+  }
+
+  @override
+  Future<AppUser> submitPassive(String userId) async {
+    await updateCurrentSession(userId, {'isPassiveDone': true});
+
+    final AppUser user = await getUser(userId);
     return user;
   }
 }

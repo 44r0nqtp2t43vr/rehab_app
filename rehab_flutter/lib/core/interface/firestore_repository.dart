@@ -12,8 +12,10 @@ abstract class FirebaseRepository {
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs();
   Future<AppUser> getUser(String userId);
   Future<void> registerUser(RegisterData data);
+  Future<void> updateCurrentSession(String userId, dynamic data);
   Future<AppUser> addPlan(AddPlanData data);
   Future<AppUser> submitTest(ResultsData data);
   Future<AppUser> submitStandard(StandardData data);
+  Future<AppUser> submitPassive(String userId);
   Future<AppUser> loginUser(LoginData data);
 }

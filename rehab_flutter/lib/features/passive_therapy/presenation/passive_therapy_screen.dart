@@ -1,19 +1,25 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/features/passive_therapy/data/pattern_bools_provider.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/helper_functions/bluetooth_functions.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/pattern_bools.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/widgets/pattern_grid.dart';
 
 class PassiveTherapyScreen extends StatefulWidget {
-  const PassiveTherapyScreen({Key? key}) : super(key: key);
+  final String userId;
+
+  const PassiveTherapyScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<PassiveTherapyScreen> createState() => _PassiveTherapyScreenState();
 }
 
-class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
-    with TickerProviderStateMixin {
+class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with TickerProviderStateMixin {
 //  PROVIDER
   final PatternBoolsProvider patternBoolsProvider = PatternBoolsProvider();
 
@@ -21,9 +27,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   static int countdownDuration = 90;
   static String countdownText = '1:30';
   Timer? _countdownTimer;
-  Duration _duration = Duration(
-      seconds:
-          countdownDuration); // Initialize the countdown duration to 8 minutes
+  Duration _duration = Duration(seconds: countdownDuration); // Initialize the countdown duration to 8 minutes
   String _countdownText = countdownText; // Initial countdown text display
 
 // PATTERN CHANGING
@@ -31,8 +35,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   static String patternChangeDurationText = '0:10';
   Timer? _patternChangeTimer;
   Duration _patternChangeDuration = Duration(seconds: patternChangeDuration);
-  String _patternChangeCountdownText =
-      patternChangeDurationText; // Initial text display for pattern change countdown
+  String _patternChangeCountdownText = patternChangeDurationText; // Initial text display for pattern change countdown
   int patternIndex = 7;
 // ANIMATION SPEED
   static int animationSpeedDuration = 5;
@@ -42,8 +45,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   int _animationSpeed = animationSpeedSlow;
   Timer? _animationSpeedTimer;
   Timer? _animationSpeedChangeTimer;
-  Duration _animationSpeedChangeDuration =
-      Duration(seconds: animationSpeedDuration);
+  Duration _animationSpeedChangeDuration = Duration(seconds: animationSpeedDuration);
   String _animationSpeedChangeCountdownText = animationSpeedCountdownText;
 
 // PATTERNS
@@ -64,25 +66,23 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     pattern = patternBoolsProvider.patternBools[patternIndex];
 
     // Countdown Timer
-    _countdownTimer =
-        Timer.periodic(const Duration(seconds: 1), _handleCountdown);
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), _handleCountdown);
 
     // Animation Speed Timer
     _initializeAnimationSpeedTimer();
 
     // Animation Speed Change Timer
-    _animationSpeedChangeTimer =
-        Timer.periodic(const Duration(seconds: 1), _handleAnimationSpeedChange);
+    _animationSpeedChangeTimer = Timer.periodic(const Duration(seconds: 1), _handleAnimationSpeedChange);
 
     // Pattern Change Timer
-    _patternChangeTimer =
-        Timer.periodic(const Duration(seconds: 1), _handlePatternChange);
+    _patternChangeTimer = Timer.periodic(const Duration(seconds: 1), _handlePatternChange);
   }
 
   void _handleCountdown(Timer timer) {
     if (_duration.inSeconds == 0) {
       timer.cancel();
       _cleanupTimers();
+      _onEnd();
     } else {
       setState(() {
         _duration -= const Duration(seconds: 1);
@@ -93,21 +93,18 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
 
   void _initializeAnimationSpeedTimer() {
     _animationSpeedTimer?.cancel();
-    _animationSpeedTimer = Timer.periodic(
-        Duration(milliseconds: _animationSpeed), _processAnimation);
+    _animationSpeedTimer = Timer.periodic(Duration(milliseconds: _animationSpeed), _processAnimation);
   }
 
   void _handleAnimationSpeedChange(Timer timer) {
     if (_animationSpeedChangeDuration.inSeconds == 0) {
       _toggleAnimationSpeed();
       _initializeAnimationSpeedTimer();
-      _animationSpeedChangeDuration =
-          Duration(seconds: animationSpeedDuration - 1);
+      _animationSpeedChangeDuration = Duration(seconds: animationSpeedDuration - 1);
     } else {
       setState(() {
         _animationSpeedChangeDuration -= const Duration(seconds: 1);
-        _animationSpeedChangeCountdownText =
-            formatDuration(_animationSpeedChangeDuration);
+        _animationSpeedChangeCountdownText = formatDuration(_animationSpeedChangeDuration);
       });
     }
   }
@@ -129,10 +126,8 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
       int length = pattern.firstFinger.length;
       currentFrame = (currentFrame + 1) % length;
 
-      List<List<int>> sums = calculateSumsForAllFingers(
-          pattern, currentFrame, values, sumOneIndices);
-      lastSentPattern = sendPattern(
-          sums[0], sums[1], sums[2], sums[3], sums[4], lastSentPattern);
+      List<List<int>> sums = calculateSumsForAllFingers(pattern, currentFrame, values, sumOneIndices);
+      lastSentPattern = sendPattern(sums[0], sums[1], sums[2], sums[3], sums[4], lastSentPattern);
     });
     // _printFingerSums(sums);
     // Additional logic to update the animation based on the current frame
@@ -144,11 +139,14 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     _animationSpeedChangeTimer?.cancel();
   }
 
+  void _onEnd() {
+    BlocProvider.of<UserBloc>(context).add(SubmitPassiveEvent(widget.userId));
+  }
+
   void _resetPatternChangeTimer() {
     _patternChangeDuration = Duration(seconds: patternChangeDuration - 1);
     _patternChangeCountdownText = _patternChangeCountdownText;
-    patternIndex =
-        (patternIndex + 1) % patternBoolsProvider.patternBools.length;
+    patternIndex = (patternIndex + 1) % patternBoolsProvider.patternBools.length;
     pattern = patternBoolsProvider.patternBools[patternIndex];
     currentFrame = 0; // Reset current frame for the new pattern
   }
@@ -156,11 +154,8 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   void _toggleAnimationSpeed() {
     // Toggle animation speed between slow and fast, start with slow
     _animationSpeedTimer?.cancel();
-    _animationSpeed = _animationSpeed == animationSpeedSlow
-        ? animationSpeedFast
-        : animationSpeedSlow;
-    _animationSpeedChangeDuration =
-        Duration(seconds: animationSpeedDuration - 1); // Reset countdown
+    _animationSpeed = _animationSpeed == animationSpeedSlow ? animationSpeedFast : animationSpeedSlow;
+    _animationSpeedChangeDuration = Duration(seconds: animationSpeedDuration - 1); // Reset countdown
   }
 
   @override
@@ -169,66 +164,66 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     _animationSpeedChangeTimer?.cancel();
     _countdownTimer?.cancel();
     _patternChangeTimer?.cancel();
-    sendPattern([000, 000], [000, 000], [000, 000], [000, 000], [000, 000],
-        lastSentPattern);
+    sendPattern([000, 000], [000, 000], [000, 000], [000, 000], [000, 000], lastSentPattern);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Squares Demo'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Countdown: $_countdownText',
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Pattern Change Countdown: $_patternChangeCountdownText',
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "Speed Countdown: $_animationSpeedChangeCountdownText",
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Text("Pattern Name: ${pattern.name}",
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold)),
-              Row(
+    return BlocConsumer<UserBloc, UserState>(
+      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
+      listener: (context, state) {
+        if (state is UserDone) {
+          Navigator.of(context).pop();
+        }
+      },
+      builder: (context, state) {
+        if (state is UserLoading) {
+          return const Scaffold(
+            body: Center(child: CupertinoActivityIndicator(color: Colors.white)),
+          );
+        }
+        if (state is UserDone) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Flutter Squares Demo'),
+            ),
+            body: Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Example for displaying the first finger's frames.
-                  // Extend this for additional fingers as needed.
-                  PatternGridWidget(
-                      patternData: pattern.firstFinger,
-                      currentFrame: currentFrame),
-                  PatternGridWidget(
-                      patternData: pattern.secondFinger,
-                      currentFrame: currentFrame),
-                  PatternGridWidget(
-                      patternData: pattern.thirdFinger,
-                      currentFrame: currentFrame),
-                  PatternGridWidget(
-                      patternData: pattern.fourthFinger,
-                      currentFrame: currentFrame),
-                  PatternGridWidget(
-                      patternData: pattern.fifthFinger,
-                      currentFrame: currentFrame),
+                children: <Widget>[
+                  Text(
+                    'Countdown: $_countdownText',
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Pattern Change Countdown: $_patternChangeCountdownText',
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Speed Countdown: $_animationSpeedChangeCountdownText",
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  Text("Pattern Name: ${pattern.name}", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Example for displaying the first finger's frames.
+                      // Extend this for additional fingers as needed.
+                      PatternGridWidget(patternData: pattern.firstFinger, currentFrame: currentFrame),
+                      PatternGridWidget(patternData: pattern.secondFinger, currentFrame: currentFrame),
+                      PatternGridWidget(patternData: pattern.thirdFinger, currentFrame: currentFrame),
+                      PatternGridWidget(patternData: pattern.fourthFinger, currentFrame: currentFrame),
+                      PatternGridWidget(patternData: pattern.fifthFinger, currentFrame: currentFrame),
+                    ],
+                  ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }

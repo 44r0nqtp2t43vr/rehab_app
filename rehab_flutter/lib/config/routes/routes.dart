@@ -82,7 +82,7 @@ class AppRoutes {
         return _materialRoute(StandardTherapyScreen(data: settings.arguments as StandardTherapyData));
 
       case '/PassiveTherapy':
-        return _materialRoute(const PassiveTherapyScreen());
+        return _materialRoute(PassiveTherapyScreen(userId: settings.arguments as String));
 
       default:
         return _materialRoute(const OnboardingScreen());

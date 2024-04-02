@@ -30,8 +30,7 @@ class ContinueCard extends StatelessWidget {
         daysToAdd = 7;
     }
     Navigator.of(context).pop();
-    BlocProvider.of<UserBloc>(context)
-        .add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+    BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
   }
 
   @override
@@ -246,7 +245,7 @@ class ContinueCard extends StatelessWidget {
             ),
           );
         } else if (!conditions[2]) {
-          Navigator.pushNamed(context, '/PassiveTherapy');
+          Navigator.pushNamed(context, '/PassiveTherapy', arguments: user.userId);
         } else if (!conditions[3]) {
           Navigator.pushNamed(
             context,

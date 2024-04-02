@@ -6,6 +6,7 @@ import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.da
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 abstract class UserEvent extends Equatable {
+  final String? userId;
   final RegisterData? registerData;
   final LoginData? loginData;
   final AddPlanData? addPlanData;
@@ -13,6 +14,7 @@ abstract class UserEvent extends Equatable {
   final StandardData? standardData;
 
   const UserEvent({
+    this.userId,
     this.registerData,
     this.loginData,
     this.addPlanData,
@@ -21,7 +23,7 @@ abstract class UserEvent extends Equatable {
   });
 
   @override
-  List<Object> get props => [registerData!, loginData!, addPlanData!, resultsData!, standardData!];
+  List<Object> get props => [userId!, registerData!, loginData!, addPlanData!, resultsData!, standardData!];
 }
 
 class ResetEvent extends UserEvent {
@@ -46,4 +48,8 @@ class SubmitTestEvent extends UserEvent {
 
 class SubmitStandardEvent extends UserEvent {
   const SubmitStandardEvent(StandardData standardData) : super(standardData: standardData);
+}
+
+class SubmitPassiveEvent extends UserEvent {
+  const SubmitPassiveEvent(String userId) : super(userId: userId);
 }
