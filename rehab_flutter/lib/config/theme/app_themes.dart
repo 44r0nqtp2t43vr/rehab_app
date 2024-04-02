@@ -371,95 +371,93 @@ Widget cuButtonDialog({
 }) {
   return GestureDetector(
     onTap: onPressed,
-    child: LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        height: 72,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              spreadRadius: 0,
-              blurRadius: 20,
-              offset: const Offset(4, 4),
+    child: Container(
+      height: 72,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: const Offset(4, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF128BED),
+                    Color(0xFF01FF99),
+                  ],
+                  stops: [0.3, 1.0],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
+            Container(
+              color: Colors.black.withOpacity(0.2),
+            ),
+            Positioned(
+              left: -20,
+              bottom: -10,
+              child: SvgPicture.asset(
+                svgPath,
+                width: 100,
+                height: 100,
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+            Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    "",
+                    style: TextStyle(
+                      fontFamily: 'Sailec Bold',
+                      fontSize: 48,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontFamily: 'Sailec Medium',
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(right: 12.0),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF128BED),
-                      Color(0xFF01FF99),
-                    ],
-                    stops: [0.3, 1.0],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                ),
-              ),
-              Container(
-                color: Colors.black.withOpacity(0.2),
-              ),
-              Positioned(
-                left: -20,
-                bottom: -10,
-                child: SvgPicture.asset(
-                  svgPath,
-                  width: 100,
-                  height: 100,
-                  color: Colors.white.withOpacity(0.3),
-                ),
-              ),
-              Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      "",
-                      style: TextStyle(
-                        fontFamily: 'Sailec Bold',
-                        fontSize: 48,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontFamily: 'Sailec Medium',
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 12.0),
-                    child: Icon(
-                      Icons.chevron_right,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    }),
+      ),
+    ),
   );
 }
 
@@ -506,8 +504,7 @@ Widget musicTopButtons({
                       style: TextStyle(
                         fontFamily: 'Sailec Medium',
                         fontSize: 12,
-                        color:
-                            isActive ? const Color(0xff275492) : Colors.white,
+                        color: isActive ? const Color(0xff275492) : Colors.white,
                       ),
                     ),
                   ],

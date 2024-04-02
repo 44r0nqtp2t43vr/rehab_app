@@ -32,8 +32,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -100,11 +99,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          AppButton(
-                            onPressed: () =>
-                                _onPassiveTherapyButtonPressed(context),
-                            child: const Text('Passive Therapy'),
-                          ),
                         ],
                       ),
                     ],
@@ -224,19 +218,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
                       ),
                     ],
                   ),
-                  // const SizedBox(height: 20),
-                  // ElevatedButton(
-                  //   onPressed: () => _onBasicMTButtonPressed(context),
-                  //   child: const Text("Basic"),
-                  // ),
-                  // ElevatedButton(
-                  //   onPressed: () => _onIntermediateMTButtonPressed(context),
-                  //   child: const Text("Intermediate"),
-                  // ),
-                  // ElevatedButton(
-                  //   onPressed: () => _onBackButtonPressed(context),
-                  //   child: const Text("Cancel"),
-                  // ),
                 ],
               ),
             ),
@@ -244,10 +225,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
         );
       },
     );
-  }
-
-  void _onPassiveTherapyButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/PassiveTherapy');
   }
 
   void _onBasicMTButtonPressed(BuildContext context) {
@@ -353,22 +330,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
                       ),
                     ],
                   ),
-                  // ElevatedButton(
-                  //   onPressed: () => _onATButtonPressed(context),
-                  //   child: const Text('Actuator Therapy'),
-                  // ),
-                  // ElevatedButton(
-                  //   onPressed: () => _onPTButtonPressed(context),
-                  //   child: const Text('Pattern Therapy'),
-                  // ),
-                  // ElevatedButton(
-                  //   onPressed: () => _onTTButtonPressed(context),
-                  //   child: const Text('Texture Therapy'),
-                  // ),
-                  // ElevatedButton(
-                  //   onPressed: () => _onBackButtonPressed(context),
-                  //   child: const Text("Cancel"),
-                  // ),
                 ],
               ),
             ),

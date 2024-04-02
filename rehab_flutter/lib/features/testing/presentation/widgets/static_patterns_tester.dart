@@ -69,20 +69,15 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   double _calculateAccuracy() {
     final List<bool> answers = _circleStates;
     final List<bool> correctAnswers = _patternToCircleStates(widget.currentStaticPattern.pattern);
-    int shouldBeTrueCount = 0;
     int correctlyAnsweredCount = 0;
 
     for (int i = 0; i < answers.length; i++) {
-      if (correctAnswers[i] == false) {
-        continue;
-      }
-      shouldBeTrueCount++;
-      if (answers[i] == true) {
+      if (answers[i] == correctAnswers[i]) {
         correctlyAnsweredCount++;
       }
     }
 
-    return (correctlyAnsweredCount / shouldBeTrueCount) * 100;
+    return (correctlyAnsweredCount / answers.length) * 100;
   }
 
   void _updateCircleStateBasedOnPosition(Offset globalPosition) {
@@ -146,7 +141,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
           flex: 2,
           child: Center(
             child: Container(
-              color: Colors.black,
+              color: const Color(0xff223E64),
               padding: const EdgeInsets.all(48.0),
               child: GestureDetector(
                 onPanStart: (DragStartDetails details) {
