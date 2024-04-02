@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/widgets/app_button.dart';
@@ -190,237 +191,243 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
         Navigator.of(context).pushReplacementNamed("/MainScreen");
       },
       child: Scaffold(
-        body: Column(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        CupertinoIcons.chevron_down,
-                        size: 24,
-                        color: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          CupertinoIcons.chevron_down,
+                          size: 24,
+                          color: Colors.white,
+                        ),
+                        onPressed: () => _onMinimize(context),
                       ),
-                      onPressed: () => _onMinimize(context),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xff3572C6).withOpacity(0.50),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () => _onSwitch(context),
-                              style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  Colors.white,
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xff3572C6).withOpacity(0.50),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => _onSwitch(context),
+                                style: ButtonStyle(
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    Colors.white,
+                                  ),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    Colors.transparent,
+                                  ),
+                                  elevation:
+                                      MaterialStateProperty.all<double>(0),
+                                  shadowColor: MaterialStateProperty.all<Color>(
+                                      Colors.transparent),
+                                  overlayColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  padding: MaterialStateProperty.all<
+                                      EdgeInsetsGeometry>(
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                  ),
                                 ),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  Colors.transparent,
-                                ),
-                                elevation: MaterialStateProperty.all<double>(0),
-                                shadowColor: MaterialStateProperty.all<Color>(
-                                    Colors.transparent),
-                                overlayColor: MaterialStateProperty.all<Color>(
-                                    Colors.transparent),
-                                padding: MaterialStateProperty.all<
-                                    EdgeInsetsGeometry>(
-                                  const EdgeInsets.symmetric(horizontal: 20),
+                                child: const Text(
+                                  'Basic',
+                                  style: TextStyle(
+                                    fontFamily: 'Sailec Light',
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
-                              child: const Text(
-                                'Basic',
-                                style: TextStyle(
-                                  fontFamily: 'Sailec Light',
-                                  fontSize: 12,
+                              ElevatedButton(
+                                onPressed: null,
+                                style: ButtonStyle(
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    Colors.white,
+                                  ),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    Colors.white.withOpacity(0.25),
+                                  ),
+                                  elevation:
+                                      MaterialStateProperty.all<double>(0),
+                                  shadowColor: MaterialStateProperty.all<Color>(
+                                      Colors.transparent),
+                                  overlayColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  padding: MaterialStateProperty.all<
+                                      EdgeInsetsGeometry>(
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                  ),
                                 ),
+                                child: const Text(
+                                  'Intermediate',
+                                  style: TextStyle(
+                                    fontFamily: 'Sailec Medium',
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          CupertinoIcons.ellipsis_vertical,
+                          size: 24,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Column(
+                children: [
+                  ...buildRayPainterRows(),
+                ],
+              ),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.songData.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Sailec Medium',
+                          fontSize: 20,
+                          height: 1.2,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        widget.songData.artist,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Sailec Light',
+                          fontSize: 16,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              secToMinSec(currentPositionSec),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Sailec Light',
+                                fontSize: 12,
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: null,
-                              style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  Colors.white,
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                  Colors.white.withOpacity(0.25),
-                                ),
-                                elevation: MaterialStateProperty.all<double>(0),
-                                shadowColor: MaterialStateProperty.all<Color>(
-                                    Colors.transparent),
-                                overlayColor: MaterialStateProperty.all<Color>(
-                                    Colors.transparent),
-                                padding: MaterialStateProperty.all<
-                                    EdgeInsetsGeometry>(
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                                ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: SongSlider(
+                                currentDuration: currentPositionSec,
+                                minDuration: 0,
+                                maxDuration: widget.songData.duration,
+                                onDurationChanged: (value) =>
+                                    _onDurationChanged(value),
                               ),
-                              child: const Text(
-                                'Intermediate',
-                                style: TextStyle(
-                                  fontFamily: 'Sailec Medium',
-                                  fontSize: 12,
-                                ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              widget.songData.songTime,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Sailec Light',
+                                fontSize: 12,
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        CupertinoIcons.ellipsis_vertical,
-                        size: 24,
-                        color: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                CupertinoIcons.shuffle,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {},
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                CupertinoIcons.backward_end_fill,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {},
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                isPlaying
+                                    ? CupertinoIcons.pause_fill
+                                    : CupertinoIcons.play_arrow_solid,
+                                size: 40,
+                                color: Colors.white,
+                              ),
+                              onPressed: () => isPlaying
+                                  ? _pauseAnimation()
+                                  : _resumeAnimation(),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                CupertinoIcons.forward_end_fill,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {},
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                CupertinoIcons.square_list_fill,
+                                size: 24,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
                       ),
-                      onPressed: () {},
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Column(
-              children: [
-                ...buildRayPainterRows(),
-              ],
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.songData.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Sailec Medium',
-                        fontSize: 20,
-                        height: 1.2,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      widget.songData.artist,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Sailec Light',
-                        fontSize: 16,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        children: [
-                          Text(
-                            secToMinSec(currentPositionSec),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Sailec Light',
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: SongSlider(
-                              currentDuration: currentPositionSec,
-                              minDuration: 0,
-                              maxDuration: widget.songData.duration,
-                              onDurationChanged: (value) =>
-                                  _onDurationChanged(value),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            widget.songData.songTime,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Sailec Light',
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              CupertinoIcons.shuffle,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              CupertinoIcons.backward_end_fill,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              isPlaying
-                                  ? CupertinoIcons.pause_fill
-                                  : CupertinoIcons.play_arrow_solid,
-                              size: 40,
-                              color: Colors.white,
-                            ),
-                            onPressed: () => isPlaying
-                                ? _pauseAnimation()
-                                : _resumeAnimation(),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              CupertinoIcons.forward_end_fill,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              CupertinoIcons.square_list_fill,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -453,30 +460,31 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   List<Widget> buildRayPainterRows() {
     List<Widget> rows = [];
     int itemsPerRow = 4; // Number of RayPainters per row
+
     for (int i = 0; i < circles.length; i += itemsPerRow) {
       List<Widget> rowItems = circles
           .sublist(i, min(i + itemsPerRow, circles.length))
           .map((circleState) {
-        return SizedBox(
-          width: 20,
-          height: 80,
-          child: CustomPaint(
-            painter: RayPainter(
-              progress: circleState.progress,
-              totalHeight: circleState.totalHeight,
-              totalWidth: circleState.totalWidth,
-              circleHeight: circleState.circleHeight,
-              circleWidth: circleState.circleWidth,
-              rayHeight: circleState.rayHeight,
-              rayWidth: circleState.rayWidth,
-              color: circleState.color,
-            ),
+        return CustomPaint(
+          painter: RayPainter(
+            progress: circleState.progress,
+            totalHeight: circleState.totalHeight,
+            totalWidth: circleState.totalWidth,
+            circleHeight: circleState.circleHeight,
+            circleWidth: circleState.circleWidth,
+            rayHeight: circleState.rayHeight,
+            rayWidth: circleState.rayWidth,
+            color: circleState.color,
           ),
         );
       }).toList();
-      rows.add(Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: rowItems));
+
+      rows.add(Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: rowItems),
+      ));
     }
     return rows;
   }
