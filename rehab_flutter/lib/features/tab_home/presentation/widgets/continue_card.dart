@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
@@ -30,8 +29,7 @@ class ContinueCard extends StatelessWidget {
         daysToAdd = 7;
     }
     Navigator.of(context).pop();
-    BlocProvider.of<UserBloc>(context)
-        .add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+    BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
   }
 
   @override
@@ -41,12 +39,6 @@ class ContinueCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => _onTap(context, user, currentPlan),
       child: LayoutBuilder(builder: (context, constraints) {
-        final buttonWidth = constraints.maxWidth;
-        final buttonHeight = constraints.maxHeight;
-
-        final svgWidth = buttonWidth * 0.7;
-        final svgHeight = buttonHeight * 0.7;
-
         return Container(
           height: 130,
           width: double.infinity,
@@ -241,17 +233,21 @@ class ContinueCard extends StatelessWidget {
             context,
             '/StandardTherapy',
             arguments: StandardTherapyData(
+              userId: user.userId,
+              isStandardOne: true,
               type: currentSession.getStandardOneType(),
               intensity: int.parse(currentSession.standardOneIntensity),
             ),
           );
         } else if (!conditions[2]) {
-          Navigator.pushNamed(context, '/PassiveTherapy');
+          Navigator.pushNamed(context, '/PassiveTherapy', arguments: user.userId);
         } else if (!conditions[3]) {
           Navigator.pushNamed(
             context,
             '/StandardTherapy',
             arguments: StandardTherapyData(
+              userId: user.userId,
+              isStandardOne: false,
               type: currentSession.getStandardTwoType(),
               intensity: int.parse(currentSession.standardTwoIntensity),
             ),

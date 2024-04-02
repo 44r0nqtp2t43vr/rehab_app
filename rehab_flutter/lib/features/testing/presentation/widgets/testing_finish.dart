@@ -21,15 +21,15 @@ class TestingFinish extends StatefulWidget {
 class _TestingFinishState extends State<TestingFinish> {
   late double score;
 
-  void _submitPretest(AppUser user, double score) {
-    BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(ResultsData(user: user, score: score, isPretest: true)));
+  void _submitTest(AppUser user, double score) {
+    BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(ResultsData(user: user, score: score, isPretest: !user.getCurrentSession()!.getSessionConditions()[0])));
   }
 
   @override
   void initState() {
     final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
     score = (widget.accuracyList.reduce((value, element) => value + element) / widget.accuracyList.length);
-    _submitPretest(currentUser, score);
+    _submitTest(currentUser, score);
 
     super.initState();
   }

@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/data_sources/song_provider.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
+import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_actuator.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_patterns.dart';
@@ -27,6 +29,10 @@ class StandardTherapyScreen extends StatefulWidget {
 
 class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
   int countdownDuration = 59;
+
+  void submit() {
+    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.data.userId, isStandardOne: widget.data.isStandardOne)));
+  }
 
   Song getSongFromIntensity() {
     final random = Random();
@@ -66,6 +72,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
             user: user,
             intensity: widget.data.intensity,
             countdownDuration: countdownDuration,
+            submitCallback: submit,
           ),
         );
       case StandardTherapy.textureTherapy:
@@ -75,6 +82,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
             user: user,
             intensity: widget.data.intensity,
             countdownDuration: countdownDuration,
+            submitCallback: submit,
           ),
         );
       case StandardTherapy.patternTherapy:
@@ -84,12 +92,13 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
             user: user,
             intensity: widget.data.intensity,
             countdownDuration: countdownDuration,
+            submitCallback: submit,
           ),
         );
       case StandardTherapy.pianoTiles:
-        return STPianoTiles(user: user, song: getSongFromIntensity());
+        return STPianoTiles(user: user, song: getSongFromIntensity(), submitCallback: submit);
       case StandardTherapy.musicVisualizer:
-        return STVisualizer(user: user, song: getSongFromIntensity());
+        return STVisualizer(user: user, song: getSongFromIntensity(), submitCallback: submit);
       default:
         return Container();
     }

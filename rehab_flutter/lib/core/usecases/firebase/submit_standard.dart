@@ -13,13 +13,13 @@ class SubmitStandardUseCase implements UseCase<AppUser, StandardData> {
     try {
       return _firebaseRepository.submitStandard(params!);
     } catch (e) {
-      throw SubmitStandardOneException(e.toString());
+      throw SubmitStandardException(e.toString());
     }
   }
 }
 
-class SubmitStandardOneException implements Exception {
+class SubmitStandardException implements Exception {
   final String message;
 
-  SubmitStandardOneException(this.message);
+  SubmitStandardException(this.message);
 }

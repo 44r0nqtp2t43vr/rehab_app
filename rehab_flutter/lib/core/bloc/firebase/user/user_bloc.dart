@@ -2,11 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
-import 'package:rehab_flutter/core/usecases/firebase/submit_pretest.dart';
+import 'package:rehab_flutter/core/usecases/firebase/submit_passive.dart';
+import 'package:rehab_flutter/core/usecases/firebase/submit_test.dart';
 
 import 'package:rehab_flutter/core/usecases/firebase/login_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_user.dart';
-import 'package:rehab_flutter/core/usecases/firebase/submit_standard_one.dart';
+import 'package:rehab_flutter/core/usecases/firebase/submit_standard.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final RegisterUserUseCase _registerUserUseCase;
@@ -14,6 +15,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final AddPlanUseCase _addPlanUseCase;
   final SubmitTestUseCase _submitTestUseCase;
   final SubmitStandardUseCase _submitStandardUseCase;
+  final SubmitPassiveUseCase _submitPassiveUseCase;
 
   UserBloc(
     this._registerUserUseCase,
@@ -21,6 +23,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this._addPlanUseCase,
     this._submitTestUseCase,
     this._submitStandardUseCase,
+    this._submitPassiveUseCase,
   ) : super(const UserNone()) {
     on<ResetEvent>(onResetUser);
     on<RegisterEvent>(onRegisterUser);
@@ -28,6 +31,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<AddPlanEvent>(onAddPlan);
     on<SubmitTestEvent>(onSubmitTest);
     on<SubmitStandardEvent>(onSubmitStandard);
+    on<SubmitPassiveEvent>(onSubmitPassive);
   }
 
   void onResetUser(ResetEvent event, Emitter<UserState> emit) {
@@ -78,6 +82,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(const UserLoading());
     try {
       final updatedUser = await _submitStandardUseCase(params: event.standardData);
+      emit(UserDone(currentUser: updatedUser));
+    } catch (e) {
+      emit(UserNone(errorMessage: e.toString()));
+    }
+  }
+
+  void onSubmitPassive(SubmitPassiveEvent event, Emitter<UserState> emit) async {
+    emit(const UserLoading());
+    try {
+      final updatedUser = await _submitPassiveUseCase(params: event.userId);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));

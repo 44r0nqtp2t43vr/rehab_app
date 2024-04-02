@@ -6,13 +6,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
-import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/helper_functions.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
@@ -22,11 +18,13 @@ import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/wi
 class STVisualizer extends StatefulWidget {
   final AppUser user;
   final Song song;
+  final Function() submitCallback;
 
   const STVisualizer({
     super.key,
     required this.user,
     required this.song,
+    required this.submitCallback,
   });
 
   @override
@@ -151,7 +149,7 @@ class _STVisualizerState extends State<STVisualizer> with SingleTickerProviderSt
     });
 
     audioPlayer.onPlayerComplete.listen((_) {
-      BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.user.userId, isStandardOne: true)));
+      widget.submitCallback();
     });
   }
 

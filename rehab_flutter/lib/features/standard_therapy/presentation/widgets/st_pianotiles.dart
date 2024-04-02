@@ -1,10 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
@@ -12,17 +9,18 @@ import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_container.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
-import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class STPianoTiles extends StatefulWidget {
   final AppUser user;
   final Song song;
+  final Function() submitCallback;
 
   const STPianoTiles({
     super.key,
     required this.user,
     required this.song,
+    required this.submitCallback,
   });
 
   @override
@@ -76,7 +74,7 @@ class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderSt
       isPlaying = false;
     });
     animationController.reset();
-    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.user.userId, isStandardOne: true)));
+    widget.submitCallback();
   }
 
   void _initBuild(BuildContext context) {

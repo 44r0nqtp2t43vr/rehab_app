@@ -87,14 +87,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
                                   subTitle: 'Stimulation',
                                   svgPath: 'assets/images/cutaneous.svg',
                                 ),
-                                // AppButton(
-                                //   onPressed: () => _onMTButtonPressed(),
-                                //   child: const Text('Music Therapy'),
-                                // ),
-                                // AppButton(
-                                //   onPressed: () => _onCTButtonPressed(),
-                                //   child: const Text('Cutaneous Therapy'),
-                                // ),
                               ],
                             ),
                           ),
