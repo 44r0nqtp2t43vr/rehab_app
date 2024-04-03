@@ -16,7 +16,7 @@ class ProfileScreen extends StatelessWidget {
       listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
       listener: (context, state) {
         if (state is UserDone) {
-          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed("/Login");
         }
       },
       builder: (context, state) {
