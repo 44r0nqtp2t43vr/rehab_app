@@ -75,7 +75,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => _onEditProfileButtonPressed(context),
               child: const Text("Edit Profile"),
             ),
             const SizedBox(height: 20),
@@ -117,6 +117,10 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onEditProfileButtonPressed(BuildContext context) {
+    Navigator.of(context).pushNamed("/EditProfile");
   }
 
   void _onLogoutButtonPressed(BuildContext context, AppUser user) {

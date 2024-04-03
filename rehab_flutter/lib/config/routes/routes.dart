@@ -15,6 +15,7 @@ import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actua
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/pages/standard_therapy_screen/standard_therapy_screen.dart';
+import 'package:rehab_flutter/features/tab_profile/presentation/pages/edit_profile/edit_profile.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy/texture_therapy.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
@@ -83,6 +84,9 @@ class AppRoutes {
 
       case '/PassiveTherapy':
         return _materialRoute(PassiveTherapyScreen(userId: settings.arguments as String));
+
+      case '/EditProfile':
+        return _materialRoute(const EditProfile());
 
       default:
         return _materialRoute(const OnboardingScreen());
