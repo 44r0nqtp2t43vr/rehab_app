@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
-import 'package:rehab_flutter/features/tab_activity_monitor/presentation/pages/activity_monitor/activity_monitor.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class MiniCalendar extends StatelessWidget {
