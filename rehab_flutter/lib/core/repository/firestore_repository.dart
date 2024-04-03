@@ -159,6 +159,11 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
+  Future<void> logoutUser() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  @override
   Future<AppUser> addPlan(AddPlanData data) async {
     final userId = data.user.userId;
 

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
@@ -7,6 +8,7 @@ import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart
 
 abstract class UserEvent extends Equatable {
   final String? userId;
+  final AppUser? user;
   final RegisterData? registerData;
   final LoginData? loginData;
   final AddPlanData? addPlanData;
@@ -15,6 +17,7 @@ abstract class UserEvent extends Equatable {
 
   const UserEvent({
     this.userId,
+    this.user,
     this.registerData,
     this.loginData,
     this.addPlanData,
@@ -23,7 +26,7 @@ abstract class UserEvent extends Equatable {
   });
 
   @override
-  List<Object> get props => [userId!, registerData!, loginData!, addPlanData!, resultsData!, standardData!];
+  List<Object> get props => [userId!, user!, registerData!, loginData!, addPlanData!, resultsData!, standardData!];
 }
 
 class ResetEvent extends UserEvent {
@@ -52,4 +55,8 @@ class SubmitStandardEvent extends UserEvent {
 
 class SubmitPassiveEvent extends UserEvent {
   const SubmitPassiveEvent(String userId) : super(userId: userId);
+}
+
+class LogoutEvent extends UserEvent {
+  const LogoutEvent(AppUser user) : super(user: user);
 }
