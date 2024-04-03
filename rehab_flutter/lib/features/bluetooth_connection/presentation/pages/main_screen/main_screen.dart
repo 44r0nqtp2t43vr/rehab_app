@@ -8,7 +8,6 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
-import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/pages/activity_monitor/activity_monitor.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/pages/home/home_screen.dart';
 import 'package:rehab_flutter/features/tab_profile/presentation/pages/profile/profile_screen.dart';
@@ -40,7 +39,8 @@ class MainScreen extends StatelessWidget {
       builder: (BuildContext context, UserState state) {
         if (state is UserLoading) {
           return const Scaffold(
-            body: Center(child: CupertinoActivityIndicator(color: Colors.white)),
+            body:
+                Center(child: CupertinoActivityIndicator(color: Colors.white)),
           );
         }
         if (state is UserDone) {

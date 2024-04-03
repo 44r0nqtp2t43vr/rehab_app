@@ -16,7 +16,6 @@ import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
 import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
 import 'package:rehab_flutter/core/widgets/animation_button.dart';
-import 'package:rehab_flutter/core/widgets/app_iconbuttontext.dart';
 import 'package:rehab_flutter/features/scrolling_textures/domain/enums/animation_state.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/widgets/gallery.dart';
 import 'package:rehab_flutter/core/data_sources/image_texture_provider.dart';

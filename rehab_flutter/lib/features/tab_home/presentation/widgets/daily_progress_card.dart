@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 
 class DailyProgressCard extends StatelessWidget {
@@ -11,27 +13,33 @@ class DailyProgressCard extends StatelessWidget {
     return Container(
       height: 240,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.white),
-      ),
       child: Column(
         children: [
           Container(
             height: 136,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(color: Colors.white),
             ),
             child: Center(
-              child: Text(
-                "${todaySession == null ? 0 : todaySession!.getSessionPercentCompletion().toStringAsFixed(0)}%",
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              child: CircularPercentIndicator(
+                radius: 0.4 * 136,
+                lineWidth: 10.0,
+                percent: todaySession!.getSessionPercentCompletion() / 100,
+                center: Text(
+                  "${todaySession!.getSessionPercentCompletion().toStringAsFixed(0)}%",
+                  style: darkTextTheme().headlineLarge,
                 ),
+                backgroundColor: Colors.white,
+                progressColor: const Color(0xff01FF99),
               ),
+              // Text(
+              //   "${todaySession == null ? 0 : todaySession!.getSessionPercentCompletion().toStringAsFixed(0)}%",
+              //   style: const TextStyle(
+              //     fontSize: 32,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.white,
+              //   ),
+              // ),
             ),
           ),
           const Spacer(),
