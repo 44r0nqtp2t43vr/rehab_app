@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
@@ -15,6 +16,7 @@ class MTScreenAll extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -60,6 +62,15 @@ class MTScreenAll extends StatelessWidget {
                   children: _getSongs(context),
                 ),
               ),
+            ),
+            GetBuilder<SongController>(
+              builder: (controller) {
+                if (controller.currentSong.value != null) {
+                  return const SizedBox(height: 80);
+                } else {
+                  return const SizedBox();
+                }
+              },
             ),
           ],
         ),

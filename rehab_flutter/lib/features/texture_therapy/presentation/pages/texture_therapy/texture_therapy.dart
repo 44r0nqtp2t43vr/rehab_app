@@ -235,7 +235,7 @@ class _TextureTherapyState extends State<TextureTherapy>
                           size: 40,
                           color: Colors.white,
                         ),
-                        onPressed: () => _stopAnimation(),
+                        onPressed: () => _toggleAniDirection(),
                       ),
                       TextButton.icon(
                         onPressed: () => _onSTButtonPressed(context),

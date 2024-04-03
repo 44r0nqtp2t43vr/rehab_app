@@ -101,17 +101,31 @@ class SpecificGenre extends StatelessWidget {
           child: Stack(
             children: [
               SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GlassContainer(
-                    blur: 4,
-                    color: Colors.white.withOpacity(0.25),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Column(
-                        children: _getSongs(context, selectedGenre!),
+                  child: Column(
+                    children: [
+                      GlassContainer(
+                        blur: 4,
+                        color: Colors.white.withOpacity(0.25),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Column(
+                            children: _getSongs(context, selectedGenre!),
+                          ),
+                        ),
                       ),
-                    ),
+                      GetBuilder<SongController>(
+                        builder: (controller) {
+                          if (controller.currentSong.value != null) {
+                            return const SizedBox(height: 80);
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),

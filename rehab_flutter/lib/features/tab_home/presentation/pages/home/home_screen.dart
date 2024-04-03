@@ -85,21 +85,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 28),
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           "Activity Monitor",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+                          style: darkTextTheme().displaySmall,
                         ),
                         const Spacer(),
                         Text(
                           "${getMonth(focusedDay.month)} ${focusedDay.year}",
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontFamily: "Sailec Medium",
+                            fontSize: 12,
                             color: Colors.white,
                           ),
                         ),
