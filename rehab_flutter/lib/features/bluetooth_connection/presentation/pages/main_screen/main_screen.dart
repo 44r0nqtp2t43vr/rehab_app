@@ -25,7 +25,7 @@ class MainScreen extends StatelessWidget {
       case TabEnum.activityMonitor:
         return ActivityMonitor(sessions: user.getAllSessionsFromAllPlans());
       case TabEnum.profile:
-        return const ProfileScreen();
+        return ProfileScreen(user: user);
       default:
         return const HomeScreen();
     }
@@ -34,7 +34,11 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
-      listener: (BuildContext context, UserState state) {},
+      listener: (BuildContext context, UserState state) {
+        if (state is UserNone) {
+          Navigator.of(context).pushReplacementNamed("/Login");
+        }
+      },
       builder: (BuildContext context, UserState state) {
         if (state is UserLoading) {
           return const Scaffold(
@@ -46,8 +50,7 @@ class MainScreen extends StatelessWidget {
           return GetX<NavigationController>(
             builder: (_) {
               final currentTab = sl<NavigationController>().getTab();
-              final currentTabTherapy =
-                  sl<NavigationController>().getTherapyTab();
+              final currentTabTherapy = sl<NavigationController>().getTherapyTab();
 
               return PopScope(
                 canPop: false,
@@ -56,14 +59,10 @@ class MainScreen extends StatelessWidget {
                     return;
                   }
 
-                  if (currentTab == TabEnum.therapy &&
-                      currentTabTherapy == TabTherapyEnum.music) {
-                    sl<NavigationController>()
-                        .setTherapyTab(TabTherapyEnum.home);
-                  } else if (currentTab == TabEnum.therapy &&
-                      currentTabTherapy == TabTherapyEnum.specificGenre) {
-                    sl<NavigationController>()
-                        .setTherapyTab(TabTherapyEnum.music);
+                  if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.music) {
+                    sl<NavigationController>().setTherapyTab(TabTherapyEnum.home);
+                  } else if (currentTab == TabEnum.therapy && currentTabTherapy == TabTherapyEnum.specificGenre) {
+                    sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
                   } else {
                     Navigator.of(context).pop();
                   }
@@ -73,71 +72,48 @@ class MainScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Expanded(
-                          child:
-                              getScreenFromTab(currentTab, state.currentUser!),
+                          child: getScreenFromTab(currentTab, state.currentUser!),
                         ),
                         Row(
                           children: [
                             Expanded(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     IconButton(
                                       icon: Icon(
-                                        currentTab == TabEnum.home
-                                            ? CupertinoIcons.house_fill
-                                            : CupertinoIcons.house,
+                                        currentTab == TabEnum.home ? CupertinoIcons.house_fill : CupertinoIcons.house,
                                         size: 30,
-                                        color: currentTab == TabEnum.home
-                                            ? Colors.white
-                                            : const Color(0XFF93aac9),
+                                        color: currentTab == TabEnum.home ? Colors.white : const Color(0XFF93aac9),
                                       ),
-                                      onPressed: () =>
-                                          _onHomeButtonPressed(currentTab),
+                                      onPressed: () => _onHomeButtonPressed(currentTab),
                                     ),
                                     IconButton(
                                       icon: Icon(
-                                        currentTab == TabEnum.therapy
-                                            ? CupertinoIcons
-                                                .circle_grid_3x3_fill
-                                            : CupertinoIcons.circle_grid_3x3,
+                                        currentTab == TabEnum.therapy ? CupertinoIcons.circle_grid_3x3_fill : CupertinoIcons.circle_grid_3x3,
                                         size: 30,
-                                        color: currentTab == TabEnum.therapy
-                                            ? Colors.white
-                                            : const Color(0XFF93aac9),
+                                        color: currentTab == TabEnum.therapy ? Colors.white : const Color(0XFF93aac9),
                                       ),
-                                      onPressed: () =>
-                                          _onTherapyButtonPressed(currentTab),
+                                      onPressed: () => _onTherapyButtonPressed(currentTab),
                                     ),
                                     IconButton(
                                       icon: Icon(
                                         CupertinoIcons.calendar,
                                         size: 30,
-                                        color: currentTab ==
-                                                TabEnum.activityMonitor
-                                            ? Colors.white
-                                            : const Color(0XFF93aac9),
+                                        color: currentTab == TabEnum.activityMonitor ? Colors.white : const Color(0XFF93aac9),
                                       ),
-                                      onPressed: () =>
-                                          _onActivityButtonPressed(currentTab),
+                                      onPressed: () => _onActivityButtonPressed(currentTab),
                                     ),
                                     IconButton(
                                       icon: Icon(
-                                        currentTab == TabEnum.profile
-                                            ? CupertinoIcons.person_fill
-                                            : CupertinoIcons.person,
+                                        currentTab == TabEnum.profile ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                         size: 30,
-                                        color: currentTab == TabEnum.profile
-                                            ? Colors.white
-                                            : const Color(0XFF93aac9),
+                                        color: currentTab == TabEnum.profile ? Colors.white : const Color(0XFF93aac9),
                                       ),
-                                      onPressed: () =>
-                                          _onProfileButtonPressed(currentTab),
+                                      onPressed: () => _onProfileButtonPressed(currentTab),
                                     ),
                                   ],
                                 ),

@@ -18,4 +18,5 @@ abstract class FirebaseRepository {
   Future<AppUser> submitStandard(StandardData data);
   Future<AppUser> submitPassive(String userId);
   Future<AppUser> loginUser(LoginData data);
+  Future<void> logoutUser();
 }

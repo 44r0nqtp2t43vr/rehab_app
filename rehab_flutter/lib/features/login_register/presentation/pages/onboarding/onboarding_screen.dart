@@ -9,7 +9,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const OnboardingPages()),
         );
@@ -157,7 +157,7 @@ class _OnboardingPagesState extends State<OnboardingPages> {
   }
 
   void _onSkipButtonPressed(BuildContext context) {
-    Navigator.pushNamed(context, '/Login');
+    Navigator.pushReplacementNamed(context, '/Login');
   }
 
   void _onContinueButtonPressed(BuildContext context) {
@@ -167,7 +167,7 @@ class _OnboardingPagesState extends State<OnboardingPages> {
         curve: Curves.ease,
       );
     } else {
-      Navigator.pushNamed(context, '/Login');
+      Navigator.pushReplacementNamed(context, '/Login');
     }
   }
 }

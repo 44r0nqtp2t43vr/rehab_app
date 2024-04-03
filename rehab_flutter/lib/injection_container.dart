@@ -19,6 +19,7 @@ import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
+import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_passive.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_test.dart';
 import 'package:rehab_flutter/core/usecases/firebase/log_login_attempt.dart';
@@ -91,12 +92,14 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<SubmitPassiveUseCase>(SubmitPassiveUseCase(sl()));
 
+  sl.registerSingleton<LogoutUserUseCase>(LogoutUserUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
-  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 }

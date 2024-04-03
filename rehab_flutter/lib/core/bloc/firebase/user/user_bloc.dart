@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
+import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_passive.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_test.dart';
 
@@ -16,6 +17,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final SubmitTestUseCase _submitTestUseCase;
   final SubmitStandardUseCase _submitStandardUseCase;
   final SubmitPassiveUseCase _submitPassiveUseCase;
+  final LogoutUserUseCase _logoutUserUseCase;
 
   UserBloc(
     this._registerUserUseCase,
@@ -24,6 +26,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this._submitTestUseCase,
     this._submitStandardUseCase,
     this._submitPassiveUseCase,
+    this._logoutUserUseCase,
   ) : super(const UserNone()) {
     on<ResetEvent>(onResetUser);
     on<RegisterEvent>(onRegisterUser);
@@ -32,6 +35,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<SubmitTestEvent>(onSubmitTest);
     on<SubmitStandardEvent>(onSubmitStandard);
     on<SubmitPassiveEvent>(onSubmitPassive);
+    on<LogoutEvent>(onLogoutUser);
   }
 
   void onResetUser(ResetEvent event, Emitter<UserState> emit) {
@@ -95,6 +99,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
+    }
+  }
+
+  void onLogoutUser(LogoutEvent event, Emitter<UserState> emit) async {
+    emit(const UserLoading());
+    try {
+      await _logoutUserUseCase();
+      emit(const UserNone());
+    } catch (e) {
+      emit(UserDone(currentUser: event.user));
     }
   }
 }
