@@ -144,8 +144,7 @@ class _OnboardingPagesState extends State<OnboardingPages> {
                   data: darkButtonTheme,
                   child: ElevatedButton(
                     onPressed: () => _onContinueButtonPressed(context),
-                    child: Text(
-                        _currentPageIndex == 2 ? 'Get Started' : 'Continue'),
+                    child: Text(_currentPageIndex == 2 ? 'Get Started' : 'Continue'),
                   ),
                 ),
               ],

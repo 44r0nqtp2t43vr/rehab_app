@@ -15,6 +15,7 @@ class MTScreenGenres extends StatelessWidget {
     final SongProvider songProvider = SongProvider();
 
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

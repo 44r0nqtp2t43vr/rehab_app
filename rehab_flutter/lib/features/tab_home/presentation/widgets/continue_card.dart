@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
@@ -29,7 +32,8 @@ class ContinueCard extends StatelessWidget {
         daysToAdd = 7;
     }
     Navigator.of(context).pop();
-    BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+    BlocProvider.of<UserBloc>(context)
+        .add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
   }
 
   @override
@@ -154,45 +158,102 @@ class ContinueCard extends StatelessWidget {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.arrow_upward,
-                      size: 40,
+            contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Colors.transparent,
+            content: GlassContainer(
+              blur: 10,
+              color: Colors.white.withOpacity(0.3),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/actuator.svg',
+                          width: MediaQuery.of(context).size.width * .06,
+                          height: MediaQuery.of(context).size.height * .06,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Select",
+                                style: TextStyle(
+                                  fontFamily: 'Sailec Bold',
+                                  fontSize: 22,
+                                  height: 1.2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                "Therapy Plan",
+                                style: TextStyle(
+                                  fontFamily: 'Sailec Light',
+                                  fontSize: 16,
+                                  height: 1.2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Select Plan",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    const SizedBox(height: 20),
+                    cuSelectPlanButtons(
+                      context: context,
+                      onPressed: () => _selectPlan(context, 'One Week', user),
+                      title: 'Plan 1: One Week',
+                    ),
+                    const SizedBox(height: 20),
+                    cuSelectPlanButtons(
+                      context: context,
+                      onPressed: () => _selectPlan(context, 'One Month', user),
+                      title: 'Plan 2: One Month',
+                    ),
+                    const SizedBox(height: 20),
+                    cuSelectPlanButtons(
+                      context: context,
+                      onPressed: () =>
+                          _selectPlan(context, 'Three Months', user),
+                      title: 'Plan 3: Three Months',
+                    ),
+                    // ElevatedButton(
+                    //   onPressed: () => _selectPlan(context, 'One Week', user),
+                    //   child: const Text('Plan 1: One Week'),
+                    // ),
+                    // const SizedBox(height: 8),
+                    // ElevatedButton(
+                    //   onPressed: () => _selectPlan(context, 'One Month', user),
+                    //   child: const Text('Plan 2: One Month'),
+                    // ),
+                    // const SizedBox(height: 8),
+                    // ElevatedButton(
+                    //   onPressed: () =>
+                    //       _selectPlan(context, 'Three Months', user),
+                    //   child: const Text('Plan 3: Three Months'),
+                    // ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Theme(
+                          data: darkButtonTheme,
+                          child: ElevatedButton(
+                            onPressed: () => _onCloseButtonPressed(context),
+                            child: const Text('Cancel'),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 28),
-                ElevatedButton(
-                  onPressed: () => _selectPlan(context, 'One Week', user),
-                  child: const Text('Plan 1: One Week'),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => _selectPlan(context, 'One Month', user),
-                  child: const Text('Plan 2: One Month'),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => _selectPlan(context, 'Three Months', user),
-                  child: const Text('Plan 3: Three Months'),
-                ),
-                const SizedBox(height: 28),
-                ElevatedButton(
-                  onPressed: () => _onCloseButtonPressed(context),
-                  child: const Text("CLOSE"),
-                ),
-              ],
+              ),
             ),
           );
         },
@@ -240,7 +301,8 @@ class ContinueCard extends StatelessWidget {
             ),
           );
         } else if (!conditions[2]) {
-          Navigator.pushNamed(context, '/PassiveTherapy', arguments: user.userId);
+          Navigator.pushNamed(context, '/PassiveTherapy',
+              arguments: user.userId);
         } else if (!conditions[3]) {
           Navigator.pushNamed(
             context,

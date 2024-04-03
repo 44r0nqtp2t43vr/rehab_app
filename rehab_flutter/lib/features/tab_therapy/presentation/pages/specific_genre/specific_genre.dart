@@ -10,7 +10,6 @@ import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/enums/genre_enum.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
-import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/hover_song_card.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/song_card.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -102,17 +101,31 @@ class SpecificGenre extends StatelessWidget {
           child: Stack(
             children: [
               SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GlassContainer(
-                    blur: 4,
-                    color: Colors.white.withOpacity(0.25),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Column(
-                        children: _getSongs(context, selectedGenre!),
+                  child: Column(
+                    children: [
+                      GlassContainer(
+                        blur: 4,
+                        color: Colors.white.withOpacity(0.25),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Column(
+                            children: _getSongs(context, selectedGenre!),
+                          ),
+                        ),
                       ),
-                    ),
+                      GetBuilder<SongController>(
+                        builder: (controller) {
+                          if (controller.currentSong.value != null) {
+                            return const SizedBox(height: 80);
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),

@@ -55,6 +55,7 @@ dependencies:
   glassmorphism_ui: ^0.3.0
   flutter_svg: ^2.0.10+1
   marquee: ^2.2.3
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:

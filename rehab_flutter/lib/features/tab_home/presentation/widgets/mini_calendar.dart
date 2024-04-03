@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -8,15 +10,20 @@ class MiniCalendar extends StatelessWidget {
   final Map<String, Color?> dateColorsMap;
   final Function(DateTime) onPageChanged;
 
-  const MiniCalendar({super.key, required this.user, required this.dateColorsMap, required this.focusedDay, required this.onPageChanged});
+  const MiniCalendar(
+      {super.key,
+      required this.user,
+      required this.dateColorsMap,
+      required this.focusedDay,
+      required this.onPageChanged});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.white),
-      ),
+    return GlassContainer(
+      shadowStrength: 2,
+      shadowColor: Colors.black,
+      blur: 4,
+      color: Colors.white.withOpacity(0.25),
       child: TableCalendar(
         firstDay: DateTime.utc(2024, 1, 1),
         lastDay: DateTime.utc(2024, 12, 31),
@@ -24,9 +31,25 @@ class MiniCalendar extends StatelessWidget {
         calendarFormat: CalendarFormat.month,
         headerVisible: false,
         onPageChanged: onPageChanged,
-        calendarStyle: const CalendarStyle(
-          todayDecoration: BoxDecoration(color: Color(0xFF9FA8DA), shape: BoxShape.rectangle),
-          selectedDecoration: BoxDecoration(color: Color(0xFF5C6BC0), shape: BoxShape.rectangle),
+        calendarStyle: CalendarStyle(
+          outsideDaysVisible: false,
+          tablePadding: const EdgeInsets.all(16),
+          todayDecoration: BoxDecoration(
+            color: const Color(0xFF9FA8DA),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          selectedDecoration: BoxDecoration(
+            color: const Color(0xFF5C6BC0),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          weekendTextStyle: const TextStyle(color: Colors.white),
+          defaultTextStyle: const TextStyle(color: Colors.white),
+        ),
+        daysOfWeekStyle: const DaysOfWeekStyle(
+          weekdayStyle: TextStyle(color: Colors.white),
+          weekendStyle: TextStyle(color: Colors.white),
         ),
         calendarBuilders: CalendarBuilders(
           // Customize the appearance of individual calendar cells
@@ -35,46 +58,87 @@ class MiniCalendar extends StatelessWidget {
             final color = dateColorsMap[dateString];
 
             if (color != null) {
-              // If the date has custom colors defined, use them
               return Container(
                 margin: const EdgeInsets.all(4.0),
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   color: color,
+                  borderRadius: BorderRadius.circular(5),
                 ),
                 child: Center(
-                  child: Text(
-                    date.day.toString(),
-                    style: const TextStyle(color: Colors.white),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2),
+                      child: Text(
+                        date.day.toString(),
+                        style: TextStyle(
+                          color: color == heatmap4 || color == heatmap5
+                              ? Colors.white.withOpacity(0.3)
+                              : Colors.black.withOpacity(0.3),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               );
             } else {
-              // If there are no custom colors defined, use the default style
-              return null;
+              return Container(
+                margin: const EdgeInsets.all(4.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Center(
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2),
+                      child: Text(
+                        date.day.toString(),
+                        style: TextStyle(
+                          color: color == heatmap4 || color == heatmap5
+                              ? Colors.white.withOpacity(0.3)
+                              : Colors.black.withOpacity(0.3),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
             }
           },
-          // Customize the appearance of the focused day
           todayBuilder: (context, date, _) {
-            final color = dateColorsMap[date];
+            final dateString = "${date.year}${date.month}${date.day}";
+            final color = dateColorsMap[dateString];
 
             if (color != null) {
-              // If the date has custom colors defined, use them
               return Container(
                 margin: const EdgeInsets.all(4.0),
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   color: color,
+                  borderRadius: BorderRadius.circular(5),
                 ),
                 child: Center(
-                  child: Text(
-                    date.day.toString(),
-                    style: const TextStyle(color: Colors.white),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2),
+                      child: Text(
+                        date.day.toString(),
+                        style: TextStyle(
+                          color: color == heatmap4 || color == heatmap5
+                              ? Colors.white.withOpacity(0.3)
+                              : Colors.black.withOpacity(0.3),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               );
             } else {
-              // If there are no custom colors defined, use the default style
               return null;
             }
           },

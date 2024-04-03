@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 
 const Color heatmap1 = Color(0xFF9CFFD8);
@@ -461,6 +458,74 @@ Widget cuButtonDialog({
   );
 }
 
+Widget cuSelectPlanButtons({
+  required BuildContext context,
+  required VoidCallback onPressed,
+  required String title,
+}) {
+  return GestureDetector(
+    onTap: onPressed,
+    child: Container(
+      height: 60,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: const Offset(4, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF128BED),
+                    Color(0xFF01FF99),
+                  ],
+                  stops: [0.3, 1.0],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
+            Container(
+              color: Colors.black.withOpacity(0.2),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontFamily: 'Sailec Medium',
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 Widget musicTopButtons({
   required BuildContext context,
   required VoidCallback onPressed,
@@ -504,7 +569,8 @@ Widget musicTopButtons({
                       style: TextStyle(
                         fontFamily: 'Sailec Medium',
                         fontSize: 12,
-                        color: isActive ? const Color(0xff275492) : Colors.white,
+                        color:
+                            isActive ? const Color(0xff275492) : Colors.white,
                       ),
                     ),
                   ],

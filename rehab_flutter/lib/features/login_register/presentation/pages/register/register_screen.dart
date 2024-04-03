@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -178,9 +177,8 @@ class RegisterScreenState extends State<RegisterScreen> {
               .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
-          Navigator.of(context).pushNamed('/Login').then((value) {
-            BlocProvider.of<UserBloc>(context).add(const ResetEvent());
-          });
+          BlocProvider.of<UserBloc>(context).add(const ResetEvent());
+          Navigator.of(context).pop();
         }
       },
       builder: (context, state) {

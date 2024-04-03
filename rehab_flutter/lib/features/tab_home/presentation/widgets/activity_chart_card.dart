@@ -9,7 +9,6 @@ class ActivityChartCard extends StatelessWidget {
       height: 240,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.white),
       ),
     );
   }

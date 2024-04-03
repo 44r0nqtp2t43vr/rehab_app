@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:marquee/marquee.dart';
-import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
-import 'package:rehab_flutter/core/widgets/app_iconbutton.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class HoverSongCard extends GetView<SongController> {
