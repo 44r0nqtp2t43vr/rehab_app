@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
@@ -29,6 +32,17 @@ class _EditProfileState extends State<EditProfile> {
   final _phoneNumberController = TextEditingController();
   List<String> _selectedConditions = [];
   String _currentCondition = availableConditions[0];
+  File? _image;
+
+  // Function to pick an image from gallery
+  Future<void> _pickImage() async {
+    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -131,24 +145,25 @@ class _EditProfileState extends State<EditProfile> {
                   child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      const Stack(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 40,
-                            // You can add an image here using backgroundImage property
-                            // For example:
-                            // backgroundImage: AssetImage('assets/avatar_image.png'),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.green,
+                      GestureDetector(
+                        onTap: () => _pickImage(),
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white,
+                              backgroundImage: _image != null ? FileImage(_image!) : null,
+                              radius: 40,
                             ),
-                          ),
-                        ],
+                            const Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 28),
                       Align(
