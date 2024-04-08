@@ -12,6 +12,8 @@ class DailyProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double percentCompletion = todaySession == null ? 0 : todaySession!.getSessionPercentCompletion();
+
     return Container(
       height: 240,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -26,9 +28,9 @@ class DailyProgressCard extends StatelessWidget {
               child: CircularPercentIndicator(
                 radius: 0.4 * 136,
                 lineWidth: 10.0,
-                percent: todaySession!.getSessionPercentCompletion() / 100,
+                percent: percentCompletion / 100,
                 center: Text(
-                  "${todaySession!.getSessionPercentCompletion().toStringAsFixed(0)}%",
+                  "${percentCompletion.toStringAsFixed(0)}%",
                   style: const TextStyle(
                     fontFamily: "Sailec Bold",
                     fontSize: 24,
@@ -218,11 +220,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[0],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[0]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[0] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -240,11 +239,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[1],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[1]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[1] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -262,11 +258,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[2],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[2]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[2] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -284,11 +277,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[3],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[3]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[3] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -306,11 +296,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[4],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[4]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[4] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
