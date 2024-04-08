@@ -87,7 +87,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       city: userDoc.data()!['city'],
       birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
       registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
-      conditions: [],
+      conditions: userDoc.data()!['conditions'].cast<String>().toList(),
       plans: plansWithSessions,
     );
 

@@ -110,7 +110,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _onLogoutButtonPressed(context, user),
+              onPressed: () => _onLogoutButtonPressed(context),
               child: const Text("Logout"),
             ),
           ],
@@ -120,10 +120,10 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    Navigator.of(context).pushNamed("/EditProfile");
+    Navigator.of(context).pushNamed("/EditProfile", arguments: user);
   }
 
-  void _onLogoutButtonPressed(BuildContext context, AppUser user) {
+  void _onLogoutButtonPressed(BuildContext context) {
     BlocProvider.of<UserBloc>(context).add(LogoutEvent(user));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
@@ -86,7 +87,7 @@ class AppRoutes {
         return _materialRoute(PassiveTherapyScreen(userId: settings.arguments as String));
 
       case '/EditProfile':
-        return _materialRoute(const EditProfile());
+        return _materialRoute(EditProfile(user: settings.arguments as AppUser));
 
       default:
         return _materialRoute(const OnboardingScreen());

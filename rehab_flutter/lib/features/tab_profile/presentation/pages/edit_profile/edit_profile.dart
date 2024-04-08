@@ -5,9 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/data_sources/health_conditions.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+  final AppUser user;
+
+  const EditProfile({super.key, required this.user});
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -21,8 +25,8 @@ class _EditProfileState extends State<EditProfile> {
   final _birthdateController = TextEditingController();
   final _genderController = TextEditingController();
   final _phoneNumberController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  List<String> _selectedConditions = [];
+  String _currentCondition = availableConditions[0];
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -37,6 +41,32 @@ class _EditProfileState extends State<EditProfile> {
         _birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
+  }
+
+  void _addCondition() {
+    if (!_selectedConditions.contains(_currentCondition)) {
+      setState(() {
+        _selectedConditions.add(_currentCondition);
+      });
+    }
+  }
+
+  void _removeCondition(String condition) {
+    setState(() {
+      _selectedConditions.remove(condition);
+    });
+  }
+
+  @override
+  void initState() {
+    _firstNameController.text = widget.user.firstName;
+    _lastNameController.text = widget.user.lastName;
+    _cityController.text = widget.user.city;
+    _birthdateController.text = DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
+    _genderController.text = widget.user.gender;
+    _phoneNumberController.text = widget.user.phoneNumber;
+    _selectedConditions = List.from(widget.user.conditions);
+    super.initState();
   }
 
   @override
@@ -206,58 +236,42 @@ class _EditProfileState extends State<EditProfile> {
                                 return null;
                               },
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Email and Password",
-                          style: darkTextTheme().displaySmall,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              controller: _emailController,
+                            const SizedBox(height: 8),
+                            DropdownButtonFormField<String>(
+                              value: _currentCondition,
                               decoration: customInputDecoration.copyWith(
-                                labelText: 'Email',
-                                hintText: 'Enter your Email',
+                                labelText: 'Select Condition',
                               ),
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter your email';
-                                }
-                                if (!value.contains('@')) {
-                                  return 'Please enter a valid email address';
-                                }
-                                return null;
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _currentCondition = newValue!;
+                                });
                               },
+                              items: availableConditions.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             ),
                             const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _passwordController,
-                              decoration: customInputDecoration.copyWith(
-                                labelText: 'Password',
-                                hintText: 'Enter your password',
+                            Theme(
+                              data: smallIconButtonTheme,
+                              child: IconButton(
+                                onPressed: _addCondition,
+                                icon: const Icon(Icons.add),
                               ),
-                              obscureText: true,
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter your password';
-                                }
-                                return null;
-                              },
+                            ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 4.0,
+                              children: _selectedConditions
+                                  .map((condition) => Chip(
+                                        label: Text(condition),
+                                        onDeleted: () => _removeCondition(condition),
+                                      ))
+                                  .toList(),
                             ),
                           ],
                         ),
