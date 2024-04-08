@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
@@ -56,6 +59,7 @@ class ProfileScreen extends StatelessWidget {
                       Text(
                         "${user.firstName.capitalize!} ${user.lastName.capitalize!}",
                         style: const TextStyle(
+                          fontFamily: 'Sailec Bold',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -63,10 +67,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       Text(
                         user.email,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
+                        style: darkTextTheme().headlineSmall,
                       ),
                     ],
                   ),
@@ -74,44 +75,115 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _onEditProfileButtonPressed(context),
-              child: const Text("Edit Profile"),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _onEditProfileButtonPressed(context),
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                        Colors.white,
+                      ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xff128BED)),
+                      elevation: MaterialStateProperty.all<double>(0),
+                      shadowColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      overlayColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    child: const Text("Edit Profile"),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ProfileButton(
-                    onTap: () {},
-                    icon: Icons.bluetooth,
-                    text: "Connected Device",
-                  ),
-                  const SizedBox(height: 20),
-                  ProfileButton(
-                    onTap: () {},
-                    icon: Icons.assignment,
-                    text: "Terms of Services",
-                  ),
-                  const SizedBox(height: 20),
-                  ProfileButton(
-                    onTap: () {},
-                    icon: Icons.security,
-                    text: "Privacy Policy",
-                  ),
-                ],
+            GlassContainer(
+              shadowStrength: 2,
+              shadowColor: Colors.black,
+              blur: 4,
+              color: Colors.white.withOpacity(0.25),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ProfileButton(
+                      onTap: () {},
+                      icon: Icons.bluetooth,
+                      text: "Connected Device",
+                    ),
+                    const SizedBox(height: 20),
+                    ProfileButton(
+                      onTap: () {},
+                      icon: Icons.assignment,
+                      text: "Terms of Services",
+                    ),
+                    const SizedBox(height: 20),
+                    ProfileButton(
+                      onTap: () {},
+                      icon: Icons.security,
+                      text: "Privacy Policy",
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _onLogoutButtonPressed(context, user),
-              child: const Text("Logout"),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF128BED),
+                          Color(0xFF01FF99),
+                        ],
+                        stops: [0.3, 1.0],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          spreadRadius: 10,
+                          blurRadius: 20,
+                          offset: const Offset(1, 1),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => _onLogoutButtonPressed(context, user),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(
+                          Colors.white,
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        elevation: MaterialStateProperty.all<double>(0),
+                        shadowColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: const Text("Logout"),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
