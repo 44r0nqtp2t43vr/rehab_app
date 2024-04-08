@@ -4,6 +4,7 @@ import 'package:rehab_flutter/features/login_register/domain/entities/login_data
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
+import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 abstract class FirebaseRepository {
@@ -19,4 +20,5 @@ abstract class FirebaseRepository {
   Future<AppUser> submitPassive(String userId);
   Future<AppUser> loginUser(LoginData data);
   Future<void> logoutUser();
+  Future<AppUser> editUser(EditUserData data);
 }

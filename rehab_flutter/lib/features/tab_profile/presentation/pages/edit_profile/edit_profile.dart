@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/data_sources/health_conditions.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
 
 class EditProfile extends StatefulWidget {
   final AppUser user;
@@ -57,6 +59,26 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
+  void _editUser() {
+    // Convert the birthdate from String to DateTime
+    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+
+    // Create the RegisterData instance with all fields
+    EditUserData editUserData = EditUserData(
+      user: widget.user,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      phoneNumber: _phoneNumberController.text,
+      city: _cityController.text,
+      gender: _genderController.text, // Assuming gender is included in RegisterData
+      birthDate: birthdate,
+      conditions: _selectedConditions,
+    );
+
+    // Dispatch the event to the bloc
+    BlocProvider.of<UserBloc>(context).add(EditUserEvent(editUserData));
+  }
+
   @override
   void initState() {
     _firstNameController.text = widget.user.firstName;
@@ -71,10 +93,16 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocConsumer<UserBloc, UserState>(
+      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
+      listener: (context, state) {
+        if (state is UserDone) {
+          Navigator.of(context).pop();
+        }
+      },
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Scaffold(body: Center(child: CupertinoActivityIndicator()));
+          return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
         }
         if (state is UserDone) {
           return Scaffold(
@@ -278,7 +306,11 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _editUser();
+                          }
+                        },
                         child: const Text("Save"),
                       ),
                     ],

@@ -11,6 +11,7 @@ import 'package:rehab_flutter/features/login_register/domain/entities/login_data
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
+import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 class FirebaseRepositoryImpl implements FirebaseRepository {
@@ -266,6 +267,33 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     await updateCurrentSession(userId, {'isPassiveDone': true});
 
     final AppUser user = await getUser(userId);
+    return user;
+  }
+
+  @override
+  Future<AppUser> editUser(EditUserData data) async {
+    // Create a map to store the fields that need to be updated
+    Map<String, dynamic> oldFields = data.user.toMap();
+    Map<String, dynamic> newFields = data.toMap();
+    Map<String, dynamic> fieldsToUpdate = {};
+
+    // Compare the new data with the existing data
+    newFields.forEach((key, value) {
+      if (key == 'conditions') {
+        List<String> oldConditions = oldFields[key];
+        List<String> newConditions = newFields[key];
+        bool areEqual = oldConditions.length == newConditions.length && List.generate(oldConditions.length, (index) => oldConditions[index] == newConditions[index]).every((element) => element);
+        if (!areEqual) {
+          fieldsToUpdate[key] = value;
+        }
+      } else if (oldFields[key] != value) {
+        fieldsToUpdate[key] = value;
+      }
+    });
+
+    await db.collection('users').doc(data.user.userId).update(fieldsToUpdate);
+
+    final AppUser user = await getUser(data.user.userId);
     return user;
   }
 }
