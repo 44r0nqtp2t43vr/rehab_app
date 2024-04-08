@@ -7,6 +7,7 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:intl/intl.dart';
+import 'package:rehab_flutter/core/data_sources/health_conditions.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -27,13 +28,8 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _genderController = TextEditingController();
   final _birthdateController = TextEditingController();
 
-  final List<String> _availableConditions = [
-    'History of Heart Disease',
-    'History of Stroke',
-    'Condition 3',
-  ]; // Populate with real conditions
   final List<String> _selectedConditions = [];
-  String _currentCondition = 'History of Heart Disease';
+  String _currentCondition = availableConditions[0];
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -173,8 +169,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           BlocProvider.of<UserBloc>(context).add(const ResetEvent());
@@ -221,8 +216,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       const SizedBox(height: 12),
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Theme(
                                             data: loginButtonTheme,
@@ -236,8 +230,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                                             data: loginButtonTheme,
                                             child: IconButton(
                                               onPressed: () {},
-                                              icon: const Icon(
-                                                  Icons.one_x_mobiledata),
+                                              icon: const Icon(Icons.one_x_mobiledata),
                                             ),
                                           ),
                                           const SizedBox(width: 8),
@@ -427,8 +420,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                 _currentCondition = newValue!;
               });
             },
-            items: _availableConditions
-                .map<DropdownMenuItem<String>>((String value) {
+            items: availableConditions.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -581,8 +573,7 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   void _registerUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate =
-        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     RegisterData registerData = RegisterData(
@@ -592,8 +583,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       lastName: _lastNameController.text,
       phoneNumber: _phoneNumberController.text,
       city: _cityController.text,
-      gender:
-          _genderController.text, // Assuming gender is included in RegisterData
+      gender: _genderController.text, // Assuming gender is included in RegisterData
       birthDate: birthdate,
       conditions: _selectedConditions,
     );

@@ -160,7 +160,7 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () => _onLogoutButtonPressed(context, user),
+                      onPressed: () => _onLogoutButtonPressed(context),
                       style: ButtonStyle(
                         foregroundColor: MaterialStateProperty.all<Color>(
                           Colors.white,
@@ -192,10 +192,10 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    Navigator.of(context).pushNamed("/EditProfile");
+    Navigator.of(context).pushNamed("/EditProfile", arguments: user);
   }
 
-  void _onLogoutButtonPressed(BuildContext context, AppUser user) {
+  void _onLogoutButtonPressed(BuildContext context) {
     BlocProvider.of<UserBloc>(context).add(LogoutEvent(user));
   }
 }
