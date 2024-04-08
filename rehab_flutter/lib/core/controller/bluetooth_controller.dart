@@ -16,10 +16,12 @@ class BluetoothController extends GetxController {
 
   Future<void> connectToDevice(BluetoothDevice targetDevice) async {
     this.targetDevice = targetDevice;
+    print('connecting to ${this.targetDevice.platformName}');
     await this.targetDevice.connect(autoConnect: false);
   }
 
   Future<List<BluetoothService>> discoverServices() async {
+    print('finding services');
     final services = await targetDevice.discoverServices();
     return services;
   }

@@ -131,10 +131,7 @@ class BluetoothScreen extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 // Stream has data
-                final scanResults = snapshot.data!
-                    .where((scanResult) =>
-                        scanResult.device.platformName.contains('Gloves'))
-                    .toList();
+                final scanResults = snapshot.data!.where((scanResult) => scanResult.device.platformName.contains('Gloves')).toList();
                 if (scanResults.isNotEmpty) {
                   return SafeArea(
                     child: Center(
@@ -160,8 +157,7 @@ class BluetoothScreen extends StatelessWidget {
                                   shrinkWrap: true,
                                   itemCount: scanResults.length,
                                   itemBuilder: (context, index) {
-                                    final BluetoothDevice device =
-                                        scanResults[index].device;
+                                    final BluetoothDevice device = scanResults[index].device;
                                     return Padding(
                                       padding: const EdgeInsets.all(8),
                                       child: GlassContainer(
@@ -177,7 +173,7 @@ class BluetoothScreen extends StatelessWidget {
                                             device.platformName,
                                             style: darkTextTheme().displaySmall,
                                           ),
-                                          onTap: () {},
+                                          onTap: () => _onDeviceCardPressed(context, device),
                                         ),
                                       ),
                                     );
@@ -244,8 +240,7 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
-  void _onDeviceCardPressed(
-      BuildContext context, BluetoothDevice targetDevice) {
+  void _onDeviceCardPressed(BuildContext context, BluetoothDevice targetDevice) {
     Navigator.pushNamed(context, '/ServiceScreen', arguments: targetDevice);
   }
 
