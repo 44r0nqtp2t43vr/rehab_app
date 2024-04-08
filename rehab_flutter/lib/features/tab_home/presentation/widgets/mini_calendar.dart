@@ -109,6 +109,35 @@ class MiniCalendar extends StatelessWidget {
               );
             }
           },
+
+          selectedBuilder: (context, date, _) {
+            //final dateString = "${date.year}${date.month}${date.day}";
+            return Container(
+              margin: const EdgeInsets.all(4.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: const Color(0xff275492),
+                border: Border.all(
+                  strokeAlign: BorderSide.strokeAlignOutside,
+                  width: 2,
+                  color: Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Center(
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Text(
+                      date.day.toString(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
           todayBuilder: (context, date, _) {
             final dateString = "${date.year}${date.month}${date.day}";
             final color = dateColorsMap[dateString];
@@ -139,7 +168,28 @@ class MiniCalendar extends StatelessWidget {
                 ),
               );
             } else {
-              return null;
+              return Container(
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: const Color(0xff275492),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Center(
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Text(
+                        date.day.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
             }
           },
         ),
