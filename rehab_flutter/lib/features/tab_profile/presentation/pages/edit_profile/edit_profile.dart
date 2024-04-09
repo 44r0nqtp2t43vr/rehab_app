@@ -80,11 +80,12 @@ class _EditProfileState extends State<EditProfile> {
     // Create the RegisterData instance with all fields
     EditUserData editUserData = EditUserData(
       user: widget.user,
+      image: _image,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
       phoneNumber: _phoneNumberController.text,
       city: _cityController.text,
-      gender: _genderController.text, // Assuming gender is included in RegisterData
+      gender: _genderController.text,
       birthDate: birthdate,
       conditions: _selectedConditions,
     );
