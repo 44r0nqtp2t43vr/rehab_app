@@ -246,10 +246,17 @@ class ActuatorsController extends GetxController {
         lastSentPattern = data;
       }
     } else if (numOfFingers == ActuatorsNumOfFingers.five) {
+      final List<String> dataList = ["", "", "", "", ""];
       for (int i = 0; i < 5; i++) {
-        data += "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
+        if (i == 0) {
+          dataList[i + 2] = "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
+        } else if (i == 1 || i == 2) {
+          dataList[i - 1] = "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
+        } else {
+          dataList[i] = "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
+        }
       }
-      data += ">";
+      final String data = "<${dataList.join()}>";
       if (data != lastSentPattern) {
         sl<BluetoothBloc>().add(WriteDataEvent(data));
         lastSentPattern = data;

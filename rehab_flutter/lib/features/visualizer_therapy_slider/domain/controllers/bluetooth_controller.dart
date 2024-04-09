@@ -8,7 +8,7 @@ Map<String, int> sendUpdatedPattern(activeValues, lastSentPattern) {
   var sums = calculateSumsOfActuators(activeValues);
   if (sums != lastSentPattern) {
     // Enough time has passed; send the pattern now
-    // sendPattern(sums['left']!, sums['right']!);
+    sendPattern(sums['left']!, sums['right']!);
     lastSentPattern = sums;
   } else {
     debugPrint("Same pattern; Not sending");
@@ -19,8 +19,7 @@ Map<String, int> sendUpdatedPattern(activeValues, lastSentPattern) {
 void sendPattern(int left, int right) {
   String leftString = left.toString().padLeft(3, '0');
   String rightString = right.toString().padLeft(3, '0');
-  String data =
-      "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+  String data = "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
 
   // Check if the data to be sent is different from the last sent pattern
   // print(data);
