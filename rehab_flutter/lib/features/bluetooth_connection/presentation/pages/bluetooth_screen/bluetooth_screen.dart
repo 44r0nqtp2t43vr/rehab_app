@@ -131,57 +131,105 @@ class BluetoothScreen extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 // Stream has data
-                final scanResults = snapshot.data!.where((scanResult) => scanResult.device.platformName.contains('Gloves')).toList();
+                final scanResults = snapshot.data!
+                    .where((scanResult) =>
+                        scanResult.device.platformName.contains('Gloves'))
+                    .toList();
                 if (scanResults.isNotEmpty) {
                   return SafeArea(
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(32),
-                        child: GlassContainer(
-                          blur: 4,
-                          color: Colors.white.withOpacity(0.25),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Bluetooth Devices',
-                                  style: darkTextTheme().headlineMedium,
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: scanResults.length,
-                                  itemBuilder: (context, index) {
-                                    final BluetoothDevice device = scanResults[index].device;
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: GlassContainer(
-                                        blur: 4,
-                                        color: Colors.white.withOpacity(0.25),
-                                        child: ListTile(
-                                          leading: const Icon(
-                                            Icons.bluetooth,
-                                            size: 30,
-                                            color: Colors.white,
-                                          ),
-                                          title: Text(
-                                            device.platformName,
-                                            style: darkTextTheme().displaySmall,
-                                          ),
-                                          onTap: () => _onDeviceCardPressed(context, device),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                )
-                              ],
+                        child: Column(
+                          children: [
+                            Text(
+                              'Connect to CU.TOUCH Gloves',
+                              style: darkTextTheme().headlineMedium,
+                              textAlign: TextAlign.center,
                             ),
-                          ),
+                            const SizedBox(
+                              height: 24,
+                            ),
+                            Text(
+                              'via Bluetooth',
+                              style: darkTextTheme().headlineSmall,
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  GlassContainer(
+                                    blur: 4,
+                                    color: Colors.white.withOpacity(0.25),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Bluetooth Devices',
+                                            style:
+                                                darkTextTheme().headlineMedium,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: scanResults.length,
+                                            itemBuilder: (context, index) {
+                                              final BluetoothDevice device =
+                                                  scanResults[index].device;
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                child: GlassContainer(
+                                                  blur: 4,
+                                                  color: Colors.white
+                                                      .withOpacity(0.25),
+                                                  child: ListTile(
+                                                    leading: const Icon(
+                                                      Icons.bluetooth,
+                                                      size: 30,
+                                                      color: Colors.white,
+                                                    ),
+                                                    title: Text(
+                                                      device.platformName,
+                                                      style: darkTextTheme()
+                                                          .displaySmall,
+                                                    ),
+                                                    onTap: () =>
+                                                        _onDeviceCardPressed(
+                                                            context, device),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.refresh,
+                                      size: 35,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () => _onRescan(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -240,7 +288,8 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
-  void _onDeviceCardPressed(BuildContext context, BluetoothDevice targetDevice) {
+  void _onDeviceCardPressed(
+      BuildContext context, BluetoothDevice targetDevice) {
     Navigator.pushNamed(context, '/ServiceScreen', arguments: targetDevice);
   }
 
