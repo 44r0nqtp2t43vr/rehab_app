@@ -32,7 +32,8 @@ class TexturesTester extends StatefulWidget {
   State<TexturesTester> createState() => _TexturesTesterState();
 }
 
-class _TexturesTesterState extends State<TexturesTester> with SingleTickerProviderStateMixin {
+class _TexturesTesterState extends State<TexturesTester>
+    with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   bool isPlaying = false;
 
@@ -40,11 +41,13 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
     setState(() {
       isPlaying = false;
     });
-    widget.onResponse(value == widget.currentImageTexture.name ? 100 : 0, widget.currentImageTexture.name);
+    widget.onResponse(value == widget.currentImageTexture.name ? 100 : 0,
+        widget.currentImageTexture.name);
   }
 
   void _renderActuators(double imageSize) {
-    final Offset animatedPosition = AniPatternProvider.doubleVPattern(imageSize, animationController.value);
+    final Offset animatedPosition =
+        AniPatternProvider.doubleVPattern(imageSize, animationController.value);
     sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
 
     setState(() {});
@@ -79,7 +82,8 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
   void didUpdateWidget(covariant TexturesTester oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.currentImageTexture != oldWidget.currentImageTexture) {
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: widget.currentImageTexture.texture, preload: false)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: widget.currentImageTexture.texture, preload: false)));
 
       isPlaying = true;
       animationController.reset();
@@ -113,36 +117,54 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
       child: Column(
         children: [
           const SizedBox(height: 32),
-          TestLabel(label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
+          TestLabel(
+              label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
           const SizedBox(height: 16),
           Expanded(
             flex: 2,
             child: _buildBody(widget.currentImageTexture, desiredSize),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 4),
           const Text(
             "What texture do you feel?",
             style: TextStyle(
+              fontFamily: 'Sailec Medium',
               fontSize: 16,
               color: Colors.white,
             ),
           ),
           const SizedBox(height: 16),
-          Expanded(
-            flex: 1,
-            child: Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: TestingDataProvider.imageTextures.map(
-                (imageTexture) {
-                  return ElevatedButton(
-                    onPressed: () => _onSubmit(imageTexture.name),
-                    child: Text(imageTexture.name),
-                  );
-                },
-              ).toList(),
-            ),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: TestingDataProvider.imageTextures.map(
+              (imageTexture) {
+                return ElevatedButton(
+                  onPressed: () => _onSubmit(imageTexture.name),
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                      Colors.white,
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color(0xff128BED),
+                    ),
+                    elevation: MaterialStateProperty.all<double>(0),
+                    shadowColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  child: Text(imageTexture.name),
+                );
+              },
+            ).toList(),
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );

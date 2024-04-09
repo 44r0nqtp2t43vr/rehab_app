@@ -35,8 +35,10 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
   }
 
   void startPattern() {
-    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
-      sendPattern(widget.currentRhythmicPattern.pattern[timer.tick % widget.currentRhythmicPattern.pattern.length]);
+    _patternTimer =
+        Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+      sendPattern(widget.currentRhythmicPattern
+          .pattern[timer.tick % widget.currentRhythmicPattern.pattern.length]);
     });
   }
 
@@ -47,7 +49,8 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
 
   void _onSubmit(String value) {
     stopPattern();
-    widget.onResponse(value == widget.currentRhythmicPattern.name ? 100 : 0, widget.currentRhythmicPattern.name);
+    widget.onResponse(value == widget.currentRhythmicPattern.name ? 100 : 0,
+        widget.currentRhythmicPattern.name);
   }
 
   @override
@@ -67,7 +70,8 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
   @override
   void dispose() {
     _patternTimer?.cancel();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -77,7 +81,8 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 32),
-        TestLabel(label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
+        TestLabel(
+            label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
         const SizedBox(height: 16),
         const Expanded(
           flex: 2,
@@ -85,6 +90,7 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
             child: Text(
               "What pattern do you feel?",
               style: TextStyle(
+                fontFamily: 'Sailec Medium',
                 fontSize: 20,
                 color: Colors.white,
               ),
@@ -94,12 +100,31 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
         Expanded(
           flex: 1,
           child: Wrap(
+            alignment: WrapAlignment.center,
             spacing: 8.0,
             runSpacing: 8.0,
             children: TestingDataProvider.rhythmicPatterns.map(
               (rhythmicPattern) {
                 return ElevatedButton(
                   onPressed: () => _onSubmit(rhythmicPattern.name),
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                      Colors.white,
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color(0xff128BED),
+                    ),
+                    elevation: MaterialStateProperty.all<double>(0),
+                    shadowColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
                   child: Text(rhythmicPattern.name),
                 );
               },
