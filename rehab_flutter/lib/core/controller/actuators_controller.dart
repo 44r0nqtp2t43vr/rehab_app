@@ -257,7 +257,6 @@ class ActuatorsController extends GetxController {
         }
       }
       final String data = "<${dataList.join()}>";
-      print(data);
       if (data != lastSentPattern) {
         sl<BluetoothBloc>().add(WriteDataEvent(data));
         lastSentPattern = data;
