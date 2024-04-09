@@ -10,8 +10,8 @@ class TestLabel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.white),
+        color: Colors.white.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         label,

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_event.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_state.dart';
@@ -9,7 +11,6 @@ import 'package:rehab_flutter/core/entities/actuators_imagedata.dart';
 import 'package:rehab_flutter/core/entities/actuators_initdata.dart';
 import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/core/enums/actuators_enums.dart';
-import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/core/data_sources/anipattern_provider.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
@@ -26,7 +27,8 @@ class TexturesIntro extends StatefulWidget {
   State<TexturesIntro> createState() => _TexturesIntroState();
 }
 
-class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProviderStateMixin {
+class _TexturesIntroState extends State<TexturesIntro>
+    with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   ImageTexture currentImageTexture = TestingDataProvider.imageTextures[0];
   int currentImageTextureInd = 0;
@@ -37,16 +39,19 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
     if (currentImageTextureInd < TestingDataProvider.imageTextures.length - 1) {
       setState(() {
         currentImageTextureInd++;
-        currentImageTexture = TestingDataProvider.imageTextures[currentImageTextureInd];
+        currentImageTexture =
+            TestingDataProvider.imageTextures[currentImageTextureInd];
         isPlaying = true;
       });
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: currentImageTexture.texture, preload: false)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+          src: currentImageTexture.texture, preload: false)));
       animationController.forward();
     }
   }
 
   void _renderActuators(double imageSize) {
-    final Offset animatedPosition = AniPatternProvider.doubleVPattern(imageSize, animationController.value);
+    final Offset animatedPosition =
+        AniPatternProvider.doubleVPattern(imageSize, animationController.value);
     sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
 
     setState(() {});
@@ -115,19 +120,89 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                currentImageTextureInd < TestingDataProvider.imageTextures.length - 1
+                currentImageTextureInd <
+                        TestingDataProvider.imageTextures.length - 1
                     ? Padding(
                         padding: const EdgeInsets.only(right: 12.0),
-                        child: AppButton(
+                        child: ElevatedButton(
                           onPressed: () => _onAnimationFinish(),
-                          child: const Text('Next Texture'),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xff275492),
+                            ),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color(0xff01FF99),
+                            ),
+                            elevation: MaterialStateProperty.all<double>(0),
+                            shadowColor: MaterialStateProperty.all<Color>(
+                                Colors.transparent),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                                Colors.transparent),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            'Next Texture',
+                            style: TextStyle(
+                              fontFamily: 'Sailec Medium',
+                              fontSize: 15,
+                              height: 1.2,
+                              color: Color(0XFF275492),
+                            ),
+                          ),
                         ),
+                        // AppButton(
+                        //   onPressed: () => _onAnimationFinish(),
+                        //   child: const Text('Next Texture'),
+                        // ),
                       )
                     : const SizedBox(),
-                AppButton(
+
+                ElevatedButton(
                   onPressed: () => widget.onProceed(TestingState.textures),
-                  child: const Text('Proceed'),
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                      Colors.white,
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color(0XFF128BED),
+                    ),
+                    elevation: MaterialStateProperty.all<double>(0),
+                    shadowColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.transparent),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Proceed',
+                        style: darkTextTheme().displaySmall,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      const Icon(
+                        CupertinoIcons.arrow_right,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
                 ),
+                // AppButton(
+                //   onPressed: () => widget.onProceed(TestingState.textures),
+                //   child: const Text('Proceed'),
+                // ),
               ],
             ),
           ),

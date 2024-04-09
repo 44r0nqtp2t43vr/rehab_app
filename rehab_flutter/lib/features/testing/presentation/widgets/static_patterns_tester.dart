@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/widgets/actuator_grid.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
@@ -32,15 +32,35 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
 
   void _sendPattern() {
     String currentPatternString = widget.currentStaticPattern.pattern;
-    String data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
+    String data =
+        "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
 
     sl<BluetoothBloc>().add(WriteDataEvent(data));
     debugPrint("Pattern sent: $data");
   }
 
   int _sideAndValueToCircleStateIndex(bool isLeft, int value) {
-    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
-    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
+    final List<int> cursorValues = [
+      1,
+      8,
+      1,
+      8,
+      2,
+      16,
+      2,
+      16,
+      4,
+      32,
+      4,
+      32,
+      64,
+      128,
+      64,
+      128
+    ];
+    return isLeft
+        ? cursorValues.indexOf(value)
+        : cursorValues.lastIndexOf(value);
   }
 
   List<bool> _patternToCircleStates(String pattern) {
@@ -55,11 +75,13 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
     for (int i = 0; i < actuatorValues.length; i++) {
       if (left - actuatorValues[i] >= 0) {
         left -= actuatorValues[i];
-        circleStates[_sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
+        circleStates[_sideAndValueToCircleStateIndex(true, actuatorValues[i])] =
+            true;
       }
       if (right - actuatorValues[i] >= 0) {
         right -= actuatorValues[i];
-        circleStates[_sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
+        circleStates[
+            _sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
       }
     }
 
@@ -68,7 +90,8 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
 
   double _calculateAccuracy() {
     final List<bool> answers = _circleStates;
-    final List<bool> correctAnswers = _patternToCircleStates(widget.currentStaticPattern.pattern);
+    final List<bool> correctAnswers =
+        _patternToCircleStates(widget.currentStaticPattern.pattern);
     int correctlyAnsweredCount = 0;
 
     for (int i = 0; i < answers.length; i++) {
@@ -82,12 +105,16 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
 
   void _updateCircleStateBasedOnPosition(Offset globalPosition) {
     for (int i = 0; i < _circleKeys.length; i++) {
-      final RenderBox? box = _circleKeys[i].currentContext?.findRenderObject() as RenderBox?;
+      final RenderBox? box =
+          _circleKeys[i].currentContext?.findRenderObject() as RenderBox?;
       if (box != null) {
         final position = box.localToGlobal(Offset.zero);
         final size = box.size;
 
-        if (globalPosition.dx >= position.dx && globalPosition.dx <= position.dx + size.width && globalPosition.dy >= position.dy && globalPosition.dy <= position.dy + size.height) {
+        if (globalPosition.dx >= position.dx &&
+            globalPosition.dx <= position.dx + size.width &&
+            globalPosition.dy >= position.dy &&
+            globalPosition.dy <= position.dy + size.height) {
           setState(() {
             if (!_isCircleStateUpdated[i]) {
               _circleStates[i] = !_circleStates[i];
@@ -126,7 +153,8 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
 
   @override
   void dispose() {
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -135,7 +163,8 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
     return Column(
       children: [
         const SizedBox(height: 32),
-        TestLabel(label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
+        TestLabel(
+            label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
         const SizedBox(height: 16),
         Expanded(
           flex: 2,
@@ -153,7 +182,8 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
                     }
                   });
                 },
-                onPanUpdate: (DragUpdateDetails details) => _updateCircleStateBasedOnPosition(details.globalPosition),
+                onPanUpdate: (DragUpdateDetails details) =>
+                    _updateCircleStateBasedOnPosition(details.globalPosition),
                 onPanEnd: (DragEndDetails details) {
                   // Reset the flag when the touch ends
                   setState(() {
@@ -184,10 +214,35 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppButton(
+              ElevatedButton(
                 onPressed: () => _onSubmit(),
-                child: const Text('Submit'),
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                    Colors.white,
+                  ),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    const Color(0xff128BED),
+                  ),
+                  elevation: MaterialStateProperty.all<double>(0),
+                  shadowColor:
+                      MaterialStateProperty.all<Color>(Colors.transparent),
+                  overlayColor:
+                      MaterialStateProperty.all<Color>(Colors.transparent),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Submit',
+                  style: darkTextTheme().displaySmall,
+                ),
               ),
+              // AppButton(
+              //   onPressed: () => _onSubmit(),
+              //   child: const Text('Submit'),
+              // ),
             ],
           ),
         ),
