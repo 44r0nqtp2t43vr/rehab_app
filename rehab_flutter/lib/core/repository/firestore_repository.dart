@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
@@ -16,8 +17,9 @@ import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart
 
 class FirebaseRepositoryImpl implements FirebaseRepository {
   final FirebaseFirestore db;
+  final FirebaseStorage storage;
 
-  FirebaseRepositoryImpl(this.db);
+  FirebaseRepositoryImpl(this.db, this.storage);
 
   @override
   Future<void> logLoginAttempt(String email, bool success) async {
@@ -291,9 +293,19 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
     });
 
-    await db.collection('users').doc(data.user.userId).update(fieldsToUpdate);
+    if (data.image != null) {
+      final storageRef = storage.ref();
+      final userImageRef = storageRef.child("images/${data.user.userId}.jpg");
+      await userImageRef.putFile(data.image!);
+    }
 
-    final AppUser user = await getUser(data.user.userId);
-    return user;
+    if (fieldsToUpdate.isNotEmpty) {
+      await db.collection('users').doc(data.user.userId).update(fieldsToUpdate);
+
+      final AppUser user = await getUser(data.user.userId);
+      return user;
+    } else {
+      return data.user;
+    }
   }
 }

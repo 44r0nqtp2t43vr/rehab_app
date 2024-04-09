@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
@@ -40,7 +41,7 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Dependencies
 
-  sl.registerSingleton<FirebaseRepository>(FirebaseRepositoryImpl(FirebaseFirestore.instance));
+  sl.registerSingleton<FirebaseRepository>(FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance));
 
   sl.registerSingleton<BluetoothController>(BluetoothController());
 

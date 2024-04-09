@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
 class EditUserData {
   final AppUser user;
+  final File? image;
   final String firstName;
   final String lastName;
   final DateTime birthDate;
@@ -13,6 +16,7 @@ class EditUserData {
 
   EditUserData({
     required this.user,
+    this.image,
     required this.firstName,
     required this.lastName,
     required this.birthDate,
