@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
@@ -60,7 +62,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(const UserLoading());
     try {
       final currentUser = await _loginUserUseCase(params: event.loginData);
-      emit(UserDone(currentUser: currentUser));
+      if (currentUser is AppUser) {
+        emit(UserDone(currentUser: currentUser));
+      } else if (currentUser is Physician) {
+        emit(UserNone(data: currentUser));
+      }
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }

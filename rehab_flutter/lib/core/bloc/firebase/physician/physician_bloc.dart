@@ -10,11 +10,16 @@ class PhysicianBloc extends Bloc<PhysicianEvent, PhysicianState> {
     this._registerPhysicianUseCase,
   ) : super(const PhysicianNone()) {
     on<ResetPhysicianEvent>(onResetPhysician);
+    on<GetPhysicianEvent>(onGetPhysician);
     on<RegisterPhysicianEvent>(onRegisterPhysician);
   }
 
   void onResetPhysician(ResetPhysicianEvent event, Emitter<PhysicianState> emit) {
     emit(const PhysicianNone());
+  }
+
+  void onGetPhysician(GetPhysicianEvent event, Emitter<PhysicianState> emit) {
+    emit(PhysicianDone(currentPhysician: event.currentPhysician));
   }
 
   void onRegisterPhysician(RegisterPhysicianEvent event, Emitter<PhysicianState> emit) async {

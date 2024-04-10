@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
@@ -47,7 +48,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<AppUser> getUser(String userId) async {
+  Future<dynamic> getUser(String userId) async {
     // Optionally fetch and do something with the user's document from Firestore
     // For example, retrieving the user's profile information
     DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
@@ -58,44 +59,68 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     print('Got user with data: ${userDoc.data()}');
 
-    // Query Plans for the User
-    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
+    final rolesList = userDoc.data()!['roles'].cast<String>().toList();
+    if (rolesList.contains("physician")) {
+      // Query Patients for the User
+      // QuerySnapshot<Map<String, dynamic>> patientsSnapshot = await db.collection('users').doc(userDoc.id).collection('patients').get();
 
-    List<Plan> plansWithSessions = [];
+      List<AppUser> patients = [];
 
-    for (var planDoc in plansSnapshot.docs) {
-      // For each Plan, Query Sessions
-      QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
-
-      List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
-
-      // Combine Plan with its Sessions
-      Plan planWithSessions = Plan(
-        planId: planDoc.data()['planId'],
-        planName: planDoc.data()['planName'],
-        startDate: planDoc.data()['startDate'].toDate() as DateTime,
-        endDate: planDoc.data()['endDate'].toDate() as DateTime,
-        sessions: sessions,
+      final currentPhysician = Physician(
+        physicianId: userDoc.id,
+        firstName: userDoc.data()!['firstName'],
+        lastName: userDoc.data()!['lastName'],
+        gender: userDoc.data()!['gender'],
+        email: userDoc.data()!['email'],
+        phoneNumber: userDoc.data()!['phoneNumber'],
+        city: userDoc.data()!['city'],
+        licenseNumber: userDoc.data()!['licenseNumber'],
+        birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+        registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+        patients: patients,
       );
 
-      plansWithSessions.add(planWithSessions);
+      return currentPhysician;
+    } else {
+      // Query Plans for the User
+      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
+
+      List<Plan> plansWithSessions = [];
+
+      for (var planDoc in plansSnapshot.docs) {
+        // For each Plan, Query Sessions
+        QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
+
+        List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
+
+        // Combine Plan with its Sessions
+        Plan planWithSessions = Plan(
+          planId: planDoc.data()['planId'],
+          planName: planDoc.data()['planName'],
+          startDate: planDoc.data()['startDate'].toDate() as DateTime,
+          endDate: planDoc.data()['endDate'].toDate() as DateTime,
+          sessions: sessions,
+        );
+
+        plansWithSessions.add(planWithSessions);
+      }
+
+      final currentUser = AppUser(
+        userId: userDoc.id,
+        firstName: userDoc.data()!['firstName'],
+        lastName: userDoc.data()!['lastName'],
+        gender: userDoc.data()!['gender'],
+        email: userDoc.data()!['email'],
+        phoneNumber: userDoc.data()!['phoneNumber'],
+        city: userDoc.data()!['city'],
+        birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+        registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+        conditions: userDoc.data()!['conditions'].cast<String>().toList(),
+        plans: plansWithSessions,
+      );
+
+      return currentUser;
     }
-
-    final currentUser = AppUser(
-      userId: userDoc.id,
-      firstName: userDoc.data()!['firstName'],
-      lastName: userDoc.data()!['lastName'],
-      gender: userDoc.data()!['gender'],
-      email: userDoc.data()!['email'],
-      phoneNumber: userDoc.data()!['phoneNumber'],
-      city: userDoc.data()!['city'],
-      birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
-      registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
-      conditions: userDoc.data()!['conditions'].cast<String>().toList(),
-      plans: plansWithSessions,
-    );
-
-    return currentUser;
   }
 
   @override
@@ -104,8 +129,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       email: data.email,
       password: data.password,
     );
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
     String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
 
     // Normalize birthDate to just the date part (year, month, day) in UTC
@@ -122,15 +145,23 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'birthDate': birthDateJustDate, // Use the normalized DateTime object
       'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
       'conditions': data.conditions,
+      'roles': ["patient"],
     });
   }
 
   @override
   Future<void> registerPhysician(RegisterPhysicianData data) async {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: data.email,
+      password: data.password,
+    );
+    String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+
     // Normalize birthDate to just the date part (year, month, day) in UTC
     DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
 
-    print({
+    await db.collection('users').doc(userID).set({
+      'physicianID': userID,
       'email': data.email,
       'firstName': data.firstName,
       'lastName': data.lastName,
@@ -140,9 +171,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'licenseNumber': data.licenseNumber,
       'birthDate': birthDateJustDate, // Use the normalized DateTime object
       'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
+      'roles': ["physician"],
     });
-
-    await Future.delayed(const Duration(seconds: 3));
   }
 
   @override
@@ -165,7 +195,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<AppUser> loginUser(LoginData data) async {
+  Future<dynamic> loginUser(LoginData data) async {
     final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
       password: data.password,
@@ -178,7 +208,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     // Example of logging the login attempt (success case)
     await logLoginAttempt(data.email, true);
 
-    final AppUser user = await getUser(userCredential.user!.uid);
+    final dynamic user = await getUser(userCredential.user!.uid);
     return user;
   }
 

@@ -12,7 +12,7 @@ abstract class FirebaseRepository {
   Future<void> logLoginAttempt(String email, bool success);
   Future<void> logLogoutAttempt(String email, bool success);
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs();
-  Future<AppUser> getUser(String userId);
+  Future<dynamic> getUser(String userId);
   Future<void> registerUser(RegisterData data);
   Future<void> registerPhysician(RegisterPhysicianData data);
   Future<void> updateCurrentSession(String userId, dynamic data);
@@ -20,7 +20,7 @@ abstract class FirebaseRepository {
   Future<AppUser> submitTest(ResultsData data);
   Future<AppUser> submitStandard(StandardData data);
   Future<AppUser> submitPassive(String userId);
-  Future<AppUser> loginUser(LoginData data);
+  Future<dynamic> loginUser(LoginData data);
   Future<void> logoutUser();
   Future<AppUser> editUser(EditUserData data);
 }
