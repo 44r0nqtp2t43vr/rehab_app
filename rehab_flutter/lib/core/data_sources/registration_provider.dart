@@ -3,3 +3,5 @@ final List<String> availableConditions = [
   'History of Stroke',
   'History of Diabetes',
 ];
+
+final List<String> availableGenders = ["Male", "Female", "Nonconforming"];

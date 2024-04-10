@@ -10,6 +10,7 @@ import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
+import 'package:rehab_flutter/features/login_register/domain/entities/register_physician_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -122,6 +123,26 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
       'conditions': data.conditions,
     });
+  }
+
+  @override
+  Future<void> registerPhysician(RegisterPhysicianData data) async {
+    // Normalize birthDate to just the date part (year, month, day) in UTC
+    DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
+
+    print({
+      'email': data.email,
+      'firstName': data.firstName,
+      'lastName': data.lastName,
+      'gender': data.gender,
+      'phoneNumber': data.phoneNumber,
+      'city': data.city,
+      'licenseNumber': data.licenseNumber,
+      'birthDate': birthDateJustDate, // Use the normalized DateTime object
+      'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
+    });
+
+    await Future.delayed(const Duration(seconds: 3));
   }
 
   @override

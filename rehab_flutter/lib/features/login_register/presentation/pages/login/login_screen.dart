@@ -234,6 +234,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
+                          Theme(
+                            data: signupButtonTheme,
+                            child: TextButton(
+                              onPressed: () => _onSignUpPhysicianButtonPressed(context),
+                              child: const Text('Sign Up as a Physician'),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -259,5 +266,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onSignUpButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Register');
+  }
+
+  void _onSignUpPhysicianButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/RegisterPhysician');
   }
 }

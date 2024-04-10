@@ -9,7 +9,7 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/data_sources/health_conditions.dart';
+import 'package:rehab_flutter/core/data_sources/registration_provider.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
 

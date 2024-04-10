@@ -9,6 +9,7 @@ import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/s
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
+import 'package:rehab_flutter/features/login_register/presentation/pages/register_physician/register_physician.dart';
 import 'package:rehab_flutter/features/logs_screen/presentation/logs_screen.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
@@ -37,6 +38,9 @@ class AppRoutes {
 
       case '/Register':
         return _materialRoute(const RegisterScreen());
+
+      case '/RegisterPhysician':
+        return _materialRoute(const RegisterPhysician());
 
       case '/BluetoothConnect':
         return _materialRoute(const BluetoothConnectScreen());
