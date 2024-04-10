@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firestore/logs/logs_bloc.dart';
 import 'package:rehab_flutter/core/controller/actuators_controller.dart';
@@ -22,6 +23,7 @@ import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
+import 'package:rehab_flutter/core/usecases/firebase/register_physician.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_passive.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_test.dart';
 import 'package:rehab_flutter/core/usecases/firebase/log_login_attempt.dart';
@@ -82,6 +84,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<LogLogoutAttemptUseCase>(LogLogoutAttemptUseCase(sl()));
 
+  sl.registerSingleton<RegisterPhysicianUseCase>(RegisterPhysicianUseCase(sl()));
+
   sl.registerSingleton<RegisterUserUseCase>(RegisterUserUseCase(sl()));
 
   sl.registerSingleton<LoginUserUseCase>(LoginUserUseCase(sl()));
@@ -104,6 +108,8 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
   sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+
+  sl.registerFactory<PhysicianBloc>(() => PhysicianBloc(sl()));
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 }

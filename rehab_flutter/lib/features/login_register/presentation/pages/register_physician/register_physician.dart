@@ -2,50 +2,61 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
-import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:intl/intl.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
 import 'package:rehab_flutter/core/data_sources/registration_provider.dart';
-import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
+import 'package:rehab_flutter/features/login_register/domain/entities/register_physician_data.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class RegisterPhysician extends StatefulWidget {
+  const RegisterPhysician({super.key});
 
   @override
-  RegisterScreenState createState() => RegisterScreenState();
+  State<RegisterPhysician> createState() => _RegisterPhysicianState();
 }
 
-class RegisterScreenState extends State<RegisterScreen> {
+class _RegisterPhysicianState extends State<RegisterPhysician> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-
   final _phoneNumberController = TextEditingController();
   final _cityController = TextEditingController();
   final _birthdateController = TextEditingController();
+  final _licenseNumberController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final List<String> _availableGenders = availableGenders;
   String? _currentGender;
 
-  final List<String> _selectedConditions = [];
-  String _currentCondition = availableConditions[0];
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-
-  int _currentStep = 1;
-
-  void _nextStep() {
-    setState(() {
-      _currentStep++;
-    });
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        // Update the UI
+        _birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
   }
 
-  void _previousStep() {
-    setState(() {
-      _currentStep--;
-    });
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneNumberController.dispose();
+    _cityController.dispose();
+    _birthdateController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,11 +81,12 @@ class RegisterScreenState extends State<RegisterScreen> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  if (_currentStep == 1) {
-                    Navigator.of(context).pop();
-                  } else {
-                    _previousStep();
-                  }
+                  // if (_currentStep == 1) {
+                  //   Navigator.of(context).pop();
+                  // } else {
+                  //   _previousStep();
+                  // }
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -88,11 +100,13 @@ class RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  _getStepTitle(),
+                  // _getStepTitle(),
+                  "Sign Up As Physician",
                   style: darkTextTheme().headlineLarge,
                 ),
                 Text(
-                  _getStepSubitle(),
+                  // _getStepSubitle(),
+                  "Create an account to get started",
                   style: darkTextTheme().headlineSmall,
                 ),
               ],
@@ -127,63 +141,25 @@ class RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  String _getStepTitle() {
-    switch (_currentStep) {
-      case 1:
-        return 'Sign Up';
-      case 2:
-        return 'Personal Information';
-      case 3:
-        return 'Create a Password';
-      default:
-        return 'Sign Up';
-    }
-  }
-
-  String _getStepSubitle() {
-    switch (_currentStep) {
-      case 1:
-        return 'Create an account to get started.';
-      case 2:
-        return 'Rest assured these information are kept confidential.';
-      case 3:
-        return 'Secure your Account with a Strong Password.';
-      default:
-        return 'Create an account to get started.';
-    }
-  }
-
-  List<Widget> _buildFormFields() {
-    switch (_currentStep) {
-      case 1:
-        return _buildSignUpFields();
-      case 2:
-        return _buildPersonalInfoFields();
-      case 3:
-        return _buildPasswordFields();
-      default:
-        return _buildSignUpFields();
-    }
-  }
-
   Widget _buildBody() {
-    return BlocConsumer<UserBloc, UserState>(
+    return BlocConsumer<PhysicianBloc, PhysicianState>(
       listener: (context, state) {
-        if (state is UserNone && state.errorMessage != null) {
+        if (state is PhysicianNone && state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
-        if (state is UserDone) {
-          BlocProvider.of<UserBloc>(context).add(const ResetEvent());
+        if (state is PhysicianDone) {
+          BlocProvider.of<PhysicianBloc>(context).add(const ResetPhysicianEvent());
           Navigator.of(context).pop();
         }
       },
       builder: (context, state) {
-        if (state is UserLoading) {
-          return const Center(child: CupertinoActivityIndicator());
+        if (state is PhysicianLoading) {
+          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
-        if (state is UserNone || state is UserDone) {
+        if (state is PhysicianNone || state is PhysicianDone) {
           return SafeArea(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Form(
@@ -198,56 +174,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(24),
                             child: Column(
-                              children: [
-                                Column(
-                                  children: _buildFormFields(),
-                                ),
-                                Visibility(
-                                  visible: _currentStep != 3,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 12),
-                                      const Text(
-                                        'or Login with',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'Sailec Light',
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Theme(
-                                            data: loginButtonTheme,
-                                            child: IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons.apple),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Theme(
-                                            data: loginButtonTheme,
-                                            child: IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons.one_x_mobiledata),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Theme(
-                                            data: loginButtonTheme,
-                                            child: IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons.facebook),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                              children: _buildSignUpFields(),
                             ),
                           ),
                         ),
@@ -327,29 +254,6 @@ class RegisterScreenState extends State<RegisterScreen> {
             },
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: Theme(
-              data: darkButtonTheme,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _nextStep();
-                  }
-                },
-                child: const Text('Continue'),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ];
-  }
-
-  List<Widget> _buildPersonalInfoFields() {
-    return [
-      Column(
-        children: [
           DropdownButtonFormField<String>(
             value: _currentGender,
             decoration: customInputDecoration.copyWith(
@@ -421,95 +325,20 @@ class RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          DropdownButtonFormField<String>(
-            value: _currentCondition,
+          TextFormField(
+            controller: _licenseNumberController,
             decoration: customInputDecoration.copyWith(
-              labelText: 'Select Condition',
+              labelText: 'License Number',
+              hintText: 'Enter your License Number',
             ),
-            onChanged: (String? newValue) {
-              setState(() {
-                _currentCondition = newValue!;
-              });
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your license number';
+              }
+              return null;
             },
-            items: availableConditions.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 12),
-          Theme(
-            data: smallIconButtonTheme,
-            child: IconButton(
-              onPressed: _addCondition,
-              icon: const Icon(Icons.add),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            children: _selectedConditions
-                .map((condition) => Chip(
-                      label: Text(condition),
-                      onDeleted: () => _removeCondition(condition),
-                    ))
-                .toList(),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: Theme(
-              data: darkButtonTheme,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _nextStep();
-                  }
-                },
-                child: const Text('Continue'),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ];
-  }
-
-  void _addCondition() {
-    if (!_selectedConditions.contains(_currentCondition)) {
-      setState(() {
-        _selectedConditions.add(_currentCondition);
-      });
-    }
-  }
-
-  void _removeCondition(String condition) {
-    setState(() {
-      _selectedConditions.remove(condition);
-    });
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        // Update the UI
-        _birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
-  }
-
-  List<Widget> _buildPasswordFields() {
-    return [
-      Column(
-        children: [
           TextFormField(
             controller: _passwordController,
             decoration: customInputDecoration.copyWith(
@@ -542,7 +371,7 @@ class RegisterScreenState extends State<RegisterScreen> {
               return null;
             },
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             child: Theme(
@@ -550,31 +379,11 @@ class RegisterScreenState extends State<RegisterScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    _registerUser();
+                    _registerPhysician();
                   }
                 },
                 child: const Text('Sign Up'),
               ),
-            ),
-          ),
-          Text.rich(
-            textAlign: TextAlign.center,
-            TextSpan(
-              text: 'By clicking Sign Up, you agree to our ',
-              style: darkTextTheme().headlineSmall,
-              children: [
-                TextSpan(
-                  text: 'terms of services',
-                  style: darkTextTheme().displaySmall,
-                ),
-                const TextSpan(
-                  text: ' and ',
-                ),
-                TextSpan(
-                  text: 'Privacy Policy',
-                  style: darkTextTheme().displaySmall,
-                ),
-              ],
             ),
           ),
         ],
@@ -582,36 +391,28 @@ class RegisterScreenState extends State<RegisterScreen> {
     ];
   }
 
-  void _registerUser() {
+  void _registerPhysician() {
     // Convert the birthdate from String to DateTime
     DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
-    RegisterData registerData = RegisterData(
+    RegisterPhysicianData registerData = RegisterPhysicianData(
       email: _emailController.text,
       password: _passwordController.text,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
       phoneNumber: _phoneNumberController.text,
       city: _cityController.text,
+      licenseNumber: _licenseNumberController.text,
       gender: _currentGender!,
       birthDate: birthdate,
-      conditions: _selectedConditions,
     );
 
     // Dispatch the event to the bloc
-    BlocProvider.of<UserBloc>(context).add(RegisterEvent(registerData));
+    BlocProvider.of<PhysicianBloc>(context).add(RegisterPhysicianEvent(registerData));
   }
 
   void _onLoginButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Login');
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
   }
 }

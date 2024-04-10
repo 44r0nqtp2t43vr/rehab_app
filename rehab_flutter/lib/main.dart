@@ -2,6 +2,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'firebase_options.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -26,9 +27,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<UserBloc>(
-          create: (BuildContext context) => sl(),
-        ),
+        BlocProvider<UserBloc>(create: (BuildContext context) => sl()),
+        BlocProvider<PhysicianBloc>(create: (BuildContext context) => sl()),
       ],
       child: MaterialApp(
         title: 'Haplos',

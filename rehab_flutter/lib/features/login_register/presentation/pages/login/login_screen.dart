@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -67,8 +70,13 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildBody() {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
-        if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        if (state is UserNone) {
+          if (state.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          } else if (state.data != null && state.data is Physician) {
+            BlocProvider.of<PhysicianBloc>(context).add(GetPhysicianEvent(state.data));
+            Navigator.pushNamed(context, '/PhysicianMain');
+          }
         }
         if (state is UserDone) {
           Navigator.pushNamed(context, '/BluetoothConnect');
@@ -234,6 +242,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
+                          Theme(
+                            data: signupButtonTheme,
+                            child: TextButton(
+                              onPressed: () => _onSignUpPhysicianButtonPressed(context),
+                              child: const Text('Sign Up as a Physician'),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -259,5 +274,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onSignUpButtonPressed(BuildContext context) {
     Navigator.pushNamed(context, '/Register');
+  }
+
+  void _onSignUpPhysicianButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/RegisterPhysician');
   }
 }
