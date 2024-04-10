@@ -36,7 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 12.0, horizontal: 24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -66,7 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             blur: 4,
                             color: Colors.white.withOpacity(0.25),
                             child: DailyProgressCard(
-                              todaySession: state.currentUser!.getCurrentSession(),
+                              todaySession:
+                                  state.currentUser!.getCurrentSession(),
                             ),
                           ),
                         ),
@@ -78,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             shadowColor: Colors.black,
                             blur: 4,
                             color: Colors.white.withOpacity(0.25),
-                            child: const ActivityChartCard(),
+                            child: ActivityChartCard(user: state.currentUser!),
                           ),
                         ),
                       ],
