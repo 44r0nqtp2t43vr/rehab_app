@@ -86,7 +86,6 @@ double calculateIncreasePercentage(AppUser user) {
 
   bool hasPreviousScores = false;
 
-  // Check if there are previous posttest scores
   for (var session in allSessions) {
     if (session.date.year == yesterday.year &&
         session.date.month == yesterday.month &&
@@ -107,20 +106,22 @@ double calculateIncreasePercentage(AppUser user) {
   double increasePercentage = 0;
 
   if (hasPreviousScores) {
-    // Calculate increase percentage based on previous posttest score
     if (previousPostTestScore != 0) {
       increasePercentage = ((currentPostTestScore - previousPostTestScore) /
               previousPostTestScore) *
           100;
     }
   } else {
-    // If there are no previous posttest scores, calculate increase percentage from 0%
     if (currentPostTestScore != 0) {
       increasePercentage = 100;
     }
   }
 
   // print('Increase percentage: $increasePercentage');
+
+  // if (currentPostTestScore == 0) {
+  //   increasePercentage = 0;
+  // }
 
   return increasePercentage;
 }
@@ -143,14 +144,18 @@ LineChartData? buildLineChartData(AppUser user) {
     }
   }
 
-  if (hasPreviousScores == false) {
+  if (hasPreviousScores == false &&
+      user.getCurrentSession()?.posttestScore == null) {
     return null;
   }
 
-  // If there's only one score, add an additional point at the beginning representing 0%
+  double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
+
   if (previousPostTestScores.length == 1) {
     previousPostTestScores.insert(0, 0);
   }
+
+  previousPostTestScores.add(currentPostTestScore);
 
   List<FlSpot> dataPoints = [];
   for (int i = 0; i < previousPostTestScores.length; i++) {

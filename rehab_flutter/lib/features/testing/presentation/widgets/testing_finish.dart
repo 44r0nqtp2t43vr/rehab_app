@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,7 +10,6 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
-import 'package:rehab_flutter/core/widgets/app_button.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 class TestingFinish extends StatefulWidget {
@@ -45,7 +45,6 @@ class _TestingFinishState extends State<TestingFinish> {
 
   @override
   Widget build(BuildContext context) {
-    // Assuming you have these variables to hold categorized data and average scores
     List<String> staticPatterns = [];
     List<String> textures = [];
     List<String> rhythmicPatterns = [];
@@ -53,7 +52,6 @@ class _TestingFinishState extends State<TestingFinish> {
     List<double> texturesScores = [];
     List<double> rhythmicPatternsScores = [];
 
-// Categorize items and calculate average scores
     for (int i = 0; i < widget.itemList.length; i++) {
       if (i < 10) {
         staticPatterns.add(widget.itemList[i]);
@@ -67,11 +65,11 @@ class _TestingFinishState extends State<TestingFinish> {
       }
     }
 
-// Calculate average scores
     double averageStaticPatterns = staticPatternsScores.isNotEmpty
         ? staticPatternsScores.reduce((a, b) => a + b) /
             staticPatternsScores.length
         : 0;
+
     double averageTextures = texturesScores.isNotEmpty
         ? texturesScores.reduce((a, b) => a + b) / texturesScores.length
         : 0;
@@ -79,6 +77,10 @@ class _TestingFinishState extends State<TestingFinish> {
         ? rhythmicPatternsScores.reduce((a, b) => a + b) /
             rhythmicPatternsScores.length
         : 0;
+
+    // print('TEST: $averageStaticPatterns');
+    // print('TEST: $averageTextures');
+    // print('TEST: $averageRhythmicPatterns');
 
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
@@ -94,85 +96,310 @@ class _TestingFinishState extends State<TestingFinish> {
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 5,
-                                child: GlassContainer(
-                                  shadowStrength: 2,
-                                  shadowColor: Colors.black,
-                                  blur: 4,
-                                  color: Colors.white.withOpacity(0.25),
-                                  child: Container(
-                                    height: 136,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: Container(),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                flex: 4,
-                                child: GlassContainer(
-                                  shadowStrength: 2,
-                                  shadowColor: Colors.black,
-                                  blur: 4,
-                                  color: Colors.white.withOpacity(0.25),
-                                  child: Center(
+                    SizedBox(
+                      height: 280,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 5,
+                                  child: GlassContainer(
+                                    shadowStrength: 2,
+                                    shadowColor: Colors.black,
+                                    blur: 4,
+                                    color: Colors.white.withOpacity(0.25),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 24,
-                                      ),
+                                      padding: const EdgeInsets.all(16),
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          CircularPercentIndicator(
-                                            radius: 0.4 * 136,
-                                            lineWidth: 10.0,
-                                            percent: score / 100,
-                                            center: Text(
-                                              "${score.toStringAsFixed(0)}%",
-                                              style: const TextStyle(
-                                                fontFamily: "Sailec Bold",
-                                                fontSize: 24,
-                                                color: Colors.white,
-                                              ),
+                                          Text(
+                                            "Average Accuracy",
+                                            style: darkTextTheme().displaySmall,
+                                          ),
+                                          const Text(
+                                            "Per item Category",
+                                            style: TextStyle(
+                                              fontFamily: 'Sailec Light',
+                                              fontSize: 12,
+                                              height: 1.2,
+                                              color: Colors.white,
                                             ),
-                                            circularStrokeCap:
-                                                CircularStrokeCap.round,
-                                            backgroundColor: Colors.white,
-                                            progressColor:
-                                                const Color(0xff01FF99),
                                           ),
                                           const SizedBox(
-                                            height: 24,
+                                            height: 16,
                                           ),
-                                          Center(
-                                            child: Text(
-                                              "Overall Score",
-                                              style:
-                                                  darkTextTheme().displaySmall,
+                                          Expanded(
+                                            child: BarChart(
+                                              BarChartData(
+                                                groupsSpace: 12,
+                                                alignment: BarChartAlignment
+                                                    .spaceAround,
+                                                maxY: 100,
+                                                titlesData: FlTitlesData(
+                                                  topTitles: const AxisTitles(
+                                                    sideTitles: SideTitles(
+                                                      showTitles: false,
+                                                    ),
+                                                  ),
+                                                  leftTitles: AxisTitles(
+                                                    sideTitles: SideTitles(
+                                                      interval: 20,
+                                                      reservedSize: 28,
+                                                      showTitles: true,
+                                                      getTitlesWidget:
+                                                          (value, meta) {
+                                                        return SideTitleWidget(
+                                                          axisSide:
+                                                              AxisSide.left,
+                                                          child: Text(
+                                                            value
+                                                                .toStringAsFixed(
+                                                                    0),
+                                                            style:
+                                                                const TextStyle(
+                                                              fontFamily:
+                                                                  'Sailec Medium',
+                                                              fontSize: 8,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                  rightTitles: const AxisTitles(
+                                                    sideTitles: SideTitles(
+                                                      showTitles: false,
+                                                    ),
+                                                  ),
+                                                  bottomTitles: AxisTitles(
+                                                    sideTitles: SideTitles(
+                                                      reservedSize: 35,
+                                                      showTitles: true,
+                                                      getTitlesWidget:
+                                                          bottomTitles,
+                                                    ),
+                                                  ),
+                                                ),
+                                                borderData: FlBorderData(
+                                                  show: true,
+                                                  border: const Border(
+                                                    left: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 1,
+                                                    ),
+                                                    bottom: BorderSide(
+                                                      color: Colors.white,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                ),
+                                                barGroups: [
+                                                  BarChartGroupData(
+                                                      x: 0,
+                                                      barRods: [
+                                                        BarChartRodData(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    4),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    4),
+                                                            bottomLeft:
+                                                                Radius.zero,
+                                                            bottomRight:
+                                                                Radius.zero,
+                                                          ),
+                                                          width: 20,
+                                                          toY:
+                                                              averageStaticPatterns,
+                                                          color: const Color(
+                                                              0xffdbfff0),
+                                                        ),
+                                                      ]),
+                                                  BarChartGroupData(
+                                                      x: 1,
+                                                      barRods: [
+                                                        BarChartRodData(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    4),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    4),
+                                                            bottomLeft:
+                                                                Radius.zero,
+                                                            bottomRight:
+                                                                Radius.zero,
+                                                          ),
+                                                          width: 20,
+                                                          toY: averageTextures,
+                                                          color: const Color(
+                                                              0xFF49ffb6),
+                                                        ),
+                                                      ]),
+                                                  BarChartGroupData(
+                                                      x: 2,
+                                                      barRods: [
+                                                        BarChartRodData(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    4),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    4),
+                                                            bottomLeft:
+                                                                Radius.zero,
+                                                            bottomRight:
+                                                                Radius.zero,
+                                                          ),
+                                                          width: 20,
+                                                          toY:
+                                                              averageRhythmicPatterns,
+                                                          color: const Color(
+                                                              0xFF00b66d),
+                                                        ),
+                                                      ]),
+                                                ],
+                                              ),
                                             ),
+                                          ),
+                                          Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  _buildLegendItem(
+                                                    const Color(0xffdbfff0),
+                                                  ),
+                                                  const Text(
+                                                    'SP: Static Patterns',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Sailec Medium',
+                                                      fontSize: 8,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  _buildLegendItem(
+                                                    const Color(0xFF49ffb6),
+                                                  ),
+                                                  const Text(
+                                                    'T: Textures',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Sailec Medium',
+                                                      fontSize: 8,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  _buildLegendItem(
+                                                    const Color(0xFF00b66d),
+                                                  ),
+                                                  const Text(
+                                                    'RP: Rhythmic Patterns',
+                                                    style: TextStyle(
+                                                      fontFamily:
+                                                          'Sailec Medium',
+                                                      fontSize: 8,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  flex: 4,
+                                  child: GlassContainer(
+                                    shadowStrength: 2,
+                                    shadowColor: Colors.black,
+                                    blur: 4,
+                                    color: Colors.white.withOpacity(0.25),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 24,
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            CircularPercentIndicator(
+                                              radius: 0.4 * 136,
+                                              lineWidth: 10.0,
+                                              percent: score / 100,
+                                              center: Text(
+                                                "${score.toStringAsFixed(0)}%",
+                                                style: const TextStyle(
+                                                  fontFamily: "Sailec Bold",
+                                                  fontSize: 24,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              circularStrokeCap:
+                                                  CircularStrokeCap.round,
+                                              backgroundColor: Colors.white,
+                                              progressColor:
+                                                  const Color(0xff01FF99),
+                                            ),
+                                            const SizedBox(
+                                              height: 24,
+                                            ),
+                                            Center(
+                                              child: Text(
+                                                "Overall Score",
+                                                style: darkTextTheme()
+                                                    .displaySmall,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 28),
                     Row(
@@ -305,6 +532,50 @@ class _TestingFinishState extends State<TestingFinish> {
         }
         return const SizedBox();
       },
+    );
+  }
+
+  Widget bottomTitles(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontFamily: 'Sailec Medium',
+      fontSize: 8,
+      color: Colors.white,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 0:
+        text = 'SP';
+        break;
+      case 1:
+        text = 'T';
+        break;
+      case 2:
+        text = 'RP';
+        break;
+      default:
+        text = '';
+        break;
+    }
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: Text(text, style: style),
+    );
+  }
+
+  Widget _buildLegendItem(Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 4),
+      ],
     );
   }
 
