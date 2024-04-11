@@ -40,8 +40,27 @@ class _STActuatorState extends State<STActuator> {
   int currentInd = 0;
 
   int sideAndValueToCircleStateIndex(bool isLeft, int value) {
-    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
-    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
+    final List<int> cursorValues = [
+      1,
+      8,
+      1,
+      8,
+      2,
+      16,
+      2,
+      16,
+      4,
+      32,
+      4,
+      32,
+      64,
+      128,
+      64,
+      128
+    ];
+    return isLeft
+        ? cursorValues.indexOf(value)
+        : cursorValues.lastIndexOf(value);
   }
 
   List<bool> patternToCircleStates(String pattern) {
@@ -60,11 +79,13 @@ class _STActuatorState extends State<STActuator> {
     for (int i = 0; i < actuatorValues.length; i++) {
       if (left - actuatorValues[i] >= 0) {
         left -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
+        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] =
+            true;
       }
       if (right - actuatorValues[i] >= 0) {
         right -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
+        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] =
+            true;
       }
     }
 
@@ -79,7 +100,8 @@ class _STActuatorState extends State<STActuator> {
 
   void sendPattern() {
     String currentPatternString = staticPatternsList[currentInd].pattern;
-    String data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
+    String data =
+        "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
 
     sl<BluetoothBloc>().add(WriteDataEvent(data));
     updateCircleStates(data);
@@ -121,7 +143,8 @@ class _STActuatorState extends State<STActuator> {
 
   void endCountdown() {
     timer.cancel();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     circleStates = List.generate(16, (_) => false);
   }
 
@@ -139,7 +162,8 @@ class _STActuatorState extends State<STActuator> {
   @override
   void dispose() {
     timer.cancel();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -151,7 +175,10 @@ class _STActuatorState extends State<STActuator> {
     return Column(
       children: [
         const SizedBox(height: 32),
-        TestLabel(label: countdownDuration == 0 ? "None" : staticPatternsList[currentInd].name),
+        TestLabel(
+            label: countdownDuration == 0
+                ? "None"
+                : staticPatternsList[currentInd].name),
         const SizedBox(height: 16),
         Container(
           height: screenWidth,
@@ -170,12 +197,26 @@ class _STActuatorState extends State<STActuator> {
           ),
         ),
         const SizedBox(height: 16),
-        Text(
-          "Time remaining: ${secToMinSec(countdownDuration.toDouble())}",
-          style: const TextStyle(
-            fontSize: 24,
-            color: Colors.white,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              "Time remaining:",
+              style: TextStyle(
+                fontFamily: 'Sailec Bold',
+                fontSize: 24,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              secToMinSec(countdownDuration.toDouble()),
+              style: const TextStyle(
+                fontFamily: 'Sailec Bold',
+                fontSize: 32,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ],
     );

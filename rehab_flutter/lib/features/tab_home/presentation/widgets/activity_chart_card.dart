@@ -135,6 +135,8 @@ LineChartData? buildLineChartData(AppUser user) {
   List<double> previousPostTestScores = [];
   bool hasPreviousScores = false;
 
+  double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
+
   for (var session in allSessions) {
     if (session.date.isAfter(threeDaysAgo) &&
         session.date.isBefore(today) &&
@@ -144,18 +146,33 @@ LineChartData? buildLineChartData(AppUser user) {
     }
   }
 
-  if (hasPreviousScores == false &&
-      user.getCurrentSession()?.posttestScore == null) {
-    return null;
+  // Get yesterday's session
+  Session? yesterdaySession = allSessions.firstWhere(
+    (session) =>
+        session.date.year == today.year &&
+        session.date.month == today.month &&
+        session.date.day == today.day - 1,
+    orElse: () => Session.empty(),
+  );
+
+  if (yesterdaySession != null) {
+    double yesterdayPostTestScore = yesterdaySession.posttestScore ?? 0;
+
+    if (yesterdayPostTestScore != 0) {
+      previousPostTestScores.insert(0, yesterdayPostTestScore);
+    }
   }
 
-  double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
-
-  if (previousPostTestScores.length == 1) {
+  // Insert 0 if there are less than 3 scores (today and yesterday)
+  if (previousPostTestScores.length < 3) {
     previousPostTestScores.insert(0, 0);
   }
 
-  previousPostTestScores.add(currentPostTestScore);
+  if (hasPreviousScores == false && currentPostTestScore == 0) {
+    return null;
+  }
+
+  print('prev $previousPostTestScores');
 
   List<FlSpot> dataPoints = [];
   for (int i = 0; i < previousPostTestScores.length; i++) {
@@ -192,3 +209,70 @@ LineChartData? buildLineChartData(AppUser user) {
     ],
   );
 }
+
+// LineChartData? buildLineChartData(AppUser user) {
+//   List<Session> allSessions = user.getAllSessionsFromAllPlans();
+
+//   final DateTime today = DateTime.now();
+//   final DateTime threeDaysAgo = today.subtract(const Duration(days: 3));
+
+//   List<double> previousPostTestScores = [];
+//   bool hasPreviousScores = false;
+
+//   for (var session in allSessions) {
+//     if (session.date.isAfter(threeDaysAgo) &&
+//         session.date.isBefore(today) &&
+//         session.posttestScore != null) {
+//       previousPostTestScores.add(session.posttestScore!);
+//       hasPreviousScores = true;
+//     }
+//   }
+
+//   if (hasPreviousScores == false &&
+//       user.getCurrentSession()?.posttestScore == null) {
+//     return null;
+//   }
+
+//   double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
+
+//   if (previousPostTestScores.length == 1) {
+//     previousPostTestScores.insert(0, 0);
+//   }
+
+//   previousPostTestScores.add(currentPostTestScore);
+
+//   List<FlSpot> dataPoints = [];
+//   for (int i = 0; i < previousPostTestScores.length; i++) {
+//     dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
+//   }
+
+//   double maxY = previousPostTestScores.isNotEmpty
+//       ? previousPostTestScores.reduce((curr, next) => curr > next ? curr : next)
+//       : 0;
+//   double minY = previousPostTestScores.isNotEmpty
+//       ? previousPostTestScores.reduce((curr, next) => curr < next ? curr : next)
+//       : 0;
+
+//   double centerValue = (maxY + minY) / 2;
+
+//   return LineChartData(
+//     minY: centerValue - 50,
+//     maxY: centerValue + 50,
+//     gridData: const FlGridData(show: false),
+//     titlesData: const FlTitlesData(show: false),
+//     borderData: FlBorderData(show: false),
+//     lineBarsData: [
+//       LineChartBarData(
+//         spots: dataPoints,
+//         isCurved: true,
+//         color: const Color(0xff01FF99),
+//         barWidth: 4,
+//         isStrokeCapRound: true,
+//         belowBarData: BarAreaData(
+//           show: true,
+//           color: const Color(0xff01FF99).withOpacity(0.3),
+//         ),
+//       ),
+//     ],
+//   );
+// }

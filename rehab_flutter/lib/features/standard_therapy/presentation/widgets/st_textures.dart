@@ -83,18 +83,21 @@ class _STTexturesState extends State<STTextures> with TickerProviderStateMixin {
 
   void endCountdown() {
     timer.cancel();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
   }
 
   void _onAnimationFinish() {
     animationController.reset();
     incrementCurrentInd();
-    sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTexturesList[currentInd].texture, preload: false)));
+    sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+        src: imageTexturesList[currentInd].texture, preload: false)));
     animationController.forward();
   }
 
   void _renderActuators(double imageSize) {
-    final Offset animatedPosition = AniPatternProvider.doubleVPattern(imageSize, animationController.value);
+    final Offset animatedPosition =
+        AniPatternProvider.doubleVPattern(imageSize, animationController.value);
     sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
 
     setState(() {});
@@ -135,7 +138,8 @@ class _STTexturesState extends State<STTextures> with TickerProviderStateMixin {
   void dispose() {
     timer.cancel();
     animationController.dispose();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -159,22 +163,47 @@ class _STTexturesState extends State<STTextures> with TickerProviderStateMixin {
       child: Column(
         children: [
           const SizedBox(height: 32),
-          TestLabel(label: countdownDuration == 0 ? "None" : imageTexturesList[currentInd].name.capitalize!),
+          TestLabel(
+              label: countdownDuration == 0
+                  ? "None"
+                  : imageTexturesList[currentInd].name.capitalize!),
           const SizedBox(height: 16),
           Container(
             height: screenWidth,
             width: double.infinity,
             color: Colors.black,
-            child: _buildBody(imageTexturesList[currentInd], screenWidth.toInt()),
+            child:
+                _buildBody(imageTexturesList[currentInd], screenWidth.toInt()),
           ),
           const SizedBox(height: 16),
-          Text(
-            "Time remaining: ${secToMinSec(countdownDuration.toDouble())}",
-            style: const TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "Time remaining:",
+                style: TextStyle(
+                  fontFamily: 'Sailec Bold',
+                  fontSize: 24,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                secToMinSec(countdownDuration.toDouble()),
+                style: const TextStyle(
+                  fontFamily: 'Sailec Bold',
+                  fontSize: 32,
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
+          // Text(
+          //   "Time remaining: ${secToMinSec(countdownDuration.toDouble())}",
+          //   style: const TextStyle(
+          //     fontSize: 24,
+          //     color: Colors.white,
+          //   ),
+          // ),
         ],
       ),
     );
