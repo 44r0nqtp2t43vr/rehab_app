@@ -20,6 +20,7 @@ import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
+import 'package:rehab_flutter/core/usecases/firebase/assign_patient.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
@@ -102,6 +103,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<EditUserUseCase>(EditUserUseCase(sl()));
 
+  sl.registerSingleton<AssignPatientUseCase>(AssignPatientUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
@@ -109,7 +112,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
-  sl.registerFactory<PhysicianBloc>(() => PhysicianBloc(sl()));
+  sl.registerFactory<PhysicianBloc>(() => PhysicianBloc(sl(), sl(), sl()));
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 }

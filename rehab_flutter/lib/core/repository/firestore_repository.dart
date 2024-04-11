@@ -12,6 +12,7 @@ import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_physician_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -61,10 +62,13 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     final rolesList = userDoc.data()!['roles'].cast<String>().toList();
     if (rolesList.contains("physician")) {
-      // Query Patients for the User
-      // QuerySnapshot<Map<String, dynamic>> patientsSnapshot = await db.collection('users').doc(userDoc.id).collection('patients').get();
+      final patientIds = userDoc.data()!['patients'].cast<String>().toList();
 
-      List<AppUser> patients = [];
+      final List<AppUser> patients = [];
+      for (var patientId in patientIds) {
+        final patientUser = await getUser(patientId);
+        patients.add(patientUser);
+      }
 
       final currentPhysician = Physician(
         physicianId: userDoc.id,
@@ -358,5 +362,14 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     } else {
       return data.user;
     }
+  }
+
+  @override
+  Future<Physician> assignPatient(AssignPatientData data) async {
+    data.patients.add(data.patientId);
+    await db.collection('users').doc(data.physicianId).update({'patients': data.patients});
+
+    final Physician user = await getUser(data.physicianId);
+    return user;
   }
 }

@@ -7,8 +7,9 @@ import 'package:rehab_flutter/core/entities/session.dart';
 
 class DailyProgressCard extends StatelessWidget {
   final Session? todaySession;
+  final bool isPhysicianView;
 
-  const DailyProgressCard({super.key, required this.todaySession});
+  const DailyProgressCard({super.key, required this.todaySession, this.isPhysicianView = false});
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +135,7 @@ class DailyProgressCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     Text(
-                      "You have no sessions for today",
+                      "${isPhysicianView ? "This patient has" : "You have"} no sessions for today",
                       style: darkTextTheme().headlineMedium,
                     ),
                     const SizedBox(height: 20),

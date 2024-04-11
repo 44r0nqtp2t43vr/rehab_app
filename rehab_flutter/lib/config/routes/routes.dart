@@ -12,6 +12,8 @@ import 'package:rehab_flutter/features/login_register/presentation/pages/registe
 import 'package:rehab_flutter/features/login_register/presentation/pages/register_physician/register_physician.dart';
 import 'package:rehab_flutter/features/logs_screen/presentation/logs_screen.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/assign_patients/assign_patients.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/patient_page/patient_page.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_main/physician_main.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
@@ -96,6 +98,12 @@ class AppRoutes {
 
       case '/PhysicianMain':
         return _materialRoute(const PhysicianMainScreen());
+
+      case '/AssignPatients':
+        return _materialRoute(const AssignPatients());
+
+      case '/PatientPage':
+        return _materialRoute(PatientPage(patient: settings.arguments as AppUser));
 
       default:
         return _materialRoute(const OnboardingScreen());
