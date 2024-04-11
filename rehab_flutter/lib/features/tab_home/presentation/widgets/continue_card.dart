@@ -288,7 +288,7 @@ class ContinueCard extends StatelessWidget {
       } else {
         List<bool> conditions = currentSession.getSessionConditions();
         if (!conditions[0]) {
-          Navigator.pushNamed(context, '/Testing');
+          Navigator.pushNamed(context, '/Testing', arguments: true);
         } else if (!conditions[1]) {
           Navigator.pushNamed(
             context,
@@ -315,7 +315,7 @@ class ContinueCard extends StatelessWidget {
             ),
           );
         } else if (!conditions[4]) {
-          Navigator.pushNamed(context, '/Testing');
+          Navigator.pushNamed(context, '/Testing', arguments: false);
         } else {
           showDialog(
             context: context,

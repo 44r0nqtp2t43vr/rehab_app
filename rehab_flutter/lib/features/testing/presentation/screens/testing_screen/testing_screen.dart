@@ -18,7 +18,9 @@ import 'package:rehab_flutter/features/testing/presentation/widgets/textures_tes
 import 'package:rehab_flutter/injection_container.dart';
 
 class TestingScreen extends StatefulWidget {
-  const TestingScreen({super.key});
+  final bool isPretest;
+
+  const TestingScreen({super.key, required this.isPretest});
 
   @override
   State<TestingScreen> createState() => _TestingScreenState();
@@ -175,7 +177,7 @@ class _TestingScreenState extends State<TestingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Pre-test",
+            widget.isPretest ? "Pre-test" : "Post-test",
             style: darkTextTheme().headlineLarge,
           ),
           Text(

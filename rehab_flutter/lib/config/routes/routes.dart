@@ -52,13 +52,15 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(
+            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
 
       case '/Testing':
-        return _materialRoute(const TestingScreen());
+        return _materialRoute(
+            TestingScreen(isPretest: settings.arguments as bool));
 
       case '/PlayGame':
         return _materialRoute(PlayGame(
@@ -88,10 +90,12 @@ class AppRoutes {
         ));
 
       case '/StandardTherapy':
-        return _materialRoute(StandardTherapyScreen(data: settings.arguments as StandardTherapyData));
+        return _materialRoute(StandardTherapyScreen(
+            data: settings.arguments as StandardTherapyData));
 
       case '/PassiveTherapy':
-        return _materialRoute(PassiveTherapyScreen(userId: settings.arguments as String));
+        return _materialRoute(
+            PassiveTherapyScreen(userId: settings.arguments as String));
 
       case '/EditProfile':
         return _materialRoute(EditProfile(user: settings.arguments as AppUser));
