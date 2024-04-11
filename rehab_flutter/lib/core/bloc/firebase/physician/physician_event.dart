@@ -26,3 +26,7 @@ class GetPhysicianEvent extends PhysicianEvent {
 class RegisterPhysicianEvent extends PhysicianEvent {
   const RegisterPhysicianEvent(RegisterPhysicianData registerData) : super(registerData: registerData);
 }
+
+class LogoutPhysicianEvent extends PhysicianEvent {
+  const LogoutPhysicianEvent(Physician currentPhysician) : super(currentPhysician: currentPhysician);
+}

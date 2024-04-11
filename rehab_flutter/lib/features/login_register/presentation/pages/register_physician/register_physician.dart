@@ -233,7 +233,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
               hintText: 'Enter your Last Name',
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your last name';
               }
               return null;
@@ -247,7 +247,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
               hintText: 'Enter your Email Address',
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your email';
               }
               return null;
@@ -285,7 +285,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
               hintText: 'Enter your Phone Number',
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your phone number';
               }
               return null;
@@ -299,7 +299,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
               hintText: 'Enter your Location',
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your city';
               }
               return null;
@@ -316,7 +316,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
                   hintText: 'Birthdate (YYY-MM-DD)',
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'Please enter your birthdate';
                   }
                   return null;
@@ -332,7 +332,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
               hintText: 'Enter your License Number',
             ),
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your license number';
               }
               return null;
@@ -347,7 +347,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
             ),
             obscureText: true,
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your password';
               }
               return null;
@@ -362,7 +362,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
             ),
             obscureText: true,
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please confirm your password';
               }
               if (value != _passwordController.text) {

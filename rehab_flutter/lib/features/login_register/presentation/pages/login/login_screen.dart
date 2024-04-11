@@ -8,8 +8,11 @@ import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart'
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
+import 'package:rehab_flutter/injection_container.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -75,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
           } else if (state.data != null && state.data is Physician) {
             BlocProvider.of<PhysicianBloc>(context).add(GetPhysicianEvent(state.data));
+            sl<NavigationController>().setTab(TabEnum.home);
             Navigator.pushNamed(context, '/PhysicianMain');
           }
         }
