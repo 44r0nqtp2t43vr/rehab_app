@@ -99,7 +99,7 @@ class AppRoutes {
         return _materialRoute(const PhysicianMainScreen());
 
       case '/AssignPatients':
-        return _materialRoute(AssignPatients(physicianId: settings.arguments as String));
+        return _materialRoute(const AssignPatients());
 
       default:
         return _materialRoute(const OnboardingScreen());

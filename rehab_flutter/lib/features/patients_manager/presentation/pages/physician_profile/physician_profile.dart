@@ -176,7 +176,7 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {
-    Navigator.of(context).pushNamed("/AssignPatients", arguments: physician.physicianId);
+    Navigator.of(context).pushNamed("/AssignPatients");
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
