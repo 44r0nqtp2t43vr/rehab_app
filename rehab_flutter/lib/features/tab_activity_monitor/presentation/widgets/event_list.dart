@@ -11,6 +11,7 @@ class EventList extends StatelessWidget {
   final DateTime selectedDay;
   final Session? currentSession;
   final List<bool> conditions;
+  final bool isPhysicianView;
 
   const EventList({
     super.key,
@@ -18,6 +19,7 @@ class EventList extends StatelessWidget {
     required this.selectedDay,
     required this.currentSession,
     required this.conditions,
+    this.isPhysicianView = false,
   });
 
   @override
@@ -51,13 +53,11 @@ class EventList extends StatelessWidget {
                       children: [
                         Text(
                           getDayOfWeek(selectedDay.weekday),
-                          style: const TextStyle(
-                              fontSize: 14, color: Colors.white),
+                          style: const TextStyle(fontSize: 14, color: Colors.white),
                         ),
                         Text(
                           selectedDay.day.toString(),
-                          style: const TextStyle(
-                              fontSize: 24, color: Colors.white),
+                          style: const TextStyle(fontSize: 24, color: Colors.white),
                         ),
                       ],
                     ),
@@ -67,7 +67,7 @@ class EventList extends StatelessWidget {
               const SizedBox(height: 16),
               currentSession == null
                   ? Text(
-                      "You have no sessions for today",
+                      "${isPhysicianView ? "This user has" : "You have"} no sessions for today",
                       style: darkTextTheme().headlineSmall,
                       textAlign: TextAlign.center,
                     )
@@ -86,38 +86,34 @@ class EventList extends StatelessWidget {
                                   EventCard(
                                     isCompleted: conditions[1],
                                     leftValue: null,
-                                    rightValue:
-                                        "Do an intensity-${currentSession!.standardOneIntensity} ${currentSession!.standardOneType} session",
+                                    rightValue: "Do an intensity-${currentSession!.standardOneIntensity} ${currentSession!.standardOneType} session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[2],
                                     leftValue: null,
-                                    rightValue:
-                                        "Complete a 20-minute intensity-${currentSession!.passiveIntensity} passive therapy session",
+                                    rightValue: "Complete a 20-minute intensity-${currentSession!.passiveIntensity} passive therapy session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[3],
                                     leftValue: null,
-                                    rightValue:
-                                        "Do an intensity-${currentSession!.standardTwoIntensity} ${currentSession!.standardTwoType} session",
+                                    rightValue: "Do an intensity-${currentSession!.standardTwoIntensity} ${currentSession!.standardTwoType} session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[4],
-                                    leftValue:
-                                        currentSession!.posttestScore ?? 0,
+                                    leftValue: currentSession!.posttestScore ?? 0,
                                     rightValue: "Take the Posttest",
                                     eventType: EventType.test,
                                   ),
                                 ],
                               )
                             : Text(
-                                "Take the Pretest to determine the next steps for this session",
+                                "${isPhysicianView ? "This patient has to take their Pretest" : "Take the Pretest"} to determine the next steps for this session",
                                 style: darkTextTheme().headlineSmall,
                                 textAlign: TextAlign.center,
                               ),

@@ -16,22 +16,28 @@ class _PhysicianDashboardState extends State<PhysicianDashboard> {
   Widget build(BuildContext context) {
     return BlocBuilder<PhysicianBloc, PhysicianState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            Text(state.currentPhysician!.physicianId, style: const TextStyle(color: Colors.white)),
-            state.currentPhysician!.patients.isEmpty
-                ? const SizedBox()
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: state.currentPhysician!.patients.length,
-                    itemBuilder: (context, index) {
-                      // Get the current patient
-                      final patient = state.currentPhysician!.patients[index];
-                      // Display the patient's ID
-                      return PatientListCard(patient: patient);
-                    },
-                  ),
-          ],
+        return SingleChildScrollView(
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              child: Column(
+                children: [
+                  state.currentPhysician!.patients.isEmpty
+                      ? const Text("You have no assigned patients", style: TextStyle(color: Colors.white))
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: state.currentPhysician!.patients.length,
+                          itemBuilder: (context, index) {
+                            // Get the current patient
+                            final patient = state.currentPhysician!.patients[index];
+                            // Display the patient's ID
+                            return PatientListCard(patient: patient);
+                          },
+                        ),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );

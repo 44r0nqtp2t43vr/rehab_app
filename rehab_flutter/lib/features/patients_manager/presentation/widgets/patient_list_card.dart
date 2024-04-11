@@ -17,7 +17,7 @@ class PatientListCard extends StatelessWidget {
     final Session? currentSession = patient.getCurrentSession();
 
     return GestureDetector(
-      onTap: () {},
+      onTap: () => _onPatientCardPressed(context),
       child: Container(
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
@@ -115,5 +115,9 @@ class PatientListCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onPatientCardPressed(BuildContext context) {
+    Navigator.of(context).pushNamed("/PatientPage", arguments: patient);
   }
 }
