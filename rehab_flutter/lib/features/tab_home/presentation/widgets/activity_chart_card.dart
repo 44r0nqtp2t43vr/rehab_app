@@ -130,51 +130,33 @@ LineChartData? buildLineChartData(AppUser user) {
   List<Session> allSessions = user.getAllSessionsFromAllPlans();
 
   final DateTime today = DateTime.now();
-  final DateTime threeDaysAgo = today.subtract(const Duration(days: 3));
 
-  List<double> previousPostTestScores = [];
-  bool hasPreviousScores = false;
+  List<double> previousPostTestScores = [0, 0, 0];
+
+  for (int i = 0; i < 3; i++) {
+    DateTime date = today.subtract(Duration(days: i));
+    Session? session = allSessions.firstWhere(
+      (session) =>
+          session.date.year == date.year &&
+          session.date.month == date.month &&
+          session.date.day == date.day,
+      orElse: () => Session.empty(),
+    );
+
+    if (session.posttestScore != null) {
+      previousPostTestScores[2 - i] = session.posttestScore!;
+    } else {
+      previousPostTestScores[2 - i] = 0;
+    }
+  }
 
   double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
-
-  for (var session in allSessions) {
-    if (session.date.isAfter(threeDaysAgo) &&
-        session.date.isBefore(today) &&
-        session.posttestScore != null) {
-      previousPostTestScores.add(session.posttestScore!);
-      hasPreviousScores = true;
-    }
-  }
-
-  // Get yesterday's session
-  Session? yesterdaySession = allSessions.firstWhere(
-    (session) =>
-        session.date.year == today.year &&
-        session.date.month == today.month &&
-        session.date.day == today.day - 1,
-    orElse: () => Session.empty(),
-  );
-
-  if (yesterdaySession != null) {
-    double yesterdayPostTestScore = yesterdaySession.posttestScore ?? 0;
-
-    if (yesterdayPostTestScore != 0) {
-      previousPostTestScores.insert(0, yesterdayPostTestScore);
-    }
-  }
-
-  // Insert 0 if there are less than 3 scores (today and yesterday)
-  if (previousPostTestScores.length < 3) {
-    previousPostTestScores.insert(0, 0);
-  }
-
-  if (hasPreviousScores == false && currentPostTestScore == 0) {
-    return null;
-  }
+  previousPostTestScores[2] = currentPostTestScore;
 
   print('prev $previousPostTestScores');
 
   List<FlSpot> dataPoints = [];
+
   for (int i = 0; i < previousPostTestScores.length; i++) {
     dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
   }
@@ -207,72 +189,27 @@ LineChartData? buildLineChartData(AppUser user) {
         ),
       ),
     ],
+    lineTouchData: LineTouchData(
+      touchSpotThreshold: 50,
+      touchTooltipData: LineTouchTooltipData(
+        getTooltipColor: (touchedSpot) {
+          return Colors.transparent;
+        },
+        tooltipPadding: const EdgeInsets.all(4),
+        getTooltipItems: (touchedSpots) {
+          return touchedSpots.map((touchedSpot) {
+            const TextStyle textStyle = TextStyle(
+              color: Color(0xff01FF99),
+              fontFamily: 'Sailec Medium',
+              fontSize: 14,
+            );
+            return LineTooltipItem(
+              touchedSpot.y.toStringAsFixed(1),
+              textStyle,
+            );
+          }).toList();
+        },
+      ),
+    ),
   );
 }
-
-// LineChartData? buildLineChartData(AppUser user) {
-//   List<Session> allSessions = user.getAllSessionsFromAllPlans();
-
-//   final DateTime today = DateTime.now();
-//   final DateTime threeDaysAgo = today.subtract(const Duration(days: 3));
-
-//   List<double> previousPostTestScores = [];
-//   bool hasPreviousScores = false;
-
-//   for (var session in allSessions) {
-//     if (session.date.isAfter(threeDaysAgo) &&
-//         session.date.isBefore(today) &&
-//         session.posttestScore != null) {
-//       previousPostTestScores.add(session.posttestScore!);
-//       hasPreviousScores = true;
-//     }
-//   }
-
-//   if (hasPreviousScores == false &&
-//       user.getCurrentSession()?.posttestScore == null) {
-//     return null;
-//   }
-
-//   double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
-
-//   if (previousPostTestScores.length == 1) {
-//     previousPostTestScores.insert(0, 0);
-//   }
-
-//   previousPostTestScores.add(currentPostTestScore);
-
-//   List<FlSpot> dataPoints = [];
-//   for (int i = 0; i < previousPostTestScores.length; i++) {
-//     dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
-//   }
-
-//   double maxY = previousPostTestScores.isNotEmpty
-//       ? previousPostTestScores.reduce((curr, next) => curr > next ? curr : next)
-//       : 0;
-//   double minY = previousPostTestScores.isNotEmpty
-//       ? previousPostTestScores.reduce((curr, next) => curr < next ? curr : next)
-//       : 0;
-
-//   double centerValue = (maxY + minY) / 2;
-
-//   return LineChartData(
-//     minY: centerValue - 50,
-//     maxY: centerValue + 50,
-//     gridData: const FlGridData(show: false),
-//     titlesData: const FlTitlesData(show: false),
-//     borderData: FlBorderData(show: false),
-//     lineBarsData: [
-//       LineChartBarData(
-//         spots: dataPoints,
-//         isCurved: true,
-//         color: const Color(0xff01FF99),
-//         barWidth: 4,
-//         isStrokeCapRound: true,
-//         belowBarData: BarAreaData(
-//           show: true,
-//           color: const Color(0xff01FF99).withOpacity(0.3),
-//         ),
-//       ),
-//     ],
-//   );
-// }

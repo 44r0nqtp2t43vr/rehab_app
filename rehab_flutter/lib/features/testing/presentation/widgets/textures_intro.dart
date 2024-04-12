@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -106,18 +107,19 @@ class _TexturesIntroState extends State<TexturesIntro>
           imagesHeight: desiredSize,
           imagesWidth: desiredSize,
         ))),
-      child: Column(
-        children: [
-          const SizedBox(height: 32),
-          TestLabel(label: currentImageTexture.name.capitalize!),
-          const SizedBox(height: 16),
-          Expanded(
-            flex: 2,
-            child: _buildBody(currentImageTexture, desiredSize),
-          ),
-          Expanded(
-            flex: 1,
-            child: Row(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            const SizedBox(height: 32),
+            TestLabel(label: currentImageTexture.name.capitalize!),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: desiredSize.toDouble(),
+              child: _buildBody(currentImageTexture, desiredSize),
+            ),
+            const SizedBox(height: 40),
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 currentImageTextureInd <
@@ -205,8 +207,8 @@ class _TexturesIntroState extends State<TexturesIntro>
                 // ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
