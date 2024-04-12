@@ -366,7 +366,12 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<Physician> assignPatient(AssignPatientData data) async {
-    data.patients.add(data.patientId);
+    if (data.isAssign) {
+      data.patients.add(data.patientId);
+    } else {
+      data.patients.removeWhere((patientId) => patientId == data.patientId);
+    }
+
     await db.collection('users').doc(data.physicianId).update({'patients': data.patients});
 
     final Physician user = await getUser(data.physicianId);

@@ -25,7 +25,7 @@ class _AssignPatientsState extends State<AssignPatients> {
     return BlocConsumer<PhysicianBloc, PhysicianState>(
       listener: (context, state) {
         if (state is PhysicianDone) {
-          sl<NavigationController>().setTab(TabEnum.home);
+          sl<NavigationController>().setTab(TabEnum.activityMonitor);
           Navigator.of(context).pop();
         }
       },
