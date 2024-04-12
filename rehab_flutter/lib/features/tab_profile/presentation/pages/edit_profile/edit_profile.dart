@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -36,7 +38,8 @@ class _EditProfileState extends State<EditProfile> {
 
   // Function to pick an image from gallery
   Future<void> _pickImage() async {
-    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       setState(() {
         _image = File(pickedImage.path);
@@ -75,7 +78,8 @@ class _EditProfileState extends State<EditProfile> {
 
   void _editUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate =
+        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     EditUserData editUserData = EditUserData(
@@ -99,7 +103,8 @@ class _EditProfileState extends State<EditProfile> {
     _firstNameController.text = widget.user.firstName;
     _lastNameController.text = widget.user.lastName;
     _cityController.text = widget.user.city;
-    _birthdateController.text = DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
+    _birthdateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
     _genderController.text = widget.user.gender;
     _phoneNumberController.text = widget.user.phoneNumber;
     _selectedConditions = List.from(widget.user.conditions);
@@ -109,7 +114,8 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
-      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
+      listenWhen: (previous, current) =>
+          previous is UserLoading && current is UserDone,
       listener: (context, state) {
         if (state is UserDone) {
           Navigator.of(context).pop();
@@ -117,12 +123,24 @@ class _EditProfileState extends State<EditProfile> {
       },
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
+          return const Scaffold(
+              body: Center(
+                  child: CupertinoActivityIndicator(color: Colors.white)));
         }
         if (state is UserDone) {
           return Scaffold(
             appBar: AppBar(
               centerTitle: false,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.chevron_left,
+                  size: 35,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -152,7 +170,8 @@ class _EditProfileState extends State<EditProfile> {
                           children: [
                             CircleAvatar(
                               backgroundColor: Colors.white,
-                              backgroundImage: _image != null ? FileImage(_image!) : null,
+                              backgroundImage:
+                                  _image != null ? FileImage(_image!) : null,
                               radius: 40,
                             ),
                             const Positioned(
@@ -160,7 +179,7 @@ class _EditProfileState extends State<EditProfile> {
                               right: 0,
                               child: Icon(
                                 Icons.camera_alt,
-                                color: Colors.green,
+                                color: Color(0xff01FF99),
                               ),
                             ),
                           ],
@@ -175,160 +194,219 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Container(
+                      GlassContainer(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
+                        shadowStrength: 2,
+                        shadowColor: Colors.black,
+                        blur: 4,
+                        color: Colors.white.withOpacity(0.25),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _firstNameController,
+                                      decoration:
+                                          customInputDecoration.copyWith(
+                                        labelText: 'First Name',
+                                        hintText: 'Enter your First Name',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your first name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: _lastNameController,
+                                      decoration:
+                                          customInputDecoration.copyWith(
+                                        labelText: 'Last Name',
+                                        hintText: 'Enter your Last Name',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your last name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _cityController,
+                                decoration: customInputDecoration.copyWith(
+                                  labelText: 'Location',
+                                  hintText: 'Enter your Location',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your city';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              InkWell(
+                                onTap: () => _selectDate(context),
+                                child: IgnorePointer(
                                   child: TextFormField(
-                                    controller: _firstNameController,
+                                    controller: _birthdateController,
                                     decoration: customInputDecoration.copyWith(
-                                      labelText: 'First Name',
-                                      hintText: 'Enter your First Name',
+                                      labelText: 'Birthdate',
+                                      hintText: 'Birthdate (YYY-MM-DD)',
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your first name';
+                                        return 'Please enter your birthdate';
                                       }
                                       return null;
                                     },
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: _lastNameController,
-                                    decoration: customInputDecoration.copyWith(
-                                      labelText: 'Last Name',
-                                      hintText: 'Enter your Last Name',
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your last name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _genderController,
+                                decoration: customInputDecoration.copyWith(
+                                  labelText: 'Gender',
+                                  hintText: 'Enter your Gender',
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _cityController,
-                              decoration: customInputDecoration.copyWith(
-                                labelText: 'Location',
-                                hintText: 'Enter your Location',
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter gender';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your city';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                            InkWell(
-                              onTap: () => _selectDate(context),
-                              child: IgnorePointer(
-                                child: TextFormField(
-                                  controller: _birthdateController,
-                                  decoration: customInputDecoration.copyWith(
-                                    labelText: 'Birthdate',
-                                    hintText: 'Birthdate (YYY-MM-DD)',
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter your birthdate';
-                                    }
-                                    return null;
-                                  },
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _phoneNumberController,
+                                decoration: customInputDecoration.copyWith(
+                                  labelText: 'Phone Number',
+                                  hintText: 'Enter your Phone Number',
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your phone number';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              DropdownButtonFormField<String>(
+                                value: _currentCondition,
+                                decoration: customInputDecoration.copyWith(
+                                  labelText: 'Select Condition',
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _currentCondition = newValue!;
+                                  });
+                                },
+                                items: availableConditions
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 8),
+                              Theme(
+                                data: smallIconButtonTheme,
+                                child: IconButton(
+                                  onPressed: _addCondition,
+                                  icon: const Icon(Icons.add),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _genderController,
-                              decoration: customInputDecoration.copyWith(
-                                labelText: 'Gender',
-                                hintText: 'Enter your Gender',
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 8.0,
+                                runSpacing: 4.0,
+                                children: _selectedConditions
+                                    .map((condition) => Chip(
+                                          label: Text(condition),
+                                          onDeleted: () =>
+                                              _removeCondition(condition),
+                                        ))
+                                    .toList(),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter gender';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _phoneNumberController,
-                              decoration: customInputDecoration.copyWith(
-                                labelText: 'Phone Number',
-                                hintText: 'Enter your Phone Number',
-                              ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your phone number';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                            DropdownButtonFormField<String>(
-                              value: _currentCondition,
-                              decoration: customInputDecoration.copyWith(
-                                labelText: 'Select Condition',
-                              ),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _currentCondition = newValue!;
-                                });
-                              },
-                              items: availableConditions.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 8),
-                            Theme(
-                              data: smallIconButtonTheme,
-                              child: IconButton(
-                                onPressed: _addCondition,
-                                icon: const Icon(Icons.add),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8.0,
-                              runSpacing: 4.0,
-                              children: _selectedConditions
-                                  .map((condition) => Chip(
-                                        label: Text(condition),
-                                        onDeleted: () => _removeCondition(condition),
-                                      ))
-                                  .toList(),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _editUser();
-                          }
-                        },
-                        child: const Text("Save"),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF128BED),
+                                    Color(0xFF01FF99),
+                                  ],
+                                  stops: [0.3, 1.0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    spreadRadius: 10,
+                                    blurRadius: 20,
+                                    offset: const Offset(1, 1),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _editUser();
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    Colors.white,
+                                  ),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  elevation:
+                                      MaterialStateProperty.all<double>(0),
+                                  shadowColor: MaterialStateProperty.all<Color>(
+                                      Colors.transparent),
+                                  overlayColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                                child: const Text("Save"),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
