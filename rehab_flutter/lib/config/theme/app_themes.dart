@@ -227,7 +227,7 @@ InputDecoration customInputDecoration = InputDecoration(
     backgroundColor: Colors.white,
   ),
   hintStyle: const TextStyle(
-    color: Colors.white,
+    color: Color(0XFFD1D1D1),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(10),

@@ -322,21 +322,38 @@ class ContinueCard extends StatelessWidget {
             barrierDismissible: false,
             builder: (context) {
               return AlertDialog(
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    const Text(
-                      "You have completed all sessions today",
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
+                contentPadding:
+                    const EdgeInsets.only(right: 10, top: 10, left: 10),
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                content: GlassContainer(
+                  blur: 10,
+                  color: Colors.white.withOpacity(0.3),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          "You have completed all Sessions for today.",
+                          textAlign: TextAlign.center,
+                          style: darkTextTheme().headlineMedium,
+                        ),
+                        const SizedBox(height: 28),
+                        Theme(
+                          data: darkButtonTheme,
+                          child: ElevatedButton(
+                            onPressed: () => _onCloseButtonPressed(context),
+                            child: const Text('Close'),
+                          ),
+                        ),
+                        // ElevatedButton(
+                        //   onPressed: () => _onCloseButtonPressed(context),
+                        //   child: const Text("CLOSE"),
+                        // ),
+                      ],
                     ),
-                    const SizedBox(height: 28),
-                    ElevatedButton(
-                      onPressed: () => _onCloseButtonPressed(context),
-                      child: const Text("CLOSE"),
-                    ),
-                  ],
+                  ),
                 ),
               );
             },
