@@ -1,13 +1,13 @@
+import 'package:rehab_flutter/core/entities/physician.dart';
+
 class AssignPatientData {
-  final String physicianId;
+  final Physician physician;
   final String patientId;
-  final List<String> patients;
   final bool isAssign;
 
   AssignPatientData({
-    required this.physicianId,
+    required this.physician,
     required this.patientId,
-    required this.patients,
     this.isAssign = true,
   });
 }

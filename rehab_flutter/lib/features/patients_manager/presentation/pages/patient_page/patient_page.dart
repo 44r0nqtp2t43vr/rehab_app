@@ -6,6 +6,7 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
+import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
@@ -105,7 +106,6 @@ class _PatientPageState extends State<PatientPage> {
           return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
         }
         if (state is PhysicianDone) {
-          final List<String> currentPatients = state.currentPhysician!.patients.map((user) => user.userId).toList();
           final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
 
           return Scaffold(
@@ -169,9 +169,8 @@ class _PatientPageState extends State<PatientPage> {
                       ElevatedButton(
                         onPressed: () => _onUnassignButtonPressed(
                           context,
-                          state.currentPhysician!.physicianId,
+                          state.currentPhysician!,
                           widget.patient.userId,
-                          currentPatients,
                         ),
                         child: const Text("Unassign"),
                       ),
@@ -187,7 +186,7 @@ class _PatientPageState extends State<PatientPage> {
     );
   }
 
-  void _onUnassignButtonPressed(BuildContext context, String physicianId, String patientId, List<String> patients) {
+  void _onUnassignButtonPressed(BuildContext context, Physician physician, String patientId) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -237,9 +236,8 @@ class _PatientPageState extends State<PatientPage> {
                         onPressed: () {
                           Navigator.of(context).pop();
                           BlocProvider.of<PhysicianBloc>(context).add(AssignPatientEvent(AssignPatientData(
-                            physicianId: physicianId,
+                            physician: physician,
                             patientId: patientId,
-                            patients: patients,
                             isAssign: false,
                           )));
                         },

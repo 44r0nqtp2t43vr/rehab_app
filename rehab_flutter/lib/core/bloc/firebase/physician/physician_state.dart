@@ -4,15 +4,16 @@ import 'package:rehab_flutter/core/entities/physician.dart';
 abstract class PhysicianState extends Equatable {
   final Physician? currentPhysician;
   final String? errorMessage;
+  final dynamic data;
 
-  const PhysicianState({this.currentPhysician, this.errorMessage});
+  const PhysicianState({this.currentPhysician, this.errorMessage, this.data});
 
   @override
-  List<Object> get props => [currentPhysician!, errorMessage!];
+  List<Object> get props => [currentPhysician!, errorMessage!, data!];
 }
 
 class PhysicianNone extends PhysicianState {
-  const PhysicianNone({String? errorMessage}) : super(errorMessage: errorMessage);
+  const PhysicianNone({String? errorMessage, dynamic data}) : super(errorMessage: errorMessage, data: data);
 }
 
 class PhysicianLoading extends PhysicianState {
