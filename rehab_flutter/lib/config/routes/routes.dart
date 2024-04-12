@@ -21,6 +21,7 @@ import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/patter
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/pages/standard_therapy_screen/standard_therapy_screen.dart';
 import 'package:rehab_flutter/features/tab_profile/presentation/pages/edit_profile/edit_profile.dart';
+import 'package:rehab_flutter/features/tab_profile/presentation/pages/user_qr/user_qr.dart';
 import 'package:rehab_flutter/features/texture_therapy/presentation/pages/texture_therapy/texture_therapy.dart';
 import 'package:rehab_flutter/features/scrolling_textures/presentation/pages/scroll_textures/scroll_textures.dart';
 import 'package:rehab_flutter/features/testing/presentation/screens/testing_screen/testing_screen.dart';
@@ -52,15 +53,13 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(
-            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
 
       case '/Testing':
-        return _materialRoute(
-            TestingScreen(isPretest: settings.arguments as bool));
+        return _materialRoute(TestingScreen(isPretest: settings.arguments as bool));
 
       case '/PlayGame':
         return _materialRoute(PlayGame(
@@ -90,15 +89,16 @@ class AppRoutes {
         ));
 
       case '/StandardTherapy':
-        return _materialRoute(StandardTherapyScreen(
-            data: settings.arguments as StandardTherapyData));
+        return _materialRoute(StandardTherapyScreen(data: settings.arguments as StandardTherapyData));
 
       case '/PassiveTherapy':
-        return _materialRoute(
-            PassiveTherapyScreen(userId: settings.arguments as String));
+        return _materialRoute(PassiveTherapyScreen(userId: settings.arguments as String));
 
       case '/EditProfile':
         return _materialRoute(EditProfile(user: settings.arguments as AppUser));
+
+      case '/UserQR':
+        return _materialRoute(const UserQR());
 
       case '/PhysicianMain':
         return _materialRoute(const PhysicianMainScreen());

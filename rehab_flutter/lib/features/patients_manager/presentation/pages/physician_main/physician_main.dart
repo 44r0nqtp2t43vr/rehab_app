@@ -8,6 +8,7 @@ import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_dashboard/physician_dashboard.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_patients/physician_patients.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_profile/physician_profile.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -18,6 +19,8 @@ class PhysicianMainScreen extends StatelessWidget {
     switch (currentTab) {
       case TabEnum.home:
         return const PhysicianDashboard();
+      case TabEnum.activityMonitor:
+        return const PhysicianPatients();
       case TabEnum.profile:
         return PhysicianProfile(physician: currentPhysician);
       default:
@@ -72,6 +75,14 @@ class PhysicianMainScreen extends StatelessWidget {
                               ),
                               IconButton(
                                 icon: Icon(
+                                  CupertinoIcons.calendar,
+                                  size: 30,
+                                  color: currentTab == TabEnum.activityMonitor ? Colors.white : const Color(0XFF93aac9),
+                                ),
+                                onPressed: () => _onActivityButtonPressed(currentTab),
+                              ),
+                              IconButton(
+                                icon: Icon(
                                   currentTab == TabEnum.profile ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                   size: 30,
                                   color: currentTab == TabEnum.profile ? Colors.white : const Color(0XFF93aac9),
@@ -97,6 +108,12 @@ class PhysicianMainScreen extends StatelessWidget {
   void _onHomeButtonPressed(TabEnum currentTab) {
     if (currentTab != TabEnum.home) {
       sl<NavigationController>().setTab(TabEnum.home);
+    }
+  }
+
+  void _onActivityButtonPressed(TabEnum currentTab) {
+    if (currentTab != TabEnum.activityMonitor) {
+      sl<NavigationController>().setTab(TabEnum.activityMonitor);
     }
   }
 

@@ -59,6 +59,8 @@ dependencies:
   fl_chart: ^0.67.0
   firebase_storage: ^11.6.9
   firebase_app_check: ^0.2.1+17
+  mobile_scanner: ^4.0.1
+  pretty_qr_code: ^3.3.0
 
 
 dev_dependencies:

@@ -46,7 +46,7 @@ class PhysicianBloc extends Bloc<PhysicianEvent, PhysicianState> {
       final updatedPhysician = await _assignPatientUseCase(params: event.assignData);
       emit(PhysicianDone(currentPhysician: updatedPhysician));
     } catch (e) {
-      emit(PhysicianNone(errorMessage: e.toString()));
+      emit(PhysicianNone(errorMessage: e.toString(), data: event.assignData!.physician));
     }
   }
 

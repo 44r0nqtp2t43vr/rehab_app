@@ -165,7 +165,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
 
     await db.collection('users').doc(userID).set({
-      'physicianID': userID,
+      'userID': userID,
       'email': data.email,
       'firstName': data.firstName,
       'lastName': data.lastName,
@@ -366,10 +366,48 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<Physician> assignPatient(AssignPatientData data) async {
-    data.patients.add(data.patientId);
-    await db.collection('users').doc(data.physicianId).update({'patients': data.patients});
+    final List<String> currentPatients = data.physician.patients.map((user) => user.userId).toList();
 
-    final Physician user = await getUser(data.physicianId);
+    if (data.isAssign) {
+      final bool isValidInput = await doesPatientExist(data.patientId);
+      if (isValidInput && !currentPatients.contains(data.patientId)) {
+        currentPatients.add(data.patientId);
+      } else {
+        throw Exception();
+      }
+    } else {
+      if (currentPatients.contains(data.patientId)) {
+        currentPatients.removeWhere((patientId) => patientId == data.patientId);
+      } else {
+        throw Exception();
+      }
+    }
+
+    await db.collection('users').doc(data.physician.physicianId).update({'patients': currentPatients});
+
+    final Physician user = await getUser(data.physician.physicianId);
     return user;
+  }
+
+  @override
+  Future<bool> doesPatientExist(String userId) async {
+    final QuerySnapshot querySnapshot = await db.collection('users').get();
+    final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+
+    for (DocumentSnapshot document in documentSnapshots) {
+      // Get the data of the document as Map<String, dynamic>
+      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+
+      // Check if the document contains a user with the given userId
+      if (data != null && document.id == userId) {
+        // Check if the array attribute contains the searchString
+        final List<String> roles = data['roles'].cast<String>().toList();
+        if (roles.contains("patient")) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }

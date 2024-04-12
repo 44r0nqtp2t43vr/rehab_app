@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
@@ -94,6 +95,12 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.security,
                       text: "Privacy Policy",
                     ),
+                    const SizedBox(height: 20),
+                    ProfileButton(
+                      onTap: () => _onQRButtonPressed(context),
+                      icon: CupertinoIcons.qrcode,
+                      text: "QR Code",
+                    ),
                   ],
                 ),
               ),
@@ -153,6 +160,10 @@ class ProfileScreen extends StatelessWidget {
 
   void _onEditProfileButtonPressed(BuildContext context) {
     Navigator.of(context).pushNamed("/EditProfile", arguments: user);
+  }
+
+  void _onQRButtonPressed(BuildContext context) {
+    Navigator.of(context).pushNamed("/UserQR");
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
