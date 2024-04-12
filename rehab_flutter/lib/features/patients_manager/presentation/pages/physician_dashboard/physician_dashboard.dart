@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_list_card.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class PhysicianDashboard extends StatefulWidget {
   const PhysicianDashboard({super.key});
@@ -22,18 +23,9 @@ class _PhysicianDashboardState extends State<PhysicianDashboard> {
               padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               child: Column(
                 children: [
-                  state.currentPhysician!.patients.isEmpty
-                      ? const Text("You have no assigned patients", style: TextStyle(color: Colors.white))
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: state.currentPhysician!.patients.length,
-                          itemBuilder: (context, index) {
-                            // Get the current patient
-                            final patient = state.currentPhysician!.patients[index];
-                            // Display the patient's ID
-                            return PatientListCard(patient: patient);
-                          },
-                        ),
+                  WelcomeCard(
+                    userFirstName: state.currentPhysician!.firstName.capitalize!,
+                  ),
                 ],
               ),
             ),
