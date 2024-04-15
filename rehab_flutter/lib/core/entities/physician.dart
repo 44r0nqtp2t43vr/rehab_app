@@ -13,6 +13,7 @@ class Physician {
   final DateTime birthDate;
   final DateTime registerDate;
   final List<AppUser> patients;
+  final String? imageURL;
 
   Physician({
     required this.physicianId,
@@ -26,6 +27,7 @@ class Physician {
     required this.birthDate,
     required this.registerDate,
     required this.patients,
+    this.imageURL,
   });
 
   Map<String, dynamic> toMap() {
@@ -38,7 +40,8 @@ class Physician {
       'phoneNumber': phoneNumber,
       'city': city,
       'licenseNumber': licenseNumber,
-      'birthDate': Timestamp.fromDate(DateTime.utc(birthDate.year, birthDate.month, birthDate.day)),
+      'birthDate': Timestamp.fromDate(
+          DateTime.utc(birthDate.year, birthDate.month, birthDate.day)),
       'registerDate': Timestamp.fromDate(registerDate),
     };
   }

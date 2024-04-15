@@ -22,11 +22,14 @@ class _PhysicianDashboardState extends State<PhysicianDashboard> {
         return SingleChildScrollView(
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               child: Column(
                 children: [
                   WelcomeCard(
-                    userFirstName: state.currentPhysician!.firstName.capitalize!,
+                    userFirstName:
+                        state.currentPhysician!.firstName.capitalize!,
+                    userProfilePicture: state.currentPhysician!.imageURL,
                   ),
                   const SizedBox(height: 20),
                   Align(

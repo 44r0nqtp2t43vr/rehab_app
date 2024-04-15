@@ -43,12 +43,27 @@ class PhysicianProfile extends StatelessWidget {
             const SizedBox(height: 28),
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 34,
-                  // You can add an image here using backgroundImage property
-                  // For example:
-                  // backgroundImage: AssetImage('assets/avatar_image.png'),
+                  child: physician.imageURL != null
+                      ? ClipOval(
+                          child: Image.network(
+                          physician.imageURL!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ))
+                      : const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(
+                              CupertinoIcons.profile_circled,
+                              color: Colors.white,
+                              size: 60,
+                            ),
+                          ),
+                        ),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -83,10 +98,13 @@ class PhysicianProfile extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.all<Color>(
                         Colors.white,
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xff128BED)),
                       elevation: MaterialStateProperty.all<double>(0),
-                      shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                      shadowColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      overlayColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -161,11 +179,15 @@ class PhysicianProfile extends StatelessWidget {
                         foregroundColor: MaterialStateProperty.all<Color>(
                           Colors.white,
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
                         elevation: MaterialStateProperty.all<double>(0),
-                        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                        overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shadowColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -184,7 +206,8 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    Navigator.of(context).pushNamed("/EditPhysicianProfile", arguments: physician);
+    Navigator.of(context)
+        .pushNamed("/EditPhysicianProfile", arguments: physician);
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {
@@ -192,6 +215,7 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
-    BlocProvider.of<PhysicianBloc>(context).add(LogoutPhysicianEvent(physician));
+    BlocProvider.of<PhysicianBloc>(context)
+        .add(LogoutPhysicianEvent(physician));
   }
 }

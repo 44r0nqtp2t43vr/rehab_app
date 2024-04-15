@@ -73,6 +73,11 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         patients.add(patientUser);
       }
 
+      // Fetch the download URL of the profile image from Firebase Storage
+      String? imageURL = await _getPhysicianImageURL(userId);
+
+      print('AAAAAAAA: $imageURL');
+
       final currentPhysician = Physician(
         physicianId: userDoc.id,
         firstName: userDoc.data()!['firstName'],
@@ -85,6 +90,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
         registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
         patients: patients,
+        imageURL: imageURL,
       );
 
       return currentPhysician;
@@ -156,6 +162,18 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       return await userImageRef.getDownloadURL();
     } catch (e) {
       print('Error getting user image URL: $e');
+      return null;
+    }
+  }
+
+  Future<String?> _getPhysicianImageURL(String userId) async {
+    final storageRef = storage.ref();
+    final userImageRef = storageRef.child("images/$userId.jpg");
+    try {
+      //final downloadURL = await userImageRef.getDownloadURL();
+      return await userImageRef.getDownloadURL();
+    } catch (e) {
+      print('Error getting Physician image URL: $e');
       return null;
     }
   }
@@ -458,19 +476,23 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
     });
 
-    if (data.image != null) {
-      final storageRef = storage.ref();
-      final userImageRef = storageRef.child("images/${data.user.physicianId}.jpg");
-      await userImageRef.putFile(data.image!);
-    }
-
-    if (fieldsToUpdate.isNotEmpty) {
-      await db.collection('users').doc(data.user.physicianId).update(fieldsToUpdate);
-
+    if (data.image == null && fieldsToUpdate.isEmpty) {
+      return data.user;
+    } else {
+      if (data.image != null) {
+        final storageRef = storage.ref();
+        final userImageRef =
+            storageRef.child("images/${data.user.physicianId}.jpg");
+        await userImageRef.putFile(data.image!);
+      }
+      if (fieldsToUpdate.isNotEmpty) {
+        await db
+            .collection('users')
+            .doc(data.user.physicianId)
+            .update(fieldsToUpdate);
+      }
       final Physician user = await getUser(data.user.physicianId);
       return user;
-    } else {
-      return data.user;
     }
   }
 

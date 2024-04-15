@@ -28,19 +28,27 @@ class PatientListCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              backgroundColor: Color(0xffd1d1d1),
+            CircleAvatar(
+              backgroundColor: const Color(0xffd1d1d1),
               radius: 32,
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Icon(
-                    CupertinoIcons.profile_circled,
-                    color: Colors.white,
-                    size: 60,
-                  ),
-                ),
-              ),
+              child: patient.imageURL != null
+                  ? ClipOval(
+                      child: Image.network(
+                      patient.imageURL!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ))
+                  : const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(
+                          CupertinoIcons.profile_circled,
+                          color: Colors.white,
+                          size: 60,
+                        ),
+                      ),
+                    ),
             ),
             const SizedBox(width: 12),
             Expanded(
