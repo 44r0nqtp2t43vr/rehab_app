@@ -37,7 +37,8 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
 
   // Function to pick an image from gallery
   Future<void> _pickImage() async {
-    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       setState(() {
         _image = File(pickedImage.path);
@@ -62,7 +63,8 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
 
   void _editUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate =
+        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     EditPhysicianData editPhysicianData = EditPhysicianData(
@@ -78,7 +80,8 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
     );
 
     // Dispatch the event to the bloc
-    BlocProvider.of<PhysicianBloc>(context).add(EditPhysicianEvent(editPhysicianData));
+    BlocProvider.of<PhysicianBloc>(context)
+        .add(EditPhysicianEvent(editPhysicianData));
   }
 
   @override
@@ -86,7 +89,8 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
     _firstNameController.text = widget.user.firstName;
     _lastNameController.text = widget.user.lastName;
     _cityController.text = widget.user.city;
-    _birthdateController.text = DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
+    _birthdateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
     _phoneNumberController.text = widget.user.phoneNumber;
     _licenseNumberController.text = widget.user.licenseNumber;
     _currentGender = widget.user.gender;
@@ -96,7 +100,8 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PhysicianBloc, PhysicianState>(
-      listenWhen: (previous, current) => previous is PhysicianLoading && current is PhysicianDone,
+      listenWhen: (previous, current) =>
+          previous is PhysicianLoading && current is PhysicianDone,
       listener: (context, state) {
         if (state is PhysicianDone) {
           Navigator.of(context).pop();
@@ -104,7 +109,9 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
       },
       builder: (context, state) {
         if (state is PhysicianLoading) {
-          return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
+          return const Scaffold(
+              body: Center(
+                  child: CupertinoActivityIndicator(color: Colors.white)));
         }
         if (state is PhysicianDone) {
           return Scaffold(
@@ -149,8 +156,32 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
                           children: [
                             CircleAvatar(
                               backgroundColor: Colors.white,
-                              backgroundImage: _image != null ? FileImage(_image!) : null,
+                              backgroundImage:
+                                  _image != null ? FileImage(_image!) : null,
                               radius: 40,
+                              child: _image != null
+                                  ? ClipOval(
+                                      child: Image.file(
+                                        _image!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      ),
+                                    )
+                                  : state.currentPhysician!.imageURL != null
+                                      ? ClipOval(
+                                          child: Image.network(
+                                            state.currentPhysician!.imageURL!,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.account_circle,
+                                          size: 80,
+                                          color: Colors.grey,
+                                        ),
                             ),
                             const Positioned(
                               bottom: 0,
@@ -188,7 +219,8 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _firstNameController,
-                                      decoration: customInputDecoration.copyWith(
+                                      decoration:
+                                          customInputDecoration.copyWith(
                                         labelText: 'First Name',
                                         hintText: 'Enter your First Name',
                                       ),
@@ -204,7 +236,8 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _lastNameController,
-                                      decoration: customInputDecoration.copyWith(
+                                      decoration:
+                                          customInputDecoration.copyWith(
                                         labelText: 'Last Name',
                                         hintText: 'Enter your Last Name',
                                       ),
@@ -262,7 +295,9 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
                                     _currentGender = newValue!;
                                   });
                                 },
-                                items: _availableGenders.map<DropdownMenuItem<String>>((String value) {
+                                items: _availableGenders
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -339,14 +374,22 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
                                   }
                                 },
                                 style: ButtonStyle(
-                                  foregroundColor: MaterialStateProperty.all<Color>(
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
                                     Colors.white,
                                   ),
-                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  elevation: MaterialStateProperty.all<double>(0),
-                                  shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  elevation:
+                                      MaterialStateProperty.all<double>(0),
+                                  shadowColor: MaterialStateProperty.all<Color>(
+                                      Colors.transparent),
+                                  overlayColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),

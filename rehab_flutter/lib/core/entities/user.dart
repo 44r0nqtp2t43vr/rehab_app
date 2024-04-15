@@ -29,7 +29,7 @@ class AppUser {
     required this.birthDate,
     required this.conditions,
     required this.registerDate,
-    required this.imageURL,
+    this.imageURL,
     this.plans = const [], // Default empty list if not provided
   });
 
