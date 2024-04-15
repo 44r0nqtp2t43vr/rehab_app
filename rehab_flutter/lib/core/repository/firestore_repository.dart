@@ -256,7 +256,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     // Create the Plan object
     Plan plan = Plan(
-      planId: "plan",
+      planId: planDocumentName,
       planName: planDocumentName,
       startDate: startDate,
       endDate: endDate,
