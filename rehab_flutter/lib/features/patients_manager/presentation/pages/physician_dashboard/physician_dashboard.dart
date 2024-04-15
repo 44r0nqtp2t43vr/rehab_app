@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
@@ -26,6 +27,15 @@ class _PhysicianDashboardState extends State<PhysicianDashboard> {
                   WelcomeCard(
                     userFirstName: state.currentPhysician!.firstName.capitalize!,
                   ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Quick Numbers",
+                      style: darkTextTheme().displaySmall,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                 ],
               ),
             ),

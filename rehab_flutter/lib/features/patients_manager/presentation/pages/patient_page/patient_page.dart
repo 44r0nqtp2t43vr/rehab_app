@@ -10,6 +10,7 @@ import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plans_list.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_list.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
@@ -118,6 +119,24 @@ class _PatientPageState extends State<PatientPage> {
                     children: [
                       ProfileInfoCard(user: widget.patient),
                       const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Therapy Plans",
+                          style: darkTextTheme().displaySmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      PatientPlansList(patient: widget.patient),
+                      const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Today's Activity",
+                          style: darkTextTheme().displaySmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Expanded(
@@ -147,6 +166,14 @@ class _PatientPageState extends State<PatientPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Therapy Calendar",
+                          style: darkTextTheme().displaySmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Calendar(
                         dateColorsMap: dateColorsMap,
                         calendarFormat: _calendarFormat,
@@ -171,6 +198,20 @@ class _PatientPageState extends State<PatientPage> {
                           context,
                           state.currentPhysician!,
                           widget.patient.userId,
+                        ),
+                        style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white,
+                          ),
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
+                          elevation: MaterialStateProperty.all<double>(0),
+                          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                         ),
                         child: const Text("Unassign"),
                       ),

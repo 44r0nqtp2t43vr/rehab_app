@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
@@ -25,6 +26,7 @@ class PatientListCard extends StatelessWidget {
           border: Border.all(color: Colors.white),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const CircleAvatar(
               backgroundColor: Color(0xffd1d1d1),
@@ -45,71 +47,106 @@ class PatientListCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 64,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${patient.firstName.capitalize!} ${patient.lastName.capitalize!}",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontFamily: 'Sailec Bold',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                patient.email,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: darkTextTheme().headlineSmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Daily",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Light',
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "${currentSession == null ? 0 : currentSession.getSessionPercentCompletion().toStringAsFixed(0)}",
+                              style: const TextStyle(
+                                fontFamily: 'Sailec Bold',
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Overall",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Light',
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
+                              style: const TextStyle(
+                                fontFamily: 'Sailec Bold',
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   Text(
-                    "${patient.firstName.capitalize!} ${patient.lastName.capitalize!}",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    "Current Plan: ${currentPlan == null ? "None" : "${DateFormat('MMMM dd, yyyy').format(currentPlan.startDate)}-${DateFormat('MMMM dd, yyyy').format(currentPlan.endDate)} - Plan #${patient.plans.indexWhere((plan) => plan.startDate.month == currentPlan.startDate.month && plan.startDate.day == currentPlan.startDate.day && plan.startDate.year == currentPlan.startDate.year) + 1}"}",
                     style: const TextStyle(
-                      fontFamily: 'Sailec Bold',
-                      fontSize: 18,
+                      fontFamily: 'Sailec Light',
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                   Text(
-                    patient.email,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: darkTextTheme().headlineSmall,
+                    "Current Session: ${currentSession == null ? "None" : "${DateFormat('MMMM dd, yyyy').format(currentSession.date)} - ${currentPlan!.sessions.indexWhere((session) => session.date.month == currentSession.date.month && session.date.day == currentSession.date.day && session.date.year == currentSession.date.year) + 1}/${currentPlan.sessions.length}"}",
+                    style: const TextStyle(
+                      fontFamily: 'Sailec Light',
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              children: [
-                const Text(
-                  "Daily",
-                  style: TextStyle(
-                    fontFamily: 'Sailec Light',
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  "${currentSession == null ? 0 : currentSession.getSessionPercentCompletion().toStringAsFixed(0)}",
-                  style: const TextStyle(
-                    fontFamily: 'Sailec Bold',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 12),
-            Column(
-              children: [
-                const Text(
-                  "Overall",
-                  style: TextStyle(
-                    fontFamily: 'Sailec Light',
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
-                  style: const TextStyle(
-                    fontFamily: 'Sailec Bold',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
           ],
         ),

@@ -2,38 +2,36 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
 import 'package:rehab_flutter/core/data_sources/registration_provider.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
-import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
+import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/edit_physician_data.dart';
 
-class EditProfile extends StatefulWidget {
-  final AppUser user;
+class EditPhysicianProfile extends StatefulWidget {
+  final Physician user;
 
-  const EditProfile({super.key, required this.user});
+  const EditPhysicianProfile({super.key, required this.user});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  State<EditPhysicianProfile> createState() => _EditPhysicianProfileState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _cityController = TextEditingController();
   final _birthdateController = TextEditingController();
   final _phoneNumberController = TextEditingController();
+  final _licenseNumberController = TextEditingController();
   final List<String> _availableGenders = availableGenders;
-  List<String> _selectedConditions = [];
-  String _currentCondition = availableConditions[0];
   String? _currentGender;
   File? _image;
 
@@ -62,39 +60,25 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-  void _addCondition() {
-    if (!_selectedConditions.contains(_currentCondition)) {
-      setState(() {
-        _selectedConditions.add(_currentCondition);
-      });
-    }
-  }
-
-  void _removeCondition(String condition) {
-    setState(() {
-      _selectedConditions.remove(condition);
-    });
-  }
-
   void _editUser() {
     // Convert the birthdate from String to DateTime
     DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
-    EditUserData editUserData = EditUserData(
+    EditPhysicianData editPhysicianData = EditPhysicianData(
       user: widget.user,
       image: _image,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
       phoneNumber: _phoneNumberController.text,
+      licenseNumber: _licenseNumberController.text,
       city: _cityController.text,
       gender: _currentGender!,
       birthDate: birthdate,
-      conditions: _selectedConditions,
     );
 
     // Dispatch the event to the bloc
-    BlocProvider.of<UserBloc>(context).add(EditUserEvent(editUserData));
+    BlocProvider.of<PhysicianBloc>(context).add(EditPhysicianEvent(editPhysicianData));
   }
 
   @override
@@ -104,25 +88,25 @@ class _EditProfileState extends State<EditProfile> {
     _cityController.text = widget.user.city;
     _birthdateController.text = DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
     _phoneNumberController.text = widget.user.phoneNumber;
+    _licenseNumberController.text = widget.user.licenseNumber;
     _currentGender = widget.user.gender;
-    _selectedConditions = List.from(widget.user.conditions);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UserBloc, UserState>(
-      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
+    return BlocConsumer<PhysicianBloc, PhysicianState>(
+      listenWhen: (previous, current) => previous is PhysicianLoading && current is PhysicianDone,
       listener: (context, state) {
-        if (state is UserDone) {
+        if (state is PhysicianDone) {
           Navigator.of(context).pop();
         }
       },
       builder: (context, state) {
-        if (state is UserLoading) {
+        if (state is PhysicianLoading) {
           return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
         }
-        if (state is UserDone) {
+        if (state is PhysicianDone) {
           return Scaffold(
             appBar: AppBar(
               centerTitle: false,
@@ -167,29 +151,6 @@ class _EditProfileState extends State<EditProfile> {
                               backgroundColor: Colors.white,
                               backgroundImage: _image != null ? FileImage(_image!) : null,
                               radius: 40,
-                              child: _image != null
-                                  ? ClipOval(
-                                      child: Image.file(
-                                        _image!,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                      ),
-                                    )
-                                  : state.currentUser!.imageURL != null
-                                      ? ClipOval(
-                                          child: Image.network(
-                                            state.currentUser!.imageURL!,
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.account_circle,
-                                          size: 80,
-                                          color: Colors.grey,
-                                        ),
                             ),
                             const Positioned(
                               bottom: 0,
@@ -329,41 +290,18 @@ class _EditProfileState extends State<EditProfile> {
                                 },
                               ),
                               const SizedBox(height: 16),
-                              DropdownButtonFormField<String>(
-                                value: _currentCondition,
+                              TextFormField(
+                                controller: _licenseNumberController,
                                 decoration: customInputDecoration.copyWith(
-                                  labelText: 'Select Condition',
+                                  labelText: 'License Number',
+                                  hintText: 'Enter your License Number',
                                 ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _currentCondition = newValue!;
-                                  });
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your license number';
+                                  }
+                                  return null;
                                 },
-                                items: availableConditions.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                              const SizedBox(height: 8),
-                              Theme(
-                                data: smallIconButtonTheme,
-                                child: IconButton(
-                                  onPressed: _addCondition,
-                                  icon: const Icon(Icons.add),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Wrap(
-                                spacing: 8.0,
-                                runSpacing: 4.0,
-                                children: _selectedConditions
-                                    .map((condition) => Chip(
-                                          label: Text(condition),
-                                          onDeleted: () => _removeCondition(condition),
-                                        ))
-                                    .toList(),
                               ),
                             ],
                           ),

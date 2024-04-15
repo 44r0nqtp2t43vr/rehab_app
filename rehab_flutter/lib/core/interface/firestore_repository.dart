@@ -5,6 +5,7 @@ import 'package:rehab_flutter/features/login_register/domain/entities/login_data
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_physician_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/edit_physician_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -25,6 +26,7 @@ abstract class FirebaseRepository {
   Future<dynamic> loginUser(LoginData data);
   Future<void> logoutUser();
   Future<AppUser> editUser(EditUserData data);
+  Future<Physician> editPhysician(EditPhysicianData data);
   Future<Physician> assignPatient(AssignPatientData data);
   Future<bool> doesPatientExist(String userId);
 }

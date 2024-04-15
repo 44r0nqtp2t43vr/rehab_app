@@ -114,6 +114,18 @@ class PhysicianProfile extends StatelessWidget {
                       icon: CupertinoIcons.person_fill,
                       text: "Assign Patients",
                     ),
+                    const SizedBox(height: 20),
+                    ProfileButton(
+                      onTap: () {},
+                      icon: Icons.assignment,
+                      text: "Terms of Services",
+                    ),
+                    const SizedBox(height: 20),
+                    ProfileButton(
+                      onTap: () {},
+                      icon: Icons.security,
+                      text: "Privacy Policy",
+                    ),
                   ],
                 ),
               ),
@@ -172,7 +184,7 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    // Navigator.of(context).pushNamed("/EditProfile", arguments: user);
+    Navigator.of(context).pushNamed("/EditPhysicianProfile", arguments: physician);
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {
