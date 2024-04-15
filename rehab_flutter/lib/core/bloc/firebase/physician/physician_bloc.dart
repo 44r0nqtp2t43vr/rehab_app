@@ -2,23 +2,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
 import 'package:rehab_flutter/core/usecases/firebase/assign_patient.dart';
+import 'package:rehab_flutter/core/usecases/firebase/edit_physician.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_physician.dart';
 
 class PhysicianBloc extends Bloc<PhysicianEvent, PhysicianState> {
   final RegisterPhysicianUseCase _registerPhysicianUseCase;
   final AssignPatientUseCase _assignPatientUseCase;
+  final EditPhysicianUseCase _editPhysicianUseCase;
   final LogoutUserUseCase _logoutUserUseCase;
 
   PhysicianBloc(
     this._registerPhysicianUseCase,
     this._assignPatientUseCase,
+    this._editPhysicianUseCase,
     this._logoutUserUseCase,
   ) : super(const PhysicianNone()) {
     on<ResetPhysicianEvent>(onResetPhysician);
     on<GetPhysicianEvent>(onGetPhysician);
     on<RegisterPhysicianEvent>(onRegisterPhysician);
     on<AssignPatientEvent>(onAssignPatient);
+    on<EditPhysicianEvent>(onEditPhysician);
     on<LogoutPhysicianEvent>(onLogoutPhysician);
   }
 
@@ -47,6 +51,16 @@ class PhysicianBloc extends Bloc<PhysicianEvent, PhysicianState> {
       emit(PhysicianDone(currentPhysician: updatedPhysician));
     } catch (e) {
       emit(PhysicianNone(errorMessage: e.toString(), data: event.assignData!.physician));
+    }
+  }
+
+  void onEditPhysician(EditPhysicianEvent event, Emitter<PhysicianState> emit) async {
+    emit(const PhysicianLoading());
+    try {
+      final updatedPhysician = await _editPhysicianUseCase(params: event.editData);
+      emit(PhysicianDone(currentPhysician: updatedPhysician));
+    } catch (e) {
+      emit(PhysicianNone(errorMessage: e.toString(), data: event.editData!.user));
     }
   }
 

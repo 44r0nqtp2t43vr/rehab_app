@@ -13,6 +13,7 @@ import 'package:rehab_flutter/features/login_register/domain/entities/login_data
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_physician_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/edit_physician_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -358,6 +359,36 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       await db.collection('users').doc(data.user.userId).update(fieldsToUpdate);
 
       final AppUser user = await getUser(data.user.userId);
+      return user;
+    } else {
+      return data.user;
+    }
+  }
+
+  @override
+  Future<Physician> editPhysician(EditPhysicianData data) async {
+    // Create a map to store the fields that need to be updated
+    Map<String, dynamic> oldFields = data.user.toMap();
+    Map<String, dynamic> newFields = data.toMap();
+    Map<String, dynamic> fieldsToUpdate = {};
+
+    // Compare the new data with the existing data
+    newFields.forEach((key, value) {
+      if (oldFields[key] != value) {
+        fieldsToUpdate[key] = value;
+      }
+    });
+
+    if (data.image != null) {
+      final storageRef = storage.ref();
+      final userImageRef = storageRef.child("images/${data.user.physicianId}.jpg");
+      await userImageRef.putFile(data.image!);
+    }
+
+    if (fieldsToUpdate.isNotEmpty) {
+      await db.collection('users').doc(data.user.physicianId).update(fieldsToUpdate);
+
+      final Physician user = await getUser(data.user.physicianId);
       return user;
     } else {
       return data.user;

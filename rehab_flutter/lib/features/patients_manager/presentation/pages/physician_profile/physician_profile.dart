@@ -172,7 +172,7 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    // Navigator.of(context).pushNamed("/EditProfile", arguments: user);
+    Navigator.of(context).pushNamed("/EditPhysicianProfile", arguments: physician);
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {

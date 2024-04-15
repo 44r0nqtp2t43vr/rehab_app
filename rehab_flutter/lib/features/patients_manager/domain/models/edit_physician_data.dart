@@ -1,45 +1,40 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
+import 'dart:io';
 
-class Physician {
-  final String physicianId;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rehab_flutter/core/entities/physician.dart';
+
+class EditPhysicianData {
+  final Physician user;
+  final File? image;
   final String firstName;
   final String lastName;
-  final String gender;
-  final String email;
-  final String phoneNumber;
-  final String city;
-  final String licenseNumber;
   final DateTime birthDate;
-  final DateTime registerDate;
-  final List<AppUser> patients;
+  final String gender;
+  final String phoneNumber;
+  final String licenseNumber;
+  final String city;
 
-  Physician({
-    required this.physicianId,
+  EditPhysicianData({
+    required this.user,
+    this.image,
     required this.firstName,
     required this.lastName,
-    required this.gender,
-    required this.email,
-    required this.phoneNumber,
-    required this.city,
-    required this.licenseNumber,
     required this.birthDate,
-    required this.registerDate,
-    required this.patients,
+    required this.gender,
+    required this.phoneNumber,
+    required this.licenseNumber,
+    required this.city,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'userId': physicianId,
       'firstName': firstName,
       'lastName': lastName,
       'gender': gender,
-      'email': email,
       'phoneNumber': phoneNumber,
-      'city': city,
       'licenseNumber': licenseNumber,
+      'city': city,
       'birthDate': Timestamp.fromDate(DateTime.utc(birthDate.year, birthDate.month, birthDate.day)),
-      'registerDate': Timestamp.fromDate(registerDate),
     };
   }
 }
