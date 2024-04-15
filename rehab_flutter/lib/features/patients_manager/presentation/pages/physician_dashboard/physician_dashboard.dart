@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/physician_numbers.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class PhysicianDashboard extends StatefulWidget {
@@ -31,11 +32,12 @@ class _PhysicianDashboardState extends State<PhysicianDashboard> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Quick Numbers",
+                      "Patient Statistics",
                       style: darkTextTheme().displaySmall,
                     ),
                   ),
                   const SizedBox(height: 8),
+                  PhysicianNumbers(physician: state.currentPhysician!),
                 ],
               ),
             ),
