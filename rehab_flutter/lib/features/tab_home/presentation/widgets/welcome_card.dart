@@ -38,7 +38,13 @@ class WelcomeCard extends StatelessWidget {
             backgroundColor: const Color(0xffd1d1d1),
             radius: 32,
             child: userProfilePicture != null
-                ? Image.asset(userProfilePicture!)
+                ? ClipOval(
+                    child: Image.network(
+                    userProfilePicture!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ))
                 : const Center(
                     child: Padding(
                       padding: EdgeInsets.all(4),
