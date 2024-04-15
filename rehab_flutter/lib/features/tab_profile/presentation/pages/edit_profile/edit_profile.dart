@@ -170,9 +170,36 @@ class _EditProfileState extends State<EditProfile> {
                           children: [
                             CircleAvatar(
                               backgroundColor: Colors.white,
-                              backgroundImage:
-                                  _image != null ? FileImage(_image!) : null,
+                              // backgroundImage: _image != null
+                              //     ? FileImage(_image!)
+                              //     : state.currentUser!.imageURL != null
+                              //         ? (state.currentUser!.imageURL!)
+                              //             as ImageProvider<Object>
+                              //         : null,
                               radius: 40,
+                              child: _image != null
+                                  ? ClipOval(
+                                      child: Image.file(
+                                        _image!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      ),
+                                    )
+                                  : state.currentUser!.imageURL != null
+                                      ? ClipOval(
+                                          child: Image.network(
+                                            state.currentUser!.imageURL!,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.account_circle,
+                                          size: 80,
+                                          color: Colors.grey,
+                                        ),
                             ),
                             const Positioned(
                               bottom: 0,

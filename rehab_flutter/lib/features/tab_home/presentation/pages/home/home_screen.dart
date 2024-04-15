@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     WelcomeCard(
                       userFirstName: state.currentUser!.firstName,
+                      userProfilePicture: state.currentUser!.imageURL,
                     ),
                     const SizedBox(height: 20),
                     ContinueCard(

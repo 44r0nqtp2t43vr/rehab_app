@@ -52,10 +52,13 @@ class ProfileScreen extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.all<Color>(
                         Colors.white,
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xff128BED)),
                       elevation: MaterialStateProperty.all<double>(0),
-                      shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                      shadowColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      overlayColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -136,11 +139,15 @@ class ProfileScreen extends StatelessWidget {
                         foregroundColor: MaterialStateProperty.all<Color>(
                           Colors.white,
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
                         elevation: MaterialStateProperty.all<double>(0),
-                        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                        overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shadowColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
