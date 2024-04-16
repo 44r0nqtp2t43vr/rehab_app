@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
 class Physician {
@@ -40,9 +41,12 @@ class Physician {
       'phoneNumber': phoneNumber,
       'city': city,
       'licenseNumber': licenseNumber,
-      'birthDate': Timestamp.fromDate(
-          DateTime.utc(birthDate.year, birthDate.month, birthDate.day)),
+      'birthDate': Timestamp.fromDate(DateTime.utc(birthDate.year, birthDate.month, birthDate.day)),
       'registerDate': Timestamp.fromDate(registerDate),
     };
+  }
+
+  String getUserFullName() {
+    return "${firstName.capitalize!} ${lastName.capitalize!}";
   }
 }
