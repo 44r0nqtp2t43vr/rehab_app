@@ -259,6 +259,44 @@ InputDecoration customInputDecoration = InputDecoration(
   contentPadding: const EdgeInsets.all(15.0),
 );
 
+InputDecoration customDropdownDecoration = InputDecoration(
+  labelStyle: const TextStyle(
+    color: Color(0XFFD1D1D1),
+  ),
+  hintStyle: const TextStyle(
+    color: Color(0XFFD1D1D1),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Color(0XFFd1d1d1), width: 2),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Color(0XFF275492), width: 2),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(
+      color: Colors.red,
+      width: 2,
+    ),
+  ),
+  errorStyle: const TextStyle(
+    color: Colors.red,
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(
+      color: Colors.red,
+      width: 2,
+    ),
+  ),
+  filled: true,
+  fillColor: Colors.white,
+  contentPadding: const EdgeInsets.all(15.0),
+  floatingLabelBehavior: FloatingLabelBehavior.never,
+);
+
 Widget cuButton({
   required BuildContext context,
   required VoidCallback onPressed,
