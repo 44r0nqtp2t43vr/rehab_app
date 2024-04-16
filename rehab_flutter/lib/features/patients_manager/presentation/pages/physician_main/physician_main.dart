@@ -20,7 +20,7 @@ class PhysicianMainScreen extends StatelessWidget {
       case TabEnum.home:
         return const PhysicianDashboard();
       case TabEnum.activityMonitor:
-        return const PhysicianPatients();
+        return PhysicianPatients(patients: currentPhysician.patients);
       case TabEnum.profile:
         return PhysicianProfile(physician: currentPhysician);
       default:
