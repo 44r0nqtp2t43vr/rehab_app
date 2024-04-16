@@ -71,7 +71,7 @@ class PhysicianProfile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${physician.firstName.capitalize!} ${physician.lastName.capitalize!}",
+                        physician.getUserFullName(),
                         style: const TextStyle(
                           fontFamily: 'Sailec Bold',
                           fontSize: 18,
