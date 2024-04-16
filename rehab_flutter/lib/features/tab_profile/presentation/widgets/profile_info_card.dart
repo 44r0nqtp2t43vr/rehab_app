@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,12 +19,23 @@ class ProfileInfoCard extends StatelessWidget {
           radius: 34,
           child: user.imageURL != null
               ? ClipOval(
-                  child: Image.network(
-                  '${user.imageURL!}&cache=${DateTime.now().millisecondsSinceEpoch}',
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ))
+                  child: CachedNetworkImage(
+                    imageUrl: user.imageURL!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
+                  //   Image.network(
+                  //   '${user.imageURL!}&cache=${DateTime.now().millisecondsSinceEpoch}',
+                  //   fit: BoxFit.cover,
+                  //   width: double.infinity,
+                  //   height: double.infinity,
+                  // ),
+                )
               : const Center(
                   child: Padding(
                     padding: EdgeInsets.all(4),
@@ -34,9 +46,6 @@ class ProfileInfoCard extends StatelessWidget {
                     ),
                   ),
                 ),
-          // You can add an image here using backgroundImage property
-          // For example:
-          // backgroundImage: AssetImage('assets/avatar_image.png'),
         ),
         const SizedBox(width: 20),
         Expanded(
