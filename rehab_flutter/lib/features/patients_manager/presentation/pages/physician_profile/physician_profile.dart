@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,12 +48,23 @@ class PhysicianProfile extends StatelessWidget {
                   radius: 34,
                   child: physician.imageURL != null
                       ? ClipOval(
-                          child: Image.network(
-                          physician.imageURL!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ))
+                          child: CachedNetworkImage(
+                            imageUrl: physician.imageURL!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),
+                          //   Image.network(
+                          //   physician.imageURL!,
+                          //   fit: BoxFit.cover,
+                          //   width: double.infinity,
+                          //   height: double.infinity,
+                          // ),
+                        )
                       : const Center(
                           child: Padding(
                             padding: EdgeInsets.all(4),
@@ -97,10 +109,13 @@ class PhysicianProfile extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.all<Color>(
                         Colors.white,
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xff128BED)),
                       elevation: MaterialStateProperty.all<double>(0),
-                      shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                      shadowColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      overlayColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -175,11 +190,15 @@ class PhysicianProfile extends StatelessWidget {
                         foregroundColor: MaterialStateProperty.all<Color>(
                           Colors.white,
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
                         elevation: MaterialStateProperty.all<double>(0),
-                        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                        overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shadowColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -198,7 +217,8 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    Navigator.of(context).pushNamed("/EditPhysicianProfile", arguments: physician);
+    Navigator.of(context)
+        .pushNamed("/EditPhysicianProfile", arguments: physician);
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {
@@ -206,6 +226,7 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
-    BlocProvider.of<PhysicianBloc>(context).add(LogoutPhysicianEvent(physician));
+    BlocProvider.of<PhysicianBloc>(context)
+        .add(LogoutPhysicianEvent(physician));
   }
 }
