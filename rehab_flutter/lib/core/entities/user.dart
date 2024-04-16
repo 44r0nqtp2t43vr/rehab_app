@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
@@ -42,8 +43,7 @@ class AppUser {
       'email': email,
       'phoneNumber': phoneNumber,
       'city': city,
-      'birthDate': Timestamp.fromDate(
-          DateTime.utc(birthDate.year, birthDate.month, birthDate.day)),
+      'birthDate': Timestamp.fromDate(DateTime.utc(birthDate.year, birthDate.month, birthDate.day)),
       'conditions': conditions,
       'registerDate': Timestamp.fromDate(registerDate),
     };
@@ -53,12 +53,14 @@ class AppUser {
     return userId;
   }
 
+  String getUserFullName() {
+    return "${firstName.capitalize!} ${lastName.capitalize!}";
+  }
+
   Plan? getCurrentPlan() {
     final DateTime today = DateTime.now();
     final Plan currentPlan = plans.lastWhere(
-      (plan) =>
-          DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day)
-              .isAfter(today),
+      (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
       orElse: () => Plan.empty(),
     );
     return currentPlan.planId.isEmpty ? null : currentPlan;
@@ -71,10 +73,7 @@ class AppUser {
       return null;
     } else {
       final Session currentSession = currentPlan.sessions.firstWhere(
-        (session) =>
-            session.date.year == today.year &&
-            session.date.month == today.month &&
-            session.date.day == today.day,
+        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
         orElse: () => Session.empty(),
       );
       return currentSession.sessionId.isEmpty ? null : currentSession;
@@ -90,20 +89,12 @@ class AppUser {
     List<Session> sessions = getAllSessionsFromAllPlans();
 
     for (var sesh in sessions) {
-      final String dateString =
-          "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
       final List<bool> conditions = sesh.getSessionConditions();
 
-      if (conditions[0] &&
-          conditions[1] &&
-          conditions[2] &&
-          conditions[3] &&
-          conditions[4]) {
+      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
         dateColorsMap[dateString] = heatmap5;
-      } else if (conditions[0] &&
-          conditions[1] &&
-          conditions[2] &&
-          conditions[3]) {
+      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
         dateColorsMap[dateString] = heatmap4;
       } else if (conditions[0] && conditions[1] && conditions[2]) {
         dateColorsMap[dateString] = heatmap3;
