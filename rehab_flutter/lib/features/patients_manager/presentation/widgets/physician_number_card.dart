@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/config/theme/app_themes.dart';
 
 class PhysicianNumberCard extends StatelessWidget {
   final int number;
   final String label;
 
-  const PhysicianNumberCard({super.key, required this.number, required this.label});
+  const PhysicianNumberCard(
+      {super.key, required this.number, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
+        color: const Color(0xff128BED),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white),
       ),
       child: Column(
         children: [
@@ -23,7 +23,11 @@ class PhysicianNumberCard extends StatelessWidget {
               child: Text(
                 "$number",
                 textAlign: TextAlign.end,
-                style: darkTextTheme().headlineLarge,
+                style: const TextStyle(
+                  fontFamily: 'Sailec Bold',
+                  fontSize: 40,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -31,7 +35,11 @@ class PhysicianNumberCard extends StatelessWidget {
             child: Text(
               label,
               textAlign: TextAlign.center,
-              style: darkTextTheme().headlineSmall,
+              style: const TextStyle(
+                fontFamily: 'Sailec Light',
+                fontSize: 12,
+                color: Colors.white,
+              ),
             ),
           ),
         ],

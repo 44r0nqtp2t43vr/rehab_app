@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
@@ -41,55 +43,87 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 240,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: Colors.white),
+    return GlassContainer(
+      shadowStrength: 2,
+      shadowColor: Colors.black,
+      blur: 4,
+      color: Colors.white.withOpacity(0.25),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 240,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  top: 24, right: 24, bottom: 20, left: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: buildLineChartOrText(_patient),
+                  ),
+                ],
+              ),
+            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 0, right: 24, bottom: 24, left: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: buildLineChartOrText(_patient),
+                const SizedBox(height: 8),
+                const Text(
+                  "Sort by Type:",
+                  style: TextStyle(
+                    fontFamily: 'Sailec Medium',
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                DropdownButtonFormField<String>(
+                  value: _currentType,
+                  decoration: customDropdownDecoration.copyWith(
+                    labelText: 'Type',
+                  ),
+                  onChanged: _onTypeDropdownSelect,
+                  items: _availableTypes
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Sort by Patient Name:",
+                  style: TextStyle(
+                    fontFamily: 'Sailec Medium',
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                DropdownButtonFormField<AppUser>(
+                  value: _patient,
+                  decoration: customDropdownDecoration.copyWith(
+                    labelText: 'Patient',
+                  ),
+                  onChanged: _onPatientDropdownSelect,
+                  items: widget.patients
+                      .map<DropdownMenuItem<AppUser>>((AppUser patient) {
+                    return DropdownMenuItem<AppUser>(
+                      value: patient,
+                      child: Text(patient.getUserFullName()),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          value: _currentType,
-          decoration: customInputDecoration.copyWith(
-            labelText: 'Type',
-          ),
-          onChanged: _onTypeDropdownSelect,
-          items: _availableTypes.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<AppUser>(
-          value: _patient,
-          decoration: customInputDecoration.copyWith(
-            labelText: 'Patient',
-          ),
-          onChanged: _onPatientDropdownSelect,
-          items: widget.patients.map<DropdownMenuItem<AppUser>>((AppUser patient) {
-            return DropdownMenuItem<AppUser>(
-              value: patient,
-              child: Text(patient.getUserFullName()),
-            );
-          }).toList(),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -122,7 +156,9 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(formatter.format(today.subtract(Duration(days: 4 - valueInt))), style: style),
+      child: Text(
+          formatter.format(today.subtract(Duration(days: 4 - valueInt))),
+          style: style),
     );
   }
 
@@ -137,7 +173,10 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
       for (int i = 0; i < 5; i++) {
         DateTime date = today.subtract(Duration(days: i));
         Session? session = allSessions.firstWhere(
-          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
+          (session) =>
+              session.date.year == date.year &&
+              session.date.month == date.month &&
+              session.date.day == date.day,
           orElse: () => Session.empty(),
         );
 
@@ -148,7 +187,8 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
         }
       }
 
-      double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
+      double currentPostTestScore =
+          user.getCurrentSession()?.posttestScore ?? 0;
       previousPostTestScores[4] = currentPostTestScore;
 
       for (int i = 0; i < previousPostTestScores.length; i++) {
@@ -160,7 +200,10 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
       for (int i = 0; i < 5; i++) {
         DateTime date = today.subtract(Duration(days: i));
         Session? session = allSessions.firstWhere(
-          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
+          (session) =>
+              session.date.year == date.year &&
+              session.date.month == date.month &&
+              session.date.day == date.day,
           orElse: () => Session.empty(),
         );
 
@@ -175,6 +218,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
     }
 
     return LineChartData(
+      backgroundColor: const Color(0xff275492),
       minY: 0,
       maxY: 100,
       titlesData: FlTitlesData(
@@ -217,8 +261,28 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
           ),
         ),
       ),
-      gridData: const FlGridData(show: false),
-      borderData: FlBorderData(show: false),
+      gridData: FlGridData(
+        show: true,
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.white.withOpacity(0.3),
+            strokeWidth: 1,
+          );
+        },
+        getDrawingVerticalLine: (value) {
+          return FlLine(
+            color: Colors.white.withOpacity(0.3),
+            strokeWidth: 1,
+          );
+        },
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: Colors.white,
+          width: 1,
+        ),
+      ),
       lineBarsData: [
         LineChartBarData(
           spots: dataPoints,
