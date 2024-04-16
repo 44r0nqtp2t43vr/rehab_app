@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -170,11 +171,17 @@ class _EditPhysicianProfileState extends State<EditPhysicianProfile> {
                                     )
                                   : state.currentPhysician!.imageURL != null
                                       ? ClipOval(
-                                          child: Image.network(
-                                            state.currentPhysician!.imageURL!,
+                                          child: CachedNetworkImage(
+                                            imageUrl: state
+                                                .currentPhysician!.imageURL!,
                                             fit: BoxFit.cover,
                                             width: double.infinity,
                                             height: double.infinity,
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
                                           ),
                                         )
                                       : const Icon(
