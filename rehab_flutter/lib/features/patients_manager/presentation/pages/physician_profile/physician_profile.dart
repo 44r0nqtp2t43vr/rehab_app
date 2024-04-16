@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
@@ -83,7 +82,7 @@ class PhysicianProfile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${physician.firstName.capitalize!} ${physician.lastName.capitalize!}",
+                        physician.getUserFullName(),
                         style: const TextStyle(
                           fontFamily: 'Sailec Bold',
                           fontSize: 18,
@@ -110,13 +109,10 @@ class PhysicianProfile extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.all<Color>(
                         Colors.white,
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xff128BED)),
+                      backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
                       elevation: MaterialStateProperty.all<double>(0),
-                      shadowColor:
-                          MaterialStateProperty.all<Color>(Colors.transparent),
-                      overlayColor:
-                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -191,15 +187,11 @@ class PhysicianProfile extends StatelessWidget {
                         foregroundColor: MaterialStateProperty.all<Color>(
                           Colors.white,
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
                         elevation: MaterialStateProperty.all<double>(0),
-                        shadowColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        overlayColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -218,8 +210,7 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    Navigator.of(context)
-        .pushNamed("/EditPhysicianProfile", arguments: physician);
+    Navigator.of(context).pushNamed("/EditPhysicianProfile", arguments: physician);
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {
@@ -227,7 +218,6 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
-    BlocProvider.of<PhysicianBloc>(context)
-        .add(LogoutPhysicianEvent(physician));
+    BlocProvider.of<PhysicianBloc>(context).add(LogoutPhysicianEvent(physician));
   }
 }

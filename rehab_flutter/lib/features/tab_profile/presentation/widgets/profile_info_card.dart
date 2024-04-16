@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
@@ -53,7 +52,7 @@ class ProfileInfoCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${user.firstName.capitalize!} ${user.lastName.capitalize!}",
+                user.getUserFullName(),
                 style: const TextStyle(
                   fontFamily: 'Sailec Bold',
                   fontSize: 18,
