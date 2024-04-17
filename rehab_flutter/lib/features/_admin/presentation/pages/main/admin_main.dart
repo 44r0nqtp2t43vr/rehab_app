@@ -36,7 +36,12 @@ class AdminMainScreen extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    return BlocBuilder<AdminBloc, AdminState>(
+    return BlocConsumer<AdminBloc, AdminState>(
+      listener: (BuildContext context, AdminState state) {
+        if (state is AdminNone) {
+          Navigator.of(context).pushReplacementNamed("/Login");
+        }
+      },
       builder: (context, state) {
         if (state is AdminLoading) {
           return const Center(child: CupertinoActivityIndicator(color: Colors.white));
