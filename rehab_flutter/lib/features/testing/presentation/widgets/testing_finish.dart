@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
@@ -85,8 +86,14 @@ class _TestingFinishState extends State<TestingFinish> {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Center(
-              child: CupertinoActivityIndicator(color: Colors.white));
+          return Center(
+            child: Lottie.asset(
+              'assets/lotties/uploading.json',
+              width: 400,
+              height: 400,
+            ),
+            //CupertinoActivityIndicator(color: Colors.white),
+          );
         }
         if (state is UserDone) {
           return SafeArea(
