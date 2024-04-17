@@ -1,4 +1,4 @@
-class RegisterPhysicianData {
+class RegisterTherapistData {
   final String email;
   final String password;
   final String firstName;
@@ -9,7 +9,7 @@ class RegisterPhysicianData {
   final String city;
   final String licenseNumber;
 
-  RegisterPhysicianData({
+  RegisterTherapistData({
     required this.email,
     required this.password,
     required this.firstName,

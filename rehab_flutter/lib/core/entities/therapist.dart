@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
-class Physician {
-  final String physicianId;
+class Therapist {
+  final String therapistId;
   final String firstName;
   final String lastName;
   final String gender;
@@ -16,8 +16,8 @@ class Physician {
   final List<AppUser> patients;
   final String? imageURL;
 
-  Physician({
-    required this.physicianId,
+  Therapist({
+    required this.therapistId,
     required this.firstName,
     required this.lastName,
     required this.gender,
@@ -33,7 +33,7 @@ class Physician {
 
   Map<String, dynamic> toMap() {
     return {
-      'userId': physicianId,
+      'userId': therapistId,
       'firstName': firstName,
       'lastName': lastName,
       'gender': gender,

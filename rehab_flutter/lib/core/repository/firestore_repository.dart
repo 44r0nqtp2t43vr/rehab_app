@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
@@ -12,9 +12,9 @@ import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
-import 'package:rehab_flutter/features/login_register/domain/entities/register_physician_data.dart';
+import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
-import 'package:rehab_flutter/features/patients_manager/domain/models/edit_physician_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/edit_therapist_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -65,7 +65,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     final rolesList = userDoc.data()!['roles'].cast<String>().toList();
     if (rolesList.contains("admin")) {
       final List<AppUser> patients = [];
-      final List<Physician> physicians = [];
+      final List<Therapist> therapists = [];
 
       final QuerySnapshot querySnapshot = await db.collection('users').get();
       final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
@@ -78,16 +78,16 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         if (roles.contains("patient")) {
           final patientUser = await getUser(data['userID']);
           patients.add(patientUser);
-        } else if (roles.contains("physician")) {
-          final physicianUser = await getUser(data['userID']);
-          physicians.add(physicianUser);
+        } else if (roles.contains("therapist")) {
+          final therapistUser = await getUser(data['userID']);
+          therapists.add(therapistUser);
         }
       }
 
       patients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
-      final currentAdmin = Admin(patients: patients, physicians: physicians);
+      final currentAdmin = Admin(patients: patients, therapists: therapists);
       return currentAdmin;
-    } else if (rolesList.contains("physician")) {
+    } else if (rolesList.contains("therapist")) {
       final patientIds = userDoc.data()!['patients'].cast<String>().toList();
 
       final List<AppUser> patients = [];
@@ -97,12 +97,12 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
 
       // Fetch the download URL of the profile image from Firebase Storage
-      String? imageURL = await _getPhysicianImageURL(userId);
+      String? imageURL = await _getTherapistImageURL(userId);
 
       print('AAAAAAAA: $imageURL');
 
-      final currentPhysician = Physician(
-        physicianId: userDoc.id,
+      final currentTherapist = Therapist(
+        therapistId: userDoc.id,
         firstName: userDoc.data()!['firstName'],
         lastName: userDoc.data()!['lastName'],
         gender: userDoc.data()!['gender'],
@@ -116,7 +116,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         imageURL: imageURL,
       );
 
-      return currentPhysician;
+      return currentTherapist;
     } else {
       // Query Plans for the User
       QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
@@ -177,14 +177,14 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
   }
 
-  Future<String?> _getPhysicianImageURL(String userId) async {
+  Future<String?> _getTherapistImageURL(String userId) async {
     final storageRef = storage.ref();
     final userImageRef = storageRef.child("images/$userId.jpg");
     try {
       //final downloadURL = await userImageRef.getDownloadURL();
       return await userImageRef.getDownloadURL();
     } catch (e) {
-      print('Error getting Physician image URL: $e');
+      print('Error getting Therapist image URL: $e');
       return null;
     }
   }
@@ -216,7 +216,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<void> registerPhysician(RegisterPhysicianData data) async {
+  Future<void> registerTherapist(RegisterTherapistData data) async {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: data.email,
       password: data.password,
@@ -237,7 +237,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'licenseNumber': data.licenseNumber,
       'birthDate': birthDateJustDate, // Use the normalized DateTime object
       'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
-      'roles': ["physician"],
+      'roles': ["therapist"],
     });
   }
 
@@ -427,7 +427,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<Physician> editPhysician(EditPhysicianData data) async {
+  Future<Therapist> editTherapist(EditTherapistData data) async {
     // Create a map to store the fields that need to be updated
     Map<String, dynamic> oldFields = data.user.toMap();
     Map<String, dynamic> newFields = data.toMap();
@@ -445,20 +445,20 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     } else {
       if (data.image != null) {
         final storageRef = storage.ref();
-        final userImageRef = storageRef.child("images/${data.user.physicianId}.jpg");
+        final userImageRef = storageRef.child("images/${data.user.therapistId}.jpg");
         await userImageRef.putFile(data.image!);
       }
       if (fieldsToUpdate.isNotEmpty) {
-        await db.collection('users').doc(data.user.physicianId).update(fieldsToUpdate);
+        await db.collection('users').doc(data.user.therapistId).update(fieldsToUpdate);
       }
-      final Physician user = await getUser(data.user.physicianId);
+      final Therapist user = await getUser(data.user.therapistId);
       return user;
     }
   }
 
   @override
-  Future<Physician> assignPatient(AssignPatientData data) async {
-    final List<String> currentPatients = data.physician.patients.map((user) => user.userId).toList();
+  Future<Therapist> assignPatient(AssignPatientData data) async {
+    final List<String> currentPatients = data.therapist.patients.map((user) => user.userId).toList();
 
     if (data.isAssign) {
       final bool isValidInput = await doesPatientExist(data.patientId);
@@ -475,9 +475,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
     }
 
-    await db.collection('users').doc(data.physician.physicianId).update({'patients': currentPatients});
+    await db.collection('users').doc(data.therapist.therapistId).update({'patients': currentPatients});
 
-    final Physician user = await getUser(data.physician.physicianId);
+    final Therapist user = await getUser(data.therapist.therapistId);
     return user;
   }
 

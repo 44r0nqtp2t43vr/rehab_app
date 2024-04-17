@@ -2,29 +2,29 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_dashboard/physician_dashboard.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_patients/physician_patients.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_profile/physician_profile.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_dashboard/therapist_dashboard.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_patients/therapist_patients.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_profile/therapist_profile.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
-class PhysicianMainScreen extends StatelessWidget {
-  const PhysicianMainScreen({super.key});
+class TherapistMainScreen extends StatelessWidget {
+  const TherapistMainScreen({super.key});
 
-  Widget getScreenFromTab(TabEnum currentTab, Physician currentPhysician) {
+  Widget getScreenFromTab(TabEnum currentTab, Therapist currentTherapist) {
     switch (currentTab) {
       case TabEnum.home:
-        return const PhysicianDashboard();
+        return const TherapistDashboard();
       case TabEnum.patients:
-        return PhysicianPatients(patients: currentPhysician.patients);
+        return TherapistPatients(patients: currentTherapist.patients);
       case TabEnum.profile:
-        return PhysicianProfile(physician: currentPhysician);
+        return TherapistProfile(therapist: currentTherapist);
       default:
-        return const PhysicianDashboard();
+        return const TherapistDashboard();
     }
   }
 
@@ -36,17 +36,17 @@ class PhysicianMainScreen extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    return BlocConsumer<PhysicianBloc, PhysicianState>(
-      listener: (BuildContext context, PhysicianState state) {
-        if (state is PhysicianNone) {
+    return BlocConsumer<TherapistBloc, TherapistState>(
+      listener: (BuildContext context, TherapistState state) {
+        if (state is TherapistNone) {
           Navigator.of(context).pushReplacementNamed("/Login");
         }
       },
       builder: (context, state) {
-        if (state is PhysicianLoading) {
+        if (state is TherapistLoading) {
           return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
-        if (state is PhysicianDone) {
+        if (state is TherapistDone) {
           return GetX<NavigationController>(
             builder: (_) {
               final currentTab = sl<NavigationController>().getTab();
@@ -54,7 +54,7 @@ class PhysicianMainScreen extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                    child: getScreenFromTab(currentTab, state.currentPhysician!),
+                    child: getScreenFromTab(currentTab, state.currentTherapist!),
                   ),
                   Row(
                     children: [

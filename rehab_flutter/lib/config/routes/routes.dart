@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/main/admin_main.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/patient_page/admin_patient_page.dart';
@@ -12,13 +12,13 @@ import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/s
 import 'package:rehab_flutter/features/login_register/presentation/pages/login/login_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/onboarding/onboarding_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
-import 'package:rehab_flutter/features/login_register/presentation/pages/register_physician/register_physician.dart';
+import 'package:rehab_flutter/features/login_register/presentation/pages/register_therapist/register_therapist.dart';
 import 'package:rehab_flutter/features/logs_screen/presentation/logs_screen.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/assign_patients/assign_patients.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/edit_physician_profile/edit_physician_profile.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/edit_therapist_profile/edit_therapist_profile.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/patient_page/patient_page.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_main/physician_main.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_main/therapist_main.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
 import 'package:rehab_flutter/features/pattern_therapy/presentation/pages/pattern_therapy_screen.dart';
@@ -47,8 +47,8 @@ class AppRoutes {
       case '/Register':
         return _materialRoute(const RegisterScreen());
 
-      case '/RegisterPhysician':
-        return _materialRoute(const RegisterPhysician());
+      case '/RegisterTherapist':
+        return _materialRoute(const RegisterTherapist());
 
       case '/BluetoothConnect':
         return _materialRoute(const BluetoothConnectScreen());
@@ -104,8 +104,8 @@ class AppRoutes {
       case '/UserQR':
         return _materialRoute(const UserQR());
 
-      case '/PhysicianMain':
-        return _materialRoute(const PhysicianMainScreen());
+      case '/TherapistMain':
+        return _materialRoute(const TherapistMainScreen());
 
       case '/AssignPatients':
         return _materialRoute(const AssignPatients());
@@ -113,8 +113,8 @@ class AppRoutes {
       case '/PatientPage':
         return _materialRoute(PatientPage(patient: settings.arguments as AppUser));
 
-      case '/EditPhysicianProfile':
-        return _materialRoute(EditPhysicianProfile(user: settings.arguments as Physician));
+      case '/EditTherapistProfile':
+        return _materialRoute(EditTherapistProfile(user: settings.arguments as Therapist));
 
       case '/AdminMain':
         return _materialRoute(const AdminMainScreen());

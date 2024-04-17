@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 
-class EditPhysicianData {
-  final Physician user;
+class EditTherapistData {
+  final Therapist user;
   final File? image;
   final String firstName;
   final String lastName;
@@ -14,7 +14,7 @@ class EditPhysicianData {
   final String licenseNumber;
   final String city;
 
-  EditPhysicianData({
+  EditTherapistData({
     required this.user,
     this.image,
     required this.firstName,

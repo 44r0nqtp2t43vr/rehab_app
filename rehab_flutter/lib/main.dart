@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'firebase_options.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<UserBloc>(create: (BuildContext context) => sl()),
-        BlocProvider<PhysicianBloc>(create: (BuildContext context) => sl()),
+        BlocProvider<TherapistBloc>(create: (BuildContext context) => sl()),
         BlocProvider<AdminBloc>(create: (BuildContext context) => sl()),
       ],
       child: MaterialApp(

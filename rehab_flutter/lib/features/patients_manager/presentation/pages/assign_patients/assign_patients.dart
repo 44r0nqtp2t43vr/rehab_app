@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -38,9 +38,9 @@ class _AssignPatientsState extends State<AssignPatients> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PhysicianBloc, PhysicianState>(
+    return BlocConsumer<TherapistBloc, TherapistState>(
       listener: (context, state) {
-        if (state is PhysicianNone) {
+        if (state is TherapistNone) {
           setState(() {
             fromError = true;
             _scannerController = MobileScannerController(
@@ -48,25 +48,25 @@ class _AssignPatientsState extends State<AssignPatients> {
             );
           });
 
-          BlocProvider.of<PhysicianBloc>(context).add(GetPhysicianEvent(state.data));
+          BlocProvider.of<TherapistBloc>(context).add(GetTherapistEvent(state.data));
         }
-        if (state is PhysicianDone && !fromError) {
+        if (state is TherapistDone && !fromError) {
           sl<NavigationController>().setTab(TabEnum.patients);
           Navigator.of(context).pop();
         }
       },
       builder: (context, state) {
-        if (state is PhysicianLoading) {
+        if (state is TherapistLoading) {
           return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
         }
-        if (state is PhysicianDone) {
+        if (state is TherapistDone) {
           return Scaffold(
             body: MobileScanner(
               controller: _scannerController,
               onDetect: (capture) => _onDetect(
                 context,
                 capture,
-                state.currentPhysician!,
+                state.currentTherapist!,
               ),
             ),
           );
@@ -76,7 +76,7 @@ class _AssignPatientsState extends State<AssignPatients> {
     );
   }
 
-  void _onDetect(BuildContext context, BarcodeCapture capture, Physician physician) {
+  void _onDetect(BuildContext context, BarcodeCapture capture, Therapist therapist) {
     final barcodes = capture.barcodes;
 
     setState(() {
@@ -86,8 +86,8 @@ class _AssignPatientsState extends State<AssignPatients> {
     if (barcodes.isNotEmpty) {
       _scannerController.dispose();
 
-      BlocProvider.of<PhysicianBloc>(context).add(AssignPatientEvent(AssignPatientData(
-        physician: physician,
+      BlocProvider.of<TherapistBloc>(context).add(AssignPatientEvent(AssignPatientData(
+        therapist: therapist,
         patientId: barcodes.first.rawValue!,
       )));
     }

@@ -4,16 +4,16 @@ import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_sorting_type.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_list_card.dart';
 
-class PhysicianPatients extends StatefulWidget {
+class TherapistPatients extends StatefulWidget {
   final List<AppUser> patients;
 
-  const PhysicianPatients({super.key, required this.patients});
+  const TherapistPatients({super.key, required this.patients});
 
   @override
-  State<PhysicianPatients> createState() => _PhysicianPatientsState();
+  State<TherapistPatients> createState() => _TherapistPatientsState();
 }
 
-class _PhysicianPatientsState extends State<PhysicianPatients> {
+class _TherapistPatientsState extends State<TherapistPatients> {
   final List<String> availableTypes = availableSortingTypes;
   late List<AppUser> sortedPatients;
   late String currentType;
@@ -32,14 +32,12 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
     } else if (newValue == availableSortingTypes[2]) {
       setState(() {
         currentType = newValue;
-        sortedPatients
-            .sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
+        sortedPatients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       });
     } else if (newValue == availableSortingTypes[3]) {
       setState(() {
         currentType = newValue;
-        sortedPatients
-            .sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
+        sortedPatients.sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
       });
     } else if (newValue == availableSortingTypes[4]) {
       setState(() {
@@ -151,8 +149,7 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
                               labelText: 'Type',
                             ),
                             onChanged: _onTypeDropdownSelect,
-                            items: availableTypes
-                                .map<DropdownMenuItem<String>>((String value) {
+                            items: availableTypes.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -164,8 +161,7 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
                     ),
               const SizedBox(height: 16),
               widget.patients.isEmpty
-                  ? const Text("You have no assigned patients",
-                      style: TextStyle(color: Colors.white))
+                  ? const Text("You have no assigned patients", style: TextStyle(color: Colors.white))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
