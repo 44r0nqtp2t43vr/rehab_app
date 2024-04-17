@@ -4,6 +4,7 @@ import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/main/admin_main.dart';
+import 'package:rehab_flutter/features/_admin/presentation/pages/patient_page/admin_patient_page.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
@@ -117,6 +118,9 @@ class AppRoutes {
 
       case '/AdminMain':
         return _materialRoute(const AdminMainScreen());
+
+      case '/AdminPatientPage':
+        return _materialRoute(AdminPatientPage(patient: settings.arguments as AppUser));
 
       default:
         return _materialRoute(const OnboardingScreen());

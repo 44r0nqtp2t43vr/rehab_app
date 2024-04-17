@@ -1,45 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
-import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_sorting_type.dart';
+import 'package:rehab_flutter/features/_admin/domain/enums/admin_patients_sorting_types.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_list_card.dart';
 
-class PhysicianPatients extends StatefulWidget {
-  final List<AppUser> patients;
+class AdminPatients extends StatefulWidget {
+  final Admin currentAdmin;
 
-  const PhysicianPatients({super.key, required this.patients});
+  const AdminPatients({super.key, required this.currentAdmin});
 
   @override
-  State<PhysicianPatients> createState() => _PhysicianPatientsState();
+  State<AdminPatients> createState() => _AdminPatientsState();
 }
 
-class _PhysicianPatientsState extends State<PhysicianPatients> {
-  final List<String> availableTypes = availableSortingTypes;
+class _AdminPatientsState extends State<AdminPatients> {
+  final List<String> availableTypes = adminPatientsSortingTypes;
   late List<AppUser> sortedPatients;
   late String currentType;
 
   void _onTypeDropdownSelect(String? newValue) {
-    if (newValue! == availableSortingTypes[0]) {
-      setState(() {
-        currentType = newValue;
-        sortedPatients = List.from(widget.patients);
-      });
-    } else if (newValue == availableSortingTypes[1]) {
-      setState(() {
-        currentType = newValue;
-        sortedPatients = List.from(widget.patients.reversed);
-      });
-    } else if (newValue == availableSortingTypes[2]) {
+    if (newValue! == adminPatientsSortingTypes[0]) {
       setState(() {
         currentType = newValue;
         sortedPatients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       });
-    } else if (newValue == availableSortingTypes[3]) {
+    } else if (newValue == adminPatientsSortingTypes[1]) {
       setState(() {
         currentType = newValue;
         sortedPatients.sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
       });
-    } else if (newValue == availableSortingTypes[4]) {
+    } else if (newValue == adminPatientsSortingTypes[2]) {
       setState(() {
         currentType = newValue;
         sortedPatients.sort((a, b) {
@@ -61,7 +52,7 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
           }
         });
       });
-    } else if (newValue == availableSortingTypes[5]) {
+    } else if (newValue == adminPatientsSortingTypes[3]) {
       setState(() {
         currentType = newValue;
         sortedPatients.sort((b, a) {
@@ -88,18 +79,18 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
 
   @override
   void initState() {
-    sortedPatients = List.from(widget.patients);
-    currentType = availableSortingTypes[0];
+    sortedPatients = List.from(widget.currentAdmin.patients);
+    currentType = adminPatientsSortingTypes[0];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -114,14 +105,14 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
                       style: darkTextTheme().headlineLarge,
                     ),
                     Text(
-                      "Your Assigned Patients",
+                      "All Patient Users",
                       style: darkTextTheme().headlineSmall,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 8),
-              widget.patients.isEmpty
+              widget.currentAdmin.patients.isEmpty
                   ? const SizedBox()
                   : Row(
                       children: [
@@ -150,8 +141,8 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
                       ],
                     ),
               const SizedBox(height: 16),
-              widget.patients.isEmpty
-                  ? const Text("You have no assigned patients", style: TextStyle(color: Colors.white))
+              widget.currentAdmin.patients.isEmpty
+                  ? const Text("The system has no patients", style: TextStyle(color: Colors.white))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -164,7 +155,7 @@ class _PhysicianPatientsState extends State<PhysicianPatients> {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: PatientListCard(
                             patient: patient,
-                            onPressedRoute: "/PatientPage",
+                            onPressedRoute: "/AdminPatientPage",
                           ),
                         );
                       },

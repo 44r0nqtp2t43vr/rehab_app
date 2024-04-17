@@ -67,6 +67,24 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       final List<AppUser> patients = [];
       final List<Physician> physicians = [];
 
+      final QuerySnapshot querySnapshot = await db.collection('users').get();
+      final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+
+      for (DocumentSnapshot document in documentSnapshots) {
+        // Get the data of the document as Map<String, dynamic>
+        final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+        final List<String> roles = data!['roles'].cast<String>().toList();
+
+        if (roles.contains("patient")) {
+          final patientUser = await getUser(data['userID']);
+          patients.add(patientUser);
+        } else if (roles.contains("physician")) {
+          final physicianUser = await getUser(data['userID']);
+          physicians.add(physicianUser);
+        }
+      }
+
+      patients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       final currentAdmin = Admin(patients: patients, physicians: physicians);
       return currentAdmin;
     } else if (rolesList.contains("physician")) {

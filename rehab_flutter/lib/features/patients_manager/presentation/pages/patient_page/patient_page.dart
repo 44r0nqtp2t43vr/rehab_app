@@ -39,20 +39,12 @@ class _PatientPageState extends State<PatientPage> {
     Map<String, Color?> dateColorsMap = {};
 
     for (var sesh in widget.patient.getAllSessionsFromAllPlans()) {
-      final String dateString =
-          "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
       final List<bool> conditions = sesh.getSessionConditions();
 
-      if (conditions[0] &&
-          conditions[1] &&
-          conditions[2] &&
-          conditions[3] &&
-          conditions[4]) {
+      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
         dateColorsMap[dateString] = heatmap5;
-      } else if (conditions[0] &&
-          conditions[1] &&
-          conditions[2] &&
-          conditions[3]) {
+      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
         dateColorsMap[dateString] = heatmap4;
       } else if (conditions[0] && conditions[1] && conditions[2]) {
         dateColorsMap[dateString] = heatmap3;
@@ -76,14 +68,10 @@ class _PatientPageState extends State<PatientPage> {
     setState(() {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
-      currentSelectedSession =
-          widget.patient.getAllSessionsFromAllPlans().firstWhere(
-                (session) =>
-                    session.date.year == _selectedDay.year &&
-                    session.date.month == _selectedDay.month &&
-                    session.date.day == _selectedDay.day,
-                orElse: () => Session.empty(),
-              );
+      currentSelectedSession = widget.patient.getAllSessionsFromAllPlans().firstWhere(
+            (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
+            orElse: () => Session.empty(),
+          );
     });
   }
 
@@ -93,9 +81,7 @@ class _PatientPageState extends State<PatientPage> {
 
   void _onToggleFormat() {
     setState(() {
-      _calendarFormat = _calendarFormat == CalendarFormat.week
-          ? CalendarFormat.month
-          : CalendarFormat.week;
+      _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
     });
   }
 
@@ -103,14 +89,10 @@ class _PatientPageState extends State<PatientPage> {
   void initState() {
     super.initState();
     dateColorsMap = sessionsToDateColorsMap();
-    currentSelectedSession =
-        widget.patient.getAllSessionsFromAllPlans().firstWhere(
-              (session) =>
-                  session.date.year == _selectedDay.year &&
-                  session.date.month == _selectedDay.month &&
-                  session.date.day == _selectedDay.day,
-              orElse: () => Session.empty(),
-            );
+    currentSelectedSession = widget.patient.getAllSessionsFromAllPlans().firstWhere(
+          (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
+          orElse: () => Session.empty(),
+        );
   }
 
   @override
@@ -123,23 +105,17 @@ class _PatientPageState extends State<PatientPage> {
       },
       builder: (context, state) {
         if (state is PhysicianLoading) {
-          return const Scaffold(
-              body: Center(
-                  child: CupertinoActivityIndicator(color: Colors.white)));
+          return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
         }
         if (state is PhysicianDone) {
-          final currentSelectedSessionDateString = currentSelectedSession
-                  .sessionId.isEmpty
-              ? ""
-              : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
+          final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
 
           return Scaffold(
             body: SafeArea(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
                   child: Column(
                     children: [
                       const SizedBox(
@@ -190,8 +166,7 @@ class _PatientPageState extends State<PatientPage> {
                               color: Colors.white.withOpacity(0.25),
                               child: DailyProgressCard(
                                 isPhysicianView: true,
-                                todaySession:
-                                    widget.patient.getCurrentSession(),
+                                todaySession: widget.patient.getCurrentSession(),
                               ),
                             ),
                           ),
@@ -230,15 +205,10 @@ class _PatientPageState extends State<PatientPage> {
                       const SizedBox(height: 20),
                       EventList(
                         isPhysicianView: true,
-                        dayColor:
-                            dateColorsMap[currentSelectedSessionDateString] ??
-                                Colors.white,
+                        dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
                         selectedDay: _selectedDay,
-                        currentSession: currentSelectedSession.sessionId.isEmpty
-                            ? null
-                            : currentSelectedSession,
-                        conditions:
-                            currentSelectedSession.getSessionConditions(),
+                        currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
+                        conditions: currentSelectedSession.getSessionConditions(),
                       ),
                       const SizedBox(height: 20),
                       Row(
@@ -251,20 +221,14 @@ class _PatientPageState extends State<PatientPage> {
                                 widget.patient.userId,
                               ),
                               style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
+                                foregroundColor: MaterialStateProperty.all<Color>(
                                   Colors.white,
                                 ),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        const Color(0xff128BED)),
+                                backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
                                 elevation: MaterialStateProperty.all<double>(0),
-                                shadowColor: MaterialStateProperty.all<Color>(
-                                    Colors.transparent),
-                                overlayColor: MaterialStateProperty.all<Color>(
-                                    Colors.transparent),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
+                                shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                                overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -288,8 +252,7 @@ class _PatientPageState extends State<PatientPage> {
     );
   }
 
-  void _onUnassignButtonPressed(
-      BuildContext context, Physician physician, String patientId) {
+  void _onUnassignButtonPressed(BuildContext context, Physician physician, String patientId) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -338,8 +301,7 @@ class _PatientPageState extends State<PatientPage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          BlocProvider.of<PhysicianBloc>(context)
-                              .add(AssignPatientEvent(AssignPatientData(
+                          BlocProvider.of<PhysicianBloc>(context).add(AssignPatientEvent(AssignPatientData(
                             physician: physician,
                             patientId: patientId,
                             isAssign: false,

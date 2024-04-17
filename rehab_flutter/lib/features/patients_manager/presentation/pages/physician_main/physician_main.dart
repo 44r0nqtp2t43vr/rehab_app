@@ -19,7 +19,7 @@ class PhysicianMainScreen extends StatelessWidget {
     switch (currentTab) {
       case TabEnum.home:
         return const PhysicianDashboard();
-      case TabEnum.activityMonitor:
+      case TabEnum.patients:
         return PhysicianPatients(patients: currentPhysician.patients);
       case TabEnum.profile:
         return PhysicianProfile(physician: currentPhysician);
@@ -77,7 +77,7 @@ class PhysicianMainScreen extends StatelessWidget {
                                 icon: Icon(
                                   CupertinoIcons.calendar,
                                   size: 30,
-                                  color: currentTab == TabEnum.activityMonitor ? Colors.white : const Color(0XFF93aac9),
+                                  color: currentTab == TabEnum.patients ? Colors.white : const Color(0XFF93aac9),
                                 ),
                                 onPressed: () => _onActivityButtonPressed(currentTab),
                               ),
@@ -112,8 +112,8 @@ class PhysicianMainScreen extends StatelessWidget {
   }
 
   void _onActivityButtonPressed(TabEnum currentTab) {
-    if (currentTab != TabEnum.activityMonitor) {
-      sl<NavigationController>().setTab(TabEnum.activityMonitor);
+    if (currentTab != TabEnum.patients) {
+      sl<NavigationController>().setTab(TabEnum.patients);
     }
   }
 
