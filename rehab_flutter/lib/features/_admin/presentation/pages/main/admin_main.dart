@@ -2,29 +2,29 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_dashboard/physician_dashboard.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_patients/physician_patients.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/pages/physician_profile/physician_profile.dart';
+import 'package:rehab_flutter/features/_admin/presentation/pages/dashboard/admin_dashboard.dart';
+import 'package:rehab_flutter/features/_admin/presentation/pages/patients/admin_patients.dart';
+import 'package:rehab_flutter/features/_admin/presentation/pages/physicians/admin_physicians.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
-class PhysicianMainScreen extends StatelessWidget {
-  const PhysicianMainScreen({super.key});
+class AdminMainScreen extends StatelessWidget {
+  const AdminMainScreen({super.key});
 
-  Widget getScreenFromTab(TabEnum currentTab, Physician currentPhysician) {
+  Widget getScreenFromTab(TabEnum currentTab, Admin currentAdmin) {
     switch (currentTab) {
       case TabEnum.home:
-        return const PhysicianDashboard();
+        return AdminDashboard(currentAdmin: currentAdmin);
+      case TabEnum.physicians:
+        return AdminPhysicians(currentAdmin: currentAdmin);
       case TabEnum.patients:
-        return PhysicianPatients(patients: currentPhysician.patients);
-      case TabEnum.profile:
-        return PhysicianProfile(physician: currentPhysician);
+        return AdminPatients(currentAdmin: currentAdmin);
       default:
-        return const PhysicianDashboard();
+        return Container();
     }
   }
 
@@ -36,17 +36,12 @@ class PhysicianMainScreen extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    return BlocConsumer<PhysicianBloc, PhysicianState>(
-      listener: (BuildContext context, PhysicianState state) {
-        if (state is PhysicianNone) {
-          Navigator.of(context).pushReplacementNamed("/Login");
-        }
-      },
+    return BlocBuilder<AdminBloc, AdminState>(
       builder: (context, state) {
-        if (state is PhysicianLoading) {
+        if (state is AdminLoading) {
           return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
-        if (state is PhysicianDone) {
+        if (state is AdminDone) {
           return GetX<NavigationController>(
             builder: (_) {
               final currentTab = sl<NavigationController>().getTab();
@@ -54,7 +49,7 @@ class PhysicianMainScreen extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                    child: getScreenFromTab(currentTab, state.currentPhysician!),
+                    child: getScreenFromTab(currentTab, state.currentAdmin!),
                   ),
                   Row(
                     children: [
@@ -75,19 +70,19 @@ class PhysicianMainScreen extends StatelessWidget {
                               ),
                               IconButton(
                                 icon: Icon(
-                                  CupertinoIcons.calendar,
+                                  currentTab == TabEnum.physicians ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                   size: 30,
-                                  color: currentTab == TabEnum.patients ? Colors.white : const Color(0XFF93aac9),
+                                  color: currentTab == TabEnum.physicians ? Colors.white : const Color(0XFF93aac9),
                                 ),
-                                onPressed: () => _onActivityButtonPressed(currentTab),
+                                onPressed: () => _onPhysiciansButtonPressed(currentTab),
                               ),
                               IconButton(
                                 icon: Icon(
-                                  currentTab == TabEnum.profile ? CupertinoIcons.person_fill : CupertinoIcons.person,
+                                  currentTab == TabEnum.patients ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                   size: 30,
-                                  color: currentTab == TabEnum.profile ? Colors.white : const Color(0XFF93aac9),
+                                  color: currentTab == TabEnum.patients ? Colors.white : const Color(0XFF93aac9),
                                 ),
-                                onPressed: () => _onProfileButtonPressed(currentTab),
+                                onPressed: () => _onPatientsButtonPressed(currentTab),
                               ),
                             ],
                           ),
@@ -100,7 +95,7 @@ class PhysicianMainScreen extends StatelessWidget {
             },
           );
         }
-        return Container();
+        return const SizedBox();
       },
     );
   }
@@ -111,15 +106,15 @@ class PhysicianMainScreen extends StatelessWidget {
     }
   }
 
-  void _onActivityButtonPressed(TabEnum currentTab) {
-    if (currentTab != TabEnum.patients) {
-      sl<NavigationController>().setTab(TabEnum.patients);
+  void _onPhysiciansButtonPressed(TabEnum currentTab) {
+    if (currentTab != TabEnum.physicians) {
+      sl<NavigationController>().setTab(TabEnum.physicians);
     }
   }
 
-  void _onProfileButtonPressed(TabEnum currentTab) {
-    if (currentTab != TabEnum.profile) {
-      sl<NavigationController>().setTab(TabEnum.profile);
+  void _onPatientsButtonPressed(TabEnum currentTab) {
+    if (currentTab != TabEnum.patients) {
+      sl<NavigationController>().setTab(TabEnum.patients);
     }
   }
 }

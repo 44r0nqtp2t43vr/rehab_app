@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
@@ -65,6 +66,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       if (currentUser is AppUser) {
         emit(UserDone(currentUser: currentUser));
       } else if (currentUser is Physician) {
+        emit(UserNone(data: currentUser));
+      } else if (currentUser is Admin) {
         emit(UserNone(data: currentUser));
       }
     } catch (e) {

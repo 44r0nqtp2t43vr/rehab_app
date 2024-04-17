@@ -51,7 +51,7 @@ class _AssignPatientsState extends State<AssignPatients> {
           BlocProvider.of<PhysicianBloc>(context).add(GetPhysicianEvent(state.data));
         }
         if (state is PhysicianDone && !fromError) {
-          sl<NavigationController>().setTab(TabEnum.activityMonitor);
+          sl<NavigationController>().setTab(TabEnum.patients);
           Navigator.of(context).pop();
         }
       },

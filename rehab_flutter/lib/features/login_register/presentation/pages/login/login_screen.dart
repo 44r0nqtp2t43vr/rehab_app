@@ -4,12 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
+import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
@@ -76,8 +79,11 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is UserNone) {
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          } else if (state.data != null && state.data is Admin) {
+            BlocProvider.of<AdminBloc>(context).add(GetAdminEvent(state.data));
+            sl<NavigationController>().setTab(TabEnum.home);
+            Navigator.pushNamed(context, '/AdminMain');
           } else if (state.data != null && state.data is Physician) {
             BlocProvider.of<PhysicianBloc>(context)
                 .add(GetPhysicianEvent(state.data));
