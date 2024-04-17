@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 
-class PhysicianListCard extends StatelessWidget {
-  final Physician physician;
+class TherapistListCard extends StatelessWidget {
+  final Therapist therapist;
 
-  const PhysicianListCard({super.key, required this.physician});
+  const TherapistListCard({super.key, required this.therapist});
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +27,10 @@ class PhysicianListCard extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: const Color(0xffd1d1d1),
                 radius: 32,
-                child: physician.imageURL != null
+                child: therapist.imageURL != null
                     ? ClipOval(
                         child: CachedNetworkImage(
-                          imageUrl: physician.imageURL!,
+                          imageUrl: therapist.imageURL!,
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: double.infinity,
@@ -56,7 +56,7 @@ class PhysicianListCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${physician.firstName.capitalize!} ${physician.lastName.capitalize!}",
+                      "${therapist.firstName.capitalize!} ${therapist.lastName.capitalize!}",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -67,7 +67,7 @@ class PhysicianListCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      physician.email,
+                      therapist.email,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: darkTextTheme().headlineSmall,

@@ -4,10 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
@@ -97,17 +97,17 @@ class _PatientPageState extends State<PatientPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PhysicianBloc, PhysicianState>(
+    return BlocConsumer<TherapistBloc, TherapistState>(
       listener: (context, state) {
-        if (state is PhysicianDone) {
+        if (state is TherapistDone) {
           Navigator.of(context).pop();
         }
       },
       builder: (context, state) {
-        if (state is PhysicianLoading) {
+        if (state is TherapistLoading) {
           return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
         }
-        if (state is PhysicianDone) {
+        if (state is TherapistDone) {
           final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
 
           return Scaffold(
@@ -165,7 +165,7 @@ class _PatientPageState extends State<PatientPage> {
                               blur: 4,
                               color: Colors.white.withOpacity(0.25),
                               child: DailyProgressCard(
-                                isPhysicianView: true,
+                                isTherapistView: true,
                                 todaySession: widget.patient.getCurrentSession(),
                               ),
                             ),
@@ -204,7 +204,7 @@ class _PatientPageState extends State<PatientPage> {
                       ),
                       const SizedBox(height: 20),
                       EventList(
-                        isPhysicianView: true,
+                        isTherapistView: true,
                         dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
                         selectedDay: _selectedDay,
                         currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
@@ -217,7 +217,7 @@ class _PatientPageState extends State<PatientPage> {
                             child: ElevatedButton(
                               onPressed: () => _onUnassignButtonPressed(
                                 context,
-                                state.currentPhysician!,
+                                state.currentTherapist!,
                                 widget.patient.userId,
                               ),
                               style: ButtonStyle(
@@ -252,7 +252,7 @@ class _PatientPageState extends State<PatientPage> {
     );
   }
 
-  void _onUnassignButtonPressed(BuildContext context, Physician physician, String patientId) {
+  void _onUnassignButtonPressed(BuildContext context, Therapist therapist, String patientId) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -301,8 +301,8 @@ class _PatientPageState extends State<PatientPage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          BlocProvider.of<PhysicianBloc>(context).add(AssignPatientEvent(AssignPatientData(
-                            physician: physician,
+                          BlocProvider.of<TherapistBloc>(context).add(AssignPatientEvent(AssignPatientData(
+                            therapist: therapist,
                             patientId: patientId,
                             isAssign: false,
                           )));

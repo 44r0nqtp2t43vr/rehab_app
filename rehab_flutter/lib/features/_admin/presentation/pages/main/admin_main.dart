@@ -9,7 +9,7 @@ import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/dashboard/admin_dashboard.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/patients/admin_patients.dart';
-import 'package:rehab_flutter/features/_admin/presentation/pages/physicians/admin_physicians.dart';
+import 'package:rehab_flutter/features/_admin/presentation/pages/therapists/admin_therapists.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class AdminMainScreen extends StatelessWidget {
@@ -19,8 +19,8 @@ class AdminMainScreen extends StatelessWidget {
     switch (currentTab) {
       case TabEnum.home:
         return AdminDashboard(currentAdmin: currentAdmin);
-      case TabEnum.physicians:
-        return AdminPhysicians(currentAdmin: currentAdmin);
+      case TabEnum.therapists:
+        return AdminTherapists(currentAdmin: currentAdmin);
       case TabEnum.patients:
         return AdminPatients(currentAdmin: currentAdmin);
       default:
@@ -36,7 +36,12 @@ class AdminMainScreen extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    return BlocBuilder<AdminBloc, AdminState>(
+    return BlocConsumer<AdminBloc, AdminState>(
+      listener: (BuildContext context, AdminState state) {
+        if (state is AdminNone) {
+          Navigator.of(context).pushReplacementNamed("/Login");
+        }
+      },
       builder: (context, state) {
         if (state is AdminLoading) {
           return const Center(child: CupertinoActivityIndicator(color: Colors.white));
@@ -70,11 +75,11 @@ class AdminMainScreen extends StatelessWidget {
                               ),
                               IconButton(
                                 icon: Icon(
-                                  currentTab == TabEnum.physicians ? CupertinoIcons.person_fill : CupertinoIcons.person,
+                                  currentTab == TabEnum.therapists ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                   size: 30,
-                                  color: currentTab == TabEnum.physicians ? Colors.white : const Color(0XFF93aac9),
+                                  color: currentTab == TabEnum.therapists ? Colors.white : const Color(0XFF93aac9),
                                 ),
-                                onPressed: () => _onPhysiciansButtonPressed(currentTab),
+                                onPressed: () => _onTherapistsButtonPressed(currentTab),
                               ),
                               IconButton(
                                 icon: Icon(
@@ -106,9 +111,9 @@ class AdminMainScreen extends StatelessWidget {
     }
   }
 
-  void _onPhysiciansButtonPressed(TabEnum currentTab) {
-    if (currentTab != TabEnum.physicians) {
-      sl<NavigationController>().setTab(TabEnum.physicians);
+  void _onTherapistsButtonPressed(TabEnum currentTab) {
+    if (currentTab != TabEnum.therapists) {
+      sl<NavigationController>().setTab(TabEnum.therapists);
     }
   }
 

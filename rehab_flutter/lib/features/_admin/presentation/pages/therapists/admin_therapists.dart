@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
-import 'package:rehab_flutter/features/_admin/presentation/widgets/physician_list_card.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
+import 'package:rehab_flutter/features/_admin/presentation/widgets/therapist_list_card.dart';
 
-class AdminPhysicians extends StatefulWidget {
+class AdminTherapists extends StatefulWidget {
   final Admin currentAdmin;
 
-  const AdminPhysicians({super.key, required this.currentAdmin});
+  const AdminTherapists({super.key, required this.currentAdmin});
 
   @override
-  State<AdminPhysicians> createState() => _AdminPhysiciansState();
+  State<AdminTherapists> createState() => _AdminTherapistsState();
 }
 
-class _AdminPhysiciansState extends State<AdminPhysicians> {
-  late List<Physician> sortedPhysicians;
+class _AdminTherapistsState extends State<AdminTherapists> {
+  late List<Therapist> sortedTherapists;
 
   @override
   void initState() {
-    sortedPhysicians = List.from(widget.currentAdmin.physicians);
+    sortedTherapists = List.from(widget.currentAdmin.therapists);
     super.initState();
   }
 
@@ -39,18 +39,18 @@ class _AdminPhysiciansState extends State<AdminPhysicians> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Physicians",
+                      "Therapists",
                       style: darkTextTheme().headlineLarge,
                     ),
                     Text(
-                      "All Physician Users",
+                      "All Therapist Users",
                       style: darkTextTheme().headlineSmall,
                     ),
                   ],
                 ),
               ),
               // const SizedBox(height: 8),
-              // widget.currentAdmin.physicians.isEmpty
+              // widget.currentAdmin.therapists.isEmpty
               //     ? const SizedBox()
               //     : Row(
               //         children: [
@@ -79,18 +79,18 @@ class _AdminPhysiciansState extends State<AdminPhysicians> {
               //         ],
               //       ),
               const SizedBox(height: 16),
-              widget.currentAdmin.physicians.isEmpty
-                  ? const Text("The system has no physicians", style: TextStyle(color: Colors.white))
+              widget.currentAdmin.therapists.isEmpty
+                  ? const Text("The system has no therapists", style: TextStyle(color: Colors.white))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: sortedPhysicians.length,
+                      itemCount: sortedTherapists.length,
                       itemBuilder: (context, index) {
-                        final physician = sortedPhysicians[index];
+                        final therapist = sortedTherapists[index];
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
-                          child: PhysicianListCard(physician: physician),
+                          child: TherapistListCard(therapist: therapist),
                         );
                       },
                     ),

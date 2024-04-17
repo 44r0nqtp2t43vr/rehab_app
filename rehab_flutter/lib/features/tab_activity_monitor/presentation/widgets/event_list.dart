@@ -11,7 +11,7 @@ class EventList extends StatelessWidget {
   final DateTime selectedDay;
   final Session? currentSession;
   final List<bool> conditions;
-  final bool isPhysicianView;
+  final bool isTherapistView;
 
   const EventList({
     super.key,
@@ -19,7 +19,7 @@ class EventList extends StatelessWidget {
     required this.selectedDay,
     required this.currentSession,
     required this.conditions,
-    this.isPhysicianView = false,
+    this.isTherapistView = false,
   });
 
   @override
@@ -67,7 +67,7 @@ class EventList extends StatelessWidget {
               const SizedBox(height: 16),
               currentSession == null
                   ? Text(
-                      "${isPhysicianView ? "This user has" : "You have"} no sessions for today",
+                      "${isTherapistView ? "This user has" : "You have"} no sessions for today",
                       style: darkTextTheme().headlineSmall,
                       textAlign: TextAlign.center,
                     )
@@ -113,7 +113,7 @@ class EventList extends StatelessWidget {
                                 ],
                               )
                             : Text(
-                                "${isPhysicianView ? "This patient has to take their Pretest" : "Take the Pretest"} to determine the next steps for this session",
+                                "${isTherapistView ? "This patient has to take their Pretest" : "Take the Pretest"} to determine the next steps for this session",
                                 style: darkTextTheme().headlineSmall,
                                 textAlign: TextAlign.center,
                               ),

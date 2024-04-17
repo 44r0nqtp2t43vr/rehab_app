@@ -4,20 +4,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_state.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
 import 'package:rehab_flutter/core/data_sources/registration_provider.dart';
-import 'package:rehab_flutter/features/login_register/domain/entities/register_physician_data.dart';
+import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
 
-class RegisterPhysician extends StatefulWidget {
-  const RegisterPhysician({super.key});
+class RegisterTherapist extends StatefulWidget {
+  const RegisterTherapist({super.key});
 
   @override
-  State<RegisterPhysician> createState() => _RegisterPhysicianState();
+  State<RegisterTherapist> createState() => _RegisterTherapistState();
 }
 
-class _RegisterPhysicianState extends State<RegisterPhysician> {
+class _RegisterTherapistState extends State<RegisterTherapist> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _firstNameController = TextEditingController();
@@ -101,7 +101,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
               children: [
                 Text(
                   // _getStepTitle(),
-                  "Sign Up As Physician",
+                  "Sign Up As Therapist",
                   style: darkTextTheme().headlineLarge,
                 ),
                 Text(
@@ -142,21 +142,21 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
   }
 
   Widget _buildBody() {
-    return BlocConsumer<PhysicianBloc, PhysicianState>(
+    return BlocConsumer<TherapistBloc, TherapistState>(
       listener: (context, state) {
-        if (state is PhysicianNone && state.errorMessage != null) {
+        if (state is TherapistNone && state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
-        if (state is PhysicianDone) {
-          BlocProvider.of<PhysicianBloc>(context).add(const ResetPhysicianEvent());
+        if (state is TherapistDone) {
+          BlocProvider.of<TherapistBloc>(context).add(const ResetTherapistEvent());
           Navigator.of(context).pop();
         }
       },
       builder: (context, state) {
-        if (state is PhysicianLoading) {
+        if (state is TherapistLoading) {
           return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
-        if (state is PhysicianNone || state is PhysicianDone) {
+        if (state is TherapistNone || state is TherapistDone) {
           return SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -379,7 +379,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    _registerPhysician();
+                    _registerTherapist();
                   }
                 },
                 child: const Text('Sign Up'),
@@ -391,12 +391,12 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
     ];
   }
 
-  void _registerPhysician() {
+  void _registerTherapist() {
     // Convert the birthdate from String to DateTime
     DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
-    RegisterPhysicianData registerData = RegisterPhysicianData(
+    RegisterTherapistData registerData = RegisterTherapistData(
       email: _emailController.text,
       password: _passwordController.text,
       firstName: _firstNameController.text,
@@ -409,7 +409,7 @@ class _RegisterPhysicianState extends State<RegisterPhysician> {
     );
 
     // Dispatch the event to the bloc
-    BlocProvider.of<PhysicianBloc>(context).add(RegisterPhysicianEvent(registerData));
+    BlocProvider.of<TherapistBloc>(context).add(RegisterTherapistEvent(registerData));
   }
 
   void _onLoginButtonPressed(BuildContext context) {

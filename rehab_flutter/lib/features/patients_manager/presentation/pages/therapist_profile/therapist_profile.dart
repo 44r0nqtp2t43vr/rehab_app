@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
-import 'package:rehab_flutter/core/entities/physician.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/features/tab_profile/presentation/widgets/profile_button.dart';
 
-class PhysicianProfile extends StatelessWidget {
-  final Physician physician;
+class TherapistProfile extends StatelessWidget {
+  final Therapist therapist;
 
-  const PhysicianProfile({super.key, required this.physician});
+  const TherapistProfile({super.key, required this.therapist});
 
   @override
   Widget build(BuildContext context) {
@@ -46,20 +46,18 @@ class PhysicianProfile extends StatelessWidget {
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 34,
-                  child: physician.imageURL != null
+                  child: therapist.imageURL != null
                       ? ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl: physician.imageURL!,
+                            imageUrl: therapist.imageURL!,
                             fit: BoxFit.cover,
                             width: double.infinity,
                             height: double.infinity,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
+                            placeholder: (context, url) => const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
                           ),
                           //   Image.network(
-                          //   physician.imageURL!,
+                          //   therapist.imageURL!,
                           //   fit: BoxFit.cover,
                           //   width: double.infinity,
                           //   height: double.infinity,
@@ -82,7 +80,7 @@ class PhysicianProfile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        physician.getUserFullName(),
+                        therapist.getUserFullName(),
                         style: const TextStyle(
                           fontFamily: 'Sailec Bold',
                           fontSize: 18,
@@ -91,7 +89,7 @@ class PhysicianProfile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        physician.email,
+                        therapist.email,
                         style: darkTextTheme().headlineSmall,
                       ),
                     ],
@@ -109,13 +107,10 @@ class PhysicianProfile extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.all<Color>(
                         Colors.white,
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xff128BED)),
+                      backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
                       elevation: MaterialStateProperty.all<double>(0),
-                      shadowColor:
-                          MaterialStateProperty.all<Color>(Colors.transparent),
-                      overlayColor:
-                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -190,15 +185,11 @@ class PhysicianProfile extends StatelessWidget {
                         foregroundColor: MaterialStateProperty.all<Color>(
                           Colors.white,
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
                         elevation: MaterialStateProperty.all<double>(0),
-                        shadowColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        overlayColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -217,8 +208,7 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    Navigator.of(context)
-        .pushNamed("/EditPhysicianProfile", arguments: physician);
+    Navigator.of(context).pushNamed("/EditTherapistProfile", arguments: therapist);
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {
@@ -226,7 +216,6 @@ class PhysicianProfile extends StatelessWidget {
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
-    BlocProvider.of<PhysicianBloc>(context)
-        .add(LogoutPhysicianEvent(physician));
+    BlocProvider.of<TherapistBloc>(context).add(LogoutTherapistEvent(therapist));
   }
 }
