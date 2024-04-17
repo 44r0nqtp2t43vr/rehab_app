@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_event.dart';
@@ -75,9 +76,11 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is UserNone) {
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
           } else if (state.data != null && state.data is Physician) {
-            BlocProvider.of<PhysicianBloc>(context).add(GetPhysicianEvent(state.data));
+            BlocProvider.of<PhysicianBloc>(context)
+                .add(GetPhysicianEvent(state.data));
             sl<NavigationController>().setTab(TabEnum.home);
             Navigator.pushNamed(context, '/PhysicianMain');
           }
@@ -88,10 +91,16 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Center(
-              child: CupertinoActivityIndicator(
-            color: Colors.white,
-          ));
+          return Center(
+            child: Lottie.asset(
+              'assets/lotties/loading-1.json',
+              width: 400,
+              height: 400,
+            ),
+            //     CupertinoActivityIndicator(
+            //   color: Colors.white,
+            // ),
+          );
         }
         if (state is UserNone || state is UserDone) {
           return SafeArea(
@@ -126,13 +135,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                     children: [
                                       TextFormField(
                                         controller: _emailController,
-                                        decoration: customInputDecoration.copyWith(
+                                        decoration:
+                                            customInputDecoration.copyWith(
                                           labelText: 'Email',
                                           hintText: 'Enter your Email',
                                         ),
-                                        keyboardType: TextInputType.emailAddress,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
                                         validator: (value) {
-                                          if (value == null || value.trim().isEmpty) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
                                             return 'Please enter your email';
                                           }
                                           if (!value.contains('@')) {
@@ -144,13 +156,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                       const SizedBox(height: 20),
                                       TextFormField(
                                         controller: _passwordController,
-                                        decoration: customInputDecoration.copyWith(
+                                        decoration:
+                                            customInputDecoration.copyWith(
                                           labelText: 'Password',
                                           hintText: 'Enter your password',
                                         ),
                                         obscureText: true,
                                         validator: (value) {
-                                          if (value == null || value.trim().isEmpty) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
                                             return 'Please enter your password';
                                           }
                                           return null;
@@ -162,7 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           data: textButtonTheme,
                                           child: TextButton(
                                             onPressed: () {},
-                                            child: const Text('Forgot Password?'),
+                                            child:
+                                                const Text('Forgot Password?'),
                                           ),
                                         ),
                                       ),
@@ -172,7 +187,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         child: Theme(
                                           data: darkButtonTheme,
                                           child: ElevatedButton(
-                                            onPressed: () => _onLoginButtonPressed(),
+                                            onPressed: () =>
+                                                _onLoginButtonPressed(),
                                             child: const Text('Login'),
                                           ),
                                         ),
@@ -188,7 +204,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       const SizedBox(height: 12),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Theme(
                                             data: loginButtonTheme,
@@ -202,7 +219,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             data: loginButtonTheme,
                                             child: IconButton(
                                               onPressed: () {},
-                                              icon: const Icon(Icons.one_x_mobiledata),
+                                              icon: const Icon(
+                                                  Icons.one_x_mobiledata),
                                             ),
                                           ),
                                           const SizedBox(width: 8),
@@ -240,7 +258,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               Theme(
                                 data: signupButtonTheme,
                                 child: TextButton(
-                                  onPressed: () => _onSignUpButtonPressed(context),
+                                  onPressed: () =>
+                                      _onSignUpButtonPressed(context),
                                   child: const Text('Sign Up'),
                                 ),
                               ),
@@ -249,7 +268,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           Theme(
                             data: signupButtonTheme,
                             child: TextButton(
-                              onPressed: () => _onSignUpPhysicianButtonPressed(context),
+                              onPressed: () =>
+                                  _onSignUpPhysicianButtonPressed(context),
                               child: const Text('Sign Up as a Physician'),
                             ),
                           ),
@@ -272,7 +292,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final String email = _emailController.text.trim();
       final String password = _passwordController.text.trim();
 
-      BlocProvider.of<UserBloc>(context).add(LoginEvent(LoginData(email: email, password: password)));
+      BlocProvider.of<UserBloc>(context)
+          .add(LoginEvent(LoginData(email: email, password: password)));
     }
   }
 

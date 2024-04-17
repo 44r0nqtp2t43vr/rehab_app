@@ -21,13 +21,16 @@ class _PhysicianDashboardState extends State<PhysicianDashboard> {
     return BlocBuilder<PhysicianBloc, PhysicianState>(
       builder: (context, state) {
         return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               child: Column(
                 children: [
                   WelcomeCard(
-                    userFirstName: state.currentPhysician!.firstName.capitalize!,
+                    userFirstName:
+                        state.currentPhysician!.firstName.capitalize!,
                     userProfilePicture: state.currentPhysician!.imageURL,
                   ),
                   const SizedBox(height: 20),
@@ -49,7 +52,8 @@ class _PhysicianDashboardState extends State<PhysicianDashboard> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  PatientProgressChart(patients: state.currentPhysician!.patients),
+                  PatientProgressChart(
+                      patients: state.currentPhysician!.patients),
                 ],
               ),
             ),

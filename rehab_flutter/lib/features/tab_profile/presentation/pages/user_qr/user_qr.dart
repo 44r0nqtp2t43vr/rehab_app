@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
@@ -13,7 +14,16 @@ class UserQR extends StatelessWidget {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
+          return Scaffold(
+            body: Center(
+              child: Lottie.asset(
+                'assets/lotties/loading-1.json',
+                width: 400,
+                height: 400,
+              ),
+              //CupertinoActivityIndicator(color: Colors.white),
+            ),
+          );
         }
         if (state is UserDone) {
           return Scaffold(

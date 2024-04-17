@@ -83,6 +83,12 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
                 const SizedBox(height: 4),
                 DropdownButtonFormField<String>(
                   value: _currentType,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Sailec Medium',
+                    fontSize: 12,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   decoration: customDropdownDecoration.copyWith(
                     labelText: 'Type',
                   ),
@@ -107,6 +113,12 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
                 const SizedBox(height: 4),
                 DropdownButtonFormField<AppUser>(
                   value: _patient,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Sailec Medium',
+                    fontSize: 12,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   decoration: customDropdownDecoration.copyWith(
                     labelText: 'Patient',
                   ),
