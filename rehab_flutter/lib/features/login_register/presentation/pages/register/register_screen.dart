@@ -170,7 +170,8 @@ class RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           BlocProvider.of<UserBloc>(context).add(const ResetEvent());
@@ -217,7 +218,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       const SizedBox(height: 12),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Theme(
                                             data: loginButtonTheme,
@@ -231,7 +233,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                                             data: loginButtonTheme,
                                             child: IconButton(
                                               onPressed: () {},
-                                              icon: const Icon(Icons.one_x_mobiledata),
+                                              icon: const Icon(
+                                                  Icons.one_x_mobiledata),
                                             ),
                                           ),
                                           const SizedBox(width: 8),
@@ -360,7 +363,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                 _currentGender = newValue!;
               });
             },
-            items: _availableGenders.map<DropdownMenuItem<String>>((String value) {
+            items:
+                _availableGenders.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -431,7 +435,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                 _currentCondition = newValue!;
               });
             },
-            items: availableConditions.map<DropdownMenuItem<String>>((String value) {
+            items: availableConditions
+                .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -584,7 +589,8 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   void _registerUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate =
+        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     RegisterData registerData = RegisterData(

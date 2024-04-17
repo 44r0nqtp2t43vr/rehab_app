@@ -261,6 +261,7 @@ InputDecoration customInputDecoration = InputDecoration(
 
 InputDecoration customDropdownDecoration = InputDecoration(
   labelStyle: const TextStyle(
+    overflow: TextOverflow.ellipsis,
     color: Color(0XFFD1D1D1),
   ),
   hintStyle: const TextStyle(
@@ -293,7 +294,7 @@ InputDecoration customDropdownDecoration = InputDecoration(
   ),
   filled: true,
   fillColor: Colors.white,
-  contentPadding: const EdgeInsets.all(15.0),
+  contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
   floatingLabelBehavior: FloatingLabelBehavior.never,
 );
 

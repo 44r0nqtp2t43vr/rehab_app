@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
@@ -132,9 +133,15 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
       },
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Scaffold(
-            body:
-                Center(child: CupertinoActivityIndicator(color: Colors.white)),
+          return Scaffold(
+            body: Center(
+              child: Lottie.asset(
+                'assets/lotties/uploading.json',
+                width: 400,
+                height: 400,
+              ),
+              //CupertinoActivityIndicator(color: Colors.white),
+            ),
           );
         }
         if (state is UserDone) {
