@@ -3,6 +3,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/entities/physician.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/_admin/presentation/pages/main/admin_main.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_connect/bluetooth_connect_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/bluetooth_screen/bluetooth_screen.dart';
 import 'package:rehab_flutter/features/bluetooth_connection/presentation/pages/main_screen/main_screen.dart';
@@ -113,6 +114,9 @@ class AppRoutes {
 
       case '/EditPhysicianProfile':
         return _materialRoute(EditPhysicianProfile(user: settings.arguments as Physician));
+
+      case '/AdminMain':
+        return _materialRoute(const AdminMainScreen());
 
       default:
         return _materialRoute(const OnboardingScreen());

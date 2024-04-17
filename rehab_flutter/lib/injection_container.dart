@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rehab_flutter/core/bloc/actuators/actuators_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/physician/physician_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firestore/logs/logs_bloc.dart';
@@ -116,6 +117,8 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<PhysicianBloc>(() => PhysicianBloc(sl(), sl(), sl(), sl()));
+
+  sl.registerFactory<AdminBloc>(() => AdminBloc());
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 }
