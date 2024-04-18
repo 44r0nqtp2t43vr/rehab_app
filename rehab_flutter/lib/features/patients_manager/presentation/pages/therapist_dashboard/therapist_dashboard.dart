@@ -5,7 +5,7 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_progress_chart.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/therapist_numbers.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_numbers.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class TherapistDashboard extends StatefulWidget {
@@ -40,7 +40,7 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  TherapistNumbers(therapist: state.currentTherapist!),
+                  PatientsNumbers(patients: state.currentTherapist!.patients),
                   const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerLeft,

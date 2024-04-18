@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 
-class TherapistNumberCard extends StatelessWidget {
+class TherapistsNumberCard extends StatelessWidget {
   final int number;
   final String label;
 
-  const TherapistNumberCard({super.key, required this.number, required this.label});
+  const TherapistsNumberCard({super.key, required this.number, required this.label});
 
   @override
   Widget build(BuildContext context) {

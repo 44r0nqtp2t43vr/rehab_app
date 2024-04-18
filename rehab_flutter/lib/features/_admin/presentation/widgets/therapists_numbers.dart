@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/therapist_number_card.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_number_card.dart';
 
-class TherapistNumbers extends StatelessWidget {
-  final Therapist therapist;
+class TherapistsNumbers extends StatelessWidget {
+  final List<Therapist> therapists;
 
-  const TherapistNumbers({super.key, required this.therapist});
+  const TherapistsNumbers({super.key, required this.therapists});
 
   List<int> getNumbers() {
     final numbers = [0, 0];
-    if (therapist.patients.isEmpty) {
+    if (therapists.isEmpty) {
       return numbers;
     }
 
-    for (int i = 0; i < therapist.patients.length; i++) {
-      final patientCurrentPlan = therapist.patients[i].getCurrentPlan();
-      if (patientCurrentPlan == null) {
+    for (int i = 0; i < therapists.length; i++) {
+      final numberOfPatients = therapists[i].patients.length;
+      if (numberOfPatients == 0) {
         numbers[1] = numbers[1] + 1;
       } else {
         numbers[0] = numbers[0] + 1;
@@ -34,23 +34,23 @@ class TherapistNumbers extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: TherapistNumberCard(
-              number: therapist.patients.length,
-              label: "Patients",
+            child: PatientsNumberCard(
+              number: therapists.length,
+              label: "Therapists",
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: TherapistNumberCard(
+            child: PatientsNumberCard(
               number: therapistNumbers[0],
-              label: "With active plans",
+              label: "With assigned patients",
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: TherapistNumberCard(
+            child: PatientsNumberCard(
               number: therapistNumbers[1],
-              label: "Without active plans",
+              label: "Without assigned patients",
             ),
           ),
         ],
