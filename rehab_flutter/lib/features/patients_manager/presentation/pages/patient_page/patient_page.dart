@@ -11,6 +11,7 @@ import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_details.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plans_list.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_list.dart';
@@ -136,6 +137,16 @@ class _PatientPageState extends State<PatientPage> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Patient Details",
+                          style: darkTextTheme().displaySmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      PatientDetails(patient: widget.patient),
                       const SizedBox(height: 20),
                       Align(
                         alignment: Alignment.centerLeft,

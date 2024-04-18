@@ -239,6 +239,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'birthDate': birthDateJustDate, // Use the normalized DateTime object
       'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
       'roles': ["therapist"],
+      'patients': [],
     });
   }
 
