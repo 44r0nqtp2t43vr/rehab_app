@@ -118,8 +118,9 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
     _timer?.cancel();
 
     // Schedule a new timer to call _sendPattern every 3 seconds
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
       sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      await Future.delayed(const Duration(milliseconds: 200));
       _sendPattern();
     });
   }
