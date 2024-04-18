@@ -119,6 +119,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
 
     // Schedule a new timer to call _sendPattern every 3 seconds
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
       _sendPattern();
     });
   }
@@ -126,6 +127,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   @override
   void initState() {
     super.initState();
+    _sendPattern();
     _sendPatternRepeatedly();
   }
 
@@ -133,6 +135,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   void didUpdateWidget(covariant StaticPatternsTester oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.currentStaticPattern != oldWidget.currentStaticPattern) {
+      _sendPattern();
       _sendPatternRepeatedly();
     }
   }
