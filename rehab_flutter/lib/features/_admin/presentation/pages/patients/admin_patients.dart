@@ -24,13 +24,15 @@ class _AdminPatientsState extends State<AdminPatients> {
       setState(() {
         currentType = newValue;
         sortedPatients = List.from(widget.currentAdmin.patients);
-        sortedPatients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
+        sortedPatients
+            .sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       });
     } else if (newValue == adminPatientsSortingTypes[1]) {
       setState(() {
         currentType = newValue;
         sortedPatients = List.from(widget.currentAdmin.patients);
-        sortedPatients.sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
+        sortedPatients
+            .sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
       });
     } else if (newValue == adminPatientsSortingTypes[2]) {
       setState(() {
@@ -142,11 +144,18 @@ class _AdminPatientsState extends State<AdminPatients> {
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: currentType,
-                            decoration: customInputDecoration.copyWith(
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Sailec Medium',
+                              fontSize: 12,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            decoration: customDropdownDecoration.copyWith(
                               labelText: 'Type',
                             ),
                             onChanged: _onTypeDropdownSelect,
-                            items: availableTypes.map<DropdownMenuItem<String>>((String value) {
+                            items: availableTypes
+                                .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -158,7 +167,8 @@ class _AdminPatientsState extends State<AdminPatients> {
                     ),
               const SizedBox(height: 16),
               widget.currentAdmin.patients.isEmpty
-                  ? const Text("The system has no patients", style: TextStyle(color: Colors.white))
+                  ? const Text("The system has no patients",
+                      style: TextStyle(color: Colors.white))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

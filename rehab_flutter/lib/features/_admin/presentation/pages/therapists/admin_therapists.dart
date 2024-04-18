@@ -24,37 +24,43 @@ class _AdminTherapistsState extends State<AdminTherapists> {
       setState(() {
         currentType = newValue;
         sortedTherapists = List.from(widget.currentAdmin.therapists);
-        sortedTherapists.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
+        sortedTherapists
+            .sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       });
     } else if (newValue == adminPatientsSortingTypes[1]) {
       setState(() {
         currentType = newValue;
         sortedTherapists = List.from(widget.currentAdmin.therapists);
-        sortedTherapists.sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
+        sortedTherapists
+            .sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
       });
     } else if (newValue == adminPatientsSortingTypes[2]) {
       setState(() {
         currentType = newValue;
         sortedTherapists = List.from(widget.currentAdmin.therapists);
-        sortedTherapists.sort((a, b) => b.patients.length.compareTo(a.patients.length));
+        sortedTherapists
+            .sort((a, b) => b.patients.length.compareTo(a.patients.length));
       });
     } else if (newValue == adminPatientsSortingTypes[3]) {
       setState(() {
         currentType = newValue;
         sortedTherapists = List.from(widget.currentAdmin.therapists);
-        sortedTherapists.sort((a, b) => a.patients.length.compareTo(b.patients.length));
+        sortedTherapists
+            .sort((a, b) => a.patients.length.compareTo(b.patients.length));
       });
     } else if (newValue == adminPatientsSortingTypes[4]) {
       setState(() {
         currentType = newValue;
         sortedTherapists = List.from(widget.currentAdmin.therapists);
-        sortedTherapists.sort((a, b) => a.registerDate.compareTo(b.registerDate));
+        sortedTherapists
+            .sort((a, b) => a.registerDate.compareTo(b.registerDate));
       });
     } else if (newValue == adminPatientsSortingTypes[5]) {
       setState(() {
         currentType = newValue;
         sortedTherapists = List.from(widget.currentAdmin.therapists);
-        sortedTherapists.sort((a, b) => b.registerDate.compareTo(a.registerDate));
+        sortedTherapists
+            .sort((a, b) => b.registerDate.compareTo(a.registerDate));
       });
     }
   }
@@ -108,11 +114,18 @@ class _AdminTherapistsState extends State<AdminTherapists> {
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: currentType,
-                            decoration: customInputDecoration.copyWith(
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Sailec Medium',
+                              fontSize: 12,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            decoration: customDropdownDecoration.copyWith(
                               labelText: 'Type',
                             ),
                             onChanged: _onTypeDropdownSelect,
-                            items: availableTypes.map<DropdownMenuItem<String>>((String value) {
+                            items: availableTypes
+                                .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -124,7 +137,8 @@ class _AdminTherapistsState extends State<AdminTherapists> {
                     ),
               const SizedBox(height: 16),
               widget.currentAdmin.therapists.isEmpty
-                  ? const Text("The system has no therapists", style: TextStyle(color: Colors.white))
+                  ? const Text("The system has no therapists",
+                      style: TextStyle(color: Colors.white))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
