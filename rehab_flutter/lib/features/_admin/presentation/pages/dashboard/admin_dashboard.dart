@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_event.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
+import 'package:rehab_flutter/features/_admin/presentation/widgets/therapists_numbers.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_numbers.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class AdminDashboard extends StatelessWidget {
@@ -19,6 +22,26 @@ class AdminDashboard extends StatelessWidget {
           child: Column(
             children: [
               const WelcomeCard(userFirstName: "Admin"),
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Therapist Statistics",
+                  style: darkTextTheme().displaySmall,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TherapistsNumbers(therapists: currentAdmin.therapists),
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Patient Statistics",
+                  style: darkTextTheme().displaySmall,
+                ),
+              ),
+              const SizedBox(height: 8),
+              PatientsNumbers(patients: currentAdmin.patients),
               const SizedBox(height: 20),
               Row(
                 children: [

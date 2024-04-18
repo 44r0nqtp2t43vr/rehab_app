@@ -32,16 +32,19 @@ class _TherapistPatientsState extends State<TherapistPatients> {
     } else if (newValue == availableSortingTypes[2]) {
       setState(() {
         currentType = newValue;
+        sortedPatients = List.from(widget.patients);
         sortedPatients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       });
     } else if (newValue == availableSortingTypes[3]) {
       setState(() {
         currentType = newValue;
+        sortedPatients = List.from(widget.patients);
         sortedPatients.sort((a, b) => b.getUserFullName().compareTo(a.getUserFullName()));
       });
     } else if (newValue == availableSortingTypes[4]) {
       setState(() {
         currentType = newValue;
+        sortedPatients = List.from(widget.patients);
         sortedPatients.sort((a, b) {
           final currentPlanA = a.getCurrentPlan();
           final currentPlanB = b.getCurrentPlan();
@@ -64,24 +67,37 @@ class _TherapistPatientsState extends State<TherapistPatients> {
     } else if (newValue == availableSortingTypes[5]) {
       setState(() {
         currentType = newValue;
-        sortedPatients.sort((b, a) {
+        sortedPatients = List.from(widget.patients);
+        sortedPatients.sort((a, b) {
           final currentPlanA = a.getCurrentPlan();
           final currentPlanB = b.getCurrentPlan();
           final isEndDateNullA = currentPlanA == null;
           final isEndDateNullB = currentPlanB == null;
 
           // Check if endDate is null
-          if (isEndDateNullA && !isEndDateNullB) {
+          if (!isEndDateNullA && isEndDateNullB) {
             return -1; // a comes first if its endDate is null
-          } else if (!isEndDateNullA && isEndDateNullB) {
+          } else if (isEndDateNullA && !isEndDateNullB) {
             return 1; // b comes first if its endDate is null
           } else {
             // If both have non-null endDate, compare proximity to DateTime.now()
             Duration diffA = (currentPlanA!.endDate).difference(DateTime.now());
             Duration diffB = (currentPlanB!.endDate).difference(DateTime.now());
-            return diffA.compareTo(diffB);
+            return diffB.compareTo(diffA);
           }
         });
+      });
+    } else if (newValue == availableSortingTypes[6]) {
+      setState(() {
+        currentType = newValue;
+        sortedPatients = List.from(widget.patients);
+        sortedPatients.sort((a, b) => a.registerDate.compareTo(b.registerDate));
+      });
+    } else if (newValue == availableSortingTypes[7]) {
+      setState(() {
+        currentType = newValue;
+        sortedPatients = List.from(widget.patients);
+        sortedPatients.sort((a, b) => b.registerDate.compareTo(a.registerDate));
       });
     }
   }

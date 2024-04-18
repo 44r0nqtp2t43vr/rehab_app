@@ -85,6 +85,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
 
       patients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
+      therapists.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       final currentAdmin = Admin(patients: patients, therapists: therapists);
       return currentAdmin;
     } else if (rolesList.contains("therapist")) {
