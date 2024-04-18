@@ -72,6 +72,15 @@ class TherapistListCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: darkTextTheme().headlineSmall,
                     ),
+                    Text(
+                      "No. of Patients: ${therapist.patients.length}",
+                      style: const TextStyle(
+                        fontFamily: 'Sailec Light',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
               ),
