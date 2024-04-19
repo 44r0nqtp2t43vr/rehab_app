@@ -145,7 +145,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       case 1:
         return 'Create an account to get started.';
       case 2:
-        return 'Rest assured these information are kept confidential.';
+        return 'Your information is needed to verify your identity.';
       case 3:
         return 'Secure your Account with a Strong Password.';
       default:

@@ -90,25 +90,13 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
                 title: 'Genres',
                 isActive: screenState == MTScreen.genres,
               ),
-              const SizedBox(width: 12),
-              musicTopButtons(
-                context: context,
-                onPressed: () => _onPlaylistButtonPressed(context),
-                icon: CupertinoIcons.heart_fill,
-                title: 'Playlist',
-                isActive: screenState == MTScreen.playlist,
-              ),
-              // AppButton(
-              //   onPressed: () => _onAllButtonPressed(context),
-              //   child: const Text('All'),
-              // ),
-              // AppButton(
-              //   onPressed: () => _onGenresButtonPressed(context),
-              //   child: const Text('Genres'),
-              // ),
-              // AppButton(
+              //const SizedBox(width: 12),
+              // musicTopButtons(
+              //   context: context,
               //   onPressed: () => _onPlaylistButtonPressed(context),
-              //   child: const Text('Playlist'),
+              //   icon: CupertinoIcons.heart_fill,
+              //   title: 'Playlist',
+              //   isActive: screenState == MTScreen.playlist,
               // ),
             ],
           ),
@@ -136,8 +124,8 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
         return const MTScreenAll();
       case MTScreen.genres:
         return const MTScreenGenres();
-      case MTScreen.playlist:
-        return const MTScreenPlaylist();
+      // case MTScreen.playlist:
+      //   return const MTScreenPlaylist();
       default:
         return Container();
     }
@@ -163,11 +151,11 @@ class _MusicTherapyScreenState extends State<MusicTherapyScreen> {
     }
   }
 
-  void _onPlaylistButtonPressed(BuildContext context) {
-    if (screenState != MTScreen.playlist) {
-      setState(() {
-        screenState = MTScreen.playlist;
-      });
-    }
-  }
+  // void _onPlaylistButtonPressed(BuildContext context) {
+  //   if (screenState != MTScreen.playlist) {
+  //     setState(() {
+  //       screenState = MTScreen.playlist;
+  //     });
+  //   }
+  // }
 }

@@ -1,1 +1,1 @@
-enum MTScreen { all, genres, playlist }
+enum MTScreen { all, genres }
