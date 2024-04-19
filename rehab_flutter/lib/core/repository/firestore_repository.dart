@@ -64,29 +64,29 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     final rolesList = userDoc.data()!['roles'].cast<String>().toList();
     if (rolesList.contains("admin")) {
-      final List<AppUser> patients = [];
-      final List<Therapist> therapists = [];
+      // final List<AppUser> patients = [];
+      // final List<Therapist> therapists = [];
 
-      final QuerySnapshot querySnapshot = await db.collection('users').get();
-      final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+      // final QuerySnapshot querySnapshot = await db.collection('users').get();
+      // final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
 
-      for (DocumentSnapshot document in documentSnapshots) {
-        // Get the data of the document as Map<String, dynamic>
-        final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
-        final List<String> roles = data!['roles'].cast<String>().toList();
+      // for (DocumentSnapshot document in documentSnapshots) {
+      //   // Get the data of the document as Map<String, dynamic>
+      //   final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+      //   final List<String> roles = data!['roles'].cast<String>().toList();
 
-        if (roles.contains("patient")) {
-          final patientUser = await getUser(data['userID']);
-          patients.add(patientUser);
-        } else if (roles.contains("therapist")) {
-          final therapistUser = await getUser(data['userID']);
-          therapists.add(therapistUser);
-        }
-      }
+      //   if (roles.contains("patient")) {
+      //     final patientUser = await getUser(data['userID']);
+      //     patients.add(patientUser);
+      //   } else if (roles.contains("therapist")) {
+      //     final therapistUser = await getUser(data['userID']);
+      //     therapists.add(therapistUser);
+      //   }
+      // }
 
-      patients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
-      therapists.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
-      final currentAdmin = Admin(patients: patients, therapists: therapists);
+      // patients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
+      // therapists.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
+      final currentAdmin = Admin();
       return currentAdmin;
     } else if (rolesList.contains("therapist")) {
       final patientIds = userDoc.data()!['patients'].cast<String>().toList();
@@ -503,5 +503,45 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     return false;
+  }
+
+  @override
+  Future<List<String>> getPatientsIds() async {
+    final List<String> patientsIds = [];
+
+    final QuerySnapshot querySnapshot = await db.collection('users').get();
+    final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+
+    for (DocumentSnapshot document in documentSnapshots) {
+      // Get the data of the document as Map<String, dynamic>
+      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+      final List<String> roles = data!['roles'].cast<String>().toList();
+
+      if (roles.contains("patient")) {
+        patientsIds.add(data['userID']);
+      }
+    }
+
+    return patientsIds;
+  }
+
+  @override
+  Future<List<String>> getTherapistsIds() async {
+    final List<String> therapistsIds = [];
+
+    final QuerySnapshot querySnapshot = await db.collection('users').get();
+    final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+
+    for (DocumentSnapshot document in documentSnapshots) {
+      // Get the data of the document as Map<String, dynamic>
+      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+      final List<String> roles = data!['roles'].cast<String>().toList();
+
+      if (roles.contains("therapist")) {
+        therapistsIds.add(data['userID']);
+      }
+    }
+
+    return therapistsIds;
   }
 }

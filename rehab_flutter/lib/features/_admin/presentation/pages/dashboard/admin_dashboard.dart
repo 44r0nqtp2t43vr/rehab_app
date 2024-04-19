@@ -31,7 +31,7 @@ class AdminDashboard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              TherapistsNumbers(therapists: currentAdmin.therapists),
+              TherapistsNumbers(therapists: []),
               const SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerLeft,
@@ -41,7 +41,7 @@ class AdminDashboard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              PatientsNumbers(patients: currentAdmin.patients),
+              PatientsNumbers(patients: []),
               const SizedBox(height: 20),
               Row(
                 children: [

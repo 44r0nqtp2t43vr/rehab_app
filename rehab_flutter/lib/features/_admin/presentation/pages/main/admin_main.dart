@@ -52,6 +52,7 @@ class AdminMainScreen extends StatelessWidget {
               final currentTab = sl<NavigationController>().getTab();
 
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: getScreenFromTab(currentTab, state.currentAdmin!),
