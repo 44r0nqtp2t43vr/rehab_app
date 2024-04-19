@@ -25,6 +25,9 @@ import 'package:rehab_flutter/core/usecases/firebase/assign_patient.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_therapist.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_patients.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_therapists.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_therapist.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_passive.dart';
@@ -40,6 +43,8 @@ import 'package:rehab_flutter/core/usecases/bluetooth/scan_devices.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/update_chara.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/write_data.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_standard.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -109,6 +114,12 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<AssignPatientUseCase>(AssignPatientUseCase(sl()));
 
+  sl.registerSingleton<GetPatientsUseCase>(GetPatientsUseCase(sl()));
+
+  sl.registerSingleton<GetTherapistsUseCase>(GetTherapistsUseCase(sl()));
+
+  sl.registerSingleton<GetUserUseCase>(GetUserUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
@@ -121,4 +132,8 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<AdminBloc>(() => AdminBloc(sl()));
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
+
+  sl.registerFactory<PatientListBloc>(() => PatientListBloc(sl(), sl()));
+
+  sl.registerFactory<TherapistListBloc>(() => TherapistListBloc(sl(), sl()));
 }

@@ -43,15 +43,16 @@ class AdminMainScreen extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        if (state is AdminLoading) {
-          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
-        }
+        // if (state is AdminLoading) {
+        //   return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+        // }
         if (state is AdminDone) {
           return GetX<NavigationController>(
             builder: (_) {
               final currentTab = sl<NavigationController>().getTab();
 
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: getScreenFromTab(currentTab, state.currentAdmin!),
