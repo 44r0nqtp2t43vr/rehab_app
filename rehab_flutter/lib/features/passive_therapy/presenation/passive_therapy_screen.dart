@@ -46,7 +46,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   int patternIndex = 7;
 // ANIMATION SPEED
   static int animationSpeedDuration = 5;
-  static String animationSpeedCountdownText = '0:05';
+  //static String animationSpeedCountdownText = '0:05';
   static int animationSpeedSlow = 500;
   static int animationSpeedFast = 100;
   int _animationSpeed = animationSpeedSlow;
@@ -54,7 +54,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   Timer? _animationSpeedChangeTimer;
   Duration _animationSpeedChangeDuration =
       Duration(seconds: animationSpeedDuration);
-  String _animationSpeedChangeCountdownText = animationSpeedCountdownText;
+  //String _animationSpeedChangeCountdownText = animationSpeedCountdownText;
 
 // PATTERNS
   late PatternBools pattern;
@@ -117,8 +117,8 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     } else {
       setState(() {
         _animationSpeedChangeDuration -= const Duration(seconds: 1);
-        _animationSpeedChangeCountdownText =
-            formatDuration(_animationSpeedChangeDuration);
+        // _animationSpeedChangeCountdownText =
+        //    formatDuration(_animationSpeedChangeDuration);
       });
     }
   }

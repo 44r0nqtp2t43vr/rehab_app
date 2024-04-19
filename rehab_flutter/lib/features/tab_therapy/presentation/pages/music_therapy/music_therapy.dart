@@ -7,7 +7,7 @@ import 'package:rehab_flutter/features/tab_therapy/domain/enums/mtscreen_enums.d
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/hover_song_card.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen_all.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen_genres.dart';
-import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen_playlist.dart';
+//import 'package:rehab_flutter/features/tab_therapy/presentation/widgets/mtscreen_playlist.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class MusicTherapyScreen extends StatefulWidget {

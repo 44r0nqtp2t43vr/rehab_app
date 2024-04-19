@@ -29,6 +29,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             showAll
                 ? ListView.builder(
@@ -68,27 +69,46 @@ class _PatientPlansListState extends State<PatientPlansList> {
                       ),
             Padding(
               padding: const EdgeInsets.only(top: 12),
-              child: GestureDetector(
-                onTap: () => setState(() {
-                  showAll = !showAll;
-                }),
-                child: SizedBox(
-                  height: 32,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  highlightColor: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: () => setState(() {
+                    showAll = !showAll;
+                  }),
+                  child: Column(
                     children: [
-                      Text(
-                        showAll ? "Hide Past Plans" : "Show All Plans",
-                        style: darkTextTheme().headlineSmall,
+                      SizedBox(
+                        height: 32,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    showAll
+                                        ? "Hide Past Plans"
+                                        : "Show All Plans",
+                                    style: darkTextTheme().headlineSmall,
+                                  ),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                                  Icon(
+                                      showAll
+                                          ? Icons.keyboard_arrow_up
+                                          : Icons.keyboard_arrow_down,
+                                      color: Colors.white),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      Icon(
-                          showAll
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: Colors.white),
                     ],
                   ),
                 ),
