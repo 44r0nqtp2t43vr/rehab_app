@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
@@ -44,7 +45,8 @@ class TherapistMainScreen extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is TherapistLoading) {
-          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+          return const Center(
+              child: CupertinoActivityIndicator(color: Colors.white));
         }
         if (state is TherapistDone) {
           return GetX<NavigationController>(
@@ -54,7 +56,8 @@ class TherapistMainScreen extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                    child: getScreenFromTab(currentTab, state.currentTherapist!),
+                    child:
+                        getScreenFromTab(currentTab, state.currentTherapist!),
                   ),
                   Row(
                     children: [
@@ -65,29 +68,51 @@ class TherapistMainScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              IconButton(
-                                icon: Icon(
-                                  currentTab == TabEnum.home ? CupertinoIcons.house_fill : CupertinoIcons.house,
-                                  size: 30,
-                                  color: currentTab == TabEnum.home ? Colors.white : const Color(0XFF93aac9),
+                              Expanded(
+                                child: IconButton(
+                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  icon: Icon(
+                                    currentTab == TabEnum.home
+                                        ? CupertinoIcons.house_fill
+                                        : CupertinoIcons.house,
+                                    size: 30,
+                                    color: currentTab == TabEnum.home
+                                        ? Colors.white
+                                        : const Color(0XFF93aac9),
+                                  ),
+                                  onPressed: () =>
+                                      _onHomeButtonPressed(currentTab),
                                 ),
-                                onPressed: () => _onHomeButtonPressed(currentTab),
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  CupertinoIcons.calendar,
-                                  size: 30,
-                                  color: currentTab == TabEnum.patients ? Colors.white : const Color(0XFF93aac9),
+                              Expanded(
+                                child: IconButton(
+                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  icon: Icon(
+                                    CupertinoIcons.calendar,
+                                    size: 30,
+                                    color: currentTab == TabEnum.patients
+                                        ? Colors.white
+                                        : const Color(0XFF93aac9),
+                                  ),
+                                  onPressed: () =>
+                                      _onActivityButtonPressed(currentTab),
                                 ),
-                                onPressed: () => _onActivityButtonPressed(currentTab),
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  currentTab == TabEnum.profile ? CupertinoIcons.person_fill : CupertinoIcons.person,
-                                  size: 30,
-                                  color: currentTab == TabEnum.profile ? Colors.white : const Color(0XFF93aac9),
+                              Expanded(
+                                child: IconButton(
+                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  icon: Icon(
+                                    currentTab == TabEnum.profile
+                                        ? CupertinoIcons.person_fill
+                                        : CupertinoIcons.person,
+                                    size: 30,
+                                    color: currentTab == TabEnum.profile
+                                        ? Colors.white
+                                        : const Color(0XFF93aac9),
+                                  ),
+                                  onPressed: () =>
+                                      _onProfileButtonPressed(currentTab),
                                 ),
-                                onPressed: () => _onProfileButtonPressed(currentTab),
                               ),
                             ],
                           ),

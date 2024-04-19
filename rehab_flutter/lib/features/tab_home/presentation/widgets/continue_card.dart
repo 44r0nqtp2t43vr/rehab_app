@@ -40,114 +40,126 @@ class ContinueCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final Plan? currentPlan = user.getCurrentPlan();
 
-    return GestureDetector(
-      onTap: () => _onTap(context, user, currentPlan),
-      child: LayoutBuilder(builder: (context, constraints) {
-        return Container(
-          height: 130,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                spreadRadius: 0,
-                blurRadius: 20,
-                offset: const Offset(4, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Stack(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF128BED),
-                        Color(0xFF01FF99),
-                      ],
-                      stops: [0.3, 1.0],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                  ),
-                ),
-                Container(
-                  color: Colors.black.withOpacity(0.2),
-                ),
-                Positioned(
-                  left: -30,
-                  child: Text(
-                    '%',
-                    style: TextStyle(
-                      fontFamily: 'Sailec Bold',
-                      fontSize: 150,
-                      color: Colors.white.withOpacity(0.25),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Text(
-                        "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
-                        style: const TextStyle(
-                          fontFamily: 'Sailec Bold',
-                          fontSize: 48,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "CONTINUE",
-                            style: TextStyle(
-                              fontFamily: 'Sailec Light',
-                              fontSize: 12,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "Therapy Plan",
-                            style: TextStyle(
-                              fontFamily: 'Sailec Bold',
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "Overall Progress",
-                            style: TextStyle(
-                              fontFamily: 'Sailec Light',
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 12.0),
-                      child: Icon(
-                        Icons.chevron_right,
-                        color: Colors.white,
-                        size: 40,
-                      ),
-                    ),
-                  ],
+    return Stack(
+      children: [
+        LayoutBuilder(builder: (context, constraints) {
+          return Container(
+            height: 130,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  spreadRadius: 0,
+                  blurRadius: 20,
+                  offset: const Offset(4, 4),
                 ),
               ],
             ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF128BED),
+                          Color(0xFF01FF99),
+                        ],
+                        stops: [0.3, 1.0],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.black.withOpacity(0.2),
+                  ),
+                  Positioned(
+                    left: -30,
+                    child: Text(
+                      '%',
+                      style: TextStyle(
+                        fontFamily: 'Sailec Bold',
+                        fontSize: 150,
+                        color: Colors.white.withOpacity(0.25),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
+                          style: const TextStyle(
+                            fontFamily: 'Sailec Bold',
+                            fontSize: 48,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "CONTINUE",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Light',
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "Therapy Plan",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Bold',
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "Overall Progress",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Light',
+                                fontSize: 15,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 12.0),
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              highlightColor: Colors.white.withOpacity(0.2),
+              onTap: () => _onTap(context, user, currentPlan),
+              child: Container(),
+            ),
           ),
-        );
-      }),
+        ),
+      ],
     );
   }
 

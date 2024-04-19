@@ -13,14 +13,17 @@ class PatientListCard extends StatelessWidget {
   final AppUser patient;
   final String onPressedRoute;
 
-  const PatientListCard({super.key, required this.patient, required this.onPressedRoute});
+  const PatientListCard(
+      {super.key, required this.patient, required this.onPressedRoute});
 
   @override
   Widget build(BuildContext context) {
     final Plan? currentPlan = patient.getCurrentPlan();
     final Session? currentSession = patient.getCurrentSession();
 
-    return GestureDetector(
+    return InkWell(
+      highlightColor: Colors.white.withOpacity(0.2),
+      borderRadius: BorderRadius.circular(10),
       onTap: () => _onPatientCardPressed(context),
       child: GlassContainer(
         shadowStrength: 2,
@@ -44,8 +47,10 @@ class PatientListCard extends StatelessWidget {
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: double.infinity,
-                              placeholder: (context, url) => const CircularProgressIndicator(),
-                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
                             ),
                             // Image.network(
                             //   patient.imageURL!,
