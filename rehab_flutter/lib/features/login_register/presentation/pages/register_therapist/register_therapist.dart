@@ -31,6 +31,20 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
   final List<String> _availableGenders = availableGenders;
   String? _currentGender;
 
+  int _currentStep = 1;
+
+  void _nextStep() {
+    setState(() {
+      _currentStep++;
+    });
+  }
+
+  void _previousStep() {
+    setState(() {
+      _currentStep--;
+    });
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -40,7 +54,6 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
     );
     if (picked != null) {
       setState(() {
-        // Update the UI
         _birthdateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
@@ -81,12 +94,11 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  // if (_currentStep == 1) {
-                  //   Navigator.of(context).pop();
-                  // } else {
-                  //   _previousStep();
-                  // }
-                  Navigator.of(context).pop();
+                  if (_currentStep == 1) {
+                    Navigator.of(context).pop();
+                  } else {
+                    _previousStep();
+                  }
                 },
               ),
             ],
@@ -100,13 +112,13 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  // _getStepTitle(),
-                  "Sign Up As Therapist",
+                  _getStepTitle(),
+                  //"Sign Up As Therapist",
                   style: darkTextTheme().headlineLarge,
                 ),
                 Text(
-                  // _getStepSubitle(),
-                  "Create an account to get started",
+                  _getStepSubitle(),
+                  //"Create an account to get started",
                   style: darkTextTheme().headlineSmall,
                 ),
               ],
@@ -141,20 +153,62 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
     );
   }
 
+  String _getStepTitle() {
+    switch (_currentStep) {
+      case 1:
+        return 'Sign Up';
+      case 2:
+        return 'Personal Information';
+      case 3:
+        return 'Create a Password';
+      default:
+        return 'Sign Up';
+    }
+  }
+
+  String _getStepSubitle() {
+    switch (_currentStep) {
+      case 1:
+        return 'Create an account to get started.';
+      case 2:
+        return 'Rest assured these information are kept confidential.';
+      case 3:
+        return 'Secure your Account with a Strong Password.';
+      default:
+        return 'Create an account to get started.';
+    }
+  }
+
+  List<Widget> _buildFormFields() {
+    switch (_currentStep) {
+      case 1:
+        return _buildSignUpFields();
+      case 2:
+        return _buildPersonalInfoFields();
+      case 3:
+        return _buildPasswordFields();
+      default:
+        return _buildSignUpFields();
+    }
+  }
+
   Widget _buildBody() {
     return BlocConsumer<TherapistBloc, TherapistState>(
       listener: (context, state) {
         if (state is TherapistNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is TherapistDone) {
-          BlocProvider.of<TherapistBloc>(context).add(const ResetTherapistEvent());
+          BlocProvider.of<TherapistBloc>(context)
+              .add(const ResetTherapistEvent());
           Navigator.of(context).pop();
         }
       },
       builder: (context, state) {
         if (state is TherapistLoading) {
-          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+          return const Center(
+              child: CupertinoActivityIndicator(color: Colors.white));
         }
         if (state is TherapistNone || state is TherapistDone) {
           return SafeArea(
@@ -174,7 +228,58 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
                           child: Padding(
                             padding: const EdgeInsets.all(24),
                             child: Column(
-                              children: _buildSignUpFields(),
+                              children: [
+                                Column(
+                                  children: _buildFormFields(),
+                                ),
+                                Visibility(
+                                  visible: _currentStep != 3,
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(height: 12),
+                                      const Text(
+                                        'or Login with',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: 'Sailec Light',
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Theme(
+                                            data: loginButtonTheme,
+                                            child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(Icons.apple),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Theme(
+                                            data: loginButtonTheme,
+                                            child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(
+                                                  Icons.one_x_mobiledata),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Theme(
+                                            data: loginButtonTheme,
+                                            child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(Icons.facebook),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -254,6 +359,29 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
             },
           ),
           const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: Theme(
+              data: darkButtonTheme,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _nextStep();
+                  }
+                },
+                child: const Text('Continue'),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  List<Widget> _buildPersonalInfoFields() {
+    return [
+      Column(
+        children: [
           DropdownButtonFormField<String>(
             value: _currentGender,
             decoration: customInputDecoration.copyWith(
@@ -264,7 +392,8 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
                 _currentGender = newValue!;
               });
             },
-            items: _availableGenders.map<DropdownMenuItem<String>>((String value) {
+            items:
+                _availableGenders.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -339,6 +468,29 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
             },
           ),
           const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: Theme(
+              data: darkButtonTheme,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _nextStep();
+                  }
+                },
+                child: const Text('Continue'),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  List<Widget> _buildPasswordFields() {
+    return [
+      Column(
+        children: [
           TextFormField(
             controller: _passwordController,
             decoration: customInputDecoration.copyWith(
@@ -386,6 +538,26 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
               ),
             ),
           ),
+          Text.rich(
+            textAlign: TextAlign.center,
+            TextSpan(
+              text: 'By clicking Sign Up, you agree to our ',
+              style: darkTextTheme().headlineSmall,
+              children: [
+                TextSpan(
+                  text: 'terms of services',
+                  style: darkTextTheme().displaySmall,
+                ),
+                const TextSpan(
+                  text: ' and ',
+                ),
+                TextSpan(
+                  text: 'Privacy Policy',
+                  style: darkTextTheme().displaySmall,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     ];
@@ -393,7 +565,8 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
 
   void _registerTherapist() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate =
+        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     RegisterTherapistData registerData = RegisterTherapistData(
@@ -409,7 +582,8 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
     );
 
     // Dispatch the event to the bloc
-    BlocProvider.of<TherapistBloc>(context).add(RegisterTherapistEvent(registerData));
+    BlocProvider.of<TherapistBloc>(context)
+        .add(RegisterTherapistEvent(registerData));
   }
 
   void _onLoginButtonPressed(BuildContext context) {
