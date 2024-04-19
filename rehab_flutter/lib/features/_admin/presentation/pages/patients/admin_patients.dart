@@ -2,7 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/admin/admin_state.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_event.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_state.dart';
@@ -101,80 +105,116 @@ class AdminPatients extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<PatientListBloc>()..add(const FetchPatientListEvent()),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Patients",
-                        style: darkTextTheme().headlineLarge,
+    return BlocBuilder<AdminBloc, AdminState>(
+      builder: (context, state) {
+        if (state is AdminDone && state.currentAdmin!.patients == null) {
+          return BlocProvider(
+            create: (_) => sl<PatientListBloc>()..add(const FetchPatientListEvent()),
+            child: _buildWidget(context: context, currentAdmin: state.currentAdmin!),
+          );
+        }
+        if (state is AdminDone && state.currentAdmin!.patients != null) {
+          return _buildWidget(context: context, currentAdmin: state.currentAdmin!);
+        }
+        return const SizedBox();
+      },
+    );
+  }
+
+  Widget _buildWidget({required BuildContext context, required Admin currentAdmin}) {
+    return SafeArea(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Patients",
+                            style: darkTextTheme().headlineLarge,
+                          ),
+                          Text(
+                            "All Patient Users",
+                            style: darkTextTheme().headlineSmall,
+                          ),
+                        ],
                       ),
-                      Text(
-                        "All Patient Users",
-                        style: darkTextTheme().headlineSmall,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        currentAdmin.patients = null;
+                        BlocProvider.of<AdminBloc>(context).add(UpdateAdminEvent(currentAdmin));
+                      },
+                      icon: const Icon(
+                        Icons.refresh,
+                        color: Colors.white,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                // const SizedBox(height: 8),
-                // [].isEmpty
-                //     ? const SizedBox()
-                //     : Row(
-                //         children: [
-                //           Text(
-                //             'Sort by:',
-                //             style: darkTextTheme().headlineSmall,
-                //           ),
-                //           const SizedBox(
-                //             width: 12,
-                //           ),
-                //           Expanded(
-                //             child: DropdownButtonFormField<String>(
-                //               value: currentType,
-                //               style: const TextStyle(
-                //                 color: Colors.black,
-                //                 fontFamily: 'Sailec Medium',
-                //                 fontSize: 12,
-                //                 overflow: TextOverflow.ellipsis,
-                //               ),
-                //               decoration: customDropdownDecoration.copyWith(
-                //                 labelText: 'Type',
-                //               ),
-                //               onChanged: _onTypeDropdownSelect,
-                //               items: availableTypes.map<DropdownMenuItem<String>>((String value) {
-                //                 return DropdownMenuItem<String>(
-                //                   value: value,
-                //                   child: Text(value),
-                //                 );
-                //               }).toList(),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                const SizedBox(height: 16),
-                _buildBody(),
-              ],
-            ),
+              ),
+              // const SizedBox(height: 8),
+              // [].isEmpty
+              //     ? const SizedBox()
+              //     : Row(
+              //         children: [
+              //           Text(
+              //             'Sort by:',
+              //             style: darkTextTheme().headlineSmall,
+              //           ),
+              //           const SizedBox(
+              //             width: 12,
+              //           ),
+              //           Expanded(
+              //             child: DropdownButtonFormField<String>(
+              //               value: currentType,
+              //               style: const TextStyle(
+              //                 color: Colors.black,
+              //                 fontFamily: 'Sailec Medium',
+              //                 fontSize: 12,
+              //                 overflow: TextOverflow.ellipsis,
+              //               ),
+              //               decoration: customDropdownDecoration.copyWith(
+              //                 labelText: 'Type',
+              //               ),
+              //               onChanged: _onTypeDropdownSelect,
+              //               items: availableTypes.map<DropdownMenuItem<String>>((String value) {
+              //                 return DropdownMenuItem<String>(
+              //                   value: value,
+              //                   child: Text(value),
+              //                 );
+              //               }).toList(),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              const SizedBox(height: 16),
+              currentAdmin.patients == null ? _buildBlocBody(currentAdmin: currentAdmin) : _buildPatientsList(patients: currentAdmin.patients!),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBody() {
-    return BlocBuilder<PatientListBloc, PatientListState>(
+  Widget _buildBlocBody({required Admin currentAdmin}) {
+    return BlocConsumer<PatientListBloc, PatientListState>(
+      listener: (context, state) {
+        if (state is PatientListDone) {
+          currentAdmin.patients = state.patientList;
+          BlocProvider.of<AdminBloc>(context).add(GetAdminEvent(currentAdmin));
+        }
+      },
       builder: (context, state) {
         if (state is PatientListNone || (state is PatientListDone && state.patientList.isEmpty)) {
           return const Text("The system has no patients", style: TextStyle(color: Colors.white));
@@ -182,23 +222,7 @@ class AdminPatients extends StatelessWidget {
         if (state is PatientListLoading || state is PatientListDone) {
           return Column(
             children: [
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: state.patientList.length,
-                itemBuilder: (context, index) {
-                  // Get the current patient
-                  final patient = state.patientList[index];
-                  // Display the patient's ID
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: PatientListCard(
-                      patient: patient,
-                      onPressedRoute: "/AdminPatientPage",
-                    ),
-                  );
-                },
-              ),
+              _buildPatientsList(patients: state.patientList),
               if (state is PatientListLoading) ...[
                 const CupertinoActivityIndicator(color: Colors.white),
               ],
@@ -206,6 +230,26 @@ class AdminPatients extends StatelessWidget {
           );
         }
         return const SizedBox();
+      },
+    );
+  }
+
+  Widget _buildPatientsList({required List<AppUser> patients}) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: patients.length,
+      itemBuilder: (context, index) {
+        // Get the current patient
+        final patient = patients[index];
+        // Display the patient's ID
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: PatientListCard(
+            patient: patient,
+            onPressedRoute: "/AdminPatientPage",
+          ),
+        );
       },
     );
   }

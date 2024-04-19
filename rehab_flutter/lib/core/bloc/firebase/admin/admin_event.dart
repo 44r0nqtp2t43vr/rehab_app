@@ -20,6 +20,10 @@ class GetAdminEvent extends AdminEvent {
   const GetAdminEvent(Admin currentAdmin) : super(currentAdmin: currentAdmin);
 }
 
+class UpdateAdminEvent extends AdminEvent {
+  const UpdateAdminEvent(Admin currentAdmin) : super(currentAdmin: currentAdmin);
+}
+
 class LogoutAdminEvent extends AdminEvent {
   const LogoutAdminEvent(Admin currentAdmin) : super(currentAdmin: currentAdmin);
 }
