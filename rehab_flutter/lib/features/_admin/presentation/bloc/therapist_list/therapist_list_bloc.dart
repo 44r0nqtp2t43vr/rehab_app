@@ -17,6 +17,7 @@ class TherapistListBloc extends Bloc<TherapistListEvent, TherapistListState> {
   }
 
   void onFetchTherapistList(FetchTherapistListEvent event, Emitter<TherapistListState> emit) async {
+    emit(const TherapistListLoading());
     try {
       final List<Therapist> therapistList = [];
       final List<String> patientIdList = await _getTherapistsUseCase();

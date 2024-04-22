@@ -7,6 +7,10 @@ import 'package:rehab_flutter/core/bloc/firebase/admin/admin_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_event.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_event.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/dashboard/admin_dashboard.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/patients/admin_patients.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/therapists/admin_therapists.dart';
@@ -15,14 +19,20 @@ import 'package:rehab_flutter/injection_container.dart';
 class AdminMainScreen extends StatelessWidget {
   const AdminMainScreen({super.key});
 
-  Widget getScreenFromTab(TabEnum currentTab, Admin currentAdmin) {
+  Widget getScreenFromTab(BuildContext context, TabEnum currentTab, Admin currentAdmin) {
     switch (currentTab) {
       case TabEnum.home:
         return AdminDashboard(currentAdmin: currentAdmin);
       case TabEnum.therapists:
-        return AdminTherapists(currentAdmin: currentAdmin);
+        if (BlocProvider.of<TherapistListBloc>(context).state.therapistList.isEmpty) {
+          BlocProvider.of<TherapistListBloc>(context).add(const FetchTherapistListEvent());
+        }
+        return const AdminTherapists();
       case TabEnum.patients:
-        return AdminPatients(currentAdmin: currentAdmin);
+        if (BlocProvider.of<PatientListBloc>(context).state.patientList.isEmpty) {
+          BlocProvider.of<PatientListBloc>(context).add(const FetchPatientListEvent());
+        }
+        return const AdminPatients();
       default:
         return Container();
     }
@@ -55,7 +65,7 @@ class AdminMainScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: getScreenFromTab(currentTab, state.currentAdmin!),
+                    child: getScreenFromTab(context, currentTab, state.currentAdmin!),
                   ),
                   Row(
                     children: [

@@ -2,21 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/admin/admin_event.dart';
-import 'package:rehab_flutter/core/bloc/firebase/admin/admin_state.dart';
-import 'package:rehab_flutter/core/entities/admin.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_event.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_list_card.dart';
-import 'package:rehab_flutter/injection_container.dart';
 
 class AdminPatients extends StatelessWidget {
-  final Admin currentAdmin;
-
-  const AdminPatients({super.key, required this.currentAdmin});
+  const AdminPatients({super.key});
 
   // final List<String> availableTypes = adminPatientsSortingTypes;
   // late List<AppUser> sortedPatients;
@@ -105,23 +97,6 @@ class AdminPatients extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AdminBloc, AdminState>(
-      builder: (context, state) {
-        if (state is AdminDone && state.currentAdmin!.patients == null) {
-          return BlocProvider(
-            create: (_) => sl<PatientListBloc>()..add(const FetchPatientListEvent()),
-            child: _buildWidget(context: context, currentAdmin: state.currentAdmin!),
-          );
-        }
-        if (state is AdminDone && state.currentAdmin!.patients != null) {
-          return _buildWidget(context: context, currentAdmin: state.currentAdmin!);
-        }
-        return const SizedBox();
-      },
-    );
-  }
-
-  Widget _buildWidget({required BuildContext context, required Admin currentAdmin}) {
     return SafeArea(
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -150,15 +125,21 @@ class AdminPatients extends StatelessWidget {
                         ],
                       ),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        currentAdmin.patients = null;
-                        BlocProvider.of<AdminBloc>(context).add(UpdateAdminEvent(currentAdmin));
+                    BlocBuilder<PatientListBloc, PatientListState>(
+                      builder: (context, state) {
+                        if (state is PatientListDone) {
+                          return IconButton(
+                            onPressed: () {
+                              BlocProvider.of<PatientListBloc>(context).add(const FetchPatientListEvent());
+                            },
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Colors.white,
+                            ),
+                          );
+                        }
+                        return const SizedBox();
                       },
-                      icon: const Icon(
-                        Icons.refresh,
-                        color: Colors.white,
-                      ),
                     ),
                   ],
                 ),
@@ -199,7 +180,7 @@ class AdminPatients extends StatelessWidget {
               //         ],
               //       ),
               const SizedBox(height: 16),
-              currentAdmin.patients == null ? _buildBlocBody(currentAdmin: currentAdmin) : _buildPatientsList(patients: currentAdmin.patients!),
+              _buildBody(),
             ],
           ),
         ),
@@ -207,14 +188,8 @@ class AdminPatients extends StatelessWidget {
     );
   }
 
-  Widget _buildBlocBody({required Admin currentAdmin}) {
-    return BlocConsumer<PatientListBloc, PatientListState>(
-      listener: (context, state) {
-        if (state is PatientListDone) {
-          currentAdmin.patients = state.patientList;
-          BlocProvider.of<AdminBloc>(context).add(GetAdminEvent(currentAdmin));
-        }
-      },
+  Widget _buildBody() {
+    return BlocBuilder<PatientListBloc, PatientListState>(
       builder: (context, state) {
         if (state is PatientListNone || (state is PatientListDone && state.patientList.isEmpty)) {
           return const Text("The system has no patients", style: TextStyle(color: Colors.white));
@@ -222,7 +197,23 @@ class AdminPatients extends StatelessWidget {
         if (state is PatientListLoading || state is PatientListDone) {
           return Column(
             children: [
-              _buildPatientsList(patients: state.patientList),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: state.patientList.length,
+                itemBuilder: (context, index) {
+                  // Get the current patient
+                  final patient = state.patientList[index];
+                  // Display the patient's ID
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: PatientListCard(
+                      patient: patient,
+                      onPressedRoute: "/AdminPatientPage",
+                    ),
+                  );
+                },
+              ),
               if (state is PatientListLoading) ...[
                 const CupertinoActivityIndicator(color: Colors.white),
               ],
@@ -230,26 +221,6 @@ class AdminPatients extends StatelessWidget {
           );
         }
         return const SizedBox();
-      },
-    );
-  }
-
-  Widget _buildPatientsList({required List<AppUser> patients}) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: patients.length,
-      itemBuilder: (context, index) {
-        // Get the current patient
-        final patient = patients[index];
-        // Display the patient's ID
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: PatientListCard(
-            patient: patient,
-            onPressedRoute: "/AdminPatientPage",
-          ),
-        );
       },
     );
   }
