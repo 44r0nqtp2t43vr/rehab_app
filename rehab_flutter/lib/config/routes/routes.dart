@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
+import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/main/admin_main.dart';
@@ -19,6 +20,7 @@ import 'package:rehab_flutter/features/passive_therapy/presenation/passive_thera
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/assign_patients/assign_patients.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/edit_therapist_profile/edit_therapist_profile.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/patient_page/patient_page.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/patient_plan_details/patient_plan_details.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_main/therapist_main.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
@@ -58,13 +60,15 @@ class AppRoutes {
         return _materialRoute(const BluetoothScreen());
 
       case '/ServiceScreen':
-        return _materialRoute(ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
+        return _materialRoute(
+            ServiceScreen(targetDevice: settings.arguments as BluetoothDevice));
 
       case '/MainScreen':
         return _materialRoute(const MainScreen());
 
       case '/Testing':
-        return _materialRoute(TestingScreen(isPretest: settings.arguments as bool));
+        return _materialRoute(
+            TestingScreen(isPretest: settings.arguments as bool));
 
       case '/PlayGame':
         return _materialRoute(PlayGame(
@@ -94,10 +98,12 @@ class AppRoutes {
         ));
 
       case '/StandardTherapy':
-        return _materialRoute(StandardTherapyScreen(data: settings.arguments as StandardTherapyData));
+        return _materialRoute(StandardTherapyScreen(
+            data: settings.arguments as StandardTherapyData));
 
       case '/PassiveTherapy':
-        return _materialRoute(PassiveTherapyScreen(userId: settings.arguments as String));
+        return _materialRoute(
+            PassiveTherapyScreen(userId: settings.arguments as String));
 
       case '/EditProfile':
         return _materialRoute(EditProfile(user: settings.arguments as AppUser));
@@ -112,16 +118,23 @@ class AppRoutes {
         return _materialRoute(const AssignPatients());
 
       case '/PatientPage':
-        return _materialRoute(PatientPage(patient: settings.arguments as AppUser));
+        return _materialRoute(
+            PatientPage(patient: settings.arguments as AppUser));
+
+      case '/PatientPlanDetails':
+        return _materialRoute(
+            PatientPlanDetails(plan: settings.arguments as Plan));
 
       case '/EditTherapistProfile':
-        return _materialRoute(EditTherapistProfile(user: settings.arguments as Therapist));
+        return _materialRoute(
+            EditTherapistProfile(user: settings.arguments as Therapist));
 
       case '/AdminMain':
         return _materialRoute(const AdminMainScreen());
 
       case '/AdminPatientPage':
-        return _materialRoute(AdminPatientPage(patient: settings.arguments as AppUser));
+        return _materialRoute(
+            AdminPatientPage(patient: settings.arguments as AppUser));
 
       case '/AdminTherapistPage':
         return _materialRoute(AdminTherapistPage(therapist: settings.arguments as Therapist));
