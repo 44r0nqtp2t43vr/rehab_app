@@ -17,6 +17,7 @@ class PatientListBloc extends Bloc<PatientListEvent, PatientListState> {
   }
 
   void onFetchPatientList(FetchPatientListEvent event, Emitter<PatientListState> emit) async {
+    emit(const PatientListLoading());
     try {
       final List<AppUser> patientList = [];
       final List<String> patientIdList = await _getPatientsUseCase();

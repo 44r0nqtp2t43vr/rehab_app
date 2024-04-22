@@ -2,14 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
 
 abstract class AdminEvent extends Equatable {
-  final Admin? currentAdmin;
-
-  const AdminEvent({
-    this.currentAdmin,
-  });
+  const AdminEvent();
 
   @override
-  List<Object> get props => [currentAdmin!];
+  List<Object> get props => [];
 }
 
 class ResetAdminEvent extends AdminEvent {
@@ -17,13 +13,9 @@ class ResetAdminEvent extends AdminEvent {
 }
 
 class GetAdminEvent extends AdminEvent {
-  const GetAdminEvent(Admin currentAdmin) : super(currentAdmin: currentAdmin);
-}
-
-class UpdateAdminEvent extends AdminEvent {
-  const UpdateAdminEvent(Admin currentAdmin) : super(currentAdmin: currentAdmin);
+  const GetAdminEvent(Admin currentAdmin) : super();
 }
 
 class LogoutAdminEvent extends AdminEvent {
-  const LogoutAdminEvent(Admin currentAdmin) : super(currentAdmin: currentAdmin);
+  const LogoutAdminEvent() : super();
 }

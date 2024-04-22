@@ -27,7 +27,7 @@ class PatientsNumbers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final therapistNumbers = getNumbers();
+    final patientNumbers = getNumbers();
 
     return SizedBox(
       height: 120,
@@ -42,14 +42,14 @@ class PatientsNumbers extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: PatientsNumberCard(
-              number: therapistNumbers[0],
+              number: patientNumbers[0],
               label: "With active plans",
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: PatientsNumberCard(
-              number: therapistNumbers[1],
+              number: patientNumbers[1],
               label: "Without active plans",
             ),
           ),
