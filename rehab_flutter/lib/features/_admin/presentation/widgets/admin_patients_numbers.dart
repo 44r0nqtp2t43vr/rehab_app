@@ -1,23 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rehab_flutter/core/entities/therapist.dart';
-import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
-import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_state.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_number_card.dart';
 
-class TherapistsNumbers extends StatelessWidget {
-  const TherapistsNumbers({super.key});
+class AdminPatientsNumbers extends StatelessWidget {
+  const AdminPatientsNumbers({super.key});
 
-  List<int> getNumbers(List<Therapist> therapists) {
+  List<int> getNumbers(List<AppUser> patients) {
     final numbers = [0, 0];
-    if (therapists.isEmpty) {
+    if (patients.isEmpty) {
       return numbers;
     }
 
-    for (int i = 0; i < therapists.length; i++) {
-      final numberOfPatients = therapists[i].patients.length;
-      if (numberOfPatients == 0) {
+    for (int i = 0; i < patients.length; i++) {
+      final patientCurrentPlan = patients[i].getCurrentPlan();
+      if (patientCurrentPlan == null) {
         numbers[1] = numbers[1] + 1;
       } else {
         numbers[0] = numbers[0] + 1;
@@ -29,13 +29,13 @@ class TherapistsNumbers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TherapistListBloc, TherapistListState>(
+    return BlocBuilder<PatientListBloc, PatientListState>(
       builder: (context, state) {
-        if (state is TherapistListLoading) {
+        if (state is PatientListLoading) {
           return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
-        if (state is TherapistListDone) {
-          final therapistNumbers = getNumbers(state.therapistList);
+        if (state is PatientListDone) {
+          final patientNumbers = getNumbers(state.patientList);
 
           return SizedBox(
             height: 120,
@@ -43,22 +43,22 @@ class TherapistsNumbers extends StatelessWidget {
               children: [
                 Expanded(
                   child: PatientsNumberCard(
-                    number: state.therapistList.length,
-                    label: "Therapists",
+                    number: state.patientList.length,
+                    label: "Patients",
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: PatientsNumberCard(
-                    number: therapistNumbers[0],
-                    label: "With assigned patients",
+                    number: patientNumbers[0],
+                    label: "With active plans",
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: PatientsNumberCard(
-                    number: therapistNumbers[1],
-                    label: "Without assigned patients",
+                    number: patientNumbers[1],
+                    label: "Without active plans",
                   ),
                 ),
               ],

@@ -5,7 +5,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
-import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_event.dart';
@@ -19,19 +18,19 @@ import 'package:rehab_flutter/injection_container.dart';
 class AdminMainScreen extends StatelessWidget {
   const AdminMainScreen({super.key});
 
-  Widget getScreenFromTab(BuildContext context, TabEnum currentTab, Admin currentAdmin) {
+  Widget getScreenFromTab(BuildContext context, TabEnum currentTab) {
     switch (currentTab) {
       case TabEnum.home:
-        return AdminDashboard(currentAdmin: currentAdmin);
-      case TabEnum.therapists:
         if (BlocProvider.of<TherapistListBloc>(context).state.therapistList.isEmpty) {
           BlocProvider.of<TherapistListBloc>(context).add(const FetchTherapistListEvent());
         }
-        return const AdminTherapists();
-      case TabEnum.patients:
         if (BlocProvider.of<PatientListBloc>(context).state.patientList.isEmpty) {
           BlocProvider.of<PatientListBloc>(context).add(const FetchPatientListEvent());
         }
+        return const AdminDashboard();
+      case TabEnum.therapists:
+        return const AdminTherapists();
+      case TabEnum.patients:
         return const AdminPatients();
       default:
         return Container();
@@ -65,7 +64,7 @@ class AdminMainScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: getScreenFromTab(context, currentTab, state.currentAdmin!),
+                    child: getScreenFromTab(context, currentTab),
                   ),
                   Row(
                     children: [

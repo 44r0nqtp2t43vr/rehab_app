@@ -11,7 +11,6 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) : super(const AdminNone()) {
     on<ResetAdminEvent>(onResetAdmin);
     on<GetAdminEvent>(onGetAdmin);
-    on<UpdateAdminEvent>(onUpdateAdmin);
     on<LogoutAdminEvent>(onLogoutAdmin);
   }
 
@@ -20,12 +19,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   void onGetAdmin(GetAdminEvent event, Emitter<AdminState> emit) {
-    emit(AdminDone(currentAdmin: event.currentAdmin));
-  }
-
-  void onUpdateAdmin(UpdateAdminEvent event, Emitter<AdminState> emit) {
-    emit(const AdminLoading());
-    emit(AdminDone(currentAdmin: event.currentAdmin));
+    emit(const AdminDone());
   }
 
   void onLogoutAdmin(LogoutAdminEvent event, Emitter<AdminState> emit) async {
@@ -34,7 +28,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       await _logoutUserUseCase();
       emit(const AdminNone());
     } catch (e) {
-      emit(AdminDone(currentAdmin: event.currentAdmin));
+      emit(const AdminDone());
     }
   }
 }

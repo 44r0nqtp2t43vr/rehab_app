@@ -3,15 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_event.dart';
-import 'package:rehab_flutter/core/entities/admin.dart';
+import 'package:rehab_flutter/features/_admin/presentation/widgets/admin_patients_numbers.dart';
 import 'package:rehab_flutter/features/_admin/presentation/widgets/therapists_numbers.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_numbers.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class AdminDashboard extends StatelessWidget {
-  final Admin currentAdmin;
-
-  const AdminDashboard({super.key, required this.currentAdmin});
+  const AdminDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +28,7 @@ class AdminDashboard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              TherapistsNumbers(therapists: []),
+              const TherapistsNumbers(),
               const SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerLeft,
@@ -41,7 +38,7 @@ class AdminDashboard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              PatientsNumbers(patients: []),
+              const AdminPatientsNumbers(),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -97,6 +94,6 @@ class AdminDashboard extends StatelessWidget {
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
-    BlocProvider.of<AdminBloc>(context).add(LogoutAdminEvent(currentAdmin));
+    BlocProvider.of<AdminBloc>(context).add(LogoutAdminEvent());
   }
 }
