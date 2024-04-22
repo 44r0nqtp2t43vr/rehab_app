@@ -14,7 +14,7 @@ class TherapistListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () => _onTherapistListCardPressed(context, therapist),
       child: GlassContainer(
         shadowStrength: 2,
         shadowColor: Colors.black,
@@ -89,5 +89,9 @@ class TherapistListCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onTherapistListCardPressed(BuildContext context, Therapist therapist) {
+    Navigator.of(context).pushNamed("/AdminTherapistPage", arguments: therapist);
   }
 }
