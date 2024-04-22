@@ -42,6 +42,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
                             ? const EdgeInsets.all(0)
                             : const EdgeInsets.only(bottom: 12.0),
                         child: PatientPlanItem(
+                          onPressedRoute: '/PatientPlanDetails',
                           plan: plans[index],
                           planNo: index + 1,
                           isCurrent: currentPlan != null &&
@@ -56,6 +57,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
                         style: darkTextTheme().headlineSmall,
                       )
                     : PatientPlanItem(
+                        onPressedRoute: '/PatientPlanDetails',
                         plan: currentPlan,
                         planNo: widget.patient.plans.indexWhere((plan) =>
                                 plan.startDate.month ==
