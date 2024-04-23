@@ -26,7 +26,7 @@ class TherapistListBloc extends Bloc<TherapistListEvent, TherapistListState> {
       for (var patientId in patientIdList) {
         final patient = await _getUserUseCase(params: patientId);
         therapistList.add(patient);
-        emit(TherapistListLoading(therapistList: List.from(therapistList)));
+        emit(TherapistListLoading(therapistList: therapistList));
       }
 
       emit(TherapistListDone(therapistList: therapistList));
