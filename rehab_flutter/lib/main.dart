@@ -7,6 +7,7 @@ import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
 import 'firebase_options.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<TherapistListBloc>(create: (BuildContext context) => sl()),
         BlocProvider<PatientListBloc>(create: (BuildContext context) => sl()),
         BlocProvider<ViewedTherapistBloc>(create: (BuildContext context) => sl()),
+        BlocProvider<ViewedPatientBloc>(create: (BuildContext context) => sl()),
       ],
       child: MaterialApp(
         title: 'Haplos',

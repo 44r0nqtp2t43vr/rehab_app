@@ -126,7 +126,7 @@ class AppRoutes {
         return _materialRoute(const AdminMainScreen());
 
       case '/AdminPatientPage':
-        return _materialRoute(AdminPatientPage(patient: settings.arguments as AppUser));
+        return _materialRoute(const AdminPatientPage());
 
       case '/AdminTherapistPage':
         return _materialRoute(const AdminTherapistPage());
