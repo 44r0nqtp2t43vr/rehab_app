@@ -54,9 +54,22 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                   // Display the patient's ID
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: PatientListCard(
-                      patient: patient,
-                      onPressedRoute: "/AdminPatientPage",
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: PatientListCard(
+                            patient: patient,
+                            onPressedRoute: "/AdminPatientPage",
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => _onRemovePatientButtonPressed(context, patient),
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -197,11 +210,84 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
     );
   }
 
+  void _onRemovePatientButtonPressed(BuildContext context, AppUser patient) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          content: GlassContainer(
+            blur: 10,
+            color: Colors.white.withOpacity(0.3),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Are you sure? Doing so will prohibit the therapist from viewing this patient's details.",
+                      style: darkTextTheme().headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Theme(
+                            data: darkButtonTheme,
+                            child: ElevatedButton(
+                              onPressed: () => _onRemoveButtonPressed(context, patient),
+                              child: const Text('Confirm'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Theme(
+                            data: darkButtonTheme,
+                            child: ElevatedButton(
+                              onPressed: () => _onBackButtonPressed(context),
+                              child: const Text('Cancel'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _onAddButtonPressed(BuildContext context) {
     Navigator.of(context).pop();
     BlocProvider.of<ViewedTherapistBloc>(context).add(AssignViewedTherapistEvent(AssignPatientData(
       therapist: widget.therapist,
       patientId: _selectedPatientToAdd!.userId,
+    )));
+  }
+
+  void _onRemoveButtonPressed(BuildContext context, AppUser patient) {
+    Navigator.of(context).pop();
+    BlocProvider.of<ViewedTherapistBloc>(context).add(AssignViewedTherapistEvent(AssignPatientData(
+      therapist: widget.therapist,
+      patientId: patient.userId,
+      isAssign: false,
     )));
   }
 
