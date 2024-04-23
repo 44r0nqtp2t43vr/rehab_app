@@ -45,6 +45,7 @@ import 'package:rehab_flutter/core/usecases/bluetooth/write_data.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_standard.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -136,4 +137,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<PatientListBloc>(() => PatientListBloc(sl(), sl()));
 
   sl.registerFactory<TherapistListBloc>(() => TherapistListBloc(sl(), sl()));
+
+  sl.registerFactory<ViewedTherapistBloc>(() => ViewedTherapistBloc(sl()));
 }

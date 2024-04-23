@@ -14,6 +14,7 @@ class TherapistListBloc extends Bloc<TherapistListEvent, TherapistListState> {
     this._getUserUseCase,
   ) : super(const TherapistListLoading()) {
     on<FetchTherapistListEvent>(onFetchTherapistList);
+    on<UpdateTherapistListEvent>(onUpdateTherapistList);
   }
 
   void onFetchTherapistList(FetchTherapistListEvent event, Emitter<TherapistListState> emit) async {
@@ -32,5 +33,11 @@ class TherapistListBloc extends Bloc<TherapistListEvent, TherapistListState> {
     } catch (e) {
       emit(TherapistListError(errorMessage: e.toString()));
     }
+  }
+
+  void onUpdateTherapistList(UpdateTherapistListEvent event, Emitter<TherapistListState> emit) async {
+    final index = state.therapistList.indexWhere((therapist) => therapist.therapistId == event.therapistToUpdate!.therapistId);
+    state.therapistList[index] = event.therapistToUpdate!;
+    emit(TherapistListDone(therapistList: state.therapistList));
   }
 }

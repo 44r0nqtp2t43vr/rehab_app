@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_event.dart';
 
 class TherapistListCard extends StatelessWidget {
   final Therapist therapist;
@@ -92,6 +95,7 @@ class TherapistListCard extends StatelessWidget {
   }
 
   void _onTherapistListCardPressed(BuildContext context, Therapist therapist) {
-    Navigator.of(context).pushNamed("/AdminTherapistPage", arguments: therapist);
+    BlocProvider.of<ViewedTherapistBloc>(context).add(FetchViewedTherapistEvent(therapist));
+    Navigator.of(context).pushNamed("/AdminTherapistPage");
   }
 }
