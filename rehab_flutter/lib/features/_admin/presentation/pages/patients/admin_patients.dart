@@ -5,7 +5,7 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_event.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_state.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_list_card.dart';
+import 'package:rehab_flutter/features/_admin/presentation/widgets/admin_patient_list_card.dart';
 
 class AdminPatients extends StatelessWidget {
   const AdminPatients({super.key});
@@ -207,10 +207,7 @@ class AdminPatients extends StatelessWidget {
                   // Display the patient's ID
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: PatientListCard(
-                      patient: patient,
-                      onPressedRoute: "/AdminPatientPage",
-                    ),
+                    child: AdminPatientListCard(patient: patient),
                   );
                 },
               ),

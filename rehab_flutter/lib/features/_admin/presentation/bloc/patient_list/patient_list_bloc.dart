@@ -25,12 +25,18 @@ class PatientListBloc extends Bloc<PatientListEvent, PatientListState> {
       for (var patientId in patientIdList) {
         final patient = await _getUserUseCase(params: patientId);
         patientList.add(patient);
-        emit(PatientListLoading(patientList: List.from(patientList)));
+        emit(PatientListLoading(patientList: patientList));
       }
 
       emit(PatientListDone(patientList: patientList));
     } catch (e) {
       emit(PatientListError(errorMessage: e.toString()));
     }
+  }
+
+  void onUpdatePatientList(UpdatePatientListEvent event, Emitter<PatientListState> emit) async {
+    final index = state.patientList.indexWhere((patient) => patient.userId == event.patientToUpdate!.userId);
+    state.patientList[index] = event.patientToUpdate!;
+    emit(PatientListDone(patientList: state.patientList));
   }
 }
