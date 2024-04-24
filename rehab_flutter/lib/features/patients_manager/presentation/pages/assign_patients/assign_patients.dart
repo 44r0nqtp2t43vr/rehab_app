@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
@@ -121,14 +123,40 @@ class _AssignPatientsState extends State<AssignPatients> {
                     state.currentTherapist!,
                   ),
                 ),
-                GlassContainer(
-                  shadowStrength: 2,
-                  shadowColor: Colors.black,
-                  blur: 4,
-                  color: Colors.white.withOpacity(0.50),
-                  child: const Padding(
-                    padding: EdgeInsets.all(40),
-                    child: Text('ss'),
+                Positioned(
+                  top: 50,
+                  left: 10,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.chevron_left,
+                      size: 35,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                Positioned(
+                  bottom: 130,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: GlassContainer(
+                      shadowStrength: 2,
+                      shadowColor: Colors.black,
+                      blur: 4,
+                      color: Colors.white.withOpacity(0.6),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
+                          width: 200,
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            'Scan QR code to assign Patient.',
+                            style: darkTextTheme().displaySmall,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
