@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
 
 class PatientsTherapyPlanDetails extends StatelessWidget {
-  final Plan plan;
+  final PatientPlan patientPlan;
 
-  const PatientsTherapyPlanDetails({super.key, required this.plan});
+  const PatientsTherapyPlanDetails({super.key, required this.patientPlan});
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +17,24 @@ class PatientsTherapyPlanDetails extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Text(
+                //   "Plan No.:",
+                //   style: darkTextTheme().headlineSmall,
+                // ),
+                // Text(
+                //   plan.planName.replaceAllMapped(
+                //     RegExp(r'\D+'),
+                //     (match) => '',
+                //   ),
+                //   style: darkTextTheme().displaySmall,
+                // ),
+                // const SizedBox(height: 8),
                 Text(
-                  "Plan No.:",
+                  'Patient Name:',
                   style: darkTextTheme().headlineSmall,
                 ),
                 Text(
-                  plan.planName.replaceAllMapped(
-                    RegExp(r'\D+'),
-                    (match) => '',
-                  ),
+                  patientPlan.patient.getUserFullName(),
                   style: darkTextTheme().displaySmall,
                 ),
                 const SizedBox(height: 8),
@@ -34,7 +43,7 @@ class PatientsTherapyPlanDetails extends StatelessWidget {
                   style: darkTextTheme().headlineSmall,
                 ),
                 Text(
-                  DateFormat('MMMM dd, yyyy').format(plan.startDate),
+                  DateFormat('MMMM dd, yyyy').format(patientPlan.plan.startDate),
                   style: darkTextTheme().displaySmall,
                 ),
                 const SizedBox(height: 8),
@@ -43,7 +52,7 @@ class PatientsTherapyPlanDetails extends StatelessWidget {
                   style: darkTextTheme().headlineSmall,
                 ),
                 Text(
-                  DateFormat('MMMM dd, yyyy').format(plan.endDate),
+                  DateFormat('MMMM dd, yyyy').format(patientPlan.plan.endDate),
                   style: darkTextTheme().displaySmall,
                 ),
                 const SizedBox(height: 8),

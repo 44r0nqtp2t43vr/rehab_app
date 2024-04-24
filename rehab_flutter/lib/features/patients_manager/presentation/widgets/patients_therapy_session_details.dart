@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
 
 class PatientsTherapySessionDetails extends StatelessWidget {
-  final Plan plan;
-  final int i;
+  final Session session;
   final String title;
 
-  const PatientsTherapySessionDetails(
-      {super.key, required this.plan, required this.i, required this.title});
+  const PatientsTherapySessionDetails({super.key, required this.session, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    List<bool> conditions = plan.sessions[i].getSessionConditions();
+    List<bool> conditions = session.getSessionConditions();
 
     return GlassContainer(
       blur: 10,
@@ -74,20 +72,16 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             vertical: 12,
                                           ),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                plan.sessions[i].pretestScore!
-                                                    .toStringAsFixed(1),
-                                                style: darkTextTheme()
-                                                    .headlineLarge,
+                                                session.pretestScore!.toStringAsFixed(1),
+                                                style: darkTextTheme().headlineLarge,
                                               ),
                                               Text(
                                                 textAlign: TextAlign.center,
                                                 "Pre-Test Score",
-                                                style: darkTextTheme()
-                                                    .headlineSmall,
+                                                style: darkTextTheme().headlineSmall,
                                               ),
                                             ],
                                           ),
@@ -107,23 +101,16 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             vertical: 12,
                                           ),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                !conditions[4]
-                                                    ? '0'
-                                                    : plan.sessions[i]
-                                                        .posttestScore!
-                                                        .toStringAsFixed(1),
-                                                style: darkTextTheme()
-                                                    .headlineLarge,
+                                                !conditions[4] ? '0' : session.posttestScore!.toStringAsFixed(1),
+                                                style: darkTextTheme().headlineLarge,
                                               ),
                                               Text(
                                                 textAlign: TextAlign.center,
                                                 "Post-Test Score",
-                                                style: darkTextTheme()
-                                                    .headlineSmall,
+                                                style: darkTextTheme().headlineSmall,
                                               ),
                                             ],
                                           ),
@@ -152,25 +139,20 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                           vertical: 12,
                                         ),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     "Therapy Type:",
-                                                    style: darkTextTheme()
-                                                        .headlineSmall,
+                                                    style: darkTextTheme().headlineSmall,
                                                   ),
                                                   Text(
-                                                    plan.sessions[i]
-                                                        .standardOneType,
-                                                    style: darkTextTheme()
-                                                        .displaySmall,
+                                                    session.standardOneType,
+                                                    style: darkTextTheme().displaySmall,
                                                   ),
                                                 ],
                                               ),
@@ -179,19 +161,15 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             Expanded(
                                               flex: 1,
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    plan.sessions[i]
-                                                        .standardOneIntensity,
-                                                    style: darkTextTheme()
-                                                        .headlineLarge,
+                                                    session.standardOneIntensity,
+                                                    style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
                                                     "Intensity",
-                                                    style: darkTextTheme()
-                                                        .headlineSmall,
+                                                    style: darkTextTheme().headlineSmall,
                                                   ),
                                                 ],
                                               ),
@@ -222,25 +200,20 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                           vertical: 12,
                                         ),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
                                               flex: 1,
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    plan.sessions[i]
-                                                        .passiveIntensity,
-                                                    style: darkTextTheme()
-                                                        .headlineLarge,
+                                                    session.passiveIntensity,
+                                                    style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
                                                     "Intensity",
-                                                    style: darkTextTheme()
-                                                        .headlineSmall,
+                                                    style: darkTextTheme().headlineSmall,
                                                   ),
                                                 ],
                                               ),
@@ -271,25 +244,20 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                           vertical: 12,
                                         ),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
                                               flex: 2,
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     "Therapy Type:",
-                                                    style: darkTextTheme()
-                                                        .headlineSmall,
+                                                    style: darkTextTheme().headlineSmall,
                                                   ),
                                                   Text(
-                                                    plan.sessions[i]
-                                                        .standardTwoType,
-                                                    style: darkTextTheme()
-                                                        .displaySmall,
+                                                    session.standardTwoType,
+                                                    style: darkTextTheme().displaySmall,
                                                   ),
                                                 ],
                                               ),
@@ -298,19 +266,15 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             Expanded(
                                               flex: 1,
                                               child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    plan.sessions[i]
-                                                        .standardTwoIntensity,
-                                                    style: darkTextTheme()
-                                                        .headlineLarge,
+                                                    session.standardTwoIntensity,
+                                                    style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
                                                     "Intensity",
-                                                    style: darkTextTheme()
-                                                        .headlineSmall,
+                                                    style: darkTextTheme().headlineSmall,
                                                   ),
                                                 ],
                                               ),

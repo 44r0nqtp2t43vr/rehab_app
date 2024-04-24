@@ -5,9 +5,8 @@ import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_sorting_type.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_completion_rate.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_edit.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_plan_details.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_sessions.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plan_session_item.dart';
 
 class PatientPlanDetails extends StatefulWidget {
   final PatientPlan patientPlan;
@@ -93,7 +92,7 @@ class _PatientPlanDetailsState extends State<PatientPlanDetails> {
                             children: [
                               PatientsTherapyCompletionRate(plan: widget.patientPlan.plan),
                               const SizedBox(width: 16),
-                              PatientsTherapyPlanDetails(plan: widget.patientPlan.plan),
+                              PatientsTherapyPlanDetails(patientPlan: widget.patientPlan),
                             ],
                           ),
                           const SizedBox(height: 24),
@@ -117,20 +116,10 @@ class _PatientPlanDetailsState extends State<PatientPlanDetails> {
                                       itemBuilder: (context, index) {
                                         return Padding(
                                           padding: const EdgeInsets.only(bottom: 16.0),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: PatientsTherapySessions(
-                                                  plan: widget.patientPlan.plan,
-                                                  i: index,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              PatientsTherapyEdit(
-                                                plan: widget.patientPlan.plan,
-                                                i: index,
-                                              ),
-                                            ],
+                                          child: PatientPlanSessionItem(
+                                            patientPlan: widget.patientPlan,
+                                            session: widget.patientPlan.plan.sessions[index],
+                                            index: index,
                                           ),
                                         );
                                       },
