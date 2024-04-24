@@ -1,8 +1,9 @@
 import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/user.dart';
 
 class PatientPlan {
-  final String patientId;
+  final AppUser patient;
   final Plan plan;
 
-  PatientPlan({required this.patientId, required this.plan});
+  PatientPlan({required this.patient, required this.plan});
 }

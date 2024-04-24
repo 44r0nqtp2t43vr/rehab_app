@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
 
 class PatientsTherapyEditDialog extends StatelessWidget {
-  final Plan plan;
-  final int i;
+  final PatientPlan patientPlan;
+  final Session session;
   final String title;
 
-  const PatientsTherapyEditDialog({super.key, required this.plan, required this.i, required this.title});
+  const PatientsTherapyEditDialog({super.key, required this.patientPlan, required this.session, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    List<bool> conditions = plan.sessions[i].getSessionConditions();
+    List<bool> conditions = session.getSessionConditions();
 
     return GlassContainer(
       blur: 10,
@@ -64,7 +65,7 @@ class PatientsTherapyEditDialog extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          !conditions[0] ? '0' : plan.sessions[i].pretestScore!.toStringAsFixed(1),
+                                          !conditions[0] ? '0' : session.pretestScore!.toStringAsFixed(1),
                                           style: darkTextTheme().headlineLarge,
                                         ),
                                         Text(
@@ -93,7 +94,7 @@ class PatientsTherapyEditDialog extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          !conditions[4] ? '0' : plan.sessions[i].posttestScore!.toStringAsFixed(1),
+                                          !conditions[4] ? '0' : session.posttestScore!.toStringAsFixed(1),
                                           style: darkTextTheme().headlineLarge,
                                         ),
                                         Text(
@@ -138,11 +139,11 @@ class PatientsTherapyEditDialog extends StatelessWidget {
                                             style: darkTextTheme().headlineSmall,
                                           ),
                                           Text(
-                                            plan.sessions[i].standardOneType,
+                                            session.standardOneType,
                                             style: darkTextTheme().displaySmall,
                                           ),
                                           Text(
-                                            plan.sessions[i].standardOneIntensity,
+                                            session.standardOneIntensity,
                                             style: darkTextTheme().headlineLarge,
                                           ),
                                           Text(
@@ -185,7 +186,7 @@ class PatientsTherapyEditDialog extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
-                                              plan.sessions[i].passiveIntensity,
+                                              session.passiveIntensity,
                                               style: darkTextTheme().headlineLarge,
                                             ),
                                             Text(
@@ -233,7 +234,7 @@ class PatientsTherapyEditDialog extends StatelessWidget {
                                               style: darkTextTheme().headlineSmall,
                                             ),
                                             Text(
-                                              plan.sessions[i].standardTwoType,
+                                              session.standardTwoType,
                                               style: darkTextTheme().displaySmall,
                                             ),
                                           ],
@@ -246,7 +247,7 @@ class PatientsTherapyEditDialog extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
-                                              plan.sessions[i].standardTwoIntensity,
+                                              session.standardTwoIntensity,
                                               style: darkTextTheme().headlineLarge,
                                             ),
                                             Text(

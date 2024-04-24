@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_getx_widget.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
@@ -8,6 +7,8 @@ import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart'
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_dashboard/therapist_dashboard.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_patients/therapist_patients.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_profile/therapist_profile.dart';
@@ -16,12 +17,15 @@ import 'package:rehab_flutter/injection_container.dart';
 class TherapistMainScreen extends StatelessWidget {
   const TherapistMainScreen({super.key});
 
-  Widget getScreenFromTab(TabEnum currentTab, Therapist currentTherapist) {
+  Widget getScreenFromTab(BuildContext context, TabEnum currentTab, Therapist currentTherapist) {
     switch (currentTab) {
       case TabEnum.home:
+        if (BlocProvider.of<TherapistPatientListBloc>(context).state.therapistPatientList.isEmpty) {
+          BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(currentTherapist.patientsIds));
+        }
         return const TherapistDashboard();
       case TabEnum.patients:
-        return TherapistPatients(patients: currentTherapist.patients);
+        return TherapistPatients(therapist: currentTherapist);
       case TabEnum.profile:
         return TherapistProfile(therapist: currentTherapist);
       default:
@@ -45,8 +49,7 @@ class TherapistMainScreen extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is TherapistLoading) {
-          return const Center(
-              child: CupertinoActivityIndicator(color: Colors.white));
+          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
         if (state is TherapistDone) {
           return GetX<NavigationController>(
@@ -56,8 +59,7 @@ class TherapistMainScreen extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                    child:
-                        getScreenFromTab(currentTab, state.currentTherapist!),
+                    child: getScreenFromTab(context, currentTab, state.currentTherapist!),
                   ),
                   Row(
                     children: [
@@ -72,16 +74,11 @@ class TherapistMainScreen extends StatelessWidget {
                                 child: IconButton(
                                   highlightColor: Colors.white.withOpacity(0.1),
                                   icon: Icon(
-                                    currentTab == TabEnum.home
-                                        ? CupertinoIcons.house_fill
-                                        : CupertinoIcons.house,
+                                    currentTab == TabEnum.home ? CupertinoIcons.house_fill : CupertinoIcons.house,
                                     size: 30,
-                                    color: currentTab == TabEnum.home
-                                        ? Colors.white
-                                        : const Color(0XFF93aac9),
+                                    color: currentTab == TabEnum.home ? Colors.white : const Color(0XFF93aac9),
                                   ),
-                                  onPressed: () =>
-                                      _onHomeButtonPressed(currentTab),
+                                  onPressed: () => _onHomeButtonPressed(currentTab),
                                 ),
                               ),
                               Expanded(
@@ -90,28 +87,20 @@ class TherapistMainScreen extends StatelessWidget {
                                   icon: Icon(
                                     CupertinoIcons.calendar,
                                     size: 30,
-                                    color: currentTab == TabEnum.patients
-                                        ? Colors.white
-                                        : const Color(0XFF93aac9),
+                                    color: currentTab == TabEnum.patients ? Colors.white : const Color(0XFF93aac9),
                                   ),
-                                  onPressed: () =>
-                                      _onActivityButtonPressed(currentTab),
+                                  onPressed: () => _onActivityButtonPressed(currentTab),
                                 ),
                               ),
                               Expanded(
                                 child: IconButton(
                                   highlightColor: Colors.white.withOpacity(0.1),
                                   icon: Icon(
-                                    currentTab == TabEnum.profile
-                                        ? CupertinoIcons.person_fill
-                                        : CupertinoIcons.person,
+                                    currentTab == TabEnum.profile ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                     size: 30,
-                                    color: currentTab == TabEnum.profile
-                                        ? Colors.white
-                                        : const Color(0XFF93aac9),
+                                    color: currentTab == TabEnum.profile ? Colors.white : const Color(0XFF93aac9),
                                   ),
-                                  onPressed: () =>
-                                      _onProfileButtonPressed(currentTab),
+                                  onPressed: () => _onProfileButtonPressed(currentTab),
                                 ),
                               ),
                             ],

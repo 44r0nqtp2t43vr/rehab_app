@@ -45,9 +45,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
                             : const EdgeInsets.only(bottom: 12.0),
                         child: PatientPlanItem(
                           onPressedRoute: '/PatientPlanDetails',
-                          patientPlan: PatientPlan(
-                              patientId: widget.patient.userId,
-                              plan: plans[index]),
+                          patientPlan: PatientPlan(patient: widget.patient, plan: plans[index]),
                           planNo: index + 1,
                           isCurrent: currentPlan != null &&
                               plans[index].planId == currentPlan.planId,
@@ -68,17 +66,8 @@ class _PatientPlansListState extends State<PatientPlansList> {
                       )
                     : PatientPlanItem(
                         onPressedRoute: '/PatientPlanDetails',
-                        patientPlan: PatientPlan(
-                            patientId: widget.patient.userId,
-                            plan: currentPlan),
-                        planNo: widget.patient.plans.indexWhere((plan) =>
-                                plan.startDate.month ==
-                                    currentPlan.startDate.month &&
-                                plan.startDate.day ==
-                                    currentPlan.startDate.day &&
-                                plan.startDate.year ==
-                                    currentPlan.startDate.year) +
-                            1,
+                        patientPlan: PatientPlan(patient: widget.patient, plan: currentPlan),
+                        planNo: widget.patient.plans.indexWhere((plan) => plan.startDate.month == currentPlan.startDate.month && plan.startDate.day == currentPlan.startDate.day && plan.startDate.year == currentPlan.startDate.year) + 1,
                         isCurrent: true,
                       ),
             Padding(

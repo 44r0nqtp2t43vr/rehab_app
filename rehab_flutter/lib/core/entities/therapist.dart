@@ -13,6 +13,7 @@ class Therapist {
   final String licenseNumber;
   final DateTime birthDate;
   final DateTime registerDate;
+  final List<String> patientsIds;
   final List<AppUser> patients;
   final String? imageURL;
 
@@ -27,6 +28,7 @@ class Therapist {
     required this.licenseNumber,
     required this.birthDate,
     required this.registerDate,
+    required this.patientsIds,
     required this.patients,
     this.imageURL,
   });

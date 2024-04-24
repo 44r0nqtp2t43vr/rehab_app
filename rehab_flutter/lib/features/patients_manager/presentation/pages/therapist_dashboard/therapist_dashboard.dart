@@ -1,21 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_progress_chart.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_numbers.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
-class TherapistDashboard extends StatefulWidget {
+class TherapistDashboard extends StatelessWidget {
   const TherapistDashboard({super.key});
 
-  @override
-  State<TherapistDashboard> createState() => _TherapistDashboardState();
-}
-
-class _TherapistDashboardState extends State<TherapistDashboard> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TherapistBloc, TherapistState>(
@@ -40,7 +38,17 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  PatientsNumbers(patients: state.currentTherapist!.patients),
+                  BlocBuilder<TherapistPatientListBloc, TherapistPatientListState>(
+                    builder: (context, state) {
+                      if (state is TherapistPatientListLoading) {
+                        return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                      }
+                      if (state is TherapistPatientListDone) {
+                        return PatientsNumbers(patients: state.therapistPatientList);
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                   const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -50,7 +58,17 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  PatientProgressChart(patients: state.currentTherapist!.patients),
+                  BlocBuilder<TherapistPatientListBloc, TherapistPatientListState>(
+                    builder: (context, state) {
+                      if (state is TherapistPatientListLoading) {
+                        return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                      }
+                      if (state is TherapistPatientListDone) {
+                        return PatientProgressChart(patients: state.therapistPatientList);
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                 ],
               ),
             ),
