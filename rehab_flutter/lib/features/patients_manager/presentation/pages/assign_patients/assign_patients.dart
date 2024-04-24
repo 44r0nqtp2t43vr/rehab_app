@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
@@ -38,6 +40,10 @@ class _AssignPatientsState extends State<AssignPatients> {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double squareSize = screenWidth * 0.6;
+
     return BlocConsumer<TherapistBloc, TherapistState>(
       listener: (context, state) {
         if (state is TherapistNone) {
@@ -48,7 +54,8 @@ class _AssignPatientsState extends State<AssignPatients> {
             );
           });
 
-          BlocProvider.of<TherapistBloc>(context).add(GetTherapistEvent(state.data));
+          BlocProvider.of<TherapistBloc>(context)
+              .add(GetTherapistEvent(state.data));
         }
         if (state is TherapistDone && !fromError) {
           sl<NavigationController>().setTab(TabEnum.patients);
@@ -57,17 +64,74 @@ class _AssignPatientsState extends State<AssignPatients> {
       },
       builder: (context, state) {
         if (state is TherapistLoading) {
-          return const Scaffold(body: Center(child: CupertinoActivityIndicator(color: Colors.white)));
+          return Scaffold(
+            body: Center(
+              child: Lottie.asset(
+                'assets/lotties/uploading.json',
+                width: 400,
+                height: 400,
+              ),
+              //CupertinoActivityIndicator(color: Colors.white),
+            ),
+          );
         }
         if (state is TherapistDone) {
           return Scaffold(
-            body: MobileScanner(
-              controller: _scannerController,
-              onDetect: (capture) => _onDetect(
-                context,
-                capture,
-                state.currentTherapist!,
-              ),
+            body: Stack(
+              children: [
+                MobileScanner(
+                  controller: _scannerController,
+                  scanWindow: Rect.fromCenter(
+                    center: Offset(
+                      MediaQuery.of(context).size.width / 2,
+                      MediaQuery.of(context).size.height / 2,
+                    ),
+                    width: squareSize - 4,
+                    height: squareSize - 4,
+                  ),
+                  overlay: Container(
+                    color: Colors.transparent,
+                    child: CustomPaint(
+                      size: MediaQuery.of(context).size,
+                      painter: OverlayPainter(
+                        scanWindow: Rect.fromCenter(
+                          center: Offset(
+                            MediaQuery.of(context).size.width / 2,
+                            MediaQuery.of(context).size.height / 2,
+                          ),
+                          width: squareSize - 4,
+                          height: squareSize - 4,
+                        ),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: squareSize,
+                          height: squareSize,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  onDetect: (capture) => _onDetect(
+                    context,
+                    capture,
+                    state.currentTherapist!,
+                  ),
+                ),
+                GlassContainer(
+                  shadowStrength: 2,
+                  shadowColor: Colors.black,
+                  blur: 4,
+                  color: Colors.white.withOpacity(0.50),
+                  child: const Padding(
+                    padding: EdgeInsets.all(40),
+                    child: Text('ss'),
+                  ),
+                ),
+              ],
             ),
           );
         }
@@ -76,7 +140,8 @@ class _AssignPatientsState extends State<AssignPatients> {
     );
   }
 
-  void _onDetect(BuildContext context, BarcodeCapture capture, Therapist therapist) {
+  void _onDetect(
+      BuildContext context, BarcodeCapture capture, Therapist therapist) {
     final barcodes = capture.barcodes;
 
     setState(() {
@@ -86,10 +151,39 @@ class _AssignPatientsState extends State<AssignPatients> {
     if (barcodes.isNotEmpty) {
       _scannerController.dispose();
 
-      BlocProvider.of<TherapistBloc>(context).add(AssignPatientEvent(AssignPatientData(
+      BlocProvider.of<TherapistBloc>(context)
+          .add(AssignPatientEvent(AssignPatientData(
         therapist: therapist,
         patientId: barcodes.first.rawValue!,
       )));
     }
+  }
+}
+
+class OverlayPainter extends CustomPainter {
+  final Rect scanWindow;
+
+  OverlayPainter({required this.scanWindow});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black.withOpacity(0.5)
+      ..style = PaintingStyle.fill;
+
+    final backgroundPath = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    final scanWindowPath = Path()..addRect(scanWindow);
+
+    final overlayPath =
+        Path.combine(PathOperation.difference, backgroundPath, scanWindowPath);
+
+    canvas.drawPath(overlayPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
