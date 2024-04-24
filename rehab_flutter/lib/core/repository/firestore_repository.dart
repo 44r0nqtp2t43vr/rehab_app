@@ -51,7 +51,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<dynamic> getUser(String userId) async {
+  Future<dynamic> getUser(String userId, {bool isLogin = false}) async {
     // Optionally fetch and do something with the user's document from Firestore
     // For example, retrieving the user's profile information
     DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
@@ -64,37 +64,17 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     final rolesList = userDoc.data()!['roles'].cast<String>().toList();
     if (rolesList.contains("admin")) {
-      // final List<AppUser> patients = [];
-      // final List<Therapist> therapists = [];
-
-      // final QuerySnapshot querySnapshot = await db.collection('users').get();
-      // final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
-
-      // for (DocumentSnapshot document in documentSnapshots) {
-      //   // Get the data of the document as Map<String, dynamic>
-      //   final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
-      //   final List<String> roles = data!['roles'].cast<String>().toList();
-
-      //   if (roles.contains("patient")) {
-      //     final patientUser = await getUser(data['userID']);
-      //     patients.add(patientUser);
-      //   } else if (roles.contains("therapist")) {
-      //     final therapistUser = await getUser(data['userID']);
-      //     therapists.add(therapistUser);
-      //   }
-      // }
-
-      // patients.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
-      // therapists.sort((a, b) => a.getUserFullName().compareTo(b.getUserFullName()));
       final currentAdmin = Admin();
       return currentAdmin;
     } else if (rolesList.contains("therapist")) {
       final patientIds = userDoc.data()!['patients'].cast<String>().toList();
 
       final List<AppUser> patients = [];
-      for (var patientId in patientIds) {
-        final patientUser = await getUser(patientId);
-        patients.add(patientUser);
+      if (!isLogin) {
+        for (var patientId in patientIds) {
+          final patientUser = await getUser(patientId);
+          patients.add(patientUser);
+        }
       }
 
       // Fetch the download URL of the profile image from Firebase Storage
@@ -113,6 +93,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         licenseNumber: userDoc.data()!['licenseNumber'],
         birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
         registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+        patientsIds: patientIds,
         patients: patients,
         imageURL: imageURL,
       );
@@ -276,7 +257,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     // Example of logging the login attempt (success case)
     await logLoginAttempt(data.email, true);
 
-    final dynamic user = await getUser(userCredential.user!.uid);
+    final dynamic user = await getUser(userCredential.user!.uid, isLogin: true);
     return user;
   }
 
