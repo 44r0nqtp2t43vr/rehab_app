@@ -3,13 +3,12 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 
-class PatientstherapyEditDialog extends StatelessWidget {
+class PatientsTherapyEditDialog extends StatelessWidget {
   final Plan plan;
   final int i;
   final String title;
 
-  const PatientstherapyEditDialog(
-      {super.key, required this.plan, required this.i, required this.title});
+  const PatientsTherapyEditDialog({super.key, required this.plan, required this.i, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +61,10 @@ class PatientstherapyEditDialog extends StatelessWidget {
                                       vertical: 12,
                                     ),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          !conditions[0]
-                                              ? '0'
-                                              : plan.sessions[i].pretestScore!
-                                                  .toStringAsFixed(1),
+                                          !conditions[0] ? '0' : plan.sessions[i].pretestScore!.toStringAsFixed(1),
                                           style: darkTextTheme().headlineLarge,
                                         ),
                                         Text(
@@ -95,14 +90,10 @@ class PatientstherapyEditDialog extends StatelessWidget {
                                       vertical: 12,
                                     ),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          !conditions[4]
-                                              ? '0'
-                                              : plan.sessions[i].posttestScore!
-                                                  .toStringAsFixed(1),
+                                          !conditions[4] ? '0' : plan.sessions[i].posttestScore!.toStringAsFixed(1),
                                           style: darkTextTheme().headlineLarge,
                                         ),
                                         Text(
@@ -137,32 +128,26 @@ class PatientstherapyEditDialog extends StatelessWidget {
                                     vertical: 12,
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             "Therapy Type:",
-                                            style:
-                                                darkTextTheme().headlineSmall,
+                                            style: darkTextTheme().headlineSmall,
                                           ),
                                           Text(
                                             plan.sessions[i].standardOneType,
                                             style: darkTextTheme().displaySmall,
                                           ),
                                           Text(
-                                            plan.sessions[i]
-                                                .standardOneIntensity,
-                                            style:
-                                                darkTextTheme().headlineLarge,
+                                            plan.sessions[i].standardOneIntensity,
+                                            style: darkTextTheme().headlineLarge,
                                           ),
                                           Text(
                                             "Intensity",
-                                            style:
-                                                darkTextTheme().headlineSmall,
+                                            style: darkTextTheme().headlineSmall,
                                           ),
                                         ],
                                       ),
@@ -192,24 +177,20 @@ class PatientstherapyEditDialog extends StatelessWidget {
                                     vertical: 12,
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         flex: 1,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
                                               plan.sessions[i].passiveIntensity,
-                                              style:
-                                                  darkTextTheme().headlineLarge,
+                                              style: darkTextTheme().headlineLarge,
                                             ),
                                             Text(
                                               "Intensity",
-                                              style:
-                                                  darkTextTheme().headlineSmall,
+                                              style: darkTextTheme().headlineSmall,
                                             ),
                                           ],
                                         ),
@@ -240,24 +221,20 @@ class PatientstherapyEditDialog extends StatelessWidget {
                                     vertical: 12,
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         flex: 2,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               "Therapy Type:",
-                                              style:
-                                                  darkTextTheme().headlineSmall,
+                                              style: darkTextTheme().headlineSmall,
                                             ),
                                             Text(
                                               plan.sessions[i].standardTwoType,
-                                              style:
-                                                  darkTextTheme().displaySmall,
+                                              style: darkTextTheme().displaySmall,
                                             ),
                                           ],
                                         ),
@@ -266,19 +243,15 @@ class PatientstherapyEditDialog extends StatelessWidget {
                                       Expanded(
                                         flex: 1,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             Text(
-                                              plan.sessions[i]
-                                                  .standardTwoIntensity,
-                                              style:
-                                                  darkTextTheme().headlineLarge,
+                                              plan.sessions[i].standardTwoIntensity,
+                                              style: darkTextTheme().headlineLarge,
                                             ),
                                             Text(
                                               "Intensity",
-                                              style:
-                                                  darkTextTheme().headlineSmall,
+                                              style: darkTextTheme().headlineSmall,
                                             ),
                                           ],
                                         ),

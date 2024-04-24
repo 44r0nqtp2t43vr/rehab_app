@@ -9,8 +9,8 @@ import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/pat
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_state.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_event.dart';
+import 'package:rehab_flutter/features/_admin/presentation/widgets/admin_patient_list_card.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_list_card.dart';
 
 class TherapistDetailsPatients extends StatefulWidget {
   final Therapist therapist;
@@ -57,10 +57,7 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: PatientListCard(
-                            patient: patient,
-                            onPressedRoute: "/AdminPatientPage",
-                          ),
+                          child: AdminPatientListCard(patient: patient),
                         ),
                         IconButton(
                           onPressed: () => _onRemovePatientButtonPressed(context, patient),

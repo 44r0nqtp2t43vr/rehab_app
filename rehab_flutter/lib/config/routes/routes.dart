@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/main/admin_main.dart';
@@ -117,7 +117,7 @@ class AppRoutes {
         return _materialRoute(PatientPage(patient: settings.arguments as AppUser));
 
       case '/PatientPlanDetails':
-        return _materialRoute(PatientPlanDetails(plan: settings.arguments as Plan));
+        return _materialRoute(PatientPlanDetails(patientPlan: settings.arguments as PatientPlan));
 
       case '/EditTherapistProfile':
         return _materialRoute(EditTherapistProfile(user: settings.arguments as Therapist));

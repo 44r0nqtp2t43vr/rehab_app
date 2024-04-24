@@ -47,7 +47,7 @@ void _showContentDialog(BuildContext context, Plan plan, int i, String title) {
         contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
-        content: PatientstherapyEditDialog(plan: plan, i: i, title: title),
+        content: PatientsTherapyEditDialog(plan: plan, i: i, title: title),
       );
     },
   );

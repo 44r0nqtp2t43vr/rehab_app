@@ -5,12 +5,11 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_session_details.dart';
 
-class PatientstherapySessions extends StatelessWidget {
+class PatientsTherapySessions extends StatelessWidget {
   final Plan plan;
   final int i;
 
-  const PatientstherapySessions(
-      {super.key, required this.plan, required this.i});
+  const PatientsTherapySessions({super.key, required this.plan, required this.i});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +66,7 @@ void _showContentDialog(BuildContext context, Plan plan, int i, String title) {
         contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
-        content: PatientstherapySessionDetails(plan: plan, i: i, title: title),
+        content: PatientsTherapySessionDetails(plan: plan, i: i, title: title),
       );
     },
   );

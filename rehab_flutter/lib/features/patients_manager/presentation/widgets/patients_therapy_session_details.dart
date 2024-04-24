@@ -3,12 +3,12 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 
-class PatientstherapySessionDetails extends StatelessWidget {
+class PatientsTherapySessionDetails extends StatelessWidget {
   final Plan plan;
   final int i;
   final String title;
 
-  const PatientstherapySessionDetails(
+  const PatientsTherapySessionDetails(
       {super.key, required this.plan, required this.i, required this.title});
 
   @override
