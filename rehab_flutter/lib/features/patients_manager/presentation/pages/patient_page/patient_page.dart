@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
@@ -124,9 +125,16 @@ class _PatientPageState extends State<PatientPage> {
       },
       builder: (context, state) {
         if (state is TherapistLoading) {
-          return const Scaffold(
-              body: Center(
-                  child: CupertinoActivityIndicator(color: Colors.white)));
+          return Scaffold(
+            body: Center(
+              child: Lottie.asset(
+                'assets/lotties/uploading.json',
+                width: 400,
+                height: 400,
+              ),
+              //CupertinoActivityIndicator(color: Colors.white),
+            ),
+          );
         }
         if (state is TherapistDone) {
           final currentSelectedSessionDateString = currentSelectedSession
