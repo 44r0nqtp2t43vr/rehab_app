@@ -13,8 +13,7 @@ class PatientListCard extends StatelessWidget {
   final AppUser patient;
   final String onPressedRoute;
 
-  const PatientListCard(
-      {super.key, required this.patient, required this.onPressedRoute});
+  const PatientListCard({super.key, required this.patient, required this.onPressedRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +46,8 @@ class PatientListCard extends StatelessWidget {
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: double.infinity,
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
+                              placeholder: (context, url) => const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => const Icon(Icons.error),
                             ),
                             // Image.network(
                             //   patient.imageURL!,
