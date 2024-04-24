@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,8 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
 
 class PatientListCard extends StatelessWidget {
   final AppUser patient;
@@ -187,6 +190,7 @@ class PatientListCard extends StatelessWidget {
   }
 
   void _onPatientCardPressed(BuildContext context) {
-    Navigator.of(context).pushNamed(onPressedRoute, arguments: patient);
+    BlocProvider.of<ViewedTherapistPatientBloc>(context).add(FetchViewedTherapistPatientEvent(patient));
+    Navigator.of(context).pushNamed(onPressedRoute);
   }
 }
