@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_list_card.dart';
 
 class TherapistPatients extends StatelessWidget {
-  const TherapistPatients({super.key});
+  final Therapist therapist;
+
+  const TherapistPatients({super.key, required this.therapist});
 
 //   @override
 //   State<TherapistPatients> createState() => _TherapistPatientsState();
@@ -121,17 +125,39 @@ class TherapistPatients extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Text(
-                      "Patients",
-                      style: darkTextTheme().headlineLarge,
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Patients",
+                            style: darkTextTheme().headlineLarge,
+                          ),
+                          Text(
+                            "Your Assigned Patients",
+                            style: darkTextTheme().headlineSmall,
+                          ),
+                        ],
+                      ),
                     ),
-                    Text(
-                      "Your Assigned Patients",
-                      style: darkTextTheme().headlineSmall,
+                    BlocBuilder<TherapistPatientListBloc, TherapistPatientListState>(
+                      builder: (context, state) {
+                        if (state is TherapistPatientListDone) {
+                          return IconButton(
+                            onPressed: () {
+                              BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(therapist.patientsIds));
+                            },
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Colors.white,
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
                     ),
                   ],
                 ),

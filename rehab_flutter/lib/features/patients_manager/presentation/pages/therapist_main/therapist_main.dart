@@ -25,7 +25,7 @@ class TherapistMainScreen extends StatelessWidget {
         }
         return const TherapistDashboard();
       case TabEnum.patients:
-        return const TherapistPatients();
+        return TherapistPatients(therapist: currentTherapist);
       case TabEnum.profile:
         return TherapistProfile(therapist: currentTherapist);
       default:
