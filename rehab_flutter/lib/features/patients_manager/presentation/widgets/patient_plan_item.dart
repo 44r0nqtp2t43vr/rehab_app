@@ -2,20 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
 
 class PatientPlanItem extends StatelessWidget {
-  final Plan plan;
+  final PatientPlan patientPlan;
   final int planNo;
   final bool isCurrent;
   final String onPressedRoute;
 
-  const PatientPlanItem(
-      {super.key,
-      required this.plan,
-      required this.planNo,
-      required this.isCurrent,
-      required this.onPressedRoute});
+  const PatientPlanItem({super.key, required this.patientPlan, required this.planNo, required this.isCurrent, required this.onPressedRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +22,7 @@ class PatientPlanItem extends StatelessWidget {
         shadowStrength: 2,
         shadowColor: Colors.black,
         blur: 4,
-        color: isCurrent
-            ? const Color(0xff01FF99).withOpacity(0.25)
-            : Colors.white.withOpacity(0.25),
+        color: isCurrent ? const Color(0xff01FF99).withOpacity(0.25) : Colors.white.withOpacity(0.25),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           child: Row(
@@ -49,11 +42,11 @@ class PatientPlanItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      DateFormat('MMMM dd, yyyy').format(plan.startDate),
+                      DateFormat('MMMM dd, yyyy').format(patientPlan.plan.startDate),
                       style: darkTextTheme().headlineSmall,
                     ),
                     Text(
-                      DateFormat('MMMM dd, yyyy').format(plan.endDate),
+                      DateFormat('MMMM dd, yyyy').format(patientPlan.plan.endDate),
                       style: darkTextTheme().headlineSmall,
                     ),
                   ],
@@ -65,7 +58,7 @@ class PatientPlanItem extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    "${plan.getPlanPercentCompletion().toStringAsFixed(2)}%",
+                    "${patientPlan.plan.getPlanPercentCompletion().toStringAsFixed(2)}%",
                     style: darkTextTheme().headlineSmall,
                   ),
                 ),
@@ -78,6 +71,6 @@ class PatientPlanItem extends StatelessWidget {
   }
 
   void _onPatientCardPressed(BuildContext context) {
-    Navigator.of(context).pushNamed(onPressedRoute, arguments: plan);
+    Navigator.of(context).pushNamed(onPressedRoute, arguments: patientPlan);
   }
 }

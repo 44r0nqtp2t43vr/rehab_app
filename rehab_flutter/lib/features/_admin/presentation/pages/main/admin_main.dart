@@ -21,11 +21,19 @@ class AdminMainScreen extends StatelessWidget {
   Widget getScreenFromTab(BuildContext context, TabEnum currentTab) {
     switch (currentTab) {
       case TabEnum.home:
-        if (BlocProvider.of<TherapistListBloc>(context).state.therapistList.isEmpty) {
-          BlocProvider.of<TherapistListBloc>(context).add(const FetchTherapistListEvent());
+        if (BlocProvider.of<TherapistListBloc>(context)
+            .state
+            .therapistList
+            .isEmpty) {
+          BlocProvider.of<TherapistListBloc>(context)
+              .add(const FetchTherapistListEvent());
         }
-        if (BlocProvider.of<PatientListBloc>(context).state.patientList.isEmpty) {
-          BlocProvider.of<PatientListBloc>(context).add(const FetchPatientListEvent());
+        if (BlocProvider.of<PatientListBloc>(context)
+            .state
+            .patientList
+            .isEmpty) {
+          BlocProvider.of<PatientListBloc>(context)
+              .add(const FetchPatientListEvent());
         }
         return const AdminDashboard();
       case TabEnum.therapists:
@@ -75,29 +83,53 @@ class AdminMainScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              IconButton(
-                                icon: Icon(
-                                  currentTab == TabEnum.home ? CupertinoIcons.house_fill : CupertinoIcons.house,
-                                  size: 30,
-                                  color: currentTab == TabEnum.home ? Colors.white : const Color(0XFF93aac9),
+                              Expanded(
+                                child: IconButton(
+                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  icon: Icon(
+                                    currentTab == TabEnum.home
+                                        ? CupertinoIcons.house_fill
+                                        : CupertinoIcons.house,
+                                    size: 30,
+                                    color: currentTab == TabEnum.home
+                                        ? Colors.white
+                                        : const Color(0XFF93aac9),
+                                  ),
+                                  onPressed: () =>
+                                      _onHomeButtonPressed(currentTab),
                                 ),
-                                onPressed: () => _onHomeButtonPressed(currentTab),
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  currentTab == TabEnum.therapists ? CupertinoIcons.person_fill : CupertinoIcons.person,
-                                  size: 30,
-                                  color: currentTab == TabEnum.therapists ? Colors.white : const Color(0XFF93aac9),
+                              Expanded(
+                                child: IconButton(
+                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  icon: Icon(
+                                    currentTab == TabEnum.therapists
+                                        ? CupertinoIcons.person_fill
+                                        : CupertinoIcons.person,
+                                    size: 30,
+                                    color: currentTab == TabEnum.therapists
+                                        ? Colors.white
+                                        : const Color(0XFF93aac9),
+                                  ),
+                                  onPressed: () =>
+                                      _onTherapistsButtonPressed(currentTab),
                                 ),
-                                onPressed: () => _onTherapistsButtonPressed(currentTab),
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  currentTab == TabEnum.patients ? CupertinoIcons.person_fill : CupertinoIcons.person,
-                                  size: 30,
-                                  color: currentTab == TabEnum.patients ? Colors.white : const Color(0XFF93aac9),
+                              Expanded(
+                                child: IconButton(
+                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  icon: Icon(
+                                    currentTab == TabEnum.patients
+                                        ? CupertinoIcons.person_fill
+                                        : CupertinoIcons.person,
+                                    size: 30,
+                                    color: currentTab == TabEnum.patients
+                                        ? Colors.white
+                                        : const Color(0XFF93aac9),
+                                  ),
+                                  onPressed: () =>
+                                      _onPatientsButtonPressed(currentTab),
                                 ),
-                                onPressed: () => _onPatientsButtonPressed(currentTab),
                               ),
                             ],
                           ),

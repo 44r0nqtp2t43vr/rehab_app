@@ -16,7 +16,9 @@ class TherapistListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+      highlightColor: Colors.white.withOpacity(0.2),
+      borderRadius: BorderRadius.circular(10),
       onTap: () => _onTherapistListCardPressed(context, therapist),
       child: GlassContainer(
         shadowStrength: 2,
@@ -37,8 +39,10 @@ class TherapistListCard extends StatelessWidget {
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: double.infinity,
-                          placeholder: (context, url) => const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
                         ),
                       )
                     : const Center(
@@ -95,7 +99,8 @@ class TherapistListCard extends StatelessWidget {
   }
 
   void _onTherapistListCardPressed(BuildContext context, Therapist therapist) {
-    BlocProvider.of<ViewedTherapistBloc>(context).add(FetchViewedTherapistEvent(therapist));
+    BlocProvider.of<ViewedTherapistBloc>(context)
+        .add(FetchViewedTherapistEvent(therapist));
     Navigator.of(context).pushNamed("/AdminTherapistPage");
   }
 }

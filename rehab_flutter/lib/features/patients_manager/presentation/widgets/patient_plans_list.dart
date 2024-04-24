@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plan_item.dart';
 
@@ -43,7 +45,9 @@ class _PatientPlansListState extends State<PatientPlansList> {
                             : const EdgeInsets.only(bottom: 12.0),
                         child: PatientPlanItem(
                           onPressedRoute: '/PatientPlanDetails',
-                          plan: plans[index],
+                          patientPlan: PatientPlan(
+                              patientId: widget.patient.userId,
+                              plan: plans[index]),
                           planNo: index + 1,
                           isCurrent: currentPlan != null &&
                               plans[index].planId == currentPlan.planId,
@@ -52,13 +56,21 @@ class _PatientPlansListState extends State<PatientPlansList> {
                     },
                   )
                 : currentPlan == null
-                    ? Text(
-                        "This patient has no current plans.",
-                        style: darkTextTheme().headlineSmall,
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "This patient has no current plans.",
+                              style: darkTextTheme().headlineSmall,
+                            ),
+                          ),
+                        ],
                       )
                     : PatientPlanItem(
                         onPressedRoute: '/PatientPlanDetails',
-                        plan: currentPlan,
+                        patientPlan: PatientPlan(
+                            patientId: widget.patient.userId,
+                            plan: currentPlan),
                         planNo: widget.patient.plans.indexWhere((plan) =>
                                 plan.startDate.month ==
                                     currentPlan.startDate.month &&

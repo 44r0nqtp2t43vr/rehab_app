@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_sorting_type.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_completion_rate.dart';
@@ -10,9 +10,9 @@ import 'package:rehab_flutter/features/patients_manager/presentation/widgets/pat
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_sessions.dart';
 
 class PatientPlanDetails extends StatefulWidget {
-  final Plan plan;
+  final PatientPlan patientPlan;
 
-  const PatientPlanDetails({super.key, required this.plan});
+  const PatientPlanDetails({super.key, required this.patientPlan});
 
   @override
   State<PatientPlanDetails> createState() => _PatientPlanDetailsState();
@@ -59,7 +59,7 @@ class _PatientPlanDetailsState extends State<PatientPlanDetails> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.plan.planName
+                                widget.patientPlan.plan.planName
                                     .replaceFirstMapped(
                                       RegExp(r'^plan'),
                                       (match) => 'Plan',
@@ -83,18 +83,17 @@ class _PatientPlanDetailsState extends State<PatientPlanDetails> {
                 ),
               ),
               const SizedBox(height: 16),
-              widget.plan.isBlank!
+              widget.patientPlan.plan.isBlank!
                   ? const SizedBox()
                   : Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 24.0),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
                       child: Column(
                         children: [
                           Row(
                             children: [
-                              PatientsTherapyCompletionRate(plan: widget.plan),
+                              PatientsTherapyCompletionRate(plan: widget.patientPlan.plan),
                               const SizedBox(width: 16),
-                              PatientsTherapyPlanDetails(plan: widget.plan),
+                              PatientsTherapyPlanDetails(plan: widget.patientPlan.plan),
                             ],
                           ),
                           const SizedBox(height: 24),
@@ -111,35 +110,30 @@ class _PatientPlanDetailsState extends State<PatientPlanDetails> {
                                       ),
                                     ),
                                     const SizedBox(height: 12),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        for (int i = 0;
-                                            i < widget.plan.sessions.length;
-                                            i++)
-                                          Column(
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: widget.patientPlan.plan.sessions.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(bottom: 16.0),
+                                          child: Row(
                                             children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child:
-                                                        PatientstherapySessions(
-                                                      plan: widget.plan,
-                                                      i: i,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  PatientsTherapyEdit(
-                                                    plan: widget.plan,
-                                                    i: i,
-                                                  ),
-                                                ],
+                                              Expanded(
+                                                child: PatientsTherapySessions(
+                                                  plan: widget.patientPlan.plan,
+                                                  i: index,
+                                                ),
                                               ),
-                                              const SizedBox(height: 12),
+                                              const SizedBox(width: 8),
+                                              PatientsTherapyEdit(
+                                                plan: widget.patientPlan.plan,
+                                                i: index,
+                                              ),
                                             ],
                                           ),
-                                      ],
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
