@@ -37,6 +37,7 @@ class AdminPatientListCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
                     backgroundColor: const Color(0xffd1d1d1),
@@ -48,8 +49,10 @@ class AdminPatientListCard extends StatelessWidget {
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: double.infinity,
-                              placeholder: (context, url) => const CircularProgressIndicator(),
-                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
                             ),
                             // Image.network(
                             //   patient.imageURL!,
@@ -127,6 +130,7 @@ class AdminPatientListCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
                       height: 64,
@@ -189,7 +193,8 @@ class AdminPatientListCard extends StatelessWidget {
   }
 
   void _onPatientCardPressed(BuildContext context, AppUser patient) {
-    BlocProvider.of<ViewedPatientBloc>(context).add(FetchViewedPatientEvent(patient));
+    BlocProvider.of<ViewedPatientBloc>(context)
+        .add(FetchViewedPatientEvent(patient));
     Navigator.of(context).pushNamed("/AdminPatientPage");
   }
 }

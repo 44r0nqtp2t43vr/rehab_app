@@ -70,11 +70,16 @@ class AdminDashboard extends StatelessWidget {
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
                           ),
-                          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.transparent),
                           elevation: MaterialStateProperty.all<double>(0),
-                          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          shadowColor: MaterialStateProperty.all<Color>(
+                              Colors.transparent),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.white.withOpacity(0.2),
+                          ),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

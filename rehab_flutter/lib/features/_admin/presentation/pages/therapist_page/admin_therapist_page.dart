@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_event.dart';
@@ -18,18 +19,26 @@ class AdminTherapistPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: BlocConsumer<ViewedTherapistBloc, ViewedTherapistState>(
-          listenWhen: (previous, current) => previous is ViewedTherapistLoading && current is ViewedTherapistDone,
+          listenWhen: (previous, current) =>
+              previous is ViewedTherapistLoading &&
+              current is ViewedTherapistDone,
           listener: (context, state) {
             if (state is ViewedTherapistDone) {
-              BlocProvider.of<TherapistListBloc>(context).add(UpdateTherapistListEvent(state.therapist!));
+              BlocProvider.of<TherapistListBloc>(context)
+                  .add(UpdateTherapistListEvent(state.therapist!));
             }
           },
           builder: (context, state) {
             if (state is ViewedTherapistLoading) {
-              return const Center(
-                child: CupertinoActivityIndicator(
-                  color: Colors.white,
+              return Center(
+                child: Lottie.asset(
+                  'assets/lotties/uploading.json',
+                  width: 400,
+                  height: 400,
                 ),
+                // CupertinoActivityIndicator(
+                //   color: Colors.white,
+                // ),
               );
             }
             if (state is ViewedTherapistDone) {
@@ -37,7 +46,8 @@ class AdminTherapistPage extends StatelessWidget {
 
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0, horizontal: 24.0),
                   child: Column(
                     children: [
                       const SizedBox(
@@ -54,7 +64,8 @@ class AdminTherapistPage extends StatelessWidget {
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           Expanded(
-                            child: TherapistProfileInfoCard(therapist: currentTherapist),
+                            child: TherapistProfileInfoCard(
+                                therapist: currentTherapist),
                           ),
                         ],
                       ),

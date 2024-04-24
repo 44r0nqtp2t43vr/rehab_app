@@ -149,6 +149,7 @@ class _PatientPageState extends State<PatientPage> {
                       Row(
                         children: [
                           IconButton(
+                            highlightColor: Colors.white.withOpacity(0.1),
                             icon: const Icon(
                               Icons.chevron_left,
                               size: 35,

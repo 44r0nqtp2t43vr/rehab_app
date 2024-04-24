@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -18,7 +19,8 @@ class TherapistDetailsPatients extends StatefulWidget {
   const TherapistDetailsPatients({super.key, required this.therapist});
 
   @override
-  State<TherapistDetailsPatients> createState() => _TherapistDetailsPatientsState();
+  State<TherapistDetailsPatients> createState() =>
+      _TherapistDetailsPatientsState();
 }
 
 class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
@@ -41,7 +43,8 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text("This therapist has no assigned patients", style: darkTextTheme().headlineSmall),
+                  child: Text("This therapist has no assigned patients",
+                      style: darkTextTheme().headlineSmall),
                 ),
               )
             : ListView.builder(
@@ -54,16 +57,45 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                   // Display the patient's ID
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: AdminPatientListCard(patient: patient),
-                        ),
-                        IconButton(
-                          onPressed: () => _onRemovePatientButtonPressed(context, patient),
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.white,
+                        SizedBox(
+                          height: 190,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 6,
+                                child: AdminPatientListCard(patient: patient),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                flex: 1,
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: GlassContainer(
+                                        shadowStrength: 2,
+                                        shadowColor: Colors.black,
+                                        blur: 4,
+                                        color: Colors.white.withOpacity(0.25),
+                                        child: IconButton(
+                                          highlightColor:
+                                              Colors.white.withOpacity(0.2),
+                                          onPressed: () =>
+                                              _onRemovePatientButtonPressed(
+                                                  context, patient),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -80,10 +112,13 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                   foregroundColor: MaterialStateProperty.all<Color>(
                     Colors.white,
                   ),
-                  backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(const Color(0xff128BED)),
                   elevation: MaterialStateProperty.all<double>(0),
-                  shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                  overlayColor: MaterialStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                  shadowColor:
+                      MaterialStateProperty.all<Color>(Colors.transparent),
+                  overlayColor: MaterialStateProperty.all<Color>(
+                      Colors.white.withOpacity(0.2)),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -128,11 +163,18 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                     BlocBuilder<PatientListBloc, PatientListState>(
                       builder: (context, state) {
                         if (state is PatientListLoading) {
-                          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                          return const Center(
+                              child: CupertinoActivityIndicator(
+                                  color: Colors.white));
                         }
                         if (state is PatientListDone) {
-                          final assignedPatientsIds = widget.therapist.patients.map((patient) => patient.userId).toList();
-                          final availablePatients = state.patientList.where((patient) => !assignedPatientsIds.contains(patient.userId)).toList();
+                          final assignedPatientsIds = widget.therapist.patients
+                              .map((patient) => patient.userId)
+                              .toList();
+                          final availablePatients = state.patientList
+                              .where((patient) =>
+                                  !assignedPatientsIds.contains(patient.userId))
+                              .toList();
 
                           return DropdownButtonFormField<AppUser>(
                             value: _selectedPatientToAdd,
@@ -146,7 +188,9 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                               labelText: 'Patient',
                             ),
                             onChanged: _onPatientDropdownSelect,
-                            items: availablePatients.map<DropdownMenuItem<AppUser>>((AppUser patient) {
+                            items: availablePatients
+                                .map<DropdownMenuItem<AppUser>>(
+                                    (AppUser patient) {
                               return DropdownMenuItem<AppUser>(
                                 value: patient,
                                 child: Text(patient.getUserFullName()),
@@ -228,10 +272,17 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Are you sure? Doing so will prohibit the therapist from viewing this patient's details.",
+                      "Are you sure?",
+                      style: darkTextTheme().headlineMedium,
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                      "Doing so will prohibit the therapist from viewing this patient's details.",
                       style: darkTextTheme().headlineSmall,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -239,7 +290,8 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                           child: Theme(
                             data: darkButtonTheme,
                             child: ElevatedButton(
-                              onPressed: () => _onRemoveButtonPressed(context, patient),
+                              onPressed: () =>
+                                  _onRemoveButtonPressed(context, patient),
                               child: const Text('Confirm'),
                             ),
                           ),
@@ -273,7 +325,8 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
 
   void _onAddButtonPressed(BuildContext context) {
     Navigator.of(context).pop();
-    BlocProvider.of<ViewedTherapistBloc>(context).add(AssignViewedTherapistEvent(AssignPatientData(
+    BlocProvider.of<ViewedTherapistBloc>(context)
+        .add(AssignViewedTherapistEvent(AssignPatientData(
       therapist: widget.therapist,
       patientId: _selectedPatientToAdd!.userId,
     )));
@@ -281,7 +334,8 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
 
   void _onRemoveButtonPressed(BuildContext context, AppUser patient) {
     Navigator.of(context).pop();
-    BlocProvider.of<ViewedTherapistBloc>(context).add(AssignViewedTherapistEvent(AssignPatientData(
+    BlocProvider.of<ViewedTherapistBloc>(context)
+        .add(AssignViewedTherapistEvent(AssignPatientData(
       therapist: widget.therapist,
       patientId: patient.userId,
       isAssign: false,
