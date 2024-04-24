@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -39,20 +40,29 @@ class _PatientPlansListState extends State<PatientPlansList> {
                     itemCount: plans.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: index + 1 == plans.length ? const EdgeInsets.all(0) : const EdgeInsets.only(bottom: 12.0),
+                        padding: index + 1 == plans.length
+                            ? const EdgeInsets.all(0)
+                            : const EdgeInsets.only(bottom: 12.0),
                         child: PatientPlanItem(
                           onPressedRoute: '/PatientPlanDetails',
                           patientPlan: PatientPlan(patient: widget.patient, plan: plans[index]),
                           planNo: index + 1,
-                          isCurrent: currentPlan != null && plans[index].planId == currentPlan.planId,
+                          isCurrent: currentPlan != null &&
+                              plans[index].planId == currentPlan.planId,
                         ),
                       );
                     },
                   )
                 : currentPlan == null
-                    ? Text(
-                        "This patient has no current plans.",
-                        style: darkTextTheme().headlineSmall,
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "This patient has no current plans.",
+                              style: darkTextTheme().headlineSmall,
+                            ),
+                          ),
+                        ],
                       )
                     : PatientPlanItem(
                         onPressedRoute: '/PatientPlanDetails',
@@ -83,13 +93,19 @@ class _PatientPlansListState extends State<PatientPlansList> {
                               child: Row(
                                 children: [
                                   Text(
-                                    showAll ? "Hide Past Plans" : "Show All Plans",
+                                    showAll
+                                        ? "Hide Past Plans"
+                                        : "Show All Plans",
                                     style: darkTextTheme().headlineSmall,
                                   ),
                                   const SizedBox(
                                     width: 4,
                                   ),
-                                  Icon(showAll ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down, color: Colors.white),
+                                  Icon(
+                                      showAll
+                                          ? Icons.keyboard_arrow_up
+                                          : Icons.keyboard_arrow_down,
+                                      color: Colors.white),
                                 ],
                               ),
                             ),
