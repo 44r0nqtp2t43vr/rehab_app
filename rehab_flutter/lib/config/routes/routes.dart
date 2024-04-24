@@ -114,7 +114,7 @@ class AppRoutes {
         return _materialRoute(const AssignPatients());
 
       case '/PatientPage':
-        return _materialRoute(PatientPage(patient: settings.arguments as AppUser));
+        return _materialRoute(const PatientPage());
 
       case '/PatientPlanDetails':
         return _materialRoute(PatientPlanDetails(patientPlan: settings.arguments as PatientPlan));

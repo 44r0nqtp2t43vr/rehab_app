@@ -11,6 +11,7 @@ class TherapistPatientListBloc extends Bloc<TherapistPatientListEvent, Therapist
     this._getUserUseCase,
   ) : super(const TherapistPatientListLoading()) {
     on<FetchTherapistPatientListEvent>(onFetchTherapistPatientList);
+    on<RemoveTherapistPatientListEvent>(onRemoveTherapistPatientList);
   }
 
   void onFetchTherapistPatientList(FetchTherapistPatientListEvent event, Emitter<TherapistPatientListState> emit) async {
@@ -32,9 +33,8 @@ class TherapistPatientListBloc extends Bloc<TherapistPatientListEvent, Therapist
     }
   }
 
-  void onUpdateTherapistPatientList(UpdateTherapistPatientListEvent event, Emitter<TherapistPatientListState> emit) async {
-    final index = state.therapistPatientList.indexWhere((patient) => patient.userId == event.patientToUpdate!.userId);
-    state.therapistPatientList[index] = event.patientToUpdate!;
+  void onRemoveTherapistPatientList(RemoveTherapistPatientListEvent event, Emitter<TherapistPatientListState> emit) async {
+    state.therapistPatientList.remove(event.patientToUpdate!);
     emit(TherapistPatientListDone(therapistPatientList: state.therapistPatientList));
   }
 }

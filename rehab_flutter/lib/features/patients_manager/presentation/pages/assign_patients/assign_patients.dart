@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
@@ -10,7 +9,6 @@ import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart'
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
-import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class AssignPatients extends StatefulWidget {
@@ -54,8 +52,7 @@ class _AssignPatientsState extends State<AssignPatients> {
             );
           });
 
-          BlocProvider.of<TherapistBloc>(context)
-              .add(GetTherapistEvent(state.data));
+          BlocProvider.of<TherapistBloc>(context).add(GetTherapistEvent(state.data));
         }
         if (state is TherapistDone && !fromError) {
           sl<NavigationController>().setTab(TabEnum.patients);
@@ -140,8 +137,7 @@ class _AssignPatientsState extends State<AssignPatients> {
     );
   }
 
-  void _onDetect(
-      BuildContext context, BarcodeCapture capture, Therapist therapist) {
+  void _onDetect(BuildContext context, BarcodeCapture capture, Therapist therapist) {
     final barcodes = capture.barcodes;
 
     setState(() {
@@ -151,11 +147,11 @@ class _AssignPatientsState extends State<AssignPatients> {
     if (barcodes.isNotEmpty) {
       _scannerController.dispose();
 
-      BlocProvider.of<TherapistBloc>(context)
-          .add(AssignPatientEvent(AssignPatientData(
-        therapist: therapist,
-        patientId: barcodes.first.rawValue!,
-      )));
+      // TODO: update implementation
+      // BlocProvider.of<TherapistBloc>(context).add(AssignPatientEvent(AssignPatientData(
+      //   therapist: therapist,
+      //   patientId: barcodes.first.rawValue!,
+      // )));
     }
   }
 }
@@ -171,13 +167,11 @@ class OverlayPainter extends CustomPainter {
       ..color = Colors.black.withOpacity(0.5)
       ..style = PaintingStyle.fill;
 
-    final backgroundPath = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final backgroundPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     final scanWindowPath = Path()..addRect(scanWindow);
 
-    final overlayPath =
-        Path.combine(PathOperation.difference, backgroundPath, scanWindowPath);
+    final overlayPath = Path.combine(PathOperation.difference, backgroundPath, scanWindowPath);
 
     canvas.drawPath(overlayPath, paint);
   }

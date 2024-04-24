@@ -48,6 +48,7 @@ import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/t
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -130,7 +131,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
-  sl.registerFactory<TherapistBloc>(() => TherapistBloc(sl(), sl(), sl(), sl()));
+  sl.registerFactory<TherapistBloc>(() => TherapistBloc(sl(), sl(), sl()));
 
   sl.registerFactory<AdminBloc>(() => AdminBloc(sl()));
 
@@ -145,4 +146,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ViewedPatientBloc>(() => ViewedPatientBloc());
 
   sl.registerFactory<TherapistPatientListBloc>(() => TherapistPatientListBloc(sl()));
+
+  sl.registerFactory<ViewedTherapistPatientBloc>(() => ViewedTherapistPatientBloc(sl()));
 }
