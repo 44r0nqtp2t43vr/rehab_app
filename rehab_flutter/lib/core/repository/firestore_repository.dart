@@ -442,7 +442,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<Therapist> assignPatient(AssignPatientData data) async {
     final List<String> currentPatients = data.therapist.patientsIds;
-
     if (data.isAssign) {
       final bool isValidInput = await doesPatientExist(data.patientId);
       if (isValidInput && !currentPatients.contains(data.patientId)) {

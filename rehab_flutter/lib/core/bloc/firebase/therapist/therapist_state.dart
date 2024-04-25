@@ -21,5 +21,5 @@ class TherapistLoading extends TherapistState {
 }
 
 class TherapistDone extends TherapistState {
-  const TherapistDone({Therapist? currentTherapist}) : super(currentTherapist: currentTherapist);
+  const TherapistDone({Therapist? currentTherapist, dynamic data}) : super(currentTherapist: currentTherapist, data: data);
 }

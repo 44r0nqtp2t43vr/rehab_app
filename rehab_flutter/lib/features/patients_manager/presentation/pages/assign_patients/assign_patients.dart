@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:lottie/lottie.dart';
@@ -11,6 +10,9 @@ import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart'
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class AssignPatients extends StatefulWidget {
@@ -57,6 +59,7 @@ class _AssignPatientsState extends State<AssignPatients> {
           BlocProvider.of<TherapistBloc>(context).add(GetTherapistEvent(state.data));
         }
         if (state is TherapistDone && !fromError) {
+          BlocProvider.of<TherapistPatientListBloc>(context).add(AddTherapistPatientListEvent(state.data));
           sl<NavigationController>().setTab(TabEnum.patients);
           Navigator.of(context).pop();
         }
@@ -167,19 +170,18 @@ class _AssignPatientsState extends State<AssignPatients> {
 
   void _onDetect(BuildContext context, BarcodeCapture capture, Therapist therapist) {
     final barcodes = capture.barcodes;
-
+    print('ondetect');
     setState(() {
       fromError = false;
     });
 
     if (barcodes.isNotEmpty) {
       _scannerController.dispose();
-
-      // TODO: update implementation
-      // BlocProvider.of<TherapistBloc>(context).add(AssignPatientEvent(AssignPatientData(
-      //   therapist: therapist,
-      //   patientId: barcodes.first.rawValue!,
-      // )));
+      print('event running');
+      BlocProvider.of<TherapistBloc>(context).add(AssignPatientEvent(AssignPatientData(
+        therapist: therapist,
+        patientId: barcodes.first.rawValue!,
+      )));
     }
   }
 }
