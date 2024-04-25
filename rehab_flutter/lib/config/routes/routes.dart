@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/main/admin_main.dart';
@@ -21,6 +22,7 @@ import 'package:rehab_flutter/features/patients_manager/presentation/pages/assig
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/edit_therapist_profile/edit_therapist_profile.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/patient_page/patient_page.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/patient_plan_details/patient_plan_details.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/pages/test_analytics/test_analytics.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_main/therapist_main.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/pages/play_game/play_game.dart';
 import 'package:rehab_flutter/features/actuator_therapy/presentation/pages/actuator_therapy_screen.dart';
@@ -130,6 +132,9 @@ class AppRoutes {
 
       case '/AdminTherapistPage':
         return _materialRoute(const AdminTherapistPage());
+
+      case '/TestAnalytics':
+        return _materialRoute(TestAnalytics(items: settings.arguments as List<TestingItem>));
 
       default:
         return _materialRoute(const OnboardingScreen());

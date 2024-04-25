@@ -16,4 +16,14 @@ class TestingItem {
       'itemAccuracy': itemAccuracy,
     };
   }
+
+  factory TestingItem.fromMap(Map<String, dynamic> map) {
+    return TestingItem(
+      test: map['test'],
+      itemNumber: map['itemNumber'],
+      itemName: map['itemName'],
+      itemType: map['itemType'],
+      itemAccuracy: map['itemAccuracy'],
+    );
+  }
 }

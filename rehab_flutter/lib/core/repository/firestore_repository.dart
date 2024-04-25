@@ -110,7 +110,16 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         // For each Plan, Query Sessions
         QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
 
-        List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
+        List<Session> sessions = [];
+        for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+          // For each session, query testingitems
+          QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+          List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+          Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+
+          sessions.add(session);
+        }
+        // List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
 
         // Combine Plan with its Sessions
         Plan planWithSessions = Plan(
@@ -318,6 +327,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         isStandardTwoDone: false,
         pretestScore: null,
         posttestScore: null,
+        items: [],
       );
       sessions.add(session);
     }
