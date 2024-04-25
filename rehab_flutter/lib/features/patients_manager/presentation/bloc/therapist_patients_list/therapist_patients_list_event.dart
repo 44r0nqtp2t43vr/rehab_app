@@ -15,6 +15,10 @@ class FetchTherapistPatientListEvent extends TherapistPatientListEvent {
   const FetchTherapistPatientListEvent(List<String> therapistPatientsIds) : super(therapistPatientsIds: therapistPatientsIds);
 }
 
+class AddTherapistPatientListEvent extends TherapistPatientListEvent {
+  const AddTherapistPatientListEvent(AppUser patientToUpdate) : super(patientToUpdate: patientToUpdate);
+}
+
 class RemoveTherapistPatientListEvent extends TherapistPatientListEvent {
   const RemoveTherapistPatientListEvent(AppUser patientToUpdate) : super(patientToUpdate: patientToUpdate);
 }

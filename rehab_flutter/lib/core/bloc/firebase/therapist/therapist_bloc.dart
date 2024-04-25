@@ -1,23 +1,30 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
+import 'package:rehab_flutter/core/usecases/firebase/assign_patient.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_therapist.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_therapist.dart';
 
 class TherapistBloc extends Bloc<TherapistEvent, TherapistState> {
   final RegisterTherapistUseCase _registerTherapistUseCase;
+  final AssignPatientUseCase _assignPatientUseCase;
   final EditTherapistUseCase _editTherapistUseCase;
   final LogoutUserUseCase _logoutUserUseCase;
+  final GetUserUseCase _getUserUseCase;
 
   TherapistBloc(
     this._registerTherapistUseCase,
+    this._assignPatientUseCase,
     this._editTherapistUseCase,
     this._logoutUserUseCase,
+    this._getUserUseCase,
   ) : super(const TherapistNone()) {
     on<ResetTherapistEvent>(onResetTherapist);
     on<GetTherapistEvent>(onGetTherapist);
     on<RegisterTherapistEvent>(onRegisterTherapist);
+    on<AssignPatientEvent>(onAssignPatient);
     on<EditTherapistEvent>(onEditTherapist);
     on<LogoutTherapistEvent>(onLogoutTherapist);
   }
@@ -37,6 +44,17 @@ class TherapistBloc extends Bloc<TherapistEvent, TherapistState> {
       emit(const TherapistDone(currentTherapist: null));
     } catch (e) {
       emit(TherapistNone(errorMessage: e.toString()));
+    }
+  }
+
+  void onAssignPatient(AssignPatientEvent event, Emitter<TherapistState> emit) async {
+    emit(const TherapistLoading());
+    try {
+      final updatedTherapist = await _assignPatientUseCase(params: event.assignData);
+      final assignedPatient = await _getUserUseCase(params: event.assignData!.patientId);
+      emit(TherapistDone(currentTherapist: updatedTherapist, data: assignedPatient));
+    } catch (e) {
+      emit(TherapistNone(errorMessage: e.toString(), data: event.assignData!.therapist));
     }
   }
 
