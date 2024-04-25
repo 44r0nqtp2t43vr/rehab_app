@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
+import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
@@ -109,7 +110,16 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         // For each Plan, Query Sessions
         QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
 
-        List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
+        List<Session> sessions = [];
+        for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+          // For each session, query testingitems
+          QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+          List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+          Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+
+          sessions.add(session);
+        }
+        // List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
 
         // Combine Plan with its Sessions
         Plan planWithSessions = Plan(
@@ -244,6 +254,29 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
+  Future<void> updateCurrentSessionTesting(String userId, List<TestingItem> items, dynamic data) async {
+    final DateTime today = DateTime.now();
+    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+    // Identify the active plan
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: endOfDay).limit(1).get();
+
+    final activePlanId = querySnapshot.docs.first.id;
+
+    // Fetch sessions for the current date within the active plan
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
+
+    // Assuming we update the first session of the day
+    final sessionDoc = sessionSnapshot.docs.first;
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update(data);
+
+    for (var item in items) {
+      await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).collection('testingitems').add(item.toMap());
+    }
+  }
+
+  @override
   Future<dynamic> loginUser(LoginData data) async {
     final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
@@ -294,6 +327,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         isStandardTwoDone: false,
         pretestScore: null,
         posttestScore: null,
+        items: [],
       );
       sessions.add(session);
     }
@@ -339,7 +373,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       String standardTwoType = shuffledTherapies[1].name;
       String intensityLevel = ((data.score / 20).ceil().clamp(1, 5)).toString();
 
-      await updateCurrentSession(data.user.userId, {
+      await updateCurrentSessionTesting(data.user.userId, data.items, {
         'pretestScore': data.score,
         'standardOneType': standardOneType,
         'standardOneIntensity': intensityLevel,
@@ -348,7 +382,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         'passiveIntensity': intensityLevel,
       });
     } else {
-      await updateCurrentSession(data.user.userId, {'posttestScore': data.score});
+      await updateCurrentSessionTesting(data.user.userId, data.items, {'posttestScore': data.score});
     }
 
     final AppUser user = await getUser(data.user.userId);

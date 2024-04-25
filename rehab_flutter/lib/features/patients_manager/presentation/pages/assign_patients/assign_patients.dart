@@ -61,6 +61,7 @@ class _AssignPatientsState extends State<AssignPatients> {
         if (state is TherapistDone && !fromError) {
           BlocProvider.of<TherapistPatientListBloc>(context).add(AddTherapistPatientListEvent(state.data));
           sl<NavigationController>().setTab(TabEnum.patients);
+          _scannerController.dispose();
           Navigator.of(context).pop();
         }
       },

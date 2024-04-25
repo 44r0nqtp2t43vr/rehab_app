@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 
 class Session {
@@ -23,6 +24,9 @@ class Session {
   final double? pretestScore;
   final double? posttestScore;
 
+  // Testing Items
+  final List<TestingItem> items;
+
   const Session({
     required this.sessionId,
     required this.date,
@@ -34,6 +38,7 @@ class Session {
     required this.standardTwoType,
     required this.standardTwoIntensity,
     required this.isStandardTwoDone,
+    required this.items,
     this.pretestScore,
     this.posttestScore,
   });
@@ -51,6 +56,7 @@ class Session {
       standardTwoType: '',
       standardTwoIntensity: '',
       isStandardTwoDone: false,
+      items: [],
     );
   }
 
@@ -71,7 +77,7 @@ class Session {
     };
   }
 
-  factory Session.fromMap(Map<String, dynamic> map) {
+  factory Session.fromMap(Map<String, dynamic> map, {List<TestingItem> items = const []}) {
     return Session(
       sessionId: map['sessionId'],
       date: (map['date'] as Timestamp).toDate(),
@@ -85,6 +91,7 @@ class Session {
       isStandardTwoDone: map['isStandardTwoDone'],
       pretestScore: map['pretestScore'],
       posttestScore: map['posttestScore'],
+      items: items,
     );
   }
 

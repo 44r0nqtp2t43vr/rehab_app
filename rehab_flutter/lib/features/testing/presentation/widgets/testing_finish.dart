@@ -10,6 +10,7 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
@@ -17,8 +18,7 @@ class TestingFinish extends StatefulWidget {
   final List<String> itemList;
   final List<double> accuracyList;
 
-  const TestingFinish(
-      {super.key, required this.itemList, required this.accuracyList});
+  const TestingFinish({super.key, required this.itemList, required this.accuracyList});
 
   @override
   State<TestingFinish> createState() => _TestingFinishState();
@@ -28,17 +28,39 @@ class _TestingFinishState extends State<TestingFinish> {
   late double score;
 
   void _submitTest(AppUser user, double score) {
-    BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(ResultsData(
+    bool isPretest = !user.getCurrentSession()!.getSessionConditions()[0];
+
+    List<TestingItem> items = [];
+    for (var i = 0; i < widget.itemList.length; i++) {
+      final nextItem = TestingItem(
+        test: isPretest ? "pretest" : "posttest",
+        itemNumber: i + 1,
+        itemName: widget.itemList[i],
+        itemType: i < 10
+            ? "static pattern"
+            : i < 15
+                ? "texture"
+                : "rhythmic pattern",
+        itemAccuracy: widget.accuracyList[i],
+      );
+
+      items.add(nextItem);
+    }
+
+    BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(
+      ResultsData(
         user: user,
         score: score,
-        isPretest: !user.getCurrentSession()!.getSessionConditions()[0])));
+        isPretest: isPretest,
+        items: items,
+      ),
+    ));
   }
 
   @override
   void initState() {
     final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
-    score = (widget.accuracyList.reduce((value, element) => value + element) /
-        widget.accuracyList.length);
+    score = (widget.accuracyList.reduce((value, element) => value + element) / widget.accuracyList.length);
     _submitTest(currentUser, score);
 
     super.initState();
@@ -66,18 +88,10 @@ class _TestingFinishState extends State<TestingFinish> {
       }
     }
 
-    double averageStaticPatterns = staticPatternsScores.isNotEmpty
-        ? staticPatternsScores.reduce((a, b) => a + b) /
-            staticPatternsScores.length
-        : 0;
+    double averageStaticPatterns = staticPatternsScores.isNotEmpty ? staticPatternsScores.reduce((a, b) => a + b) / staticPatternsScores.length : 0;
 
-    double averageTextures = texturesScores.isNotEmpty
-        ? texturesScores.reduce((a, b) => a + b) / texturesScores.length
-        : 0;
-    double averageRhythmicPatterns = rhythmicPatternsScores.isNotEmpty
-        ? rhythmicPatternsScores.reduce((a, b) => a + b) /
-            rhythmicPatternsScores.length
-        : 0;
+    double averageTextures = texturesScores.isNotEmpty ? texturesScores.reduce((a, b) => a + b) / texturesScores.length : 0;
+    double averageRhythmicPatterns = rhythmicPatternsScores.isNotEmpty ? rhythmicPatternsScores.reduce((a, b) => a + b) / rhythmicPatternsScores.length : 0;
 
     // print('TEST: $averageStaticPatterns');
     // print('TEST: $averageTextures');
@@ -121,8 +135,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(16),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             "Average Accuracy",
@@ -144,8 +157,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                             child: BarChart(
                                               BarChartData(
                                                 groupsSpace: 12,
-                                                alignment: BarChartAlignment
-                                                    .spaceAround,
+                                                alignment: BarChartAlignment.spaceAround,
                                                 maxY: 100,
                                                 titlesData: FlTitlesData(
                                                   topTitles: const AxisTitles(
@@ -158,22 +170,15 @@ class _TestingFinishState extends State<TestingFinish> {
                                                       interval: 20,
                                                       reservedSize: 28,
                                                       showTitles: true,
-                                                      getTitlesWidget:
-                                                          (value, meta) {
+                                                      getTitlesWidget: (value, meta) {
                                                         return SideTitleWidget(
-                                                          axisSide:
-                                                              AxisSide.left,
+                                                          axisSide: AxisSide.left,
                                                           child: Text(
-                                                            value
-                                                                .toStringAsFixed(
-                                                                    0),
-                                                            style:
-                                                                const TextStyle(
-                                                              fontFamily:
-                                                                  'Sailec Medium',
+                                                            value.toStringAsFixed(0),
+                                                            style: const TextStyle(
+                                                              fontFamily: 'Sailec Medium',
                                                               fontSize: 8,
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors.white,
                                                             ),
                                                           ),
                                                         );
@@ -189,8 +194,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                     sideTitles: SideTitles(
                                                       reservedSize: 35,
                                                       showTitles: true,
-                                                      getTitlesWidget:
-                                                          bottomTitles,
+                                                      getTitlesWidget: bottomTitles,
                                                     ),
                                                   ),
                                                 ),
@@ -208,80 +212,45 @@ class _TestingFinishState extends State<TestingFinish> {
                                                   ),
                                                 ),
                                                 barGroups: [
-                                                  BarChartGroupData(
-                                                      x: 0,
-                                                      barRods: [
-                                                        BarChartRodData(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    4),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    4),
-                                                            bottomLeft:
-                                                                Radius.zero,
-                                                            bottomRight:
-                                                                Radius.zero,
-                                                          ),
-                                                          width: 20,
-                                                          toY:
-                                                              averageStaticPatterns,
-                                                          color: const Color(
-                                                              0xffdbfff0),
-                                                        ),
-                                                      ]),
-                                                  BarChartGroupData(
-                                                      x: 1,
-                                                      barRods: [
-                                                        BarChartRodData(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    4),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    4),
-                                                            bottomLeft:
-                                                                Radius.zero,
-                                                            bottomRight:
-                                                                Radius.zero,
-                                                          ),
-                                                          width: 20,
-                                                          toY: averageTextures,
-                                                          color: const Color(
-                                                              0xFF49ffb6),
-                                                        ),
-                                                      ]),
-                                                  BarChartGroupData(
-                                                      x: 2,
-                                                      barRods: [
-                                                        BarChartRodData(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    4),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    4),
-                                                            bottomLeft:
-                                                                Radius.zero,
-                                                            bottomRight:
-                                                                Radius.zero,
-                                                          ),
-                                                          width: 20,
-                                                          toY:
-                                                              averageRhythmicPatterns,
-                                                          color: const Color(
-                                                              0xFF00b66d),
-                                                        ),
-                                                      ]),
+                                                  BarChartGroupData(x: 0, barRods: [
+                                                    BarChartRodData(
+                                                      borderRadius: const BorderRadius.only(
+                                                        topLeft: Radius.circular(4),
+                                                        topRight: Radius.circular(4),
+                                                        bottomLeft: Radius.zero,
+                                                        bottomRight: Radius.zero,
+                                                      ),
+                                                      width: 20,
+                                                      toY: averageStaticPatterns,
+                                                      color: const Color(0xffdbfff0),
+                                                    ),
+                                                  ]),
+                                                  BarChartGroupData(x: 1, barRods: [
+                                                    BarChartRodData(
+                                                      borderRadius: const BorderRadius.only(
+                                                        topLeft: Radius.circular(4),
+                                                        topRight: Radius.circular(4),
+                                                        bottomLeft: Radius.zero,
+                                                        bottomRight: Radius.zero,
+                                                      ),
+                                                      width: 20,
+                                                      toY: averageTextures,
+                                                      color: const Color(0xFF49ffb6),
+                                                    ),
+                                                  ]),
+                                                  BarChartGroupData(x: 2, barRods: [
+                                                    BarChartRodData(
+                                                      borderRadius: const BorderRadius.only(
+                                                        topLeft: Radius.circular(4),
+                                                        topRight: Radius.circular(4),
+                                                        bottomLeft: Radius.zero,
+                                                        bottomRight: Radius.zero,
+                                                      ),
+                                                      width: 20,
+                                                      toY: averageRhythmicPatterns,
+                                                      color: const Color(0xFF00b66d),
+                                                    ),
+                                                  ]),
                                                 ],
                                               ),
                                             ),
@@ -296,8 +265,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                   const Text(
                                                     'SP: Static Patterns',
                                                     style: TextStyle(
-                                                      fontFamily:
-                                                          'Sailec Medium',
+                                                      fontFamily: 'Sailec Medium',
                                                       fontSize: 8,
                                                       color: Colors.white,
                                                     ),
@@ -315,8 +283,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                   const Text(
                                                     'T: Textures',
                                                     style: TextStyle(
-                                                      fontFamily:
-                                                          'Sailec Medium',
+                                                      fontFamily: 'Sailec Medium',
                                                       fontSize: 8,
                                                       color: Colors.white,
                                                     ),
@@ -334,8 +301,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                   const Text(
                                                     'RP: Rhythmic Patterns',
                                                     style: TextStyle(
-                                                      fontFamily:
-                                                          'Sailec Medium',
+                                                      fontFamily: 'Sailec Medium',
                                                       fontSize: 8,
                                                       color: Colors.white,
                                                     ),
@@ -363,10 +329,8 @@ class _TestingFinishState extends State<TestingFinish> {
                                           vertical: 24,
                                         ),
                                         child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             CircularPercentIndicator(
                                               radius: 0.4 * 136,
@@ -380,11 +344,9 @@ class _TestingFinishState extends State<TestingFinish> {
                                                   color: Colors.white,
                                                 ),
                                               ),
-                                              circularStrokeCap:
-                                                  CircularStrokeCap.round,
+                                              circularStrokeCap: CircularStrokeCap.round,
                                               backgroundColor: Colors.white,
-                                              progressColor:
-                                                  const Color(0xff01FF99),
+                                              progressColor: const Color(0xff01FF99),
                                             ),
                                             const SizedBox(
                                               height: 24,
@@ -392,8 +354,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                             Center(
                                               child: Text(
                                                 "Overall Score",
-                                                style: darkTextTheme()
-                                                    .displaySmall,
+                                                style: darkTextTheme().displaySmall,
                                               ),
                                             ),
                                           ],
@@ -440,20 +401,17 @@ class _TestingFinishState extends State<TestingFinish> {
                                           vertical: 12,
                                         ),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               widget.itemList[i],
-                                              style:
-                                                  darkTextTheme().headlineSmall,
+                                              style: darkTextTheme().headlineSmall,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             const SizedBox(width: 24),
                                             Text(
                                               "${widget.accuracyList[i].toString()}%",
-                                              style:
-                                                  darkTextTheme().displaySmall,
+                                              style: darkTextTheme().displaySmall,
                                             ),
                                           ],
                                         ),
@@ -496,24 +454,16 @@ class _TestingFinishState extends State<TestingFinish> {
                                 child: ElevatedButton(
                                   onPressed: () => _onFinish(context),
                                   style: ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStateProperty.all<Color>(
+                                    foregroundColor: MaterialStateProperty.all<Color>(
                                       Colors.white,
                                     ),
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
+                                    backgroundColor: MaterialStateProperty.all<Color>(
                                       const Color(0xff128BED),
                                     ),
-                                    elevation:
-                                        MaterialStateProperty.all<double>(0),
-                                    shadowColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.transparent),
-                                    overlayColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.transparent),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
+                                    elevation: MaterialStateProperty.all<double>(0),
+                                    shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                                    overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
