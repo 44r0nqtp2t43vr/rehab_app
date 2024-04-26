@@ -509,6 +509,7 @@ Widget cuSelectPlanButtons({
   required BuildContext context,
   required VoidCallback onPressed,
   required String title,
+  required String subtitle,
 }) {
   return GestureDetector(
     onTap: onPressed,
@@ -561,6 +562,15 @@ Widget cuSelectPlanButtons({
                           color: Colors.white,
                         ),
                       ),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          fontFamily: 'Sailec Light',
+                          fontSize: 12,
+                          height: 1.2,
+                          color: Colors.white,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -608,8 +618,7 @@ Widget musicTopButtons({
                     children: [
                       Icon(
                         icon,
-                        color:
-                            isActive ? const Color(0xff275492) : Colors.white,
+                        color: isActive ? const Color(0xff275492) : Colors.white,
                         size: 28,
                       ),
                       Text(
@@ -617,8 +626,7 @@ Widget musicTopButtons({
                         style: TextStyle(
                           fontFamily: 'Sailec Medium',
                           fontSize: 12,
-                          color:
-                              isActive ? const Color(0xff275492) : Colors.white,
+                          color: isActive ? const Color(0xff275492) : Colors.white,
                         ),
                       ),
                     ],

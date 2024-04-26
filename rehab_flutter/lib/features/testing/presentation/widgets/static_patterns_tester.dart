@@ -105,6 +105,7 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
   }
 
   void _onSubmit() {
+    _timer?.cancel();
     widget.onResponse(_calculateAccuracy(), widget.currentStaticPattern.name);
     setState(() {
       for (int i = 0; i < _circleStates.length; i++) {
