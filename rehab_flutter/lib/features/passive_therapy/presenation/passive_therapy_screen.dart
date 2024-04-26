@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -9,51 +8,46 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/features/passive_therapy/data/pattern_bools_provider.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/helper_functions/bluetooth_functions.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_therapy_data.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/pattern_bools.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/widgets/pattern_grid.dart';
 
 class PassiveTherapyScreen extends StatefulWidget {
-  final String userId;
+  final PassiveTherapyData data;
 
-  const PassiveTherapyScreen({Key? key, required this.userId})
-      : super(key: key);
+  const PassiveTherapyScreen({Key? key, required this.data}) : super(key: key);
 
   @override
   State<PassiveTherapyScreen> createState() => _PassiveTherapyScreenState();
 }
 
-class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
-    with TickerProviderStateMixin {
+class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with TickerProviderStateMixin {
 //  PROVIDER
   final PatternBoolsProvider patternBoolsProvider = PatternBoolsProvider();
 
 // COUNTDOWN TIMER
-  static int countdownDuration = 90;
-  static String countdownText = '1:30';
+  final int countdownDuration = 600;
+  final String countdownText = '10:00';
   Timer? _countdownTimer;
-  Duration _duration = Duration(
-      seconds:
-          countdownDuration); // Initialize the countdown duration to 8 minutes
-  String _countdownText = countdownText; // Initial countdown text display
+  late Duration _duration; // Initialize the countdown duration to 8 minutes
+  late String _countdownText; // Initial countdown text display
 
 // PATTERN CHANGING
-  static int patternChangeDuration = 10;
-  static String patternChangeDurationText = '0:10';
+  final int patternChangeDuration = 120;
+  final String patternChangeDurationText = '2:00';
   Timer? _patternChangeTimer;
-  Duration _patternChangeDuration = Duration(seconds: patternChangeDuration);
-  String _patternChangeCountdownText =
-      patternChangeDurationText; // Initial text display for pattern change countdown
+  late Duration _patternChangeDuration;
+  late String _patternChangeCountdownText; // Initial text display for pattern change countdown
   int patternIndex = 7;
 // ANIMATION SPEED
-  static int animationSpeedDuration = 5;
-  //static String animationSpeedCountdownText = '0:05';
-  static int animationSpeedSlow = 500;
-  static int animationSpeedFast = 100;
-  int _animationSpeed = animationSpeedSlow;
+  late int animationSpeedDuration;
+  //final String animationSpeedCountdownText = '0:05';
+  final int animationSpeedSlow = 500;
+  final int animationSpeedFast = 100;
+  late int _animationSpeed;
   Timer? _animationSpeedTimer;
   Timer? _animationSpeedChangeTimer;
-  Duration _animationSpeedChangeDuration =
-      Duration(seconds: animationSpeedDuration);
+  late Duration _animationSpeedChangeDuration;
   //String _animationSpeedChangeCountdownText = animationSpeedCountdownText;
 
 // PATTERNS
@@ -66,27 +60,52 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
 // BLUETOOTH
   String lastSentPattern = '';
 
+  int intensityToAnimationSpeedDuration() {
+    switch (widget.data.intensity) {
+      case 1:
+        return 60;
+      case 2:
+        return 30;
+      case 3:
+        return 15;
+      case 4:
+        return 10;
+      case 5:
+        return 5;
+      default:
+        return 60;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    _duration = Duration(seconds: countdownDuration); // Initialize the countdown duration to 8 minutes
+    _countdownText = countdownText; // Initial countdown text display
+
+    _patternChangeDuration = Duration(seconds: patternChangeDuration);
+    _patternChangeCountdownText = patternChangeDurationText; // Initial text display for pattern change countdown
+
+    animationSpeedDuration = intensityToAnimationSpeedDuration();
+    _animationSpeed = animationSpeedSlow;
+
+    _animationSpeedChangeDuration = Duration(seconds: animationSpeedDuration);
 
     // Initialize pattern based on patternIndex
     pattern = patternBoolsProvider.patternBools[patternIndex];
 
     // Countdown Timer
-    _countdownTimer =
-        Timer.periodic(const Duration(seconds: 1), _handleCountdown);
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), _handleCountdown);
 
     // Animation Speed Timer
     _initializeAnimationSpeedTimer();
 
     // Animation Speed Change Timer
-    _animationSpeedChangeTimer =
-        Timer.periodic(const Duration(seconds: 1), _handleAnimationSpeedChange);
+    _animationSpeedChangeTimer = Timer.periodic(const Duration(seconds: 1), _handleAnimationSpeedChange);
 
     // Pattern Change Timer
-    _patternChangeTimer =
-        Timer.periodic(const Duration(seconds: 1), _handlePatternChange);
+    _patternChangeTimer = Timer.periodic(const Duration(seconds: 1), _handlePatternChange);
   }
 
   void _handleCountdown(Timer timer) {
@@ -104,16 +123,14 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
 
   void _initializeAnimationSpeedTimer() {
     _animationSpeedTimer?.cancel();
-    _animationSpeedTimer = Timer.periodic(
-        Duration(milliseconds: _animationSpeed), _processAnimation);
+    _animationSpeedTimer = Timer.periodic(Duration(milliseconds: _animationSpeed), _processAnimation);
   }
 
   void _handleAnimationSpeedChange(Timer timer) {
     if (_animationSpeedChangeDuration.inSeconds == 0) {
       _toggleAnimationSpeed();
       _initializeAnimationSpeedTimer();
-      _animationSpeedChangeDuration =
-          Duration(seconds: animationSpeedDuration - 1);
+      _animationSpeedChangeDuration = Duration(seconds: animationSpeedDuration - 1);
     } else {
       setState(() {
         _animationSpeedChangeDuration -= const Duration(seconds: 1);
@@ -140,10 +157,8 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
       int length = pattern.firstFinger.length;
       currentFrame = (currentFrame + 1) % length;
 
-      List<List<int>> sums = calculateSumsForAllFingers(
-          pattern, currentFrame, values, sumOneIndices);
-      lastSentPattern = sendPattern(
-          sums[0], sums[1], sums[2], sums[3], sums[4], lastSentPattern);
+      List<List<int>> sums = calculateSumsForAllFingers(pattern, currentFrame, values, sumOneIndices);
+      lastSentPattern = sendPattern(sums[0], sums[1], sums[2], sums[3], sums[4], lastSentPattern);
     });
     // _printFingerSums(sums);
     // Additional logic to update the animation based on the current frame
@@ -156,14 +171,13 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   }
 
   void _onEnd() {
-    BlocProvider.of<UserBloc>(context).add(SubmitPassiveEvent(widget.userId));
+    BlocProvider.of<UserBloc>(context).add(SubmitPassiveEvent(widget.data.userId));
   }
 
   void _resetPatternChangeTimer() {
     _patternChangeDuration = Duration(seconds: patternChangeDuration - 1);
     _patternChangeCountdownText = _patternChangeCountdownText;
-    patternIndex =
-        (patternIndex + 1) % patternBoolsProvider.patternBools.length;
+    patternIndex = (patternIndex + 1) % patternBoolsProvider.patternBools.length;
     pattern = patternBoolsProvider.patternBools[patternIndex];
     currentFrame = 0; // Reset current frame for the new pattern
   }
@@ -171,11 +185,8 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
   void _toggleAnimationSpeed() {
     // Toggle animation speed between slow and fast, start with slow
     _animationSpeedTimer?.cancel();
-    _animationSpeed = _animationSpeed == animationSpeedSlow
-        ? animationSpeedFast
-        : animationSpeedSlow;
-    _animationSpeedChangeDuration =
-        Duration(seconds: animationSpeedDuration - 1); // Reset countdown
+    _animationSpeed = _animationSpeed == animationSpeedSlow ? animationSpeedFast : animationSpeedSlow;
+    _animationSpeedChangeDuration = Duration(seconds: animationSpeedDuration - 1); // Reset countdown
   }
 
   @override
@@ -184,16 +195,14 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
     _animationSpeedChangeTimer?.cancel();
     _countdownTimer?.cancel();
     _patternChangeTimer?.cancel();
-    sendPattern([000, 000], [000, 000], [000, 000], [000, 000], [000, 000],
-        lastSentPattern);
+    sendPattern([000, 000], [000, 000], [000, 000], [000, 000], [000, 000], lastSentPattern);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
-      listenWhen: (previous, current) =>
-          previous is UserLoading && current is UserDone,
+      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
       listener: (context, state) {
         if (state is UserDone) {
           Navigator.of(context).pop();
@@ -255,21 +264,11 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen>
                           spacing: 16,
                           runSpacing: 16,
                           children: [
-                            PatternGridWidget(
-                                patternData: pattern.firstFinger,
-                                currentFrame: currentFrame),
-                            PatternGridWidget(
-                                patternData: pattern.secondFinger,
-                                currentFrame: currentFrame),
-                            PatternGridWidget(
-                                patternData: pattern.thirdFinger,
-                                currentFrame: currentFrame),
-                            PatternGridWidget(
-                                patternData: pattern.fourthFinger,
-                                currentFrame: currentFrame),
-                            PatternGridWidget(
-                                patternData: pattern.fifthFinger,
-                                currentFrame: currentFrame),
+                            PatternGridWidget(patternData: pattern.firstFinger, currentFrame: currentFrame),
+                            PatternGridWidget(patternData: pattern.secondFinger, currentFrame: currentFrame),
+                            PatternGridWidget(patternData: pattern.thirdFinger, currentFrame: currentFrame),
+                            PatternGridWidget(patternData: pattern.fourthFinger, currentFrame: currentFrame),
+                            PatternGridWidget(patternData: pattern.fifthFinger, currentFrame: currentFrame),
                           ],
                         ),
                       ),

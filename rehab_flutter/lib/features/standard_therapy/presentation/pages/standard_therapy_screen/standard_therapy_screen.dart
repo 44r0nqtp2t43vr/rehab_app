@@ -30,22 +30,19 @@ class StandardTherapyScreen extends StatefulWidget {
 }
 
 class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
-  int countdownDuration = 59;
+  int countdownDuration = 299;
 
   void submit() {
-    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(
-        userId: widget.data.userId, isStandardOne: widget.data.isStandardOne)));
+    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.data.userId, isStandardOne: widget.data.isStandardOne)));
   }
 
   Song getSongFromIntensity() {
     final random = Random();
     final songList = SongProvider.songs;
 
-    songList
-        .sort((a, b) => a.noteCountsPerFrame.compareTo(b.noteCountsPerFrame));
+    songList.sort((a, b) => a.noteCountsPerFrame.compareTo(b.noteCountsPerFrame));
 
-    int startIndex =
-        (songList.length * (widget.data.intensity - 1) ~/ 5).toInt();
+    int startIndex = (songList.length * (widget.data.intensity - 1) ~/ 5).toInt();
     int endIndex = (songList.length * widget.data.intensity ~/ 5).toInt();
 
     return songList[startIndex + random.nextInt(endIndex - startIndex)];
@@ -101,11 +98,9 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
           ),
         );
       case StandardTherapy.pianoTiles:
-        return STPianoTiles(
-            user: user, song: getSongFromIntensity(), submitCallback: submit);
+        return STPianoTiles(user: user, song: getSongFromIntensity(), submitCallback: submit);
       case StandardTherapy.musicVisualizer:
-        return STVisualizer(
-            user: user, song: getSongFromIntensity(), submitCallback: submit);
+        return STVisualizer(user: user, song: getSongFromIntensity(), submitCallback: submit);
       default:
         return Container();
     }
@@ -124,8 +119,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
-      listenWhen: (previous, current) =>
-          previous is UserLoading && current is UserDone,
+      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
       listener: (context, state) {
         if (state is UserDone) {
           Navigator.of(context).pop();

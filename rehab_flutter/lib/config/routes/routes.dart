@@ -17,6 +17,7 @@ import 'package:rehab_flutter/features/login_register/presentation/pages/onboard
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register_therapist/register_therapist.dart';
 import 'package:rehab_flutter/features/logs_screen/presentation/logs_screen.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_therapy_data.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/assign_patients/assign_patients.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/edit_therapist_profile/edit_therapist_profile.dart';
@@ -101,7 +102,7 @@ class AppRoutes {
         return _materialRoute(StandardTherapyScreen(data: settings.arguments as StandardTherapyData));
 
       case '/PassiveTherapy':
-        return _materialRoute(PassiveTherapyScreen(userId: settings.arguments as String));
+        return _materialRoute(PassiveTherapyScreen(data: settings.arguments as PassiveTherapyData));
 
       case '/EditProfile':
         return _materialRoute(EditProfile(user: settings.arguments as AppUser));
