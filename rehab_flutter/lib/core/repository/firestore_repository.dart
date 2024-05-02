@@ -520,6 +520,12 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
+  Future<List<String>> getTherapistPatientIds(String therpistId) async {
+    DocumentSnapshot<Map<String, dynamic>> therapistDoc = await db.collection('users').doc(therpistId).get();
+    return therapistDoc.data()!['patients'].cast<String>().toList();
+  }
+
+  @override
   Future<List<String>> getPatientsIds() async {
     final List<String> patientsIds = [];
 

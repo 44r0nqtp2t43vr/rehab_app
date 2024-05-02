@@ -21,7 +21,7 @@ class TherapistMainScreen extends StatelessWidget {
     switch (currentTab) {
       case TabEnum.home:
         if (BlocProvider.of<TherapistPatientListBloc>(context).state.therapistPatientList.isEmpty) {
-          BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(currentTherapist.patientsIds));
+          BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(currentTherapist.therapistId));
         }
         return const TherapistDashboard();
       case TabEnum.patients:

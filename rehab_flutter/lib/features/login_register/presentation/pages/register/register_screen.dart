@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
@@ -170,8 +171,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is UserDone) {
           BlocProvider.of<UserBloc>(context).add(const ResetEvent());
@@ -180,7 +180,13 @@ class RegisterScreenState extends State<RegisterScreen> {
       },
       builder: (context, state) {
         if (state is UserLoading) {
-          return const Center(child: CupertinoActivityIndicator());
+          return Center(
+            child: Lottie.asset(
+              'assets/lotties/loading-1.json',
+              width: 400,
+              height: 400,
+            ),
+          );
         }
         if (state is UserNone || state is UserDone) {
           return SafeArea(
@@ -218,8 +224,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       const SizedBox(height: 12),
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Theme(
                                             data: loginButtonTheme,
@@ -233,8 +238,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                                             data: loginButtonTheme,
                                             child: IconButton(
                                               onPressed: () {},
-                                              icon: const Icon(
-                                                  Icons.one_x_mobiledata),
+                                              icon: const Icon(Icons.one_x_mobiledata),
                                             ),
                                           ),
                                           const SizedBox(width: 8),
@@ -363,8 +367,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                 _currentGender = newValue!;
               });
             },
-            items:
-                _availableGenders.map<DropdownMenuItem<String>>((String value) {
+            items: _availableGenders.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -435,8 +438,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                 _currentCondition = newValue!;
               });
             },
-            items: availableConditions
-                .map<DropdownMenuItem<String>>((String value) {
+            items: availableConditions.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -589,8 +591,7 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   void _registerUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate =
-        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     RegisterData registerData = RegisterData(

@@ -1,14 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_therapist_patient_ids.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_user.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_state.dart';
 
 class TherapistPatientListBloc extends Bloc<TherapistPatientListEvent, TherapistPatientListState> {
   final GetUserUseCase _getUserUseCase;
+  final GetTherapistPatientIdsUseCase _getTherapistPatientIdsUseCase;
 
   TherapistPatientListBloc(
     this._getUserUseCase,
+    this._getTherapistPatientIdsUseCase,
   ) : super(const TherapistPatientListLoading()) {
     on<FetchTherapistPatientListEvent>(onFetchTherapistPatientList);
     on<AddTherapistPatientListEvent>(onAddTherapistPatientList);
@@ -19,7 +22,8 @@ class TherapistPatientListBloc extends Bloc<TherapistPatientListEvent, Therapist
     emit(const TherapistPatientListLoading());
     try {
       final List<AppUser> therapistPatientList = [];
-      final List<String> patientIdList = event.therapistPatientsIds!;
+      // final List<String> patientIdList = event.therapistPatientsIds!;
+      final List<String> patientIdList = await _getTherapistPatientIdsUseCase(params: event.therapistId);
 
       for (var patientId in patientIdList) {
         final patient = await _getUserUseCase(params: patientId);
