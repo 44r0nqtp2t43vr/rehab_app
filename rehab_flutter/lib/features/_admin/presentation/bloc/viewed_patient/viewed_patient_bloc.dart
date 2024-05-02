@@ -14,6 +14,7 @@ class ViewedPatientBloc extends Bloc<ViewedPatientEvent, ViewedPatientState> {
 
   void onFetchViewedPatient(FetchViewedPatientEvent event, Emitter<ViewedPatientState> emit) async {
     if (event.currentPatient != null) {
+      emit(const ViewedPatientLoading());
       emit(ViewedPatientDone(patient: event.currentPatient));
     }
   }

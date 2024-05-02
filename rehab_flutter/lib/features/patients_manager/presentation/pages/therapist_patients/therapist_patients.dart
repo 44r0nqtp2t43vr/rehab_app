@@ -148,7 +148,7 @@ class TherapistPatients extends StatelessWidget {
                         if (state is TherapistPatientListDone) {
                           return IconButton(
                             onPressed: () {
-                              BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(therapist.patientsIds));
+                              BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(therapist.therapistId));
                             },
                             icon: const Icon(
                               Icons.refresh,

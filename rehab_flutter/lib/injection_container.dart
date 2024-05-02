@@ -26,6 +26,7 @@ import 'package:rehab_flutter/core/usecases/firebase/edit_therapist.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patients.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_therapist_patient_ids.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_therapists.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
@@ -118,6 +119,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<AssignPatientUseCase>(AssignPatientUseCase(sl()));
 
+  sl.registerSingleton<GetTherapistPatientIdsUseCase>(GetTherapistPatientIdsUseCase(sl()));
+
   sl.registerSingleton<GetPatientsUseCase>(GetPatientsUseCase(sl()));
 
   sl.registerSingleton<GetTherapistsUseCase>(GetTherapistsUseCase(sl()));
@@ -145,7 +148,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<ViewedPatientBloc>(() => ViewedPatientBloc());
 
-  sl.registerFactory<TherapistPatientListBloc>(() => TherapistPatientListBloc(sl()));
+  sl.registerFactory<TherapistPatientListBloc>(() => TherapistPatientListBloc(sl(), sl()));
 
   sl.registerFactory<ViewedTherapistPatientBloc>(() => ViewedTherapistPatientBloc(sl()));
 }
