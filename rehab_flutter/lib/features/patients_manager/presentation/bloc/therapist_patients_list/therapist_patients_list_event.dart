@@ -22,3 +22,7 @@ class AddTherapistPatientListEvent extends TherapistPatientListEvent {
 class RemoveTherapistPatientListEvent extends TherapistPatientListEvent {
   const RemoveTherapistPatientListEvent(AppUser patientToUpdate) : super(patientToUpdate: patientToUpdate);
 }
+
+class UpdateTherapistPatientListEvent extends TherapistPatientListEvent {
+  const UpdateTherapistPatientListEvent(AppUser patientToUpdate) : super(patientToUpdate: patientToUpdate);
+}
