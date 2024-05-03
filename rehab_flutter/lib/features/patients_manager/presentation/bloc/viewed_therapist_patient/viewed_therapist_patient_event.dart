@@ -22,6 +22,6 @@ class AssignPatientEvent extends ViewedTherapistPatientEvent {
   const AssignPatientEvent(AssignPatientData assignData, AppUser currentPatient) : super(assignData: assignData, currentPatient: currentPatient);
 }
 
-class AddPatientPlanEvent extends ViewedTherapistPatientEvent {
-  const AddPatientPlanEvent(AddPlanData addPlanData) : super(addPlanData: addPlanData);
+class AddTherapistPatientPlanEvent extends ViewedTherapistPatientEvent {
+  const AddTherapistPatientPlanEvent(AddPlanData addPlanData) : super(addPlanData: addPlanData);
 }

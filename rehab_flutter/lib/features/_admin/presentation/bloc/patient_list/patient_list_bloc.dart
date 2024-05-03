@@ -14,6 +14,7 @@ class PatientListBloc extends Bloc<PatientListEvent, PatientListState> {
     this._getUserUseCase,
   ) : super(const PatientListLoading()) {
     on<FetchPatientListEvent>(onFetchPatientList);
+    on<UpdatePatientListEvent>(onUpdatePatientList);
   }
 
   void onFetchPatientList(FetchPatientListEvent event, Emitter<PatientListState> emit) async {

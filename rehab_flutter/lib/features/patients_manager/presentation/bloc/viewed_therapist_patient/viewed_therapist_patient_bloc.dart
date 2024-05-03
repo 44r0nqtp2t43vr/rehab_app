@@ -15,7 +15,7 @@ class ViewedTherapistPatientBloc extends Bloc<ViewedTherapistPatientEvent, Viewe
   ) : super(const ViewedTherapistPatientLoading()) {
     on<FetchViewedTherapistPatientEvent>(onFetchViewedTherapistPatient);
     on<AssignPatientEvent>(onAssignPatient);
-    on<AddPatientPlanEvent>(onAddPlan);
+    on<AddTherapistPatientPlanEvent>(onAddTherapistPatientPlan);
   }
 
   void onFetchViewedTherapistPatient(FetchViewedTherapistPatientEvent event, Emitter<ViewedTherapistPatientState> emit) async {
@@ -35,7 +35,7 @@ class ViewedTherapistPatientBloc extends Bloc<ViewedTherapistPatientEvent, Viewe
     }
   }
 
-  void onAddPlan(AddPatientPlanEvent event, Emitter<ViewedTherapistPatientState> emit) async {
+  void onAddTherapistPatientPlan(AddTherapistPatientPlanEvent event, Emitter<ViewedTherapistPatientState> emit) async {
     emit(const ViewedTherapistPatientLoading());
     try {
       final currentUser = await _addPlanUseCase(params: event.addPlanData);

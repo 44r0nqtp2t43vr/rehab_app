@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -39,7 +38,6 @@ class PatientPage extends StatelessWidget {
                   width: 400,
                   height: 400,
                 ),
-                //CupertinoActivityIndicator(color: Colors.white),
               );
             }
             if (state is ViewedTherapistPatientDone) {

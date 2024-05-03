@@ -3,8 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
+import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plan_item.dart';
@@ -257,7 +263,14 @@ class _PatientPlansListState extends State<PatientPlansList> {
         daysToAdd = 7;
     }
     Navigator.of(context).pop();
-    BlocProvider.of<ViewedTherapistPatientBloc>(context).add(AddPatientPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+
+    final userType = BlocProvider.of<UserBloc>(context).state;
+
+    if (userType is UserNone && userType.data is Admin) {
+      BlocProvider.of<ViewedPatientBloc>(context).add(AddPatientPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+    } else if (userType is UserNone && userType.data is Therapist) {
+      BlocProvider.of<ViewedTherapistPatientBloc>(context).add(AddTherapistPatientPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+    }
   }
 
   void _onCloseButtonPressed(BuildContext context) {
