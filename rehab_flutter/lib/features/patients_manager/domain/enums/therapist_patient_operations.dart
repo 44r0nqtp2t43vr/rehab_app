@@ -1,0 +1,1 @@
+enum TherapistPatientOperation { unassign, addPlan }

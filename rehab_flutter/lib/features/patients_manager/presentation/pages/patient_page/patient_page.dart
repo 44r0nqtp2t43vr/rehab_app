@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_event.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/enums/therapist_patient_operations.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
@@ -21,9 +22,13 @@ class PatientPage extends StatelessWidget {
           listenWhen: (previous, current) => previous is ViewedTherapistPatientLoading && current is ViewedTherapistPatientDone,
           listener: (context, state) {
             if (state is ViewedTherapistPatientDone) {
-              BlocProvider.of<TherapistBloc>(context).add(GetTherapistEvent(state.therapist!));
-              BlocProvider.of<TherapistPatientListBloc>(context).add(RemoveTherapistPatientListEvent(state.patient!));
-              Navigator.of(context).pop();
+              if (state.operation! == TherapistPatientOperation.unassign) {
+                BlocProvider.of<TherapistBloc>(context).add(GetTherapistEvent(state.therapist!));
+                BlocProvider.of<TherapistPatientListBloc>(context).add(RemoveTherapistPatientListEvent(state.patient!));
+                Navigator.of(context).pop();
+              } else if (state.operation == TherapistPatientOperation.addPlan) {
+                BlocProvider.of<TherapistPatientListBloc>(context).add(UpdateTherapistPatientListEvent(state.patient!));
+              }
             }
           },
           builder: (context, state) {
