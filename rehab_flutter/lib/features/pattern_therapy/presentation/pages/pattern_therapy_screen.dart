@@ -29,27 +29,8 @@ class _PatternTherapyState extends State<PatternTherapy> {
   PatternProvider patternProvider = PatternProvider();
 
   int sideAndValueToCircleStateIndex(bool isLeft, int value) {
-    final List<int> cursorValues = [
-      1,
-      8,
-      1,
-      8,
-      2,
-      16,
-      2,
-      16,
-      4,
-      32,
-      4,
-      32,
-      64,
-      128,
-      64,
-      128
-    ];
-    return isLeft
-        ? cursorValues.indexOf(value)
-        : cursorValues.lastIndexOf(value);
+    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
   }
 
   List<bool> patternToCircleStates(String pattern) {
@@ -68,13 +49,11 @@ class _PatternTherapyState extends State<PatternTherapy> {
     for (int i = 0; i < actuatorValues.length; i++) {
       if (left - actuatorValues[i] >= 0) {
         left -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] =
-            true;
+        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
       }
       if (right - actuatorValues[i] >= 0) {
         right -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] =
-            true;
+        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
       }
     }
 
@@ -93,12 +72,10 @@ class _PatternTherapyState extends State<PatternTherapy> {
     // Assuming patternProvider is accessible here, if not, it should be passed as a parameter or made globally accessible
     var currentPatternData = patternProvider.patterns[patternIndex].patternData;
 
-    _patternTimer =
-        Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
       // Adjusted to 500ms or as per the requirement
       if (isPatternActive && activePattern == patternIndex) {
-        final String patternToSend =
-            currentPatternData[timer.tick % currentPatternData.length];
+        final String patternToSend = currentPatternData[timer.tick % currentPatternData.length];
         setState(() {
           circleStates = patternToCircleStates(patternToSend);
         });
@@ -127,8 +104,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
   @override
   void dispose() {
     _patternTimer?.cancel();
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -164,7 +140,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                           style: darkTextTheme().headlineLarge,
                         ),
                         Text(
-                          "Pattern Therapy",
+                          "Pattern Discrimination",
                           style: darkTextTheme().headlineSmall,
                         ),
                       ],
@@ -174,17 +150,14 @@ class _PatternTherapyState extends State<PatternTherapy> {
                     height: 44,
                     width: 44,
                     decoration: BoxDecoration(
-                      color: isLeftHand
-                          ? const Color(0xff128BED)
-                          : const Color(0xff01FF99),
+                      color: isLeftHand ? const Color(0xff128BED) : const Color(0xff01FF99),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: IconButton(
                       icon: isLeftHand
                           ? Transform(
                               alignment: Alignment.center,
-                              transform: Matrix4.identity()
-                                ..scale(-1.0, 1.0, 1.0),
+                              transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
                               child: const Icon(
                                 Icons.back_hand,
                                 color: Colors.white,
@@ -192,9 +165,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                             )
                           : Icon(
                               Icons.back_hand,
-                              color: isLeftHand
-                                  ? Colors.white
-                                  : const Color(0xff275492),
+                              color: isLeftHand ? Colors.white : const Color(0xff275492),
                             ),
                       onPressed: () => _onHandButtonPressed(),
                     ),
@@ -219,12 +190,10 @@ class _PatternTherapyState extends State<PatternTherapy> {
                       alignment: WrapAlignment.center,
                       children: [
                         ...patternProvider.patterns.map((pattern) {
-                          final isActive = activePattern ==
-                              patternProvider.patterns.indexOf(pattern);
+                          final isActive = activePattern == patternProvider.patterns.indexOf(pattern);
                           return PatternButton(
                             buttonText: pattern.name,
-                            onPressed: () => startPattern(
-                                patternProvider.patterns.indexOf(pattern)),
+                            onPressed: () => startPattern(patternProvider.patterns.indexOf(pattern)),
                             isActive: isActive,
                           );
                         }).toList(),
@@ -250,10 +219,6 @@ class _PatternTherapyState extends State<PatternTherapy> {
                       ),
                       onPressed: stopPattern,
                     ),
-                    // PatternButton(
-                    //   buttonText: 'Stop Pattern',
-                    //   onPressed: stopPattern,
-                    // ),
                   ],
                 ),
               ),
@@ -263,53 +228,6 @@ class _PatternTherapyState extends State<PatternTherapy> {
       ),
     );
   }
-
-  // _buildAppBar() {
-  //   return AppBar(
-  //     centerTitle: false,
-  //     title: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         const SizedBox(height: 20),
-  //         Text(
-  //           "Cutaneous",
-  //           style: darkTextTheme().headlineLarge,
-  //         ),
-  //         Text(
-  //           "Pattern Therapy",
-  //           style: darkTextTheme().headlineMedium,
-  //         ),
-  //       ],
-  //     ),
-  //     actions: [
-  //       Container(
-  //         height: 44,
-  //         width: 44,
-  //         decoration: BoxDecoration(
-  //           color: Colors.green,
-  //           borderRadius: BorderRadius.circular(10.0),
-  //         ),
-  //         child: IconButton(
-  //           icon: isLeftHand
-  //               ? Transform(
-  //                   alignment: Alignment.center, // or Alignment.centerLeft
-  //                   transform: Matrix4.identity()..scale(-1.0, 1.0, 1.0),
-  //                   child: const Icon(
-  //                     Icons.back_hand,
-  //                     color: Colors.white,
-  //                   ), // Your icon here
-  //                 )
-  //               : const Icon(
-  //                   Icons.back_hand,
-  //                   color: Colors.white,
-  //                 ),
-  //           onPressed: () => _onHandButtonPressed(),
-  //         ),
-  //       ),
-  //       const SizedBox(width: 20),
-  //     ],
-  //   );
-  // }
 
   void _onHandButtonPressed() {
     setState(() {

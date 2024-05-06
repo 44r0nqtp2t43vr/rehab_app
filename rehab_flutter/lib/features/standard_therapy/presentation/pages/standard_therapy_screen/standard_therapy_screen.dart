@@ -51,11 +51,11 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
   String getNameFromType() {
     switch (widget.data.type) {
       case StandardTherapy.actuatorTherapy:
-        return "Actuator Therapy";
+        return "Point Discrimination";
       case StandardTherapy.textureTherapy:
-        return "Texture Therapy";
+        return "Texture Discrimination";
       case StandardTherapy.patternTherapy:
-        return "Pattern Therapy";
+        return "Pattern Discrimination";
       case StandardTherapy.pianoTiles:
         return "Music Stimulation - Basic";
       case StandardTherapy.musicVisualizer:

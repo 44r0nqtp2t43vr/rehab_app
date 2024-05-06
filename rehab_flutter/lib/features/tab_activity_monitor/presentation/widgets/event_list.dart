@@ -22,6 +22,23 @@ class EventList extends StatelessWidget {
     this.isTherapistView = false,
   });
 
+  String typeToString(String type) {
+    switch (type) {
+      case "actuatorTherapy":
+        return "point discrimination";
+      case "patternTherapy":
+        return "pattern discrimination";
+      case "textureTherapy":
+        return "texture discrimination";
+      case "pianoTiles":
+        return "basic music stimulation";
+      case "musicVisualizer":
+        return "intermediate music stimulation";
+      default:
+        return "";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
@@ -86,21 +103,21 @@ class EventList extends StatelessWidget {
                                   EventCard(
                                     isCompleted: conditions[1],
                                     leftValue: null,
-                                    rightValue: "Do an intensity-${currentSession!.standardOneIntensity} ${currentSession!.standardOneType} session",
+                                    rightValue: "Do an intensity-${currentSession!.standardOneIntensity} ${typeToString(currentSession!.standardOneType)} session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[2],
                                     leftValue: null,
-                                    rightValue: "Complete a 20-minute intensity-${currentSession!.passiveIntensity} passive therapy session",
+                                    rightValue: "Complete an intensity-${currentSession!.passiveIntensity} passive therapy session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),
                                   EventCard(
                                     isCompleted: conditions[3],
                                     leftValue: null,
-                                    rightValue: "Do an intensity-${currentSession!.standardTwoIntensity} ${currentSession!.standardTwoType} session",
+                                    rightValue: "Do an intensity-${currentSession!.standardTwoIntensity} ${typeToString(currentSession!.standardTwoType)} session",
                                     eventType: EventType.timed,
                                   ),
                                   const SizedBox(height: 16),

@@ -14,7 +14,7 @@ class PatientsTherapyEditDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<bool> conditions = session.getSessionConditions();
-
+    //TODO: edit dialog
     return GlassContainer(
       blur: 10,
       color: Colors.white.withOpacity(0.3),

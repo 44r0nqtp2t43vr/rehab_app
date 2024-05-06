@@ -128,9 +128,6 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Actuator Therapy'),
-      // ),
       body: SafeArea(
         child: Column(
           children: [
@@ -156,7 +153,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
                           style: darkTextTheme().headlineLarge,
                         ),
                         Text(
-                          "Actuator Therapy",
+                          "Point Discrimination",
                           style: darkTextTheme().headlineSmall,
                         ),
                       ],
@@ -176,7 +173,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  'Actuator',
+                  'Pins',
                   style: darkTextTheme().displaySmall,
                 ),
               ),

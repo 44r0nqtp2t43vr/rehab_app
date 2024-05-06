@@ -13,10 +13,15 @@ class TherapistPatientListBloc extends Bloc<TherapistPatientListEvent, Therapist
     this._getUserUseCase,
     this._getTherapistPatientIdsUseCase,
   ) : super(const TherapistPatientListLoading()) {
+    on<ResetTherapistPatientListEvent>(onResetTherapistPatientListEvent);
     on<FetchTherapistPatientListEvent>(onFetchTherapistPatientList);
     on<AddTherapistPatientListEvent>(onAddTherapistPatientList);
     on<RemoveTherapistPatientListEvent>(onRemoveTherapistPatientList);
     on<UpdateTherapistPatientListEvent>(onUpdateTherapistPatientList);
+  }
+
+  void onResetTherapistPatientListEvent(ResetTherapistPatientListEvent event, Emitter<TherapistPatientListState> emit) async {
+    emit(const TherapistPatientListLoading());
   }
 
   void onFetchTherapistPatientList(FetchTherapistPatientListEvent event, Emitter<TherapistPatientListState> emit) async {
