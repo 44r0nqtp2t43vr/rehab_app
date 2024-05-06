@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/enums/standard_therapy_types.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_edit_dialog.dart';
 
 class PatientPlanSessionItem extends StatelessWidget {
@@ -73,7 +74,7 @@ class PatientPlanSessionItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Standard One: ${session.standardOneType.isEmpty ? "TBD" : "${session.standardOneType} ${session.standardOneIntensity}"}",
+                    "Standard One: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardOneType).title} ${session.standardOneIntensity}"}",
                     style: darkTextTheme().headlineSmall,
                   ),
                   Text(
@@ -81,7 +82,7 @@ class PatientPlanSessionItem extends StatelessWidget {
                     style: darkTextTheme().headlineSmall,
                   ),
                   Text(
-                    "Standard Two: ${session.standardOneType.isEmpty ? "TBD" : "${session.standardTwoType} ${session.standardTwoIntensity}"}",
+                    "Standard Two: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardTwoType).title} ${session.standardTwoIntensity}"}",
                     style: darkTextTheme().headlineSmall,
                   ),
                 ],
