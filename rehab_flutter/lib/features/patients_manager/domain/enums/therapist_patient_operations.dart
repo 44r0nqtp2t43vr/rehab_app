@@ -1,1 +1,1 @@
-enum TherapistPatientOperation { unassign, addPlan }
+enum TherapistPatientOperation { unassign, addPlan, editSession }
