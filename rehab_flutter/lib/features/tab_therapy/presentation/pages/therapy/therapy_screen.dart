@@ -30,8 +30,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -291,7 +290,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
                   cuButtonDialog(
                     context: context,
                     onPressed: () => _onATButtonPressed(context),
-                    title: 'Actuator',
+                    title: 'Point',
                     svgPath: 'assets/images/actuator.svg',
                   ),
                   const SizedBox(height: 12),

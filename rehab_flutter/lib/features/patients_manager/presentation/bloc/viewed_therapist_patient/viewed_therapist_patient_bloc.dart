@@ -13,9 +13,14 @@ class ViewedTherapistPatientBloc extends Bloc<ViewedTherapistPatientEvent, Viewe
     this._assignPatientUseCase,
     this._addPlanUseCase,
   ) : super(const ViewedTherapistPatientLoading()) {
+    on<ResetViewedTherapistPatientEvent>(onResetViewedTherapistPatientEvent);
     on<FetchViewedTherapistPatientEvent>(onFetchViewedTherapistPatient);
     on<AssignPatientEvent>(onAssignPatient);
     on<AddTherapistPatientPlanEvent>(onAddTherapistPatientPlan);
+  }
+
+  void onResetViewedTherapistPatientEvent(ResetViewedTherapistPatientEvent event, Emitter<ViewedTherapistPatientState> emit) async {
+    emit(const ViewedTherapistPatientLoading());
   }
 
   void onFetchViewedTherapistPatient(FetchViewedTherapistPatientEvent event, Emitter<ViewedTherapistPatientState> emit) async {

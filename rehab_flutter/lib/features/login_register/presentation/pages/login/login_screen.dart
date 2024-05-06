@@ -15,6 +15,10 @@ import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -84,6 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
             sl<NavigationController>().setTab(TabEnum.home);
             Navigator.pushNamed(context, '/AdminMain');
           } else if (state.data != null && state.data is Therapist) {
+            BlocProvider.of<TherapistPatientListBloc>(context).add(const ResetTherapistPatientListEvent());
+            BlocProvider.of<ViewedTherapistPatientBloc>(context).add(const ResetViewedTherapistPatientEvent());
             BlocProvider.of<TherapistBloc>(context).add(GetTherapistEvent(state.data));
             sl<NavigationController>().setTab(TabEnum.home);
             Navigator.pushNamed(context, '/TherapistMain');
@@ -101,9 +107,6 @@ class _LoginScreenState extends State<LoginScreen> {
               width: 400,
               height: 400,
             ),
-            //     CupertinoActivityIndicator(
-            //   color: Colors.white,
-            // ),
           );
         }
         if (state is UserNone || state is UserDone) {

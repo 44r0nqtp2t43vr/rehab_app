@@ -14,6 +14,10 @@ abstract class ViewedTherapistPatientEvent extends Equatable {
   List<Object> get props => [currentPatient!];
 }
 
+class ResetViewedTherapistPatientEvent extends ViewedTherapistPatientEvent {
+  const ResetViewedTherapistPatientEvent() : super();
+}
+
 class FetchViewedTherapistPatientEvent extends ViewedTherapistPatientEvent {
   const FetchViewedTherapistPatientEvent(AppUser currentPatient) : super(currentPatient: currentPatient);
 }

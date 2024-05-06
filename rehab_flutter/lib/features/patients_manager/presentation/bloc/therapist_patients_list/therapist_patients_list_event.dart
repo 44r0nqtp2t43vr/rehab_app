@@ -11,6 +11,10 @@ abstract class TherapistPatientListEvent extends Equatable {
   List<Object> get props => [therapistId!, patientToUpdate!];
 }
 
+class ResetTherapistPatientListEvent extends TherapistPatientListEvent {
+  const ResetTherapistPatientListEvent() : super();
+}
+
 class FetchTherapistPatientListEvent extends TherapistPatientListEvent {
   const FetchTherapistPatientListEvent(String therapistId) : super(therapistId: therapistId);
 }

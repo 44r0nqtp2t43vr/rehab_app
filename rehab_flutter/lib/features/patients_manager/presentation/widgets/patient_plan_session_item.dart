@@ -125,21 +125,6 @@ class PatientPlanSessionItem extends StatelessWidget {
   }
 }
 
-// void _showContentDialog(BuildContext context, Session session, String title) {
-//   showDialog(
-//     context: context,
-//     barrierDismissible: true,
-//     builder: (BuildContext context) {
-//       return AlertDialog(
-//         contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
-//         surfaceTintColor: Colors.transparent,
-//         backgroundColor: Colors.transparent,
-//         content: PatientsTherapySessionDetails(session: session, title: title),
-//       );
-//     },
-//   );
-// }
-
 void _showEditDialog(BuildContext context, PatientPlan patientPlan, Session session, String title) {
   showDialog(
     context: context,
