@@ -17,6 +17,8 @@ class ViewedTherapistPatientBloc extends Bloc<ViewedTherapistPatientEvent, Viewe
     on<FetchViewedTherapistPatientEvent>(onFetchViewedTherapistPatient);
     on<AssignPatientEvent>(onAssignPatient);
     on<AddTherapistPatientPlanEvent>(onAddTherapistPatientPlan);
+    on<EditTherapistPatientSessionEvent>(onEditTherapistPatientSession);
+    on<UpdateViewedTherapistPatientEvent>(onUpdateViewedTherapistPatientEvent);
   }
 
   void onResetViewedTherapistPatientEvent(ResetViewedTherapistPatientEvent event, Emitter<ViewedTherapistPatientState> emit) async {
@@ -48,5 +50,20 @@ class ViewedTherapistPatientBloc extends Bloc<ViewedTherapistPatientEvent, Viewe
     } catch (e) {
       emit(ViewedTherapistPatientDone(errorMessage: e.toString()));
     }
+  }
+
+  void onEditTherapistPatientSession(EditTherapistPatientSessionEvent event, Emitter<ViewedTherapistPatientState> emit) async {
+    emit(const ViewedTherapistPatientLoading());
+    try {
+      final currentUser = await _addPlanUseCase(params: event.addPlanData);
+      emit(ViewedTherapistPatientDone(patient: currentUser, operation: TherapistPatientOperation.editSession));
+    } catch (e) {
+      emit(ViewedTherapistPatientDone(errorMessage: e.toString()));
+    }
+  }
+
+  void onUpdateViewedTherapistPatientEvent(UpdateViewedTherapistPatientEvent event, Emitter<ViewedTherapistPatientState> emit) async {
+    emit(const ViewedTherapistPatientLoading());
+    emit(ViewedTherapistPatientDone(patient: event.currentPatient));
   }
 }

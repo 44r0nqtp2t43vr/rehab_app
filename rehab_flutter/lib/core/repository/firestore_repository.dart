@@ -15,6 +15,7 @@ import 'package:rehab_flutter/features/login_register/domain/entities/login_data
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_therapist_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
@@ -441,6 +442,20 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       final AppUser user = await getUser(data.user.userId);
       return user;
     }
+  }
+
+  @override
+  Future<AppUser> editUserSession(EditSessionData data) async {
+    await db.collection('users').doc(data.userId).collection('plans').doc(data.planId).collection('sessions').doc(data.sessionId).update({
+      'standardOneType': data.standardOneType,
+      'standardOneIntensity': data.standardOneIntensity,
+      'standardTwoType': data.standardTwoType,
+      'standardTwoIntensity': data.standardTwoIntensity,
+      'passiveIntensity': data.passiveIntensity,
+    });
+
+    final AppUser user = await getUser(data.userId);
+    return user;
   }
 
   @override

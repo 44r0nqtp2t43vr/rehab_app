@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_event.dart';
 
 class PatientPlanItem extends StatelessWidget {
   final PatientPlan patientPlan;
@@ -71,6 +74,7 @@ class PatientPlanItem extends StatelessWidget {
   }
 
   void _onPatientCardPressed(BuildContext context) {
-    Navigator.of(context).pushNamed(onPressedRoute, arguments: patientPlan);
+    BlocProvider.of<ViewedTherapistPatientPlanBloc>(context).add(UpdateTherapistPatientPlanEvent(patientPlan.plan, patientPlan.patient));
+    Navigator.of(context).pushNamed(onPressedRoute);
   }
 }

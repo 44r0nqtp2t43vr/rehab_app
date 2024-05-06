@@ -28,6 +28,10 @@ class PatientPage extends StatelessWidget {
               } else if (state.operation == TherapistPatientOperation.addPlan) {
                 BlocProvider.of<TherapistPatientListBloc>(context).add(UpdateTherapistPatientListEvent(state.patient!));
               }
+              // else if (state.operation == TherapistPatientOperation.editSession) {
+              //   BlocProvider.of<TherapistPatientListBloc>(context).add(UpdateTherapistPatientListEvent(state.patient!));
+              //   Navigator.of(context).pushNamed("/PatientPlanDetails", arguments: PatientPlan(patient: state.patient!, plan: plan));
+              // }
             }
           },
           builder: (context, state) {

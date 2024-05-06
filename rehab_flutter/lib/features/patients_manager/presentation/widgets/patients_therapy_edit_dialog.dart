@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/standard_therapy_types.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/standard_therapy_type.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_event.dart';
 
 final intensityValues = [1, 2, 3, 4, 5];
 
@@ -29,24 +33,18 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
   late int? passiveIntensity;
 
   void _editSession(BuildContext context) {
-    // Convert the birthdate from String to DateTime
-    // DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    EditSessionData editSessionData = EditSessionData(
+      userId: widget.patientPlan.patient.userId,
+      planId: widget.patientPlan.plan.planId,
+      sessionId: widget.session.sessionId,
+      standardOneType: standardOneType!.value,
+      standardOneIntensity: standardOneIntensity!.toString(),
+      passiveIntensity: passiveIntensity!.toString(),
+      standardTwoType: standardTwoType!.value,
+      standardTwoIntensity: standardTwoIntensity!.toString(),
+    );
 
-    // // Create the RegisterData instance with all fields
-    // EditUserData editUserData = EditUserData(
-    //   user: widget.user,
-    //   image: _image,
-    //   firstName: _firstNameController.text,
-    //   lastName: _lastNameController.text,
-    //   phoneNumber: _phoneNumberController.text,
-    //   city: _cityController.text,
-    //   gender: _currentGender!,
-    //   birthDate: birthdate,
-    //   conditions: _selectedConditions,
-    // );
-
-    // // Dispatch the event to the bloc
-    // BlocProvider.of<UserBloc>(context).add(EditUserEvent(editUserData));
+    BlocProvider.of<ViewedTherapistPatientPlanBloc>(context).add(EditTherapistPatientPlanSessionEvent(editSessionData));
   }
 
   @override
