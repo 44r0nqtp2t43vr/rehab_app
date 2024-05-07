@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_event.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
@@ -21,8 +28,15 @@ class PatientPlanDetailsPage extends StatelessWidget {
           listenWhen: (previous, current) => previous is ViewedTherapistPatientPlanLoading && current is ViewedTherapistPatientPlanDone,
           listener: (context, state) {
             if (state is ViewedTherapistPatientPlanDone) {
-              BlocProvider.of<TherapistPatientListBloc>(context).add(UpdateTherapistPatientListEvent(state.data));
-              BlocProvider.of<ViewedTherapistPatientBloc>(context).add(UpdateViewedTherapistPatientEvent(state.data));
+              final userType = BlocProvider.of<UserBloc>(context).state.data;
+
+              if (userType is Admin) {
+                BlocProvider.of<PatientListBloc>(context).add(UpdatePatientListEvent(state.data));
+                BlocProvider.of<ViewedPatientBloc>(context).add(FetchViewedPatientEvent(state.data));
+              } else if (userType is Therapist) {
+                BlocProvider.of<TherapistPatientListBloc>(context).add(UpdateTherapistPatientListEvent(state.data));
+                BlocProvider.of<ViewedTherapistPatientBloc>(context).add(UpdateViewedTherapistPatientEvent(state.data));
+              }
             }
           },
           builder: (context, state) {
