@@ -1,40 +1,36 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
-import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 
 class ContinueCard extends StatelessWidget {
   final AppUser user;
 
   const ContinueCard({super.key, required this.user});
 
-  void _selectPlan(BuildContext context, String planName, AppUser user) {
-    int daysToAdd;
-    switch (planName) {
-      case 'One Week':
-        daysToAdd = 7;
-        break;
-      case 'One Month':
-        daysToAdd = 30;
-        break;
-      case 'Three Months':
-        daysToAdd = 90;
-        break;
-      default:
-        daysToAdd = 7;
-    }
-    Navigator.of(context).pop();
-    BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
-  }
+  // void _selectPlan(BuildContext context, String planName, AppUser user) {
+  //   int daysToAdd;
+  //   switch (planName) {
+  //     case 'One Week':
+  //       daysToAdd = 7;
+  //       break;
+  //     case 'One Month':
+  //       daysToAdd = 30;
+  //       break;
+  //     case 'Three Months':
+  //       daysToAdd = 90;
+  //       break;
+  //     default:
+  //       daysToAdd = 7;
+  //   }
+  //   Navigator.of(context).pop();
+  //   BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -181,77 +177,28 @@ class ContinueCard extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Row(
+                    const Row(
                       children: [
-                        SvgPicture.asset(
-                          'assets/images/actuator.svg',
-                          width: MediaQuery.of(context).size.width * .06,
-                          height: MediaQuery.of(context).size.height * .06,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Select",
-                                style: TextStyle(
-                                  fontFamily: 'Sailec Bold',
-                                  fontSize: 22,
-                                  height: 1.2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Text(
-                                "Therapy Plan",
-                                style: TextStyle(
-                                  fontFamily: 'Sailec Light',
-                                  fontSize: 16,
-                                  height: 1.2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
+                        Icon(CupertinoIcons.exclamationmark_circle, color: Colors.white),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            "No active plan",
+                            style: TextStyle(
+                              fontFamily: 'Sailec Bold',
+                              fontSize: 22,
+                              height: 1.2,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    cuSelectPlanButtons(
-                      context: context,
-                      onPressed: () => _selectPlan(context, 'One Week', user),
-                      title: 'Plan 1: One Week',
-                      subtitle: '149.99 NTD',
+                    Text(
+                      "Please consult your therapist to create your therapy plan",
+                      style: darkTextTheme().headlineSmall,
                     ),
-                    const SizedBox(height: 20),
-                    cuSelectPlanButtons(
-                      context: context,
-                      onPressed: () => _selectPlan(context, 'One Month', user),
-                      title: 'Plan 2: One Month',
-                      subtitle: '499.99 NTD',
-                    ),
-                    const SizedBox(height: 20),
-                    cuSelectPlanButtons(
-                      context: context,
-                      onPressed: () => _selectPlan(context, 'Three Months', user),
-                      title: 'Plan 3: Three Months',
-                      subtitle: '999.99 NTD',
-                    ),
-                    // ElevatedButton(
-                    //   onPressed: () => _selectPlan(context, 'One Week', user),
-                    //   child: const Text('Plan 1: One Week'),
-                    // ),
-                    // const SizedBox(height: 8),
-                    // ElevatedButton(
-                    //   onPressed: () => _selectPlan(context, 'One Month', user),
-                    //   child: const Text('Plan 2: One Month'),
-                    // ),
-                    // const SizedBox(height: 8),
-                    // ElevatedButton(
-                    //   onPressed: () =>
-                    //       _selectPlan(context, 'Three Months', user),
-                    //   child: const Text('Plan 3: Three Months'),
-                    // ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -363,10 +310,6 @@ class ContinueCard extends StatelessWidget {
                             child: const Text('Close'),
                           ),
                         ),
-                        // ElevatedButton(
-                        //   onPressed: () => _onCloseButtonPressed(context),
-                        //   child: const Text("CLOSE"),
-                        // ),
                       ],
                     ),
                   ),

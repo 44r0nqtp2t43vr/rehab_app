@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -21,8 +20,7 @@ class ServiceScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => sl<BluetoothBloc>()..add(ConnectDeviceEvent(targetDevice)),
       child: PopScope(
-        onPopInvoked: (didPop) =>
-            sl<BluetoothBloc>().add(const DisconnectDeviceEvent()),
+        onPopInvoked: (didPop) => sl<BluetoothBloc>().add(const DisconnectDeviceEvent()),
         child: Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -73,7 +71,7 @@ class ServiceScreen extends StatelessWidget {
     return BlocBuilder<BluetoothBloc, BluetoothAppState>(
       builder: (context, state) {
         if (state is BluetoothLoading) {
-          return const Center(child: CupertinoActivityIndicator());
+          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         } else if (state is BluetoothDone) {
           BluetoothCharacteristic? ffe2Characteristic;
           // Search for the characteristic with UUID ffe2 across all services.
@@ -122,38 +120,25 @@ class ServiceScreen extends StatelessWidget {
                         ),
                         ffe2Characteristic != null
                             ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 40),
+                                padding: const EdgeInsets.symmetric(horizontal: 40),
                                 child: Row(
                                   children: [
                                     Expanded(
                                       child: ElevatedButton(
-                                        onPressed: () =>
-                                            _onCharacteristicButtonPressed(
-                                                context, ffe2Characteristic!),
+                                        onPressed: () => _onCharacteristicButtonPressed(context, ffe2Characteristic!),
                                         style: ButtonStyle(
-                                          foregroundColor:
-                                              MaterialStateProperty.all<Color>(
+                                          foregroundColor: MaterialStateProperty.all<Color>(
                                             Colors.white,
                                           ),
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
+                                          backgroundColor: MaterialStateProperty.all<Color>(
                                             Colors.white.withOpacity(.3),
                                           ),
-                                          elevation:
-                                              MaterialStateProperty.all<double>(
-                                                  0),
-                                          shadowColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.transparent),
-                                          overlayColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.transparent),
-                                          shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
+                                          elevation: MaterialStateProperty.all<double>(0),
+                                          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                              borderRadius: BorderRadius.circular(10),
                                             ),
                                           ),
                                         ),
@@ -180,8 +165,7 @@ class ServiceScreen extends StatelessWidget {
     );
   }
 
-  void _onCharacteristicButtonPressed(
-      BuildContext context, BluetoothCharacteristic characteristic) {
+  void _onCharacteristicButtonPressed(BuildContext context, BluetoothCharacteristic characteristic) {
     sl<BluetoothBloc>().add(UpdateCharaEvent(characteristic));
     sl<NavigationController>().setTab(TabEnum.home);
     Navigator.pushNamed(context, '/MainScreen');
