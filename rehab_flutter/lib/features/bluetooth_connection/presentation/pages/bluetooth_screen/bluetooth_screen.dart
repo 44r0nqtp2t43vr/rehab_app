@@ -124,17 +124,14 @@ class BluetoothScreen extends StatelessWidget {
         // );
 
         if (state is BluetoothLoading) {
-          return const Center(child: CupertinoActivityIndicator());
+          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         } else if (state is BluetoothDone) {
           return StreamBuilder<List<ScanResult>>(
             stream: state.scanResults,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 // Stream has data
-                final scanResults = snapshot.data!
-                    .where((scanResult) =>
-                        scanResult.device.platformName.contains('Gloves'))
-                    .toList();
+                final scanResults = snapshot.data!.where((scanResult) => scanResult.device.platformName.contains('Gloves')).toList();
                 if (scanResults.isNotEmpty) {
                   return SafeArea(
                     child: Center(
@@ -167,8 +164,7 @@ class BluetoothScreen extends StatelessWidget {
                                         children: [
                                           Text(
                                             'Bluetooth Devices',
-                                            style:
-                                                darkTextTheme().headlineMedium,
+                                            style: darkTextTheme().headlineMedium,
                                             textAlign: TextAlign.center,
                                           ),
                                           const SizedBox(
@@ -178,15 +174,12 @@ class BluetoothScreen extends StatelessWidget {
                                             shrinkWrap: true,
                                             itemCount: scanResults.length,
                                             itemBuilder: (context, index) {
-                                              final BluetoothDevice device =
-                                                  scanResults[index].device;
+                                              final BluetoothDevice device = scanResults[index].device;
                                               return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8),
+                                                padding: const EdgeInsets.all(8),
                                                 child: GlassContainer(
                                                   blur: 4,
-                                                  color: Colors.white
-                                                      .withOpacity(0.25),
+                                                  color: Colors.white.withOpacity(0.25),
                                                   child: ListTile(
                                                     leading: const Icon(
                                                       Icons.bluetooth,
@@ -195,12 +188,9 @@ class BluetoothScreen extends StatelessWidget {
                                                     ),
                                                     title: Text(
                                                       device.platformName,
-                                                      style: darkTextTheme()
-                                                          .displaySmall,
+                                                      style: darkTextTheme().displaySmall,
                                                     ),
-                                                    onTap: () =>
-                                                        _onDeviceCardPressed(
-                                                            context, device),
+                                                    onTap: () => _onDeviceCardPressed(context, device),
                                                   ),
                                                 ),
                                               );
@@ -288,8 +278,7 @@ class BluetoothScreen extends StatelessWidget {
     );
   }
 
-  void _onDeviceCardPressed(
-      BuildContext context, BluetoothDevice targetDevice) {
+  void _onDeviceCardPressed(BuildContext context, BluetoothDevice targetDevice) {
     Navigator.pushNamed(context, '/ServiceScreen', arguments: targetDevice);
   }
 
