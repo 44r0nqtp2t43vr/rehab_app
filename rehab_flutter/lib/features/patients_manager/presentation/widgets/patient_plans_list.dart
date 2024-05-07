@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
-import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
-import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
-import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_event.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plan_item.dart';
-import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/select_plan_dialog.dart';
 
 class PatientPlansList extends StatefulWidget {
   final AppUser patient;
@@ -77,7 +67,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: () => _onAddPlanButtonPressed(context),
+                                  onPressed: () => _onAddPlanButtonPressed(context, widget.patient),
                                   style: ButtonStyle(
                                     foregroundColor: MaterialStateProperty.all<Color>(
                                       Colors.white,
@@ -152,7 +142,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
     );
   }
 
-  void _onAddPlanButtonPressed(BuildContext context) {
+  void _onAddPlanButtonPressed(BuildContext context, AppUser patient) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -161,119 +151,9 @@ class _PatientPlansListState extends State<PatientPlansList> {
           contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.transparent,
-          content: GlassContainer(
-            blur: 10,
-            color: Colors.white.withOpacity(0.3),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/actuator.svg',
-                        width: MediaQuery.of(context).size.width * .06,
-                        height: MediaQuery.of(context).size.height * .06,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Select",
-                              style: TextStyle(
-                                fontFamily: 'Sailec Bold',
-                                fontSize: 22,
-                                height: 1.2,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              "Therapy Plan",
-                              style: TextStyle(
-                                fontFamily: 'Sailec Light',
-                                fontSize: 16,
-                                height: 1.2,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  cuSelectPlanButtons(
-                    context: context,
-                    onPressed: () => _selectPlan(context, 'One Week', widget.patient),
-                    title: 'Plan 1: One Week',
-                    subtitle: '149.99 NTD',
-                  ),
-                  const SizedBox(height: 20),
-                  cuSelectPlanButtons(
-                    context: context,
-                    onPressed: () => _selectPlan(context, 'One Month', widget.patient),
-                    title: 'Plan 2: One Month',
-                    subtitle: '499.99 NTD',
-                  ),
-                  const SizedBox(height: 20),
-                  cuSelectPlanButtons(
-                    context: context,
-                    onPressed: () => _selectPlan(context, 'Three Months', widget.patient),
-                    title: 'Plan 3: Three Months',
-                    subtitle: '999.99 NTD',
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Theme(
-                        data: darkButtonTheme,
-                        child: ElevatedButton(
-                          onPressed: () => _onCloseButtonPressed(context),
-                          child: const Text('Cancel'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+          content: SelectPlanDialog(patient: patient),
         );
       },
     );
-  }
-
-  void _selectPlan(BuildContext context, String planName, AppUser user) {
-    int daysToAdd;
-    switch (planName) {
-      case 'One Week':
-        daysToAdd = 7;
-        break;
-      case 'One Month':
-        daysToAdd = 30;
-        break;
-      case 'Three Months':
-        daysToAdd = 90;
-        break;
-      default:
-        daysToAdd = 7;
-    }
-    Navigator.of(context).pop();
-
-    final userType = BlocProvider.of<UserBloc>(context).state;
-
-    if (userType is UserNone && userType.data is Admin) {
-      BlocProvider.of<ViewedPatientBloc>(context).add(AddPatientPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
-    } else if (userType is UserNone && userType.data is Therapist) {
-      BlocProvider.of<ViewedTherapistPatientBloc>(context).add(AddTherapistPatientPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
-    }
-  }
-
-  void _onCloseButtonPressed(BuildContext context) {
-    Navigator.of(context).pop();
   }
 }
