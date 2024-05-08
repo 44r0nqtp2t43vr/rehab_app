@@ -6,8 +6,8 @@ class BluetoothController extends GetxController {
   StreamSubscription? scanSubscription;
   List<BluetoothDevice> devicesList = [];
 
-  late BluetoothDevice targetDevice;
-  late BluetoothCharacteristic targetCharacteristic;
+  BluetoothDevice? targetDevice;
+  BluetoothCharacteristic? targetCharacteristic;
 
   Future<Stream<List<ScanResult>>> scanDevices() async {
     FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
@@ -16,11 +16,11 @@ class BluetoothController extends GetxController {
 
   Future<void> connectToDevice(BluetoothDevice targetDevice) async {
     this.targetDevice = targetDevice;
-    await this.targetDevice.connect(autoConnect: false);
+    await this.targetDevice!.connect(autoConnect: false);
   }
 
   Future<List<BluetoothService>> discoverServices() async {
-    final services = await targetDevice.discoverServices();
+    final services = await targetDevice!.discoverServices();
     return services;
   }
 
@@ -29,7 +29,9 @@ class BluetoothController extends GetxController {
   }
 
   Future<void> disconnectDevice() async {
-    await targetDevice.disconnect();
+    await targetDevice!.disconnect();
+    targetDevice = null;
+    targetCharacteristic = null;
   }
 
   void updateCharacteristic(BluetoothCharacteristic newCharacteristic) {
@@ -39,6 +41,6 @@ class BluetoothController extends GetxController {
   Future writeData(String data) async {
     // List<int> bytes = utf8.encode(data);
     // await targetCharacteristic.write(bytes, withoutResponse: true);
-    await targetCharacteristic.write(data.codeUnits, withoutResponse: true);
+    await targetCharacteristic!.write(data.codeUnits, withoutResponse: true);
   }
 }

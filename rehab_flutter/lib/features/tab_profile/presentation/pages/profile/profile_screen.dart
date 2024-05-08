@@ -7,6 +7,7 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/tab_profile/presentation/widgets/connected_device_dialog.dart';
 import 'package:rehab_flutter/features/tab_profile/presentation/widgets/profile_button.dart';
 import 'package:rehab_flutter/features/tab_profile/presentation/widgets/profile_info_card.dart';
 
@@ -53,11 +54,9 @@ class ProfileScreen extends StatelessWidget {
                       foregroundColor: MaterialStateProperty.all<Color>(
                         Colors.white,
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xff128BED)),
+                      backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
                       elevation: MaterialStateProperty.all<double>(0),
-                      shadowColor:
-                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
                       overlayColor: MaterialStateProperty.all<Color>(
                         Colors.white.withOpacity(0.2),
                       ),
@@ -82,7 +81,7 @@ class ProfileScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ProfileButton(
-                    onTap: () {},
+                    onTap: () => _showConnectedDeviceDialog(context),
                     icon: Icons.bluetooth,
                     text: "Connected Device",
                   ),
@@ -141,15 +140,11 @@ class ProfileScreen extends StatelessWidget {
                         foregroundColor: MaterialStateProperty.all<Color>(
                           Colors.white,
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
+                        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
                         elevation: MaterialStateProperty.all<double>(0),
-                        shadowColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        overlayColor: MaterialStateProperty.all<Color>(
-                            Colors.white.withOpacity(0.2)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                        overlayColor: MaterialStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -177,6 +172,21 @@ class ProfileScreen extends StatelessWidget {
 
   void _onLogoutButtonPressed(BuildContext context) {
     BlocProvider.of<UserBloc>(context).add(LogoutEvent(user));
+  }
+
+  void _showConnectedDeviceDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.only(right: 10, top: 10, left: 10),
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          content: ConnectedDeviceDialog(),
+        );
+      },
+    );
   }
 
   void _showContentDialog(BuildContext context, String title) {

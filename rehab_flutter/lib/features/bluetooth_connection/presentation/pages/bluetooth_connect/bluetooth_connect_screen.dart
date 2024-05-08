@@ -70,7 +70,7 @@ class BluetoothConnectScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            'Connect to CU.TOUCH Gloves',
+                            'Connect to CU.TOUCH Station',
                             style: darkTextTheme().headlineMedium,
                             textAlign: TextAlign.center,
                           ),
@@ -95,7 +95,7 @@ class BluetoothConnectScreen extends StatelessWidget {
                                 height: 40,
                               ),
                               Text(
-                                'Tap the screen to set up your gloves.',
+                                'Tap the screen to set up your station.',
                                 style: darkTextTheme().headlineSmall,
                                 textAlign: TextAlign.center,
                               ),
