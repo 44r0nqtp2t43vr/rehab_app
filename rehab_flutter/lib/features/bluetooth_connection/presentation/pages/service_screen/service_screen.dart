@@ -93,7 +93,7 @@ class ServiceScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Set up CU.TOUCH Gloves',
+                    'Set up CU.TOUCH Station',
                     style: darkTextTheme().headlineMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -101,7 +101,7 @@ class ServiceScreen extends StatelessWidget {
                     height: 12,
                   ),
                   Text(
-                    'CU.TOUCH Gloves Characteristics',
+                    'CU.TOUCH Station Characteristics',
                     style: darkTextTheme().headlineSmall,
                   ),
                   const SizedBox(

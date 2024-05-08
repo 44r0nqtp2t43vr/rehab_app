@@ -140,7 +140,7 @@ class BluetoothScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              'Connect to CU.TOUCH Gloves',
+                              'Connect to CU.TOUCH Station',
                               style: darkTextTheme().headlineMedium,
                               textAlign: TextAlign.center,
                             ),
@@ -233,7 +233,7 @@ class BluetoothScreen extends StatelessWidget {
                       child: Column(
                     children: [
                       Text(
-                        'Connect to CU.TOUCH Gloves',
+                        'Connect to CU.TOUCH Station',
                         style: darkTextTheme().headlineMedium,
                         textAlign: TextAlign.center,
                       ),
