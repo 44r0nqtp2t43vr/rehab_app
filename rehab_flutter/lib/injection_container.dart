@@ -32,6 +32,7 @@ import 'package:rehab_flutter/core/usecases/firebase/get_therapists.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_therapist.dart';
+import 'package:rehab_flutter/core/usecases/firebase/reset_session.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_passive.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_test.dart';
 import 'package:rehab_flutter/core/usecases/firebase/log_login_attempt.dart';
@@ -131,12 +132,14 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<EditUserSessionUseCase>(EditUserSessionUseCase(sl()));
 
+  sl.registerSingleton<ResetSessionUseCase>(ResetSessionUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<ActuatorsBloc>(() => ActuatorsBloc(sl(), sl(), sl()));
 
-  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<UserBloc>(() => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory<TherapistBloc>(() => TherapistBloc(sl(), sl(), sl(), sl(), sl()));
 

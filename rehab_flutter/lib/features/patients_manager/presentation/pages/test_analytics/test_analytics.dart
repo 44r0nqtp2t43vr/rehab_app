@@ -4,6 +4,7 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/test_analytics_item.dart';
 
 class TestAnalytics extends StatelessWidget {
   final List<TestingItem> items;
@@ -318,51 +319,46 @@ class TestAnalytics extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (int i = 0; i < items.length; i++)
-                            Column(
-                              children: [
-                                GlassContainer(
-                                  shadowStrength: 1,
-                                  shadowColor: Colors.black,
-                                  blur: 4,
-                                  color: Colors.white.withOpacity(0.25),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 12,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          items[i].itemName,
-                                          style: darkTextTheme().headlineSmall,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(width: 24),
-                                        Text(
-                                          "${items[i].itemAccuracy.toString()}%",
-                                          style: darkTextTheme().displaySmall,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  itemBuilder: (context, i) {
+                    return Column(
+                      children: [
+                        TestAnalyticsItem(
+                          itemName: items[i].itemName,
+                          itemType: items[i].itemType,
+                          itemAccuracy: items[i].itemAccuracy,
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                    );
+                  },
                 ),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       flex: 2,
+                //       child: Column(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: [
+                //           for (int i = 0; i < items.length; i++)
+                //             Column(
+                //               children: [
+                //                 TestAnalyticsItem(
+                //                   itemName: items[i].itemName,
+                //                   itemType: items[i].itemType,
+                //                   itemAccuracy: items[i].itemAccuracy,
+                //                 ),
+                //                 const SizedBox(height: 12),
+                //               ],
+                //             ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 // Row(
                 //   children: [
                 //     Expanded(

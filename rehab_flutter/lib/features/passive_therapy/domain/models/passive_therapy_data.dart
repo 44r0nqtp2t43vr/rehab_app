@@ -1,9 +1,11 @@
+import 'package:rehab_flutter/core/entities/user.dart';
+
 class PassiveTherapyData {
-  final String userId;
+  final AppUser user;
   final int intensity;
 
   PassiveTherapyData({
-    required this.userId,
+    required this.user,
     required this.intensity,
   });
 }

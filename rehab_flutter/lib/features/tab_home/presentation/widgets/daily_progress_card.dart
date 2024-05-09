@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 
 class DailyProgressCard extends StatelessWidget {
   final Session? todaySession;
   final bool isTherapistView;
 
-  const DailyProgressCard(
-      {super.key, required this.todaySession, this.isTherapistView = false});
+  const DailyProgressCard({super.key, required this.todaySession, this.isTherapistView = false});
 
   @override
   Widget build(BuildContext context) {
-    double percentCompletion =
-        todaySession == null ? 0 : todaySession!.getSessionPercentCompletion();
+    double percentCompletion = todaySession == null ? 0 : todaySession!.getSessionPercentCompletion();
 
     return Container(
       height: 240,
@@ -227,11 +228,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[0],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[0]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[0] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -249,11 +247,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[1],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[1]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[1] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -271,11 +266,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[2],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[2]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[2] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -293,11 +285,8 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[3],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[3]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[3] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
@@ -315,17 +304,27 @@ class DailyProgressCard extends StatelessWidget {
                           value: conditions[4],
                           groupValue: true,
                           onChanged: (value) {},
-                          fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return conditions[4]
-                                ? const Color(0xff01FF99)
-                                : Colors.white;
+                          fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                            return conditions[4] ? const Color(0xff01FF99) : Colors.white;
                           }),
                         ),
                         Expanded(
                           child: Text(
                             "Completed Post-test",
                             style: darkTextTheme().headlineSmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Theme(
+                          data: darkButtonTheme,
+                          child: ElevatedButton(
+                            onPressed: () => _onResetSessionPressed(context),
+                            child: const Text('Debug: Reset Session'),
                           ),
                         ),
                       ],
@@ -351,6 +350,12 @@ class DailyProgressCard extends StatelessWidget {
         },
       );
     }
+  }
+
+  void _onResetSessionPressed(BuildContext context) {
+    final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
+    BlocProvider.of<UserBloc>(context).add(ResetSessionEvent(currentUser));
+    Navigator.of(context).pop();
   }
 
   void _onCloseButtonPressed(BuildContext context) {

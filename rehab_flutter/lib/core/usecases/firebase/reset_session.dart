@@ -3,23 +3,23 @@ import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecase/usecase.dart';
 
-class SubmitPassiveUseCase implements UseCase<Session, AppUser> {
+class ResetSessionUseCase implements UseCase<Session, AppUser> {
   final FirebaseRepository _firebaseRepository;
 
-  SubmitPassiveUseCase(this._firebaseRepository);
+  ResetSessionUseCase(this._firebaseRepository);
 
   @override
   Future<Session> call({AppUser? params}) {
     try {
-      return _firebaseRepository.submitPassive(params!);
+      return _firebaseRepository.resetSession(params!);
     } catch (e) {
-      throw SubmitPassiveException(e.toString());
+      throw ResetSessionException(e.toString());
     }
   }
 }
 
-class SubmitPassiveException implements Exception {
+class ResetSessionException implements Exception {
   final String message;
 
-  SubmitPassiveException(this.message);
+  ResetSessionException(this.message);
 }

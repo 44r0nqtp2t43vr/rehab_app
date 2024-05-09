@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
@@ -23,9 +24,10 @@ abstract class FirebaseRepository {
   Future<void> updateCurrentSession(String userId, dynamic data);
   Future<void> updateCurrentSessionTesting(String userId, List<TestingItem> items, dynamic data);
   Future<AppUser> addPlan(AddPlanData data);
-  Future<AppUser> submitTest(ResultsData data);
-  Future<AppUser> submitStandard(StandardData data);
-  Future<AppUser> submitPassive(String userId);
+  Future<Session> submitTest(ResultsData data);
+  Future<Session> submitStandard(StandardData data);
+  Future<Session> submitPassive(AppUser user);
+  Future<Session> resetSession(AppUser user);
   Future<dynamic> loginUser(LoginData data);
   Future<void> logoutUser();
   Future<AppUser> editUser(EditUserData data);

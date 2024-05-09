@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -33,7 +32,8 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
   int countdownDuration = 299;
 
   void submit() {
-    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(userId: widget.data.userId, isStandardOne: widget.data.isStandardOne)));
+    final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
+    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(user: currentUser, isStandardOne: widget.data.isStandardOne)));
   }
 
   Song getSongFromIntensity() {
@@ -165,6 +165,16 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
                   ),
                 ],
               ),
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.check,
+                    size: 35,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => submit(),
+                ),
+              ],
             ),
             body: getWidgetFromType(state.currentUser!),
           );

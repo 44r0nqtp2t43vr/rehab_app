@@ -66,6 +66,14 @@ class AppUser {
     return currentPlan.planId.isEmpty ? null : currentPlan;
   }
 
+  int getIndexOfCurrentPlan() {
+    final DateTime today = DateTime.now();
+    final int indexOfCurrentPlan = plans.lastIndexWhere(
+      (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
+    );
+    return indexOfCurrentPlan;
+  }
+
   Session? getCurrentSession() {
     final DateTime today = DateTime.now();
     final Plan? currentPlan = getCurrentPlan();
@@ -77,6 +85,19 @@ class AppUser {
         orElse: () => Session.empty(),
       );
       return currentSession.sessionId.isEmpty ? null : currentSession;
+    }
+  }
+
+  int getIndexOfCurrentSession() {
+    final DateTime today = DateTime.now();
+    final Plan? currentPlan = getCurrentPlan();
+    if (currentPlan == null) {
+      return -1;
+    } else {
+      final int indexOfCurrentSession = currentPlan.sessions.indexWhere(
+        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+      );
+      return indexOfCurrentSession;
     }
   }
 
@@ -108,5 +129,12 @@ class AppUser {
     }
 
     return dateColorsMap;
+  }
+
+  void setCurrentSession(Session newSession) {
+    final indexOfCurrentPlan = getIndexOfCurrentPlan();
+    final indexOfCurrentSession = getIndexOfCurrentSession();
+
+    plans[indexOfCurrentPlan].sessions[indexOfCurrentSession] = newSession;
   }
 }

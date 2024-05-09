@@ -264,7 +264,7 @@ class ContinueCard extends StatelessWidget {
         } else if (!conditions[2]) {
           Navigator.pushNamed(context, '/PassiveTherapy',
               arguments: PassiveTherapyData(
-                userId: user.userId,
+                user: user,
                 intensity: int.parse(currentSession.passiveIntensity),
               ));
         } else if (!conditions[3]) {

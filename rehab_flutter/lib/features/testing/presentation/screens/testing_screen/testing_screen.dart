@@ -1,11 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
@@ -39,6 +43,20 @@ class _TestingScreenState extends State<TestingScreen> {
   TestingState testingState = TestingState.staticPatterns;
   int currentItemInd = 0;
 
+  void skipTest(BuildContext context) {
+    final user = BlocProvider.of<UserBloc>(context).state.currentUser!;
+
+    BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(
+      ResultsData(
+        user: user,
+        score: 0,
+        isPretest: widget.isPretest,
+        items: [],
+      ),
+    ));
+    Navigator.of(context).pop();
+  }
+
   void onProceed(TestingState newTestingState) {
     setState(() {
       testingState = newTestingState;
@@ -54,21 +72,25 @@ class _TestingScreenState extends State<TestingScreen> {
 
       if (currentItemInd == numOfStaticPatternsItems) {
         testingState = TestingState.texturesIntro;
-      } else if (currentItemInd ==
-          numOfStaticPatternsItems + numOfTexturesItems) {
+      } else if (currentItemInd == numOfStaticPatternsItems + numOfTexturesItems) {
         testingState = TestingState.rhythmicPatternsIntro;
-      } else if (currentItemInd ==
-          numOfStaticPatternsItems +
-              numOfTexturesItems +
-              numOfRhythmicPatternsItems) {
+      } else if (currentItemInd == numOfStaticPatternsItems + numOfTexturesItems + numOfRhythmicPatternsItems) {
         testingState = TestingState.finished;
       }
 
       currentTestingWidget = getWidgetFromTestingState();
     });
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
-    debugPrint(accuracyList.toString());
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 1),
+        backgroundColor: Colors.white.withOpacity(0.3),
+        content: Text('Submitted Response', style: darkTextTheme().displaySmall),
+      ),
+    );
+
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    // debugPrint(accuracyList.toString());
   }
 
   String getTitleFromTestingState() {
@@ -106,20 +128,16 @@ class _TestingScreenState extends State<TestingScreen> {
           onResponse: onResponse,
           currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems,
           totalItemNo: numOfTexturesItems,
-          currentImageTexture:
-              imageTexturesList[currentItemInd - numOfStaticPatternsItems],
+          currentImageTexture: imageTexturesList[currentItemInd - numOfStaticPatternsItems],
         );
       case TestingState.rhythmicPatternsIntro:
         return RhythmicPatternsIntro(onProceed: onProceed);
       case TestingState.rhythmicPatterns:
         return RhythmicPatternsTester(
           onResponse: onResponse,
-          currentItemNo: (currentItemInd + 1) -
-              numOfStaticPatternsItems -
-              numOfTexturesItems,
+          currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems - numOfTexturesItems,
           totalItemNo: numOfRhythmicPatternsItems,
-          currentRhythmicPattern: rhythmicPatternsList[
-              currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
+          currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
         );
       case TestingState.finished:
         return TestingFinish(itemList: itemList, accuracyList: accuracyList);
@@ -147,8 +165,7 @@ class _TestingScreenState extends State<TestingScreen> {
 
   @override
   void dispose() {
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -186,6 +203,16 @@ class _TestingScreenState extends State<TestingScreen> {
           ),
         ],
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.check,
+            size: 35,
+            color: Colors.white,
+          ),
+          onPressed: () => skipTest(context),
+        ),
+      ],
     );
   }
 }

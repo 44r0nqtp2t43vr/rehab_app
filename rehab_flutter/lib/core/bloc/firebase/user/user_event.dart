@@ -57,7 +57,11 @@ class SubmitStandardEvent extends UserEvent {
 }
 
 class SubmitPassiveEvent extends UserEvent {
-  const SubmitPassiveEvent(String userId) : super(userId: userId);
+  const SubmitPassiveEvent(AppUser user) : super(user: user);
+}
+
+class ResetSessionEvent extends UserEvent {
+  const ResetSessionEvent(AppUser user) : super(user: user);
 }
 
 class LogoutEvent extends UserEvent {

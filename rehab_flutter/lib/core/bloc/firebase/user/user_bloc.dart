@@ -7,6 +7,7 @@ import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
+import 'package:rehab_flutter/core/usecases/firebase/reset_session.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_passive.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_test.dart';
 
@@ -21,6 +22,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final SubmitTestUseCase _submitTestUseCase;
   final SubmitStandardUseCase _submitStandardUseCase;
   final SubmitPassiveUseCase _submitPassiveUseCase;
+  final ResetSessionUseCase _resetSessionUseCase;
   final LogoutUserUseCase _logoutUserUseCase;
   final EditUserUseCase _editUserUseCase;
 
@@ -31,6 +33,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this._submitTestUseCase,
     this._submitStandardUseCase,
     this._submitPassiveUseCase,
+    this._resetSessionUseCase,
     this._logoutUserUseCase,
     this._editUserUseCase,
   ) : super(const UserNone()) {
@@ -41,6 +44,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<SubmitTestEvent>(onSubmitTest);
     on<SubmitStandardEvent>(onSubmitStandard);
     on<SubmitPassiveEvent>(onSubmitPassive);
+    on<ResetSessionEvent>(onResetSession);
     on<LogoutEvent>(onLogoutUser);
     on<EditUserEvent>(onEditUser);
   }
@@ -88,7 +92,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onSubmitTest(SubmitTestEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitTestUseCase(params: event.resultsData);
+      final updatedSession = await _submitTestUseCase(params: event.resultsData);
+      final updatedUser = event.resultsData!.user;
+
+      updatedUser.setCurrentSession(updatedSession);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
@@ -98,7 +105,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onSubmitStandard(SubmitStandardEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitStandardUseCase(params: event.standardData);
+      final updatedSession = await _submitStandardUseCase(params: event.standardData);
+      final updatedUser = event.standardData!.user;
+
+      updatedUser.setCurrentSession(updatedSession);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
@@ -108,7 +118,23 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onSubmitPassive(SubmitPassiveEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitPassiveUseCase(params: event.userId);
+      final updatedSession = await _submitPassiveUseCase(params: event.user!);
+      final updatedUser = event.user!;
+
+      updatedUser.setCurrentSession(updatedSession);
+      emit(UserDone(currentUser: updatedUser));
+    } catch (e) {
+      emit(UserNone(errorMessage: e.toString()));
+    }
+  }
+
+  void onResetSession(ResetSessionEvent event, Emitter<UserState> emit) async {
+    emit(const UserLoading());
+    try {
+      final updatedSession = await _resetSessionUseCase(params: event.user!);
+      final updatedUser = event.user!;
+
+      updatedUser.setCurrentSession(updatedSession);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));

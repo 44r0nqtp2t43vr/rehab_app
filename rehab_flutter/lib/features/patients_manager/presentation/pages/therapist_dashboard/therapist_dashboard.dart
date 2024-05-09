@@ -41,7 +41,8 @@ class TherapistDashboard extends StatelessWidget {
                   BlocBuilder<TherapistPatientListBloc, TherapistPatientListState>(
                     builder: (context, state) {
                       if (state is TherapistPatientListLoading) {
-                        return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                        // return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                        return PatientsNumbers(patients: state.therapistPatientList);
                       }
                       if (state is TherapistPatientListDone) {
                         return PatientsNumbers(patients: state.therapistPatientList);
@@ -61,7 +62,8 @@ class TherapistDashboard extends StatelessWidget {
                   BlocBuilder<TherapistPatientListBloc, TherapistPatientListState>(
                     builder: (context, state) {
                       if (state is TherapistPatientListLoading) {
-                        return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                        // return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                        return PatientProgressChart(patients: state.therapistPatientList);
                       }
                       if (state is TherapistPatientListDone) {
                         return PatientProgressChart(patients: state.therapistPatientList);
