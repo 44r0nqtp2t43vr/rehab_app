@@ -88,7 +88,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onSubmitTest(SubmitTestEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitTestUseCase(params: event.resultsData);
+      final updatedSession = await _submitTestUseCase(params: event.resultsData);
+      final updatedUser = event.resultsData!.user;
+
+      updatedUser.setCurrentSession(updatedSession);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
@@ -98,7 +101,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onSubmitStandard(SubmitStandardEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitStandardUseCase(params: event.standardData);
+      final updatedSession = await _submitStandardUseCase(params: event.standardData);
+      final updatedUser = event.standardData!.user;
+
+      updatedUser.setCurrentSession(updatedSession);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
@@ -108,7 +114,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onSubmitPassive(SubmitPassiveEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedUser = await _submitPassiveUseCase(params: event.userId);
+      final updatedSession = await _submitPassiveUseCase(params: event.user!);
+      final updatedUser = event.user!;
+
+      updatedUser.setCurrentSession(updatedSession);
       emit(UserDone(currentUser: updatedUser));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));

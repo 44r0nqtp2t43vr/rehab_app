@@ -363,7 +363,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<AppUser> submitTest(ResultsData data) async {
+  Future<Session> submitTest(ResultsData data) async {
     if (data.isPretest) {
       final Random random = Random();
       // Creating a list of all StandardTherapy values and shuffling it
@@ -382,29 +382,49 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         'standardTwoIntensity': intensityLevel,
         'passiveIntensity': intensityLevel,
       });
+
+      Session currentSession = data.user.getCurrentSession()!;
+      currentSession.pretestScore = data.score;
+      currentSession.standardOneType = standardOneType;
+      currentSession.standardOneIntensity = intensityLevel;
+      currentSession.standardTwoType = standardTwoType;
+      currentSession.standardTwoIntensity = intensityLevel;
+      currentSession.passiveIntensity = intensityLevel;
+      currentSession.items = List.from(data.items);
+      return currentSession;
     } else {
       await updateCurrentSessionTesting(data.user.userId, data.items, {'posttestScore': data.score});
+
+      Session currentSession = data.user.getCurrentSession()!;
+      currentSession.posttestScore = data.score;
+      return currentSession;
     }
 
-    final AppUser user = await getUser(data.user.userId);
-    return user;
+    // final AppUser user = await getUser(data.user.userId);
+    // return user;
   }
 
   @override
-  Future<AppUser> submitStandard(StandardData data) async {
+  Future<Session> submitStandard(StandardData data) async {
     final dataToSend = data.isStandardOne ? {'isStandardOneDone': true} : {'isStandardTwoDone': true};
-    await updateCurrentSession(data.userId, dataToSend);
+    await updateCurrentSession(data.user.userId, dataToSend);
 
-    final AppUser user = await getUser(data.userId);
-    return user;
+    // final AppUser user = await getUser(data.user.userId);
+    // return user;
+    Session currentSession = data.user.getCurrentSession()!;
+    data.isStandardOne ? currentSession.isStandardOneDone = true : currentSession.isStandardTwoDone = true;
+    return currentSession;
   }
 
   @override
-  Future<AppUser> submitPassive(String userId) async {
-    await updateCurrentSession(userId, {'isPassiveDone': true});
+  Future<Session> submitPassive(AppUser user) async {
+    await updateCurrentSession(user.userId, {'isPassiveDone': true});
 
-    final AppUser user = await getUser(userId);
-    return user;
+    // final AppUser user = await getUser(userId);
+    // return user;
+    Session currentSession = user.getCurrentSession()!;
+    currentSession.isPassiveDone = true;
+    return currentSession;
   }
 
   @override

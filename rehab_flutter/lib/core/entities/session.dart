@@ -3,31 +3,31 @@ import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 
 class Session {
-  final String sessionId;
-  final DateTime date;
+  String sessionId;
+  DateTime date;
 
   // Standard 1
-  final String standardOneType;
-  final String standardOneIntensity;
-  final bool isStandardOneDone;
+  String standardOneType;
+  String standardOneIntensity;
+  bool isStandardOneDone;
 
   // Passive
-  final String passiveIntensity;
-  final bool isPassiveDone;
+  String passiveIntensity;
+  bool isPassiveDone;
 
   // Standard 2
-  final String standardTwoType;
-  final String standardTwoIntensity;
-  final bool isStandardTwoDone;
+  String standardTwoType;
+  String standardTwoIntensity;
+  bool isStandardTwoDone;
 
   // Tests
-  final double? pretestScore;
-  final double? posttestScore;
+  double? pretestScore;
+  double? posttestScore;
 
   // Testing Items
-  final List<TestingItem> items;
+  List<TestingItem> items;
 
-  const Session({
+  Session({
     required this.sessionId,
     required this.date,
     required this.standardOneType,

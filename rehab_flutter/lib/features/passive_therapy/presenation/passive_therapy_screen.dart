@@ -171,7 +171,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with Ticker
   }
 
   void _onEnd() {
-    BlocProvider.of<UserBloc>(context).add(SubmitPassiveEvent(widget.data.userId));
+    BlocProvider.of<UserBloc>(context).add(SubmitPassiveEvent(widget.data.user));
   }
 
   void _resetPatternChangeTimer() {
