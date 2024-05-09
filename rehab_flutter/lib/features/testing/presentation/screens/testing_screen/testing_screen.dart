@@ -1,11 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
@@ -38,6 +42,20 @@ class _TestingScreenState extends State<TestingScreen> {
   late List<RhythmicPattern> rhythmicPatternsList;
   TestingState testingState = TestingState.staticPatterns;
   int currentItemInd = 0;
+
+  void skipTest(BuildContext context) {
+    final user = BlocProvider.of<UserBloc>(context).state.currentUser!;
+
+    BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(
+      ResultsData(
+        user: user,
+        score: 0,
+        isPretest: widget.isPretest,
+        items: [],
+      ),
+    ));
+    Navigator.of(context).pop();
+  }
 
   void onProceed(TestingState newTestingState) {
     setState(() {
@@ -185,6 +203,16 @@ class _TestingScreenState extends State<TestingScreen> {
           ),
         ],
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.check,
+            size: 35,
+            color: Colors.white,
+          ),
+          onPressed: () => skipTest(context),
+        ),
+      ],
     );
   }
 }

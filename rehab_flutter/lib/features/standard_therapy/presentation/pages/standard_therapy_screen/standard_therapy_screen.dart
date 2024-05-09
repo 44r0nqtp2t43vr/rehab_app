@@ -165,6 +165,16 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
                   ),
                 ],
               ),
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.check,
+                    size: 35,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => submit(),
+                ),
+              ],
             ),
             body: getWidgetFromType(state.currentUser!),
           );

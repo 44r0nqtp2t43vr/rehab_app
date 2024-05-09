@@ -26,10 +26,10 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with Ticker
   final PatternBoolsProvider patternBoolsProvider = PatternBoolsProvider();
 
 // COUNTDOWN TIMER
-  final int countdownDuration = 600;
-  final String countdownText = '10:00';
+  final int countdownDuration = 300;
+  final String countdownText = '5:00';
   Timer? _countdownTimer;
-  late Duration _duration; // Initialize the countdown duration to 8 minutes
+  late Duration _duration; // Initialize the countdown duration to 5 minutes
   late String _countdownText; // Initial countdown text display
 
 // PATTERN CHANGING
@@ -248,6 +248,16 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with Ticker
                   ),
                 ],
               ),
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.check,
+                    size: 35,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => _onEnd(),
+                ),
+              ],
             ),
             body: Center(
               child: Column(
