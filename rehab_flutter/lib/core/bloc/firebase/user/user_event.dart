@@ -60,6 +60,10 @@ class SubmitPassiveEvent extends UserEvent {
   const SubmitPassiveEvent(AppUser user) : super(user: user);
 }
 
+class ResetSessionEvent extends UserEvent {
+  const ResetSessionEvent(AppUser user) : super(user: user);
+}
+
 class LogoutEvent extends UserEvent {
   const LogoutEvent(AppUser user) : super(user: user);
 }

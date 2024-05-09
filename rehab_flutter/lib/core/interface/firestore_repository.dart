@@ -27,6 +27,7 @@ abstract class FirebaseRepository {
   Future<Session> submitTest(ResultsData data);
   Future<Session> submitStandard(StandardData data);
   Future<Session> submitPassive(AppUser user);
+  Future<Session> resetSession(AppUser user);
   Future<dynamic> loginUser(LoginData data);
   Future<void> logoutUser();
   Future<AppUser> editUser(EditUserData data);

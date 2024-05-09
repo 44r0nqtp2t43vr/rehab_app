@@ -428,6 +428,25 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
+  Future<Session> resetSession(AppUser user) async {
+    await updateCurrentSession(user.userId, {
+      'pretestScore': null,
+      'posttestScore': null,
+      'isStandardOneDone': false,
+      'isStandardTwoDone': false,
+      'isPassiveDone': false,
+    });
+
+    Session currentSession = user.getCurrentSession()!;
+    currentSession.pretestScore = null;
+    currentSession.posttestScore = null;
+    currentSession.isStandardOneDone = false;
+    currentSession.isStandardTwoDone = false;
+    currentSession.isPassiveDone = false;
+    return currentSession;
+  }
+
+  @override
   Future<AppUser> editUser(EditUserData data) async {
     // Create a map to store the fields that need to be updated
     Map<String, dynamic> oldFields = data.user.toMap();
