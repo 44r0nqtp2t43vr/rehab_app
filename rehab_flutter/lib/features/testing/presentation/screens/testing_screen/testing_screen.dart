@@ -54,21 +54,25 @@ class _TestingScreenState extends State<TestingScreen> {
 
       if (currentItemInd == numOfStaticPatternsItems) {
         testingState = TestingState.texturesIntro;
-      } else if (currentItemInd ==
-          numOfStaticPatternsItems + numOfTexturesItems) {
+      } else if (currentItemInd == numOfStaticPatternsItems + numOfTexturesItems) {
         testingState = TestingState.rhythmicPatternsIntro;
-      } else if (currentItemInd ==
-          numOfStaticPatternsItems +
-              numOfTexturesItems +
-              numOfRhythmicPatternsItems) {
+      } else if (currentItemInd == numOfStaticPatternsItems + numOfTexturesItems + numOfRhythmicPatternsItems) {
         testingState = TestingState.finished;
       }
 
       currentTestingWidget = getWidgetFromTestingState();
     });
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
-    debugPrint(accuracyList.toString());
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 1),
+        backgroundColor: Colors.white.withOpacity(0.3),
+        content: Text('Submitted Response', style: darkTextTheme().displaySmall),
+      ),
+    );
+
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    // debugPrint(accuracyList.toString());
   }
 
   String getTitleFromTestingState() {
@@ -106,20 +110,16 @@ class _TestingScreenState extends State<TestingScreen> {
           onResponse: onResponse,
           currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems,
           totalItemNo: numOfTexturesItems,
-          currentImageTexture:
-              imageTexturesList[currentItemInd - numOfStaticPatternsItems],
+          currentImageTexture: imageTexturesList[currentItemInd - numOfStaticPatternsItems],
         );
       case TestingState.rhythmicPatternsIntro:
         return RhythmicPatternsIntro(onProceed: onProceed);
       case TestingState.rhythmicPatterns:
         return RhythmicPatternsTester(
           onResponse: onResponse,
-          currentItemNo: (currentItemInd + 1) -
-              numOfStaticPatternsItems -
-              numOfTexturesItems,
+          currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems - numOfTexturesItems,
           totalItemNo: numOfRhythmicPatternsItems,
-          currentRhythmicPattern: rhythmicPatternsList[
-              currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
+          currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
         );
       case TestingState.finished:
         return TestingFinish(itemList: itemList, accuracyList: accuracyList);
@@ -147,8 +147,7 @@ class _TestingScreenState extends State<TestingScreen> {
 
   @override
   void dispose() {
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
