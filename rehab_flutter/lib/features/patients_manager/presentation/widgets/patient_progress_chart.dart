@@ -1,5 +1,4 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +18,7 @@ class PatientProgressChart extends StatefulWidget {
 
 class _PatientProgressChartState extends State<PatientProgressChart> {
   final List<String> _availableTypes = availableTypes;
+  late List<AppUser> _patients;
   late String _currentType;
   AppUser? _patient;
 
@@ -36,9 +36,22 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
 
   @override
   void initState() {
+    _patients = widget.patients;
     _patient = widget.patients.isNotEmpty ? widget.patients[0] : null;
     _currentType = availableTypes[0];
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(PatientProgressChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.patients != _patients) {
+      // Data has changed, trigger a rebuild
+      setState(() {
+        _patients = widget.patients;
+        _patient = widget.patients[0];
+      });
+    }
   }
 
   @override
@@ -53,8 +66,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
           SizedBox(
             height: 240,
             child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 24, right: 24, bottom: 20, left: 8),
+              padding: const EdgeInsets.only(top: 24, right: 24, bottom: 20, left: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -66,8 +78,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsets.only(top: 0, right: 24, bottom: 24, left: 24),
+            padding: const EdgeInsets.only(top: 0, right: 24, bottom: 24, left: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -93,8 +104,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
                     labelText: 'Type',
                   ),
                   onChanged: _onTypeDropdownSelect,
-                  items: _availableTypes
-                      .map<DropdownMenuItem<String>>((String value) {
+                  items: _availableTypes.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -123,8 +133,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
                     labelText: 'Patient',
                   ),
                   onChanged: _onPatientDropdownSelect,
-                  items: widget.patients
-                      .map<DropdownMenuItem<AppUser>>((AppUser patient) {
+                  items: widget.patients.map<DropdownMenuItem<AppUser>>((AppUser patient) {
                     return DropdownMenuItem<AppUser>(
                       value: patient,
                       child: Text(patient.getUserFullName()),
@@ -168,9 +177,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(
-          formatter.format(today.subtract(Duration(days: 4 - valueInt))),
-          style: style),
+      child: Text(formatter.format(today.subtract(Duration(days: 4 - valueInt))), style: style),
     );
   }
 
@@ -185,10 +192,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
       for (int i = 0; i < 5; i++) {
         DateTime date = today.subtract(Duration(days: i));
         Session? session = allSessions.firstWhere(
-          (session) =>
-              session.date.year == date.year &&
-              session.date.month == date.month &&
-              session.date.day == date.day,
+          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
           orElse: () => Session.empty(),
         );
 
@@ -199,8 +203,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
         }
       }
 
-      double currentPostTestScore =
-          user.getCurrentSession()?.posttestScore ?? 0;
+      double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
       previousPostTestScores[4] = currentPostTestScore;
 
       for (int i = 0; i < previousPostTestScores.length; i++) {
@@ -212,10 +215,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
       for (int i = 0; i < 5; i++) {
         DateTime date = today.subtract(Duration(days: i));
         Session? session = allSessions.firstWhere(
-          (session) =>
-              session.date.year == date.year &&
-              session.date.month == date.month &&
-              session.date.day == date.day,
+          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
           orElse: () => Session.empty(),
         );
 
