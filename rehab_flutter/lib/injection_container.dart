@@ -22,6 +22,7 @@ import 'package:rehab_flutter/core/usecases/actuators/init_actuators.dart';
 import 'package:rehab_flutter/core/usecases/actuators/load_image.dart';
 import 'package:rehab_flutter/core/usecases/firebase/add_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/assign_patient.dart';
+import 'package:rehab_flutter/core/usecases/firebase/delete_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_therapist.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user_session.dart';
@@ -134,6 +135,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<ResetSessionUseCase>(ResetSessionUseCase(sl()));
 
+  sl.registerSingleton<DeletePlanUseCase>(DeletePlanUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
@@ -157,7 +160,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<TherapistPatientListBloc>(() => TherapistPatientListBloc(sl(), sl()));
 
-  sl.registerFactory<ViewedTherapistPatientBloc>(() => ViewedTherapistPatientBloc(sl(), sl()));
+  sl.registerFactory<ViewedTherapistPatientBloc>(() => ViewedTherapistPatientBloc(sl(), sl(), sl()));
 
   sl.registerFactory<ViewedTherapistPatientPlanBloc>(() => ViewedTherapistPatientPlanBloc(sl()));
 }

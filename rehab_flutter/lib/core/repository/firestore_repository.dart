@@ -15,6 +15,7 @@ import 'package:rehab_flutter/features/login_register/domain/entities/login_data
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_therapist_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
@@ -360,6 +361,11 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     final AppUser user = await getUser(userId);
     return user;
+  }
+
+  @override
+  Future<void> deletePlan(DeletePlanData data) async {
+    await FirebaseFirestore.instance.collection('users').doc(data.user.userId).collection('plans').doc(data.planIdToDelete).delete();
   }
 
   @override

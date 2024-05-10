@@ -7,6 +7,7 @@ import 'package:rehab_flutter/features/login_register/domain/entities/login_data
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_therapist_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
@@ -24,6 +25,7 @@ abstract class FirebaseRepository {
   Future<void> updateCurrentSession(String userId, dynamic data);
   Future<void> updateCurrentSessionTesting(String userId, List<TestingItem> items, dynamic data);
   Future<AppUser> addPlan(AddPlanData data);
+  Future<void> deletePlan(DeletePlanData data);
   Future<Session> submitTest(ResultsData data);
   Future<Session> submitStandard(StandardData data);
   Future<Session> submitPassive(AppUser user);
