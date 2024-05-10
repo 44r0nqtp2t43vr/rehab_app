@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/usecases/firebase/assign_patient.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_event.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_state.dart';
@@ -23,7 +24,11 @@ class ViewedTherapistBloc extends Bloc<ViewedTherapistEvent, ViewedTherapistStat
   void onAssignViewedTherapist(AssignViewedTherapistEvent event, Emitter<ViewedTherapistState> emit) async {
     emit(const ViewedTherapistLoading());
     try {
-      final updatedTherapist = await _assignPatientUseCase(params: event.assignData);
+      await _assignPatientUseCase(params: event.assignData);
+
+      Therapist updatedTherapist = event.assignData!.therapist;
+      updatedTherapist.patientsIds.remove(event.assignData!.patientId);
+
       emit(ViewedTherapistDone(therapist: updatedTherapist));
     } catch (e) {
       emit(ViewedTherapistDone(errorMessage: e.toString(), therapist: event.assignData!.therapist));

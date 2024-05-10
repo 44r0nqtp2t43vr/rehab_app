@@ -535,7 +535,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<Therapist> assignPatient(AssignPatientData data) async {
+  Future<void> assignPatient(AssignPatientData data) async {
     final List<String> currentPatients = data.therapist.patientsIds;
     if (data.isAssign) {
       final bool isValidInput = await doesPatientExist(data.patientId);
@@ -554,8 +554,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     await db.collection('users').doc(data.therapist.therapistId).update({'patients': currentPatients});
 
-    final Therapist user = await getUser(data.therapist.therapistId);
-    return user;
+    // final Therapist user = await getUser(data.therapist.therapistId);
+    // return user;
   }
 
   @override
