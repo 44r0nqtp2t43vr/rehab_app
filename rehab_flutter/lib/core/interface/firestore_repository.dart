@@ -35,7 +35,7 @@ abstract class FirebaseRepository {
   Future<AppUser> editUser(EditUserData data);
   Future<AppUser> editUserSession(EditSessionData data);
   Future<Therapist> editTherapist(EditTherapistData data);
-  Future<Therapist> assignPatient(AssignPatientData data);
+  Future<void> assignPatient(AssignPatientData data);
   Future<bool> doesPatientExist(String userId);
   Future<List<String>> getTherapistPatientIds(String therapistId);
   Future<List<String>> getPatientsIds();
