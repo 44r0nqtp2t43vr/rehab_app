@@ -10,6 +10,7 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/test_analytics_item.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 class TestingFinish extends StatefulWidget {
@@ -378,50 +379,34 @@ class _TestingFinishState extends State<TestingFinish> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              for (int i = 0; i < widget.itemList.length; i++)
-                                Column(
-                                  children: [
-                                    GlassContainer(
-                                      shadowStrength: 1,
-                                      shadowColor: Colors.black,
-                                      blur: 4,
-                                      color: Colors.white.withOpacity(0.25),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 12,
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              widget.itemList[i],
-                                              style: darkTextTheme().headlineSmall,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(width: 24),
-                                            Text(
-                                              "${widget.accuracyList[i].toString()}%",
-                                              style: darkTextTheme().displaySmall,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.itemList.length,
+                      itemBuilder: (context, i) {
+                        final nextItem = TestingItem(
+                          test: "",
+                          itemNumber: i + 1,
+                          itemName: widget.itemList[i],
+                          itemType: i < 10
+                              ? "static pattern"
+                              : i < 15
+                                  ? "texture"
+                                  : "rhythmic pattern",
+                          itemAccuracy: widget.accuracyList[i],
+                        );
+
+                        return Column(
+                          children: [
+                            TestAnalyticsItem(
+                              itemName: nextItem.itemName,
+                              itemType: nextItem.itemType,
+                              itemAccuracy: nextItem.itemAccuracy,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        );
+                      },
                     ),
                     // Row(
                     //   children: [
