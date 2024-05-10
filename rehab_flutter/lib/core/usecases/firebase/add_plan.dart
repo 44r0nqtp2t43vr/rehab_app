@@ -13,13 +13,13 @@ class AddPlanUseCase implements UseCase<AppUser, AddPlanData> {
     try {
       return _firebaseRepository.addPlan(params!);
     } catch (e) {
-      throw RegisterUserException(e.toString());
+      throw AddPlanException(e.toString());
     }
   }
 }
 
-class RegisterUserException implements Exception {
+class AddPlanException implements Exception {
   final String message;
 
-  RegisterUserException(this.message);
+  AddPlanException(this.message);
 }
