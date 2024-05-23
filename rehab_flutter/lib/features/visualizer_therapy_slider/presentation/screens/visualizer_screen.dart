@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
+import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
@@ -32,7 +35,8 @@ class VisualizerScreenSlider extends StatefulWidget {
   VisualizerScreenStateSlider createState() => VisualizerScreenStateSlider();
 }
 
-class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with SingleTickerProviderStateMixin {
+class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
+    with SingleTickerProviderStateMixin {
 //  controllers
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
@@ -106,12 +110,14 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     isPlaying = true;
     // Start playing the audio
 
-    audioPlayer.setSource(AssetSource(widget.songData.audioSource)).then((_) {
-      audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
-      audioPlayer.resume();
-    });
+    // audioPlayer.setSource(AssetSource(widget.songData.audioSource)).then((_) {
+    //   audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
+    //   audioPlayer.resume();
+    // });
 
-    audioPlayer.play(AssetSource(widget.songData.audioSource), position: Duration(seconds: widget.currentPositionSec.toInt()));
+    // audioPlayer.play(AssetSource(widget.songData.audioSource), position: Duration(seconds: widget.currentPositionSec.toInt()));
+
+    fetchAndPlayAudio();
 
     _controller.repeat(reverse: true);
     circles = List.generate(16, (index) {
@@ -146,8 +152,24 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
         currentPositionSec = position.inSeconds.toDouble();
       });
 
-      useClosestBlock(position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
+      useClosestBlock(
+          position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
     });
+  }
+
+  Future<void> fetchAndPlayAudio() async {
+    final firebaseRepository = FirebaseRepositoryImpl(
+        FirebaseFirestore.instance, FirebaseStorage.instance);
+    final audioUrl =
+        await firebaseRepository.getAudioUrl(widget.songData.audioSource);
+
+    audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
+      audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
+      audioPlayer.resume();
+    });
+
+    await audioPlayer.play(UrlSource(audioUrl),
+        position: Duration(seconds: widget.currentPositionSec.toInt()));
   }
 
   void _pauseAnimation() {
@@ -216,16 +238,23 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               ElevatedButton(
                                 onPressed: () => _onSwitch(context),
                                 style: ButtonStyle(
-                                  foregroundColor: MaterialStateProperty.all<Color>(
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
                                     Colors.white,
                                   ),
-                                  backgroundColor: MaterialStateProperty.all<Color>(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
                                     Colors.transparent,
                                   ),
-                                  elevation: MaterialStateProperty.all<double>(0),
-                                  shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  elevation:
+                                      MaterialStateProperty.all<double>(0),
+                                  shadowColor: MaterialStateProperty.all<Color>(
+                                      Colors.transparent),
+                                  overlayColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  padding: MaterialStateProperty.all<
+                                      EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(horizontal: 20),
                                   ),
                                 ),
@@ -240,16 +269,23 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               ElevatedButton(
                                 onPressed: null,
                                 style: ButtonStyle(
-                                  foregroundColor: MaterialStateProperty.all<Color>(
+                                  foregroundColor:
+                                      MaterialStateProperty.all<Color>(
                                     Colors.white,
                                   ),
-                                  backgroundColor: MaterialStateProperty.all<Color>(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
                                     Colors.white.withOpacity(0.25),
                                   ),
-                                  elevation: MaterialStateProperty.all<double>(0),
-                                  shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                  elevation:
+                                      MaterialStateProperty.all<double>(0),
+                                  shadowColor: MaterialStateProperty.all<Color>(
+                                      Colors.transparent),
+                                  overlayColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.transparent),
+                                  padding: MaterialStateProperty.all<
+                                      EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(horizontal: 20),
                                   ),
                                 ),
@@ -334,7 +370,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                                 currentDuration: currentPositionSec,
                                 minDuration: 0,
                                 maxDuration: widget.songData.duration,
-                                onDurationChanged: (value) => _onDurationChanged(value),
+                                onDurationChanged: (value) =>
+                                    _onDurationChanged(value),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -372,11 +409,15 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                             ),
                             IconButton(
                               icon: Icon(
-                                isPlaying ? CupertinoIcons.pause_fill : CupertinoIcons.play_arrow_solid,
+                                isPlaying
+                                    ? CupertinoIcons.pause_fill
+                                    : CupertinoIcons.play_arrow_solid,
                                 size: 40,
                                 color: Colors.white,
                               ),
-                              onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                              onPressed: () => isPlaying
+                                  ? _pauseAnimation()
+                                  : _resumeAnimation(),
                             ),
                             IconButton(
                               icon: const Icon(
@@ -437,7 +478,9 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     int itemsPerRow = 4; // Number of RayPainters per row
 
     for (int i = 0; i < circles.length; i += itemsPerRow) {
-      List<Widget> rowItems = circles.sublist(i, min(i + itemsPerRow, circles.length)).map((circleState) {
+      List<Widget> rowItems = circles
+          .sublist(i, min(i + itemsPerRow, circles.length))
+          .map((circleState) {
         return CustomPaint(
           painter: RayPainter(
             progress: circleState.progress,
@@ -454,13 +497,16 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
 
       rows.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: rowItems),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: rowItems),
       ));
     }
     return rows;
   }
 
-  void updateCircleState(int index, Color color, double width, double height, int activeValue) {
+  void updateCircleState(
+      int index, Color color, double width, double height, int activeValue) {
     setState(() {
       circles[index].color = color;
       circles[index].circleWidth = width;
@@ -471,7 +517,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
-  void resetAllCircles(Color color, double width, double height, int activeValue) {
+  void resetAllCircles(
+      Color color, double width, double height, int activeValue) {
     setState(() {
       for (var circle in circles) {
         circle.color = color;
@@ -518,10 +565,12 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     if (blocks.isEmpty) return;
 
     for (int i = 0; i < blocks.length; i++) {
-      if (i == blocks.length - 1 || (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
+      if (i == blocks.length - 1 ||
+          (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
         if (i != currentIndex) {
           setState(() {
-            prevIndex = currentIndex; // Save the current index as previous before updating
+            prevIndex =
+                currentIndex; // Save the current index as previous before updating
             currentIndex = i; // Now update the current index
           });
           break;
@@ -545,12 +594,21 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
       print("Time: ${blocks[currentIndex].time}");
       print("Position: $positionSec");
 
-      if (noteOnset == 1 && blocks[prevIndex].noteOnset == 0 && blocks[prevIndex - 1].noteOnset == 0 && blocks[prevIndex - 2].noteOnset == 0 && blocks[prevIndex - 3].noteOnset == 0) {
+      if (noteOnset == 1 &&
+          blocks[prevIndex].noteOnset == 0 &&
+          blocks[prevIndex - 1].noteOnset == 0 &&
+          blocks[prevIndex - 2].noteOnset == 0 &&
+          blocks[prevIndex - 3].noteOnset == 0) {
         for (int i = 0; i < activeValues.length; i++) {
           activeValues[i] = 0;
         }
         int delay = 0; // Initial delay is 0ms for the first column
-        List<List<int>> columns = [firstCol, secondCol, thirdCol, fourthCol]; // List of column groups for iteration
+        List<List<int>> columns = [
+          firstCol,
+          secondCol,
+          thirdCol,
+          fourthCol
+        ]; // List of column groups for iteration
 
         for (var column in columns) {
           Timer(Duration(milliseconds: delay), () {
@@ -559,7 +617,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
               for (int i = 0; i < activeValues.length; i++) {
                 activeValues[i] = 0;
               }
-              updateCircleState(index, Colors.green, 40.0, 40.0, 1); // Mark as active
+              updateCircleState(
+                  index, Colors.green, 40.0, 40.0, 1); // Mark as active
             }
           });
 
@@ -574,15 +633,19 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
       } else if (noteOnset == 1) {
         updateCirclePropertiesNoteOnset(outerSquare, true);
         lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
-      } else if (activeValues.every((value) => value == 0)) //active values is all 0
+      } else if (activeValues
+          .every((value) => value == 0)) //active values is all 0
       {
         updateCircleProperties(bassSquare, getBassBoolValue(bass));
         updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
-        updateCircleProperties(lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
+        updateCircleProperties(
+            lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
         updateCircleProperties(subBassSquare, getSubBassBoolValue(subBass));
         updateCircleProperties(presenceSquare, getPresenceBoolValue(presence));
-        updateCircleProperties(higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
-        updateCircleProperties(brillianceSquare, getBrillianceBoolValue(brilliance));
+        updateCircleProperties(
+            higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
+        updateCircleProperties(
+            brillianceSquare, getBrillianceBoolValue(brilliance));
       }
 
       lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);

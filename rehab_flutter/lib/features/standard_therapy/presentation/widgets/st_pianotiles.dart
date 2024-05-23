@@ -1,4 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
@@ -6,6 +8,7 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_container.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
@@ -38,6 +41,7 @@ class _STPianoTilesState extends State<STPianoTiles>
   late int currentNoteIndex;
   bool hasStarted = false;
   bool isPlaying = true;
+  late String audioUrl;
 
   void _pauseAnimation() {
     animationController.stop();
@@ -138,12 +142,23 @@ class _STPianoTilesState extends State<STPianoTiles>
       }
     });
 
-    player
-        .play(AssetSource(widget.song.audioSource))
-        .then((value) => animationController.forward());
+    fetchAndPlayAudio();
+    // player
+    //     .play(AssetSource(widget.song.audioSource))
+    //     .then((value) => animationController.forward());
+    // animationController.forward();
+    // player.seek(Duration(milliseconds: currentNoteIndex * 300));
+    // player.play(AssetSource(widget.song.audioSource));
+  }
+
+  Future<void> fetchAndPlayAudio() async {
+    final firebaseRepository = FirebaseRepositoryImpl(
+        FirebaseFirestore.instance, FirebaseStorage.instance);
+    final audioUrl =
+        await firebaseRepository.getAudioUrl(widget.song.audioSource);
+    await player.play(UrlSource(audioUrl));
     animationController.forward();
     player.seek(Duration(milliseconds: currentNoteIndex * 300));
-    player.play(AssetSource(widget.song.audioSource));
   }
 
   @override

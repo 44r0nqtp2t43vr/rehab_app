@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/helper_functions.dart';
@@ -106,13 +109,14 @@ class _STVisualizerState extends State<STVisualizer>
     isPlaying = true;
     // Start playing the audio
 
-    audioPlayer.setSource(AssetSource(widget.song.audioSource)).then((_) {
-      audioPlayer.seek(const Duration(seconds: 0));
-      audioPlayer.resume();
-    });
+    fetchAndPlayAudio();
+    // audioPlayer.setSource(AssetSource(widget.song.audioSource)).then((_) {
+    //   audioPlayer.seek(const Duration(seconds: 0));
+    //   audioPlayer.resume();
+    // });
 
-    audioPlayer.play(AssetSource(widget.song.audioSource),
-        position: const Duration(seconds: 0));
+    // audioPlayer.play(AssetSource(widget.song.audioSource),
+    //     position: const Duration(seconds: 0));
 
     _controller.repeat(reverse: true);
     circles = List.generate(16, (index) {
@@ -154,6 +158,21 @@ class _STVisualizerState extends State<STVisualizer>
     audioPlayer.onPlayerComplete.listen((_) {
       widget.submitCallback();
     });
+  }
+
+  Future<void> fetchAndPlayAudio() async {
+    final firebaseRepository = FirebaseRepositoryImpl(
+        FirebaseFirestore.instance, FirebaseStorage.instance);
+    final audioUrl =
+        await firebaseRepository.getAudioUrl(widget.song.audioSource);
+
+    audioPlayer.setSource(UrlSource(widget.song.audioSource)).then((_) {
+      audioPlayer.seek(const Duration(seconds: 0));
+      audioPlayer.resume();
+    });
+
+    await audioPlayer.play(UrlSource(audioUrl),
+        position: const Duration(seconds: 0));
   }
 
   void _pauseAnimation() {
