@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
@@ -7,6 +8,8 @@ import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_therapy_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_therapy_data.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_state.dart';
 
 class ContinueCard extends StatelessWidget {
   final AppUser user;
@@ -88,13 +91,32 @@ class ContinueCard extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Text(
-                          "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
-                          style: const TextStyle(
-                            fontFamily: 'Sailec Bold',
-                            fontSize: 48,
-                            color: Colors.white,
-                          ),
+                        child: BlocBuilder<PatientCurrentPlanBloc, PatientCurrentPlanState>(
+                          builder: (context, state) {
+                            if (state is PatientCurrentPlanLoading) {
+                              return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                            }
+
+                            if (state is PatientCurrentPlanDone) {
+                              return Text(
+                                "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
+                                style: const TextStyle(
+                                  fontFamily: 'Sailec Bold',
+                                  fontSize: 48,
+                                  color: Colors.white,
+                                ),
+                              );
+                            }
+
+                            return const Text(
+                              "0",
+                              style: TextStyle(
+                                fontFamily: 'Sailec Bold',
+                                fontSize: 48,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
                         ),
                       ),
                       const Expanded(

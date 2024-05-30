@@ -10,6 +10,8 @@ import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_state.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/daily_progress_card.dart';
@@ -110,7 +112,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             shadowColor: Colors.black,
                             blur: 4,
                             color: Colors.white.withOpacity(0.25),
-                            child: ActivityChartCard(user: state.currentUser!),
+                            child: BlocConsumer<PatientCurrentPlanBloc, PatientCurrentPlanState>(
+                              listener: (context, state) => setState(() {}),
+                              builder: (context, state) {
+                                if (state is PatientCurrentPlanLoading) {
+                                  return Container(
+                                    height: 240,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: const Center(child: CupertinoActivityIndicator(color: Colors.white)),
+                                  );
+                                }
+
+                                if (state is PatientCurrentPlanDone) {
+                                  return ActivityChartCard(currentPlan: state.currentPlan);
+                                }
+
+                                return Center(
+                                  child: Text(
+                                    "An error occurred while loading current plan",
+                                    style: darkTextTheme().headlineSmall,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],

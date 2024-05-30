@@ -645,9 +645,10 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       List<Session> sessions = [];
       for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
         // For each session, query testingitems
-        QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
-        List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
-        Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+        // QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(plansSnapshot.docs.first.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+        // List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+        // Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+        Session session = Session.fromMap(sessionSnapshotDoc.data());
 
         sessions.add(session);
       }
@@ -666,5 +667,50 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     return plansWithSessions;
+  }
+
+  @override
+  Future<Plan> fetchPatientCurrentPlan(String patientId) async {
+    DateTime today = DateTime.now();
+
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
+        .collection('users')
+        .doc(patientId)
+        .collection('plans')
+        .where('endDate', isGreaterThan: Timestamp.fromDate(today))
+        .orderBy('endDate', descending: false) // Optional: Sorts plans by end date in ascending order
+        .limit(1) // Optional: Limits the query to one result
+        .get();
+
+    if (plansSnapshot.docs.isNotEmpty) {
+      Map<String, dynamic> data = plansSnapshot.docs.first.data();
+      QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(plansSnapshot.docs.first.id).collection('sessions').get();
+
+      List<Session> sessions = [];
+      for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+        // For each session, query testingitems
+        // QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(plansSnapshot.docs.first.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+        // List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+        // Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+        Session session = Session.fromMap(sessionSnapshotDoc.data());
+
+        sessions.add(session);
+      }
+
+      // Combine Plan with its Sessions
+      Plan currentPlan = Plan(
+        planId: data['planId'],
+        planName: data['planName'],
+        startDate: data['startDate'].toDate() as DateTime,
+        endDate: data['endDate'].toDate() as DateTime,
+        sessions: sessions,
+      );
+
+      print(currentPlan.planId);
+
+      return currentPlan;
+    } else {
+      return Plan.empty();
+    }
   }
 }

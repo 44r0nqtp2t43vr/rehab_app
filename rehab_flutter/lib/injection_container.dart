@@ -27,6 +27,7 @@ import 'package:rehab_flutter/core/usecases/firebase/edit_therapist.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/edit_user_session.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.dart';
+import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_current_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_plans.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patients.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_therapist_patient_ids.dart';
@@ -56,6 +57,7 @@ import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therap
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -141,6 +143,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<FetchPatientPlansUseCase>(FetchPatientPlansUseCase(sl()));
 
+  sl.registerSingleton<FetchPatientCurrentPlanUseCase>(FetchPatientCurrentPlanUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
@@ -169,4 +173,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ViewedTherapistPatientPlanBloc>(() => ViewedTherapistPatientPlanBloc(sl()));
 
   sl.registerFactory<PatientPlansBloc>(() => PatientPlansBloc(sl()));
+
+  sl.registerFactory<PatientCurrentPlanBloc>(() => PatientCurrentPlanBloc(sl()));
 }

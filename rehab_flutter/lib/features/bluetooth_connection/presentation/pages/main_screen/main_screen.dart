@@ -14,6 +14,8 @@ import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/pa
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_event.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_state.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/pages/activity_monitor/activity_monitor.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_event.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/pages/home/home_screen.dart';
 import 'package:rehab_flutter/features/tab_profile/presentation/pages/profile/profile_screen.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/therapy/therapy_screen.dart';
@@ -27,6 +29,10 @@ class MainScreen extends StatelessWidget {
       case TabEnum.home:
         if (BlocProvider.of<PatientPlansBloc>(context).state.plans.isEmpty) {
           BlocProvider.of<PatientPlansBloc>(context).add(FetchPatientPlansEvent(user));
+        }
+
+        if (BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan == null) {
+          BlocProvider.of<PatientCurrentPlanBloc>(context).add(FetchPatientCurrentPlanEvent(user));
         }
 
         return const HomeScreen();
