@@ -15,14 +15,10 @@ class Tile extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      decoration: const BoxDecoration(
-        color: Colors.black,
-        border: Border(
-          top: BorderSide(
-            color: Colors.white,
-            width: 1.0,
-          ),
-        ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xff275492), width: 2),
       ),
     );
   }
