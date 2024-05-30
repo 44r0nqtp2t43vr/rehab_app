@@ -25,7 +25,8 @@ class TextureTherapy extends StatefulWidget {
   State<TextureTherapy> createState() => _TextureTherapyState();
 }
 
-class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProviderStateMixin {
+class _TextureTherapyState extends State<TextureTherapy>
+    with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
   final ImageTextureProvider imageTextureProvider = ImageTextureProvider();
   late AnimationController animationController;
@@ -65,7 +66,9 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
 
   void _toggleAniDirection() {
     setState(() {
-      animationDirection = animationDirection == AnimationDirection.vertical ? AnimationDirection.horizontal : AnimationDirection.vertical;
+      animationDirection = animationDirection == AnimationDirection.vertical
+          ? AnimationDirection.horizontal
+          : AnimationDirection.vertical;
     });
   }
 
@@ -95,13 +98,15 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
   void dispose() {
     _pageController.dispose();
     animationController.dispose();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>()
+        .add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    ImageTexture currentTexture = imageTextureProvider.imageTextures[currentIndex];
+    ImageTexture currentTexture =
+        imageTextureProvider.imageTextures[currentIndex];
     int desiredSize = MediaQuery.of(context).size.width.toInt();
 
     return BlocProvider(
@@ -130,7 +135,8 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
               child: Column(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(top: 24, bottom: 12, right: 24),
+                    padding:
+                        const EdgeInsets.only(top: 24, bottom: 12, right: 24),
                     child: Row(
                       children: [
                         IconButton(
@@ -176,7 +182,10 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
                       setState(() {
                         currentIndex = index;
                       });
-                      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: imageTextureProvider.imageTextures[index].texture, preload: false)));
+                      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
+                          src:
+                              imageTextureProvider.imageTextures[index].texture,
+                          preload: false)));
                     },
                   ),
                   const Spacer(flex: 1),
@@ -186,7 +195,8 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
                       setState(() {
                         animationDuration = value.toInt();
                         animationController.stop();
-                        animationController.duration = Duration(seconds: animationDuration);
+                        animationController.duration =
+                            Duration(seconds: animationDuration);
                         animationController.forward();
                       });
                     },
@@ -198,11 +208,16 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
                       IconButton(
                         padding: const EdgeInsets.all(0),
                         icon: Icon(
-                          isPlaying ? CupertinoIcons.pause_circle_fill : CupertinoIcons.play_circle_fill,
+                          isPlaying
+                              ? CupertinoIcons.pause_circle_fill
+                              : CupertinoIcons.play_circle_fill,
                           size: 40,
-                          color: isPlaying ? const Color(0xff01FF99) : Colors.white,
+                          color: isPlaying
+                              ? const Color(0xff01FF99)
+                              : Colors.white,
                         ),
-                        onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                        onPressed: () =>
+                            isPlaying ? _pauseAnimation() : _resumeAnimation(),
                       ),
                       IconButton(
                         padding: const EdgeInsets.all(0),
@@ -242,7 +257,8 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
                               fontSize: 16,
                             ),
                           ),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

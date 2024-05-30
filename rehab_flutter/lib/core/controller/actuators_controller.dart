@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,8 @@ class ActuatorsController extends GetxController {
   late String lastSentPattern;
   late int imagesHeight;
   late int imagesWidth;
+  final int _throttleDuration = 5;
+  Timer? _throttleTimer;
 
   List<img.Image> imagesToScan = [
     img.Image(height: 0, width: 0),
@@ -43,7 +46,12 @@ class ActuatorsController extends GetxController {
     4: [],
   };
 
-  Future<void> initializeActuators({required ActuatorsOrientation orientation, required ActuatorsNumOfFingers numOfFingers, required String imgSrc, required int imagesHeight, required int imagesWidth}) async {
+  Future<void> initializeActuators(
+      {required ActuatorsOrientation orientation,
+      required ActuatorsNumOfFingers numOfFingers,
+      required String imgSrc,
+      required int imagesHeight,
+      required int imagesWidth}) async {
     this.orientation = orientation;
     this.numOfFingers = numOfFingers;
     this.imagesHeight = imagesHeight;
@@ -107,14 +115,18 @@ class ActuatorsController extends GetxController {
     });
   }
 
-  Future<void> loadImage({required String src, required bool preload, int rotateFactor = 0}) async {
+  Future<void> loadImage(
+      {required String src,
+      required bool preload,
+      int rotateFactor = 0}) async {
     try {
       ByteData data = await rootBundle.load(src);
       Uint8List bytes = data.buffer.asUint8List();
       img.Image image = img.decodeImage(bytes)!;
 
       if (imagesHeight > 0 && imagesWidth > 0) {
-        image = img.copyResize(image, width: imagesWidth, height: imagesHeight, maintainAspect: false);
+        image = img.copyResize(image,
+            width: imagesWidth, height: imagesHeight, maintainAspect: false);
       } else {
         imagesWidth = image.width;
         imagesHeight = image.height;
@@ -151,15 +163,22 @@ class ActuatorsController extends GetxController {
 
         img.Pixel pixel = imagesToScan[0].getPixelSafe(imageX2, imageY);
         bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-        colorsMap[0]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+        colorsMap[0]!.add(!isWhite
+            ? Colors.green
+            : Color.fromRGBO(
+                pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
         positionsMap[0]!.add(Offset(gridX2, gridY));
 
         if (numOfFingers == ActuatorsNumOfFingers.five) {
-          final double gridX3 = adjustedX + spaceBetweenFingers + (j * actuatorSpacing);
-          final double gridX4 = adjustedX + (spaceBetweenFingers * 2) + (j * actuatorSpacing);
-          final double gridX0 = adjustedX - (spaceBetweenFingers * 2) + (j * actuatorSpacing);
-          final double gridX1 = adjustedX - spaceBetweenFingers + (j * actuatorSpacing);
+          final double gridX3 =
+              adjustedX + spaceBetweenFingers + (j * actuatorSpacing);
+          final double gridX4 =
+              adjustedX + (spaceBetweenFingers * 2) + (j * actuatorSpacing);
+          final double gridX0 =
+              adjustedX - (spaceBetweenFingers * 2) + (j * actuatorSpacing);
+          final double gridX1 =
+              adjustedX - spaceBetweenFingers + (j * actuatorSpacing);
 
           final int imageX0 = max(0, min(imagesWidth, gridX0.round()));
           final int imageX1 = max(0, min(imagesWidth, gridX1.round()));
@@ -168,19 +187,31 @@ class ActuatorsController extends GetxController {
 
           pixel = imagesToScan[0].getPixelSafe(imageX0, imageY);
           bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[1]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[1]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           pixel = imagesToScan[0].getPixelSafe(imageX1, imageY);
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[2]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[2]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           pixel = imagesToScan[0].getPixelSafe(imageX3, imageY);
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[3]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[3]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           pixel = imagesToScan[0].getPixelSafe(imageX4, imageY);
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[4]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[4]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           positionsMap[1]!.add(Offset(gridX0, gridY));
           positionsMap[2]!.add(Offset(gridX1, gridY));
@@ -200,16 +231,19 @@ class ActuatorsController extends GetxController {
     if (isLeft) {
       if (orientation == ActuatorsOrientation.landscape) {
         for (int i = 0; i < actuatorsPerFinger; i += 4) {
-          if (i < actuatorsPerFinger && colorsMap[fingerNum]![i] == Colors.green) {
+          if (i < actuatorsPerFinger &&
+              colorsMap[fingerNum]![i] == Colors.green) {
             sum += values[i];
           }
-          if (i + 1 < actuatorsPerFinger && colorsMap[fingerNum]![i + 1] == Colors.green) {
+          if (i + 1 < actuatorsPerFinger &&
+              colorsMap[fingerNum]![i + 1] == Colors.green) {
             sum += values[i + 1];
           }
         }
       } else if (orientation == ActuatorsOrientation.portrait) {
         for (int i = 0; i < 8; i++) {
-          if (i < actuatorsPerFinger && colorsMap[fingerNum]![i] == Colors.green) {
+          if (i < actuatorsPerFinger &&
+              colorsMap[fingerNum]![i] == Colors.green) {
             sum += values[i];
           }
         }
@@ -217,16 +251,19 @@ class ActuatorsController extends GetxController {
     } else {
       if (orientation == ActuatorsOrientation.landscape) {
         for (int i = 2; i < actuatorsPerFinger; i += 4) {
-          if (i < actuatorsPerFinger && colorsMap[fingerNum]![i] == Colors.green) {
+          if (i < actuatorsPerFinger &&
+              colorsMap[fingerNum]![i] == Colors.green) {
             sum += values[i];
           }
-          if (i + 1 < actuatorsPerFinger && colorsMap[fingerNum]![i + 1] == Colors.green) {
+          if (i + 1 < actuatorsPerFinger &&
+              colorsMap[fingerNum]![i + 1] == Colors.green) {
             sum += values[i + 1];
           }
         }
       } else if (orientation == ActuatorsOrientation.portrait) {
         for (int i = 8; i < 16; i++) {
-          if (i < actuatorsPerFinger && colorsMap[fingerNum]![i] == Colors.green) {
+          if (i < actuatorsPerFinger &&
+              colorsMap[fingerNum]![i] == Colors.green) {
             sum += values[i];
           }
         }
@@ -237,9 +274,15 @@ class ActuatorsController extends GetxController {
   }
 
   void sendPattern() {
+    if (_throttleTimer?.isActive ?? false) {
+      return;
+    }
+
     String data = "<";
     if (numOfFingers == ActuatorsNumOfFingers.one) {
-      data += "${actuatorSumStr(fingerNum: 0, isLeft: true)}${actuatorSumStr(fingerNum: 0, isLeft: false)}" * 5;
+      data +=
+          "${actuatorSumStr(fingerNum: 0, isLeft: true)}${actuatorSumStr(fingerNum: 0, isLeft: false)}" *
+              5;
       data += ">";
       if (data != lastSentPattern) {
         sl<BluetoothBloc>().add(WriteDataEvent(data));
@@ -249,11 +292,14 @@ class ActuatorsController extends GetxController {
       final List<String> dataList = ["", "", "", "", ""];
       for (int i = 0; i < 5; i++) {
         if (i == 0) {
-          dataList[i + 2] = "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
+          dataList[i + 2] =
+              "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
         } else if (i == 1 || i == 2) {
-          dataList[i - 1] = "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
+          dataList[i - 1] =
+              "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
         } else {
-          dataList[i] = "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
+          dataList[i] =
+              "${actuatorSumStr(fingerNum: i, isLeft: true)}${actuatorSumStr(fingerNum: i, isLeft: false)}";
         }
       }
       final String data = "<${dataList.join()}>";
@@ -262,9 +308,14 @@ class ActuatorsController extends GetxController {
         lastSentPattern = data;
       }
     }
+
+    _throttleTimer = Timer(Duration(milliseconds: _throttleDuration), () {});
   }
 
-  void updateActuatorsScrollingAnimation({required double animationValue, required double animationHorizValue, required bool isLastVertStateDownward}) {
+  void updateActuatorsScrollingAnimation(
+      {required double animationValue,
+      required double animationHorizValue,
+      required bool isLastVertStateDownward}) {
     resetActuators();
 
     if (orientation == ActuatorsOrientation.landscape) {
@@ -273,14 +324,20 @@ class ActuatorsController extends GetxController {
 
       for (int i = -1; i <= 2; i++) {
         for (int j = -1; j <= 2; j++) {
-          final double gridX0 = adjustedX - (spaceBetweenFingers * 2) + (j * actuatorSpacing);
-          final double gridX1 = adjustedX - spaceBetweenFingers + (j * actuatorSpacing);
+          final double gridX0 =
+              adjustedX - (spaceBetweenFingers * 2) + (j * actuatorSpacing);
+          final double gridX1 =
+              adjustedX - spaceBetweenFingers + (j * actuatorSpacing);
           final double gridX2 = adjustedX + (j * actuatorSpacing);
-          final double gridX3 = adjustedX + spaceBetweenFingers + (j * actuatorSpacing);
-          final double gridX4 = adjustedX + (spaceBetweenFingers * 2) + (j * actuatorSpacing);
+          final double gridX3 =
+              adjustedX + spaceBetweenFingers + (j * actuatorSpacing);
+          final double gridX4 =
+              adjustedX + (spaceBetweenFingers * 2) + (j * actuatorSpacing);
           final double gridY = adjustedY + (i * actuatorSpacing);
 
-          final double gridYtoImage = (imagesHeight - 1 - 40 + (i * actuatorSpacing)) - ((imagesHeight - 1) * animationValue);
+          final double gridYtoImage =
+              (imagesHeight - 1 - 40 + (i * actuatorSpacing)) -
+                  ((imagesHeight - 1) * animationValue);
 
           final int imageX0 = max(0, min(imagesWidth - 1, gridX0.round()));
           final int imageX1 = max(0, min(imagesWidth - 1, gridX1.round()));
@@ -299,25 +356,60 @@ class ActuatorsController extends GetxController {
             currentPhoto = imagesToScan[2];
           }
 
-          img.Pixel pixel = currentPhoto.getPixelSafe(imageX0, gridYtoImage >= 0 ? gridYtoImage.toInt() : imagesHeight + gridYtoImage.toInt());
+          img.Pixel pixel = currentPhoto.getPixelSafe(
+              imageX0,
+              gridYtoImage >= 0
+                  ? gridYtoImage.toInt()
+                  : imagesHeight + gridYtoImage.toInt());
           bool isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[1]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[1]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-          pixel = currentPhoto.getPixelSafe(imageX1, gridYtoImage >= 0 ? gridYtoImage.toInt() : imagesHeight + gridYtoImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX1,
+              gridYtoImage >= 0
+                  ? gridYtoImage.toInt()
+                  : imagesHeight + gridYtoImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[2]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[2]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-          pixel = currentPhoto.getPixelSafe(imageX2, gridYtoImage >= 0 ? gridYtoImage.toInt() : imagesHeight + gridYtoImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX2,
+              gridYtoImage >= 0
+                  ? gridYtoImage.toInt()
+                  : imagesHeight + gridYtoImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[0]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[0]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-          pixel = currentPhoto.getPixelSafe(imageX3, gridYtoImage >= 0 ? gridYtoImage.toInt() : imagesHeight + gridYtoImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX3,
+              gridYtoImage >= 0
+                  ? gridYtoImage.toInt()
+                  : imagesHeight + gridYtoImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[3]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[3]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
-          pixel = currentPhoto.getPixelSafe(imageX4, gridYtoImage >= 0 ? gridYtoImage.toInt() : imagesHeight + gridYtoImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX4,
+              gridYtoImage >= 0
+                  ? gridYtoImage.toInt()
+                  : imagesHeight + gridYtoImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[4]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[4]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           positionsMap[1]!.add(Offset(gridX0, gridY));
           positionsMap[2]!.add(Offset(gridX1, gridY));
@@ -332,7 +424,9 @@ class ActuatorsController extends GetxController {
 
       for (int i = -1; i <= 2; i++) {
         for (int j = -1; j <= 2; j++) {
-          final double gridX = adjustedX + (j * actuatorSpacing) + ((imagesWidth - 80) * animationHorizValue);
+          final double gridX = adjustedX +
+              (j * actuatorSpacing) +
+              ((imagesWidth - 80) * animationHorizValue);
           final double gridY0 = adjustedY - 100 + (i * actuatorSpacing);
           final double gridY1 = adjustedY - 50 + (i * actuatorSpacing);
           final double gridY2 = adjustedY + (i * actuatorSpacing);
@@ -340,11 +434,16 @@ class ActuatorsController extends GetxController {
           final double gridY4 = adjustedY + 100 + (i * actuatorSpacing);
 
           // final double gridYtoImage = (photo.height - 1 - 40 + (i * spacing)) - ((photo.height - 1) * animationController.value);
-          final double gridY0toImage = gridY0 - imagesHeight - ((imagesHeight - 1) * animationValue);
-          final double gridY1toImage = gridY1 - imagesHeight - ((imagesHeight - 1) * animationValue);
-          final double gridY2toImage = gridY2 - imagesHeight - ((imagesHeight - 1) * animationValue);
-          final double gridY3toImage = gridY3 - imagesHeight - ((imagesHeight - 1) * animationValue);
-          final double gridY4toImage = gridY4 - imagesHeight - ((imagesHeight - 1) * animationValue);
+          final double gridY0toImage =
+              gridY0 - imagesHeight - ((imagesHeight - 1) * animationValue);
+          final double gridY1toImage =
+              gridY1 - imagesHeight - ((imagesHeight - 1) * animationValue);
+          final double gridY2toImage =
+              gridY2 - imagesHeight - ((imagesHeight - 1) * animationValue);
+          final double gridY3toImage =
+              gridY3 - imagesHeight - ((imagesHeight - 1) * animationValue);
+          final double gridY4toImage =
+              gridY4 - imagesHeight - ((imagesHeight - 1) * animationValue);
 
           final int imageX = max(0, min(imagesWidth - 1, gridX.round()));
 
@@ -362,9 +461,16 @@ class ActuatorsController extends GetxController {
           } else if (gridY0toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = imagesToScan[2];
           }
-          pixel = currentPhoto.getPixelSafe(imageX, gridY0toImage >= 0 ? gridY0toImage.toInt() : imagesHeight + gridY0toImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX,
+              gridY0toImage >= 0
+                  ? gridY0toImage.toInt()
+                  : imagesHeight + gridY0toImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[1]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[1]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = imagesToScan[0];
           if (gridY1toImage < 0 && isLastVertStateDownward == true) {
@@ -372,9 +478,16 @@ class ActuatorsController extends GetxController {
           } else if (gridY1toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = imagesToScan[2];
           }
-          pixel = currentPhoto.getPixelSafe(imageX, gridY1toImage >= 0 ? gridY1toImage.toInt() : imagesHeight + gridY1toImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX,
+              gridY1toImage >= 0
+                  ? gridY1toImage.toInt()
+                  : imagesHeight + gridY1toImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[2]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[2]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = imagesToScan[0];
           if (gridY2toImage < 0 && isLastVertStateDownward == true) {
@@ -382,9 +495,16 @@ class ActuatorsController extends GetxController {
           } else if (gridY2toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = imagesToScan[2];
           }
-          pixel = currentPhoto.getPixelSafe(imageX, gridY2toImage >= 0 ? gridY2toImage.toInt() : imagesHeight + gridY2toImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX,
+              gridY2toImage >= 0
+                  ? gridY2toImage.toInt()
+                  : imagesHeight + gridY2toImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[0]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[0]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = imagesToScan[0];
           if (gridY3toImage < 0 && isLastVertStateDownward == true) {
@@ -392,9 +512,16 @@ class ActuatorsController extends GetxController {
           } else if (gridY3toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = imagesToScan[2];
           }
-          pixel = currentPhoto.getPixelSafe(imageX, gridY3toImage >= 0 ? gridY3toImage.toInt() : imagesHeight + gridY3toImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX,
+              gridY3toImage >= 0
+                  ? gridY3toImage.toInt()
+                  : imagesHeight + gridY3toImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[3]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[3]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           currentPhoto = imagesToScan[0];
           if (gridY4toImage < 0 && isLastVertStateDownward == true) {
@@ -402,9 +529,16 @@ class ActuatorsController extends GetxController {
           } else if (gridY4toImage < 0 && isLastVertStateDownward == false) {
             currentPhoto = imagesToScan[2];
           }
-          pixel = currentPhoto.getPixelSafe(imageX, gridY4toImage >= 0 ? gridY4toImage.toInt() : imagesHeight + gridY4toImage.toInt());
+          pixel = currentPhoto.getPixelSafe(
+              imageX,
+              gridY4toImage >= 0
+                  ? gridY4toImage.toInt()
+                  : imagesHeight + gridY4toImage.toInt());
           isWhite = pixel.r >= 235 && pixel.g >= 235 && pixel.b >= 235;
-          colorsMap[4]!.add(!isWhite ? Colors.green : Color.fromRGBO(pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
+          colorsMap[4]!.add(!isWhite
+              ? Colors.green
+              : Color.fromRGBO(
+                  pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt(), 1.0));
 
           // Adjust position back to display space
           positionsMap[1]!.add(Offset(gridX, gridY0));
@@ -426,15 +560,18 @@ class ActuatorsController extends GetxController {
 
     if (newPhoto0.height != 0 && newPhoto0.width != 0) {
       newPhoto0 = img.copyRotate(newPhoto0, angle: 90);
-      newPhoto0 = img.copyResize(newPhoto0, width: imagesWidth, height: imagesHeight, maintainAspect: false);
+      newPhoto0 = img.copyResize(newPhoto0,
+          width: imagesWidth, height: imagesHeight, maintainAspect: false);
     }
     if (newPhoto1.height != 0 && newPhoto1.width != 0) {
       newPhoto1 = img.copyRotate(newPhoto1, angle: 90);
-      newPhoto1 = img.copyResize(newPhoto1, width: imagesWidth, height: imagesHeight, maintainAspect: false);
+      newPhoto1 = img.copyResize(newPhoto1,
+          width: imagesWidth, height: imagesHeight, maintainAspect: false);
     }
     if (newPhoto2.height != 0 && newPhoto2.width != 0) {
       newPhoto2 = img.copyRotate(newPhoto2, angle: 90);
-      newPhoto2 = img.copyResize(newPhoto2, width: imagesWidth, height: imagesHeight, maintainAspect: false);
+      newPhoto2 = img.copyResize(newPhoto2,
+          width: imagesWidth, height: imagesHeight, maintainAspect: false);
     }
 
     imagesToScan = [newPhoto1, newPhoto2, newPhoto0];

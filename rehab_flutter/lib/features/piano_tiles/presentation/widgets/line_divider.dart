@@ -9,8 +9,8 @@ class LineDivider extends StatelessWidget {
 
     return Container(
       height: height,
-      width: 1,
-      color: Colors.white,
+      width: 2,
+      color: const Color(0xff275492),
     );
   }
 }

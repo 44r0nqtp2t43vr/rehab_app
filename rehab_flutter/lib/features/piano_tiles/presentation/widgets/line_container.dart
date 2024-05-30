@@ -9,7 +9,14 @@ class LineContainer extends AnimatedWidget {
   final int currentNoteIndex;
   final List<Note> currentNotes;
 
-  const LineContainer({required Key key, required this.tileHeight, required this.tileWidth, required this.currentNotes, required this.currentNoteIndex, required Animation<double> animation}) : super(key: key, listenable: animation);
+  const LineContainer(
+      {required Key key,
+      required this.tileHeight,
+      required this.tileWidth,
+      required this.currentNotes,
+      required this.currentNoteIndex,
+      required Animation<double> animation})
+      : super(key: key, listenable: animation);
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +24,7 @@ class LineContainer extends AnimatedWidget {
 
     return Container(
       decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/background.jpg'),
-          fit: BoxFit.cover,
-        ),
+        color: Color(0xff223e65),
       ),
       child: Row(
         children: <Widget>[
@@ -38,7 +42,8 @@ class LineContainer extends AnimatedWidget {
     );
   }
 
-  Widget _drawLine(int lineNumber, double tileHeight, double tileWidth, double animationValue) {
+  Widget _drawLine(int lineNumber, double tileHeight, double tileWidth,
+      double animationValue) {
     return Expanded(
       child: Line(
         tileHeight: tileHeight,
