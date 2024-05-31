@@ -95,8 +95,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       final updatedSession = await _submitTestUseCase(params: event.resultsData);
       final updatedUser = event.resultsData!.user;
 
-      updatedUser.setCurrentSession(updatedSession);
-      emit(UserDone(currentUser: updatedUser));
+      // updatedUser.setCurrentSession(updatedSession);
+      emit(UserDone(currentUser: updatedUser, currentSession: updatedSession));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }
@@ -108,8 +108,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       final updatedSession = await _submitStandardUseCase(params: event.standardData);
       final updatedUser = event.standardData!.user;
 
-      updatedUser.setCurrentSession(updatedSession);
-      emit(UserDone(currentUser: updatedUser));
+      // updatedUser.setCurrentSession(updatedSession);
+      emit(UserDone(currentUser: updatedUser, currentSession: updatedSession));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }
@@ -118,11 +118,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onSubmitPassive(SubmitPassiveEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedSession = await _submitPassiveUseCase(params: event.user!);
-      final updatedUser = event.user!;
+      final updatedSession = await _submitPassiveUseCase(params: event.passiveData!);
+      final updatedUser = event.passiveData!.user;
 
-      updatedUser.setCurrentSession(updatedSession);
-      emit(UserDone(currentUser: updatedUser));
+      // updatedUser.setCurrentSession(updatedSession);
+      emit(UserDone(currentUser: updatedUser, currentSession: updatedSession));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }
@@ -131,11 +131,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void onResetSession(ResetSessionEvent event, Emitter<UserState> emit) async {
     emit(const UserLoading());
     try {
-      final updatedSession = await _resetSessionUseCase(params: event.user!);
-      final updatedUser = event.user!;
+      final updatedSession = await _resetSessionUseCase(params: event.passiveData!);
+      final updatedUser = event.passiveData!.user;
 
-      updatedUser.setCurrentSession(updatedSession);
-      emit(UserDone(currentUser: updatedUser));
+      // updatedUser.setCurrentSession(updatedSession);
+      emit(UserDone(currentUser: updatedUser, currentSession: updatedSession));
     } catch (e) {
       emit(UserNone(errorMessage: e.toString()));
     }

@@ -8,9 +8,11 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/features/passive_therapy/data/pattern_bools_provider.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/helper_functions/bluetooth_functions.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_data.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_therapy_data.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/pattern_bools.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/widgets/pattern_grid.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 
 class PassiveTherapyScreen extends StatefulWidget {
   final PassiveTherapyData data;
@@ -171,7 +173,9 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with Ticker
   }
 
   void _onEnd() {
-    BlocProvider.of<UserBloc>(context).add(SubmitPassiveEvent(widget.data.user));
+    final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
+
+    BlocProvider.of<UserBloc>(context).add(SubmitPassiveEvent(PassiveData(user: widget.data.user, currentSession: currentSession)));
   }
 
   void _resetPatternChangeTimer() {

@@ -14,6 +14,7 @@ import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
@@ -48,8 +49,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-      getLoginLogs() async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs() async {
     final snapshot = await db.collection('loginAttempts').get();
     return snapshot.docs;
   }
@@ -58,8 +58,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Future<dynamic> getUser(String userId, {bool isLogin = false}) async {
     // Optionally fetch and do something with the user's document from Firestore
     // For example, retrieving the user's profile information
-    DocumentSnapshot<Map<String, dynamic>> userDoc =
-        await db.collection('users').doc(userId).get();
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
 
     if (!userDoc.exists) {
       throw Exception('User document does not exist in Firestore.');
@@ -105,63 +104,41 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
       return currentTherapist;
     } else {
-      // Query Plans for the User
-      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
-          .collection('users')
-          .doc(userDoc.id)
-          .collection('plans')
-          .get();
-
       List<Plan> plansWithSessions = [];
+      if (!isLogin) {
+        // Query Plans for the User
+        QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
 
-      for (var planDoc in plansSnapshot.docs) {
-        // For each Plan, Query Sessions
-        QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db
-            .collection('users')
-            .doc(userDoc.id)
-            .collection('plans')
-            .doc(planDoc.id)
-            .collection('sessions')
-            .get();
+        for (var planDoc in plansSnapshot.docs) {
+          // For each Plan, Query Sessions
+          QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').get();
 
-        List<Session> sessions = [];
-        for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
-          // For each session, query testingitems
-          QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db
-              .collection('users')
-              .doc(userDoc.id)
-              .collection('plans')
-              .doc(planDoc.id)
-              .collection('sessions')
-              .doc(sessionSnapshotDoc.id)
-              .collection('testingitems')
-              .get();
-          List<TestingItem> testingitems = testingitemsSnapshot.docs
-              .map((doc) => TestingItem.fromMap(doc.data()))
-              .toList();
-          Session session =
-              Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+          List<Session> sessions = [];
+          for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+            // For each session, query testingitems
+            QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+            List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+            Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
 
-          sessions.add(session);
+            sessions.add(session);
+          }
+          // List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
+
+          // Combine Plan with its Sessions
+          Plan planWithSessions = Plan(
+            planId: planDoc.data()['planId'],
+            planName: planDoc.data()['planName'],
+            startDate: planDoc.data()['startDate'].toDate() as DateTime,
+            endDate: planDoc.data()['endDate'].toDate() as DateTime,
+            sessions: sessions,
+          );
+
+          plansWithSessions.add(planWithSessions);
         }
-        // List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
-
-        // Combine Plan with its Sessions
-        Plan planWithSessions = Plan(
-          planId: planDoc.data()['planId'],
-          planName: planDoc.data()['planName'],
-          startDate: planDoc.data()['startDate'].toDate() as DateTime,
-          endDate: planDoc.data()['endDate'].toDate() as DateTime,
-          sessions: sessions,
-        );
-
-        plansWithSessions.add(planWithSessions);
       }
 
       // Fetch the download URL of the profile image from Firebase Storage
       String? imageURL = await _getUserImageURL(userId);
-
-      print('AAAAAAAA: $imageURL');
 
       final currentUser = AppUser(
         userId: userDoc.id,
@@ -212,12 +189,10 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       email: data.email,
       password: data.password,
     );
-    String userID =
-        FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+    String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
 
     // Normalize birthDate to just the date part (year, month, day) in UTC
-    DateTime birthDateJustDate = DateTime.utc(
-        data.birthDate.year, data.birthDate.month, data.birthDate.day);
+    DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
 
     await db.collection('users').doc(userID).set({
       'userID': userID,
@@ -228,8 +203,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'phoneNumber': data.phoneNumber,
       'city': data.city,
       'birthDate': birthDateJustDate, // Use the normalized DateTime object
-      'registerDate': FieldValue
-          .serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
+      'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
       'conditions': data.conditions,
       'roles': ["patient"],
     });
@@ -241,12 +215,10 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       email: data.email,
       password: data.password,
     );
-    String userID =
-        FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
+    String userID = FirebaseAuth.instance.currentUser!.uid; // Get the current user's ID
 
     // Normalize birthDate to just the date part (year, month, day) in UTC
-    DateTime birthDateJustDate = DateTime.utc(
-        data.birthDate.year, data.birthDate.month, data.birthDate.day);
+    DateTime birthDateJustDate = DateTime.utc(data.birthDate.year, data.birthDate.month, data.birthDate.day);
 
     await db.collection('users').doc(userID).set({
       'userID': userID,
@@ -258,8 +230,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'city': data.city,
       'licenseNumber': data.licenseNumber,
       'birthDate': birthDateJustDate, // Use the normalized DateTime object
-      'registerDate': FieldValue
-          .serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
+      'registerDate': FieldValue.serverTimestamp(), // Use FieldValue.serverTimestamp() to store the current date and time
       'roles': ["therapist"],
       'patients': [],
     });
@@ -269,101 +240,47 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Future<void> updateCurrentSession(String userId, data) async {
     final DateTime today = DateTime.now();
     final DateTime startOfDay = DateTime(today.year, today.month, today.day);
-    final DateTime endOfDay =
-        DateTime(today.year, today.month, today.day, 23, 59, 59);
+    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
 
     // Identify the active plan
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans')
-        .where('endDate', isGreaterThanOrEqualTo: endOfDay)
-        .limit(1)
-        .get();
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: endOfDay).limit(1).get();
 
     final activePlanId = querySnapshot.docs.first.id;
 
     // Fetch sessions for the current date within the active plan
-    final sessionSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans')
-        .doc(activePlanId)
-        .collection('sessions')
-        .where('date', isGreaterThanOrEqualTo: startOfDay)
-        .where('date', isLessThanOrEqualTo: endOfDay)
-        .get();
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
 
     // Assuming we update the first session of the day
     final sessionDoc = sessionSnapshot.docs.first;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans')
-        .doc(activePlanId)
-        .collection('sessions')
-        .doc(sessionDoc.id)
-        .update(data);
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update(data);
   }
 
   @override
-  Future<void> updateCurrentSessionTesting(
-      String userId, List<TestingItem> items, dynamic data) async {
+  Future<void> updateCurrentSessionTesting(String userId, List<TestingItem> items, dynamic data) async {
     final DateTime today = DateTime.now();
     final DateTime startOfDay = DateTime(today.year, today.month, today.day);
-    final DateTime endOfDay =
-        DateTime(today.year, today.month, today.day, 23, 59, 59);
+    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
 
     // Identify the active plan
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans')
-        .where('endDate', isGreaterThanOrEqualTo: endOfDay)
-        .limit(1)
-        .get();
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: endOfDay).limit(1).get();
 
     final activePlanId = querySnapshot.docs.first.id;
 
     // Fetch sessions for the current date within the active plan
-    final sessionSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans')
-        .doc(activePlanId)
-        .collection('sessions')
-        .where('date', isGreaterThanOrEqualTo: startOfDay)
-        .where('date', isLessThanOrEqualTo: endOfDay)
-        .get();
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
 
     // Assuming we update the first session of the day
     final sessionDoc = sessionSnapshot.docs.first;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans')
-        .doc(activePlanId)
-        .collection('sessions')
-        .doc(sessionDoc.id)
-        .update(data);
+    await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).update(data);
 
     for (var item in items) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .collection('plans')
-          .doc(activePlanId)
-          .collection('sessions')
-          .doc(sessionDoc.id)
-          .collection('testingitems')
-          .add(item.toMap());
+      await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id).collection('testingitems').add(item.toMap());
     }
   }
 
   @override
   Future<dynamic> loginUser(LoginData data) async {
-    final UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: data.email,
       password: data.password,
     );
@@ -391,10 +308,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     final DateTime startDate = DateTime.now();
     final DateTime endDate = startDate.add(Duration(days: data.planSelected));
 
-    final plansCollection = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('plans');
+    final plansCollection = FirebaseFirestore.instance.collection('users').doc(userId).collection('plans');
     final int planNumber = (await plansCollection.get()).docs.length + 1;
     final String planDocumentName = 'plan$planNumber';
 
@@ -441,12 +355,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }).then((_) async {
       // Create sessions in Firestore under the plan document
       for (int i = 0; i < plan.sessions.length; i++) {
-        await plansCollection
-            .doc(planDocumentName)
-            .collection('sessions')
-            .doc(plan.sessions[i].sessionId)
-            .set(plan.sessions[i]
-                .toMap()); // Assuming Session class has a toMap method for serialization
+        await plansCollection.doc(planDocumentName).collection('sessions').doc(plan.sessions[i].sessionId).set(plan.sessions[i].toMap()); // Assuming Session class has a toMap method for serialization
       }
     });
 
@@ -456,12 +365,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<void> deletePlan(DeletePlanData data) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(data.user.userId)
-        .collection('plans')
-        .doc(data.planIdToDelete)
-        .delete();
+    await FirebaseFirestore.instance.collection('users').doc(data.user.userId).collection('plans').doc(data.planIdToDelete).delete();
   }
 
   @override
@@ -470,8 +374,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       final Random random = Random();
       // Creating a list of all StandardTherapy values and shuffling it
       List<StandardTherapy> allTherapies = StandardTherapy.values;
-      List<StandardTherapy> shuffledTherapies = List.of(allTherapies)
-        ..shuffle(random);
+      List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
       shuffledTherapies.remove(StandardTherapy.musicVisualizer);
 
       String standardOneType = shuffledTherapies[0].name;
@@ -487,7 +390,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         'passiveIntensity': intensityLevel,
       });
 
-      Session currentSession = data.user.getCurrentSession()!;
+      Session currentSession = data.currentSession;
       currentSession.pretestScore = data.score;
       currentSession.standardOneType = standardOneType;
       currentSession.standardOneIntensity = intensityLevel;
@@ -497,10 +400,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       currentSession.items = List.from(data.items);
       return currentSession;
     } else {
-      await updateCurrentSessionTesting(
-          data.user.userId, data.items, {'posttestScore': data.score});
+      await updateCurrentSessionTesting(data.user.userId, data.items, {'posttestScore': data.score});
 
-      Session currentSession = data.user.getCurrentSession()!;
+      Session currentSession = data.currentSession;
       currentSession.posttestScore = data.score;
       return currentSession;
     }
@@ -511,34 +413,28 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<Session> submitStandard(StandardData data) async {
-    final dataToSend = data.isStandardOne
-        ? {'isStandardOneDone': true}
-        : {'isStandardTwoDone': true};
+    final dataToSend = data.isStandardOne ? {'isStandardOneDone': true} : {'isStandardTwoDone': true};
     await updateCurrentSession(data.user.userId, dataToSend);
 
     // final AppUser user = await getUser(data.user.userId);
     // return user;
-    Session currentSession = data.user.getCurrentSession()!;
-    data.isStandardOne
-        ? currentSession.isStandardOneDone = true
-        : currentSession.isStandardTwoDone = true;
+    Session currentSession = data.currentSession;
+    data.isStandardOne ? currentSession.isStandardOneDone = true : currentSession.isStandardTwoDone = true;
     return currentSession;
   }
 
   @override
-  Future<Session> submitPassive(AppUser user) async {
-    await updateCurrentSession(user.userId, {'isPassiveDone': true});
+  Future<Session> submitPassive(PassiveData data) async {
+    await updateCurrentSession(data.user.userId, {'isPassiveDone': true});
 
-    // final AppUser user = await getUser(userId);
-    // return user;
-    Session currentSession = user.getCurrentSession()!;
+    Session currentSession = data.currentSession;
     currentSession.isPassiveDone = true;
     return currentSession;
   }
 
   @override
-  Future<Session> resetSession(AppUser user) async {
-    await updateCurrentSession(user.userId, {
+  Future<Session> resetSession(PassiveData data) async {
+    await updateCurrentSession(data.user.userId, {
       'pretestScore': null,
       'posttestScore': null,
       'isStandardOneDone': false,
@@ -546,7 +442,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'isPassiveDone': false,
     });
 
-    Session currentSession = user.getCurrentSession()!;
+    Session currentSession = data.currentSession;
     currentSession.pretestScore = null;
     currentSession.posttestScore = null;
     currentSession.isStandardOneDone = false;
@@ -567,10 +463,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       if (key == 'conditions') {
         List<String> oldConditions = oldFields[key];
         List<String> newConditions = newFields[key];
-        bool areEqual = oldConditions.length == newConditions.length &&
-            List.generate(oldConditions.length,
-                    (index) => oldConditions[index] == newConditions[index])
-                .every((element) => element);
+        bool areEqual = oldConditions.length == newConditions.length && List.generate(oldConditions.length, (index) => oldConditions[index] == newConditions[index]).every((element) => element);
         if (!areEqual) {
           fieldsToUpdate[key] = value;
         }
@@ -588,26 +481,16 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         await userImageRef.putFile(data.image!);
       }
       if (fieldsToUpdate.isNotEmpty) {
-        await db
-            .collection('users')
-            .doc(data.user.userId)
-            .update(fieldsToUpdate);
+        await db.collection('users').doc(data.user.userId).update(fieldsToUpdate);
       }
-      final AppUser user = await getUser(data.user.userId);
+      final AppUser user = await getUser(data.user.userId, isLogin: true);
       return user;
     }
   }
 
   @override
   Future<AppUser> editUserSession(EditSessionData data) async {
-    await db
-        .collection('users')
-        .doc(data.userId)
-        .collection('plans')
-        .doc(data.planId)
-        .collection('sessions')
-        .doc(data.sessionId)
-        .update({
+    await db.collection('users').doc(data.userId).collection('plans').doc(data.planId).collection('sessions').doc(data.sessionId).update({
       'standardOneType': data.standardOneType,
       'standardOneIntensity': data.standardOneIntensity,
       'standardTwoType': data.standardTwoType,
@@ -638,15 +521,11 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     } else {
       if (data.image != null) {
         final storageRef = storage.ref();
-        final userImageRef =
-            storageRef.child("images/${data.user.therapistId}.jpg");
+        final userImageRef = storageRef.child("images/${data.user.therapistId}.jpg");
         await userImageRef.putFile(data.image!);
       }
       if (fieldsToUpdate.isNotEmpty) {
-        await db
-            .collection('users')
-            .doc(data.user.therapistId)
-            .update(fieldsToUpdate);
+        await db.collection('users').doc(data.user.therapistId).update(fieldsToUpdate);
       }
       final Therapist user = await getUser(data.user.therapistId);
       return user;
@@ -671,10 +550,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
     }
 
-    await db
-        .collection('users')
-        .doc(data.therapist.therapistId)
-        .update({'patients': currentPatients});
+    await db.collection('users').doc(data.therapist.therapistId).update({'patients': currentPatients});
 
     // final Therapist user = await getUser(data.therapist.therapistId);
     // return user;
@@ -687,8 +563,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     for (DocumentSnapshot document in documentSnapshots) {
       // Get the data of the document as Map<String, dynamic>
-      final Map<String, dynamic>? data =
-          document.data() as Map<String, dynamic>?;
+      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
 
       // Check if the document contains a user with the given userId
       if (data != null && document.id == userId) {
@@ -705,8 +580,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<List<String>> getTherapistPatientIds(String therpistId) async {
-    DocumentSnapshot<Map<String, dynamic>> therapistDoc =
-        await db.collection('users').doc(therpistId).get();
+    DocumentSnapshot<Map<String, dynamic>> therapistDoc = await db.collection('users').doc(therpistId).get();
     return therapistDoc.data()!['patients'].cast<String>().toList();
   }
 
@@ -719,8 +593,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     for (DocumentSnapshot document in documentSnapshots) {
       // Get the data of the document as Map<String, dynamic>
-      final Map<String, dynamic>? data =
-          document.data() as Map<String, dynamic>?;
+      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
       final List<String> roles = data!['roles'].cast<String>().toList();
 
       if (roles.contains("patient")) {
@@ -740,8 +613,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     for (DocumentSnapshot document in documentSnapshots) {
       // Get the data of the document as Map<String, dynamic>
-      final Map<String, dynamic>? data =
-          document.data() as Map<String, dynamic>?;
+      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
       final List<String> roles = data!['roles'].cast<String>().toList();
 
       if (roles.contains("therapist")) {
@@ -756,5 +628,124 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     final storageRef = storage.ref().child(audioPath);
     final url = await storageRef.getDownloadURL();
     return url;
+  }
+
+  @override
+  Future<List<Plan>> fetchPatientPlans(String patientId) async {
+    List<Plan> plansWithSessions = [];
+
+    // Query Plans for the User
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(patientId).collection('plans').get();
+
+    for (var planDoc in plansSnapshot.docs) {
+      // For each Plan, Query Sessions
+      QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(planDoc.id).collection('sessions').get();
+
+      List<Session> sessions = [];
+      for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+        // For each session, query testingitems
+        // QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(plansSnapshot.docs.first.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+        // List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+        // Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+        Session session = Session.fromMap(sessionSnapshotDoc.data());
+
+        sessions.add(session);
+      }
+      // List<Session> sessions = sessionsSnapshot.docs.map((doc) => Session.fromMap(doc.data())).toList();
+
+      // Combine Plan with its Sessions
+      Plan planWithSessions = Plan(
+        planId: planDoc.data()['planId'],
+        planName: planDoc.data()['planName'],
+        startDate: planDoc.data()['startDate'].toDate() as DateTime,
+        endDate: planDoc.data()['endDate'].toDate() as DateTime,
+        sessions: sessions,
+      );
+
+      plansWithSessions.add(planWithSessions);
+    }
+
+    return plansWithSessions;
+  }
+
+  @override
+  Future<Plan> fetchPatientCurrentPlan(String patientId) async {
+    DateTime dateTimeNow = DateTime.now();
+    final today = DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, 23, 59, 59);
+
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
+        .collection('users')
+        .doc(patientId)
+        .collection('plans')
+        .where('endDate', isGreaterThan: Timestamp.fromDate(today))
+        .orderBy('endDate', descending: false) // Optional: Sorts plans by end date in ascending order
+        .limit(1) // Optional: Limits the query to one result
+        .get();
+
+    if (plansSnapshot.docs.isNotEmpty) {
+      Map<String, dynamic> data = plansSnapshot.docs.first.data();
+      QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(plansSnapshot.docs.first.id).collection('sessions').get();
+
+      List<Session> sessions = [];
+      for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+        // For each session, query testingitems
+        // QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(plansSnapshot.docs.first.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+        // List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+        // Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+        Session session = Session.fromMap(sessionSnapshotDoc.data());
+
+        sessions.add(session);
+      }
+
+      // Combine Plan with its Sessions
+      Plan currentPlan = Plan(
+        planId: data['planId'],
+        planName: data['planName'],
+        startDate: data['startDate'].toDate() as DateTime,
+        endDate: data['endDate'].toDate() as DateTime,
+        sessions: sessions,
+      );
+
+      return currentPlan;
+    } else {
+      return Plan.empty();
+    }
+  }
+
+  @override
+  Future<Session> fetchPatientCurrentSession(String patientId) async {
+    DateTime dateTimeNow = DateTime.now();
+    final today = DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, 23, 59, 59);
+
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
+        .collection('users')
+        .doc(patientId)
+        .collection('plans')
+        .where('endDate', isGreaterThan: Timestamp.fromDate(today))
+        .orderBy('endDate', descending: false) // Optional: Sorts plans by end date in ascending order
+        .limit(1) // Optional: Limits the query to one result
+        .get();
+
+    if (plansSnapshot.docs.isNotEmpty) {
+      DateTime startOfDay = DateTime(today.year, today.month, today.day);
+      DateTime endOfDay = startOfDay.add(const Duration(days: 1));
+
+      QuerySnapshot<Map<String, dynamic>> sessionSnapshot = await db
+          .collection('users')
+          .doc(patientId)
+          .collection('plans')
+          .doc(plansSnapshot.docs.first.id) // Assuming currentPlan has an id
+          .collection('sessions')
+          .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('date', isLessThan: Timestamp.fromDate(endOfDay))
+          .limit(1) // Optional: Limits the query to one result
+          .get();
+
+      Session session = Session.fromMap(sessionSnapshot.docs.first.data());
+
+      return session;
+    } else {
+      return Session.empty();
+    }
   }
 }

@@ -50,6 +50,20 @@ class Plan {
     );
     return currentSession.sessionId.isEmpty ? null : currentSession;
   }
+
+  int getIndexOfCurrentSession() {
+    final DateTime today = DateTime.now();
+    final int indexOfCurrentSession = sessions.indexWhere(
+      (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+    );
+    return indexOfCurrentSession;
+  }
+
+  void setCurrentSession(Session newSession) {
+    final indexOfCurrentSession = getIndexOfCurrentSession();
+
+    sessions[indexOfCurrentSession] = newSession;
+  }
 }
 
 // Plan Provider

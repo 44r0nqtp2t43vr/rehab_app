@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
@@ -6,6 +7,7 @@ import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
@@ -28,8 +30,8 @@ abstract class FirebaseRepository {
   Future<void> deletePlan(DeletePlanData data);
   Future<Session> submitTest(ResultsData data);
   Future<Session> submitStandard(StandardData data);
-  Future<Session> submitPassive(AppUser user);
-  Future<Session> resetSession(AppUser user);
+  Future<Session> submitPassive(PassiveData data);
+  Future<Session> resetSession(PassiveData data);
   Future<dynamic> loginUser(LoginData data);
   Future<void> logoutUser();
   Future<AppUser> editUser(EditUserData data);
@@ -40,4 +42,7 @@ abstract class FirebaseRepository {
   Future<List<String>> getTherapistPatientIds(String therapistId);
   Future<List<String>> getPatientsIds();
   Future<List<String>> getTherapistsIds();
+  Future<List<Plan>> fetchPatientPlans(String patientId);
+  Future<Plan> fetchPatientCurrentPlan(String patientId);
+  Future<Session> fetchPatientCurrentSession(String patientId);
 }

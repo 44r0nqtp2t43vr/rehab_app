@@ -8,6 +8,7 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/image_texture.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
@@ -45,10 +46,12 @@ class _TestingScreenState extends State<TestingScreen> {
 
   void skipTest(BuildContext context) {
     final user = BlocProvider.of<UserBloc>(context).state.currentUser!;
+    final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
 
     BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(
       ResultsData(
         user: user,
+        currentSession: currentSession,
         score: 0,
         isPretest: widget.isPretest,
         items: [],

@@ -11,6 +11,7 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/test_analytics_item.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 class TestingFinish extends StatefulWidget {
@@ -27,7 +28,8 @@ class _TestingFinishState extends State<TestingFinish> {
   late double score;
 
   void _submitTest(AppUser user, double score) {
-    bool isPretest = !user.getCurrentSession()!.getSessionConditions()[0];
+    final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
+    bool isPretest = currentSession.getSessionConditions()[0];
 
     List<TestingItem> items = [];
     for (var i = 0; i < widget.itemList.length; i++) {
@@ -49,6 +51,7 @@ class _TestingFinishState extends State<TestingFinish> {
     BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(
       ResultsData(
         user: user,
+        currentSession: currentSession,
         score: score,
         isPretest: isPretest,
         items: items,

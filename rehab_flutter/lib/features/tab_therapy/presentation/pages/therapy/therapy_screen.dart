@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,6 +11,8 @@ import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/music_therapy/music_therapy.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/specific_genre/specific_genre.dart';
@@ -27,6 +30,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         if (state is UserDone) {
+          final patient = state.currentUser!;
+
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Padding(
@@ -55,7 +60,28 @@ class _TherapyScreenState extends State<TherapyScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ContinueCard(user: state.currentUser!),
+                      BlocBuilder<PatientCurrentSessionBloc, PatientCurrentSessionState>(
+                        builder: (context, state) {
+                          if (state is PatientCurrentSessionLoading) {
+                            return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                          }
+
+                          if (state is PatientCurrentSessionDone) {
+                            return ContinueCard(
+                              user: patient,
+                              session: state.currentSession!,
+                            );
+                          }
+
+                          return Center(
+                            child: Text(
+                              "An error occurred while loading current session",
+                              textAlign: TextAlign.center,
+                              style: darkTextTheme().headlineSmall,
+                            ),
+                          );
+                        },
+                      ),
                       const SizedBox(height: 28),
                       Text(
                         "Free Play",
