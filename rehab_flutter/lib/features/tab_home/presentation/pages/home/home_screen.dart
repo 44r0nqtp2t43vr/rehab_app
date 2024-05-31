@@ -12,6 +12,8 @@ import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/pa
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_state.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/daily_progress_card.dart';
@@ -65,6 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         if (state is UserDone) {
+          final patient = state.currentUser!;
+
           return SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -78,8 +82,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       userProfilePicture: state.currentUser!.imageURL,
                     ),
                     const SizedBox(height: 20),
-                    ContinueCard(
-                      user: state.currentUser!,
+                    BlocBuilder<PatientCurrentSessionBloc, PatientCurrentSessionState>(
+                      builder: (context, state) {
+                        if (state is PatientCurrentSessionLoading) {
+                          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                        }
+
+                        if (state is PatientCurrentSessionDone) {
+                          return ContinueCard(
+                            user: patient,
+                            session: state.currentSession!,
+                          );
+                        }
+
+                        return Center(
+                          child: Text(
+                            "An error occurred while loading current session",
+                            textAlign: TextAlign.center,
+                            style: darkTextTheme().headlineSmall,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 28),
                     Align(
@@ -99,8 +122,39 @@ class _HomeScreenState extends State<HomeScreen> {
                             shadowColor: Colors.black,
                             blur: 4,
                             color: Colors.white.withOpacity(0.25),
-                            child: DailyProgressCard(
-                              todaySession: state.currentUser!.getCurrentSession(),
+                            child: BlocConsumer<PatientCurrentSessionBloc, PatientCurrentSessionState>(
+                              listener: (context, state) => setState(() {}),
+                              builder: (context, state) {
+                                if (state is PatientCurrentSessionLoading) {
+                                  return Container(
+                                    height: 240,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: const Center(child: CupertinoActivityIndicator(color: Colors.white)),
+                                  );
+                                }
+
+                                if (state is PatientCurrentSessionDone) {
+                                  return DailyProgressCard(
+                                    todaySession: state.currentSession,
+                                  );
+                                }
+
+                                return Container(
+                                  height: 240,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "An error occurred while loading current session",
+                                      textAlign: TextAlign.center,
+                                      style: darkTextTheme().headlineSmall,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -129,10 +183,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return ActivityChartCard(currentPlan: state.currentPlan);
                                 }
 
-                                return Center(
-                                  child: Text(
-                                    "An error occurred while loading current plan",
-                                    style: darkTextTheme().headlineSmall,
+                                return Container(
+                                  height: 240,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "An error occurred while loading current plan",
+                                      textAlign: TextAlign.center,
+                                      style: darkTextTheme().headlineSmall,
+                                    ),
                                   ),
                                 );
                               },

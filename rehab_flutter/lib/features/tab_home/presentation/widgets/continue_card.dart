@@ -13,8 +13,9 @@ import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_curren
 
 class ContinueCard extends StatelessWidget {
   final AppUser user;
+  final Session session;
 
-  const ContinueCard({super.key, required this.user});
+  const ContinueCard({super.key, required this.user, required this.session});
 
   // void _selectPlan(BuildContext context, String planName, AppUser user) {
   //   int daysToAdd;
@@ -37,7 +38,7 @@ class ContinueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Plan? currentPlan = user.getCurrentPlan();
+    // final Plan? currentPlan = user.getCurrentPlan();
 
     return Stack(
       children: [
@@ -98,8 +99,10 @@ class ContinueCard extends StatelessWidget {
                             }
 
                             if (state is PatientCurrentPlanDone) {
+                              final currentPlan = state.currentPlan!;
+
                               return Text(
-                                "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
+                                "${currentPlan.planId == Plan.empty().planId ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
                                 style: const TextStyle(
                                   fontFamily: 'Sailec Bold',
                                   fontSize: 48,
@@ -169,11 +172,21 @@ class ContinueCard extends StatelessWidget {
         Positioned.fill(
           child: Material(
             color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              highlightColor: Colors.white.withOpacity(0.2),
-              onTap: () => _onTap(context, user, currentPlan),
-              child: Container(),
+            child: BlocBuilder<PatientCurrentPlanBloc, PatientCurrentPlanState>(
+              builder: (context, state) {
+                if (state is PatientCurrentPlanDone) {
+                  final currentPlan = state.currentPlan!;
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    highlightColor: Colors.white.withOpacity(0.2),
+                    onTap: () => _onTap(context, user, currentPlan, session),
+                    child: Container(),
+                  );
+                }
+
+                return const SizedBox();
+              },
             ),
           ),
         ),
@@ -181,7 +194,7 @@ class ContinueCard extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context, AppUser user, Plan? currentPlan) {
+  void _onTap(BuildContext context, AppUser user, Plan? currentPlan, Session session) {
     if (currentPlan == null) {
       showDialog(
         context: context,
@@ -242,8 +255,7 @@ class ContinueCard extends StatelessWidget {
         },
       );
     } else {
-      Session? currentSession = currentPlan.getCurrentSession();
-      if (currentSession == null) {
+      if (session.sessionId == Session.empty().sessionId) {
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -269,7 +281,7 @@ class ContinueCard extends StatelessWidget {
           },
         );
       } else {
-        List<bool> conditions = currentSession.getSessionConditions();
+        List<bool> conditions = session.getSessionConditions();
         if (!conditions[0]) {
           Navigator.pushNamed(context, '/Testing', arguments: true);
         } else if (!conditions[1]) {
@@ -279,15 +291,15 @@ class ContinueCard extends StatelessWidget {
             arguments: StandardTherapyData(
               userId: user.userId,
               isStandardOne: true,
-              type: currentSession.getStandardOneType(),
-              intensity: int.parse(currentSession.standardOneIntensity),
+              type: session.getStandardOneType(),
+              intensity: int.parse(session.standardOneIntensity),
             ),
           );
         } else if (!conditions[2]) {
           Navigator.pushNamed(context, '/PassiveTherapy',
               arguments: PassiveTherapyData(
                 user: user,
-                intensity: int.parse(currentSession.passiveIntensity),
+                intensity: int.parse(session.passiveIntensity),
               ));
         } else if (!conditions[3]) {
           Navigator.pushNamed(
@@ -296,8 +308,8 @@ class ContinueCard extends StatelessWidget {
             arguments: StandardTherapyData(
               userId: user.userId,
               isStandardOne: false,
-              type: currentSession.getStandardTwoType(),
-              intensity: int.parse(currentSession.standardTwoIntensity),
+              type: session.getStandardTwoType(),
+              intensity: int.parse(session.standardTwoIntensity),
             ),
           );
         } else if (!conditions[4]) {

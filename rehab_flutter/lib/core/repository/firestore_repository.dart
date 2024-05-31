@@ -671,7 +671,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<Plan> fetchPatientCurrentPlan(String patientId) async {
-    DateTime today = DateTime.now();
+    DateTime dateTimeNow = DateTime.now();
+    final today = DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, 23, 59, 59);
 
     QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
         .collection('users')
@@ -706,11 +707,46 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         sessions: sessions,
       );
 
-      print(currentPlan.planId);
-
       return currentPlan;
     } else {
       return Plan.empty();
+    }
+  }
+
+  @override
+  Future<Session> fetchPatientCurrentSession(String patientId) async {
+    DateTime dateTimeNow = DateTime.now();
+    final today = DateTime(dateTimeNow.year, dateTimeNow.month, dateTimeNow.day, 23, 59, 59);
+
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
+        .collection('users')
+        .doc(patientId)
+        .collection('plans')
+        .where('endDate', isGreaterThan: Timestamp.fromDate(today))
+        .orderBy('endDate', descending: false) // Optional: Sorts plans by end date in ascending order
+        .limit(1) // Optional: Limits the query to one result
+        .get();
+
+    if (plansSnapshot.docs.isNotEmpty) {
+      DateTime startOfDay = DateTime(today.year, today.month, today.day);
+      DateTime endOfDay = startOfDay.add(const Duration(days: 1));
+
+      QuerySnapshot<Map<String, dynamic>> sessionSnapshot = await db
+          .collection('users')
+          .doc(patientId)
+          .collection('plans')
+          .doc(plansSnapshot.docs.first.id) // Assuming currentPlan has an id
+          .collection('sessions')
+          .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('date', isLessThan: Timestamp.fromDate(endOfDay))
+          .limit(1) // Optional: Limits the query to one result
+          .get();
+
+      Session session = Session.fromMap(sessionSnapshot.docs.first.data());
+
+      return session;
+    } else {
+      return Session.empty();
     }
   }
 }
