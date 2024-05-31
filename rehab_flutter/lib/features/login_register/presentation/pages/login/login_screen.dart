@@ -19,6 +19,12 @@ import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therap
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_event.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_event.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_event.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -96,6 +102,10 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
         if (state is UserDone) {
+          BlocProvider.of<PatientPlansBloc>(context).add(FetchPatientPlansEvent(state.currentUser!));
+          BlocProvider.of<PatientCurrentPlanBloc>(context).add(FetchPatientCurrentPlanEvent(state.currentUser!));
+          BlocProvider.of<PatientCurrentSessionBloc>(context).add(FetchPatientCurrentSessionEvent(state.currentUser!));
+
           Navigator.pushNamed(context, '/BluetoothConnect');
         }
       },

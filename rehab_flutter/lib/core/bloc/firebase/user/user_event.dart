@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -15,6 +16,7 @@ abstract class UserEvent extends Equatable {
   final AddPlanData? addPlanData;
   final ResultsData? resultsData;
   final StandardData? standardData;
+  final PassiveData? passiveData;
   final EditUserData? editUserData;
 
   const UserEvent({
@@ -25,6 +27,7 @@ abstract class UserEvent extends Equatable {
     this.addPlanData,
     this.resultsData,
     this.standardData,
+    this.passiveData,
     this.editUserData,
   });
 
@@ -57,11 +60,11 @@ class SubmitStandardEvent extends UserEvent {
 }
 
 class SubmitPassiveEvent extends UserEvent {
-  const SubmitPassiveEvent(AppUser user) : super(user: user);
+  const SubmitPassiveEvent(PassiveData passiveData) : super(passiveData: passiveData);
 }
 
 class ResetSessionEvent extends UserEvent {
-  const ResetSessionEvent(AppUser user) : super(user: user);
+  const ResetSessionEvent(PassiveData passiveData) : super(passiveData: passiveData);
 }
 
 class LogoutEvent extends UserEvent {

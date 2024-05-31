@@ -1,15 +1,15 @@
 import 'package:rehab_flutter/core/entities/session.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecase/usecase.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_data.dart';
 
-class ResetSessionUseCase implements UseCase<Session, AppUser> {
+class ResetSessionUseCase implements UseCase<Session, PassiveData> {
   final FirebaseRepository _firebaseRepository;
 
   ResetSessionUseCase(this._firebaseRepository);
 
   @override
-  Future<Session> call({AppUser? params}) {
+  Future<Session> call({PassiveData? params}) {
     try {
       return _firebaseRepository.resetSession(params!);
     } catch (e) {

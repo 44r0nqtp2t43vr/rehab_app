@@ -7,6 +7,8 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_data.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 
 class DailyProgressCard extends StatelessWidget {
   final Session? todaySession;
@@ -354,7 +356,9 @@ class DailyProgressCard extends StatelessWidget {
 
   void _onResetSessionPressed(BuildContext context) {
     final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
-    BlocProvider.of<UserBloc>(context).add(ResetSessionEvent(currentUser));
+    final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
+
+    BlocProvider.of<UserBloc>(context).add(ResetSessionEvent(PassiveData(user: currentUser, currentSession: currentSession)));
     Navigator.of(context).pop();
   }
 

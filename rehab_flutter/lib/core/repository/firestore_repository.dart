@@ -14,6 +14,7 @@ import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/login_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_data.dart';
 import 'package:rehab_flutter/features/login_register/domain/entities/register_therapist_data.dart';
+import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
@@ -389,7 +390,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         'passiveIntensity': intensityLevel,
       });
 
-      Session currentSession = data.user.getCurrentSession()!;
+      Session currentSession = data.currentSession;
       currentSession.pretestScore = data.score;
       currentSession.standardOneType = standardOneType;
       currentSession.standardOneIntensity = intensityLevel;
@@ -401,7 +402,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     } else {
       await updateCurrentSessionTesting(data.user.userId, data.items, {'posttestScore': data.score});
 
-      Session currentSession = data.user.getCurrentSession()!;
+      Session currentSession = data.currentSession;
       currentSession.posttestScore = data.score;
       return currentSession;
     }
@@ -417,25 +418,23 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     // final AppUser user = await getUser(data.user.userId);
     // return user;
-    Session currentSession = data.user.getCurrentSession()!;
+    Session currentSession = data.currentSession;
     data.isStandardOne ? currentSession.isStandardOneDone = true : currentSession.isStandardTwoDone = true;
     return currentSession;
   }
 
   @override
-  Future<Session> submitPassive(AppUser user) async {
-    await updateCurrentSession(user.userId, {'isPassiveDone': true});
+  Future<Session> submitPassive(PassiveData data) async {
+    await updateCurrentSession(data.user.userId, {'isPassiveDone': true});
 
-    // final AppUser user = await getUser(userId);
-    // return user;
-    Session currentSession = user.getCurrentSession()!;
+    Session currentSession = data.currentSession;
     currentSession.isPassiveDone = true;
     return currentSession;
   }
 
   @override
-  Future<Session> resetSession(AppUser user) async {
-    await updateCurrentSession(user.userId, {
+  Future<Session> resetSession(PassiveData data) async {
+    await updateCurrentSession(data.user.userId, {
       'pretestScore': null,
       'posttestScore': null,
       'isStandardOneDone': false,
@@ -443,7 +442,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'isPassiveDone': false,
     });
 
-    Session currentSession = user.getCurrentSession()!;
+    Session currentSession = data.currentSession;
     currentSession.pretestScore = null;
     currentSession.posttestScore = null;
     currentSession.isStandardOneDone = false;

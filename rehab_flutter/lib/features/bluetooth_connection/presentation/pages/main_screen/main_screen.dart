@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -29,17 +28,17 @@ class MainScreen extends StatelessWidget {
   Widget getScreenFromTab(BuildContext context, TabEnum currentTab, AppUser user) {
     switch (currentTab) {
       case TabEnum.home:
-        if (BlocProvider.of<PatientPlansBloc>(context).state.plans.isEmpty) {
-          BlocProvider.of<PatientPlansBloc>(context).add(FetchPatientPlansEvent(user));
-        }
+        // if (BlocProvider.of<PatientPlansBloc>(context).state.plans.isEmpty) {
+        //   BlocProvider.of<PatientPlansBloc>(context).add(FetchPatientPlansEvent(user));
+        // }
 
-        if (BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan == null) {
-          BlocProvider.of<PatientCurrentPlanBloc>(context).add(FetchPatientCurrentPlanEvent(user));
-        }
+        // if (BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan == null) {
+        //   BlocProvider.of<PatientCurrentPlanBloc>(context).add(FetchPatientCurrentPlanEvent(user));
+        // }
 
-        if (BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession == null) {
-          BlocProvider.of<PatientCurrentSessionBloc>(context).add(FetchPatientCurrentSessionEvent(user));
-        }
+        // if (BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession == null) {
+        //   BlocProvider.of<PatientCurrentSessionBloc>(context).add(FetchPatientCurrentSessionEvent(user));
+        // }
 
         return const HomeScreen();
       case TabEnum.therapy:
@@ -80,6 +79,18 @@ class MainScreen extends StatelessWidget {
       listener: (BuildContext context, UserState state) {
         if (state is UserNone) {
           Navigator.of(context).pushReplacementNamed("/Login");
+        }
+        if (state is UserDone) {
+          final currentSession = state.currentSession;
+
+          if (currentSession != null) {
+            final patientPlans = BlocProvider.of<PatientPlansBloc>(context).state.plans;
+            final currentPlan = BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan!;
+
+            BlocProvider.of<PatientPlansBloc>(context).add(UpdatePatientPlansEvent(patientPlans, currentSession));
+            BlocProvider.of<PatientCurrentSessionBloc>(context).add(UpdateCurrentSessionEvent(currentSession));
+            BlocProvider.of<PatientCurrentPlanBloc>(context).add(UpdateCurrentPlanSessionEvent(currentPlan, currentSession));
+          }
         }
       },
       builder: (BuildContext context, UserState state) {

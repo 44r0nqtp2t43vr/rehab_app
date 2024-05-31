@@ -10,6 +10,7 @@ class PatientPlansBloc extends Bloc<PatientPlansEvent, PatientPlansState> {
     this._fetchPatientPlansUseCase,
   ) : super(const PatientPlansLoading()) {
     on<FetchPatientPlansEvent>(onFetchPatientPlans);
+    on<UpdatePatientPlansEvent>(onUpdatePatientPlans);
   }
 
   void onFetchPatientPlans(FetchPatientPlansEvent event, Emitter<PatientPlansState> emit) async {
@@ -20,5 +21,11 @@ class PatientPlansBloc extends Bloc<PatientPlansEvent, PatientPlansState> {
     } catch (e) {
       emit(PatientPlansError(errorMessage: e.toString()));
     }
+  }
+
+  void onUpdatePatientPlans(UpdatePatientPlansEvent event, Emitter<PatientPlansState> emit) async {
+    emit(const PatientPlansLoading());
+    event.patientPlans!.last.setCurrentSession(event.currentSession!);
+    emit(PatientPlansDone(plans: event.patientPlans!));
   }
 }

@@ -18,6 +18,7 @@ import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_pianotiles.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_textures.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_visualizer.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 
 class StandardTherapyScreen extends StatefulWidget {
   final StandardTherapyData data;
@@ -33,7 +34,9 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
 
   void submit() {
     final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
-    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(user: currentUser, isStandardOne: widget.data.isStandardOne)));
+    final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
+
+    BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(user: currentUser, currentSession: currentSession, isStandardOne: widget.data.isStandardOne)));
   }
 
   Song getSongFromIntensity() {
