@@ -131,6 +131,7 @@ class _STVisualizerState extends State<STVisualizer>
         rayHeight: _rayHeight,
         rayWidth: _rayWidth,
         color: _color,
+        circleSize: 25.0,
       );
     });
     _controller.addListener(() {
@@ -353,11 +354,17 @@ class _STVisualizerState extends State<STVisualizer>
             progress: circleState.progress,
             totalHeight: circleState.totalHeight,
             totalWidth: circleState.totalWidth,
-            circleHeight: circleState.circleHeight,
-            circleWidth: circleState.circleWidth,
-            rayHeight: circleState.rayHeight,
-            rayWidth: circleState.rayWidth,
+            // circleHeight: circleState.circleHeight,
+            // circleWidth: circleState.circleWidth,
+            // rayHeight: circleState.rayHeight,
+            // rayWidth: circleState.rayWidth,
             color: circleState.color,
+            // circleSizeAnimation: _controller.drive(
+            //   Tween<double>(
+            //     begin: circleState.circleSize,
+            //     end: circleState.circleSize,
+            //   ),
+            // ),
           ),
         );
       }).toList();

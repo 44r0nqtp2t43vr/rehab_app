@@ -1,12 +1,16 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
@@ -57,7 +61,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
 
   // AudioData variables
   List<dynamic> blocks = [];
-  int currentIndex = -1;
+  int currentIndex = 0;
   int prevIndex = -1;
 
   // Cols
@@ -96,6 +100,16 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   Map<String, int> lastSentPattern = {};
   double currentPositionSec = 0.0;
 
+  List<double> getFrequencies() {
+    return [
+      blocks[currentIndex].midrange.toDouble(),
+      blocks[currentIndex].higherMidrange.toDouble(),
+      blocks[currentIndex].bass.toDouble(),
+      blocks[currentIndex].subBass.toDouble(),
+      blocks[currentIndex].lowerMidrange.toDouble(),
+    ];
+  }
+
   @override
   void initState() {
     super.initState();
@@ -108,20 +122,11 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       });
     audioPlayer = AudioPlayer();
     isPlaying = true;
-    // Start playing the audio
-
-    // audioPlayer.setSource(AssetSource(widget.songData.audioSource)).then((_) {
-    //   audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
-    //   audioPlayer.resume();
-    // });
-
-    // audioPlayer.play(AssetSource(widget.songData.audioSource), position: Duration(seconds: widget.currentPositionSec.toInt()));
 
     fetchAndPlayAudio();
 
     _controller.repeat(reverse: true);
     circles = List.generate(16, (index) {
-      // Assuming you want 16 blocks as per your UI setup
       return RayPainterState(
         id: '$index',
         progress: _controller.value,
@@ -132,20 +137,18 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
         rayHeight: _rayHeight,
         rayWidth: _rayWidth,
         color: _color,
+        circleSize: 25,
       );
     });
     _controller.addListener(() {
       setState(() {
-        // Update the progress value for each circle
         for (var circle in circles) {
           circle.progress = _controller.value;
         }
       });
     });
 
-    // Load blocks from forest_of_blocks.json
     loadBlocks(widget.songData.metaDataUrl);
-    // Subscribe to the onPositionChanged event
 
     positionSubscription = audioPlayer.onPositionChanged.listen((position) {
       setState(() {
@@ -313,10 +316,36 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                   ),
                 ),
               ),
-              Column(
-                children: [
-                  ...buildRayPainterRows(),
-                ],
+              Expanded(
+                flex: 5,
+                child: Container(
+                  decoration: const BoxDecoration(color: Color(0xff223e65)),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: CustomPaint(
+                            size: Size(MediaQuery.of(context).size.width, 100),
+                            painter: LineAudioVisualizerPainter(
+                              frequencies: getFrequencies(),
+                              totalHeight: 100,
+                              totalWidth: 300,
+                              color: const Color(0xff01FF99).withOpacity(0.3),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ...buildRayPainterRows(),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
               Expanded(
                 flex: 3,
@@ -468,14 +497,12 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   }
 
   void _onDurationChanged(double value) {
-    // Seek the audio player to the new value
     audioPlayer.seek(Duration(seconds: value.toInt()));
-    // Update any state related to the current playback position, if necessary
   }
 
   List<Widget> buildRayPainterRows() {
     List<Widget> rows = [];
-    int itemsPerRow = 4; // Number of RayPainters per row
+    int itemsPerRow = 4;
 
     for (int i = 0; i < circles.length; i += itemsPerRow) {
       List<Widget> rowItems = circles
@@ -486,11 +513,12 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
             progress: circleState.progress,
             totalHeight: circleState.totalHeight,
             totalWidth: circleState.totalWidth,
-            circleHeight: circleState.circleHeight,
-            circleWidth: circleState.circleWidth,
-            rayHeight: circleState.rayHeight,
-            rayWidth: circleState.rayWidth,
+            // circleHeight: circleState.circleHeight,
+            // circleWidth: circleState.circleWidth,
+            // rayHeight: circleState.rayHeight,
+            // rayWidth: circleState.rayWidth,
             color: circleState.color,
+            circleSize: circleState.circleHeight,
           ),
         );
       }).toList();
@@ -505,25 +533,25 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     return rows;
   }
 
-  void updateCircleState(
-      int index, Color color, double width, double height, int activeValue) {
+  void updateCircleState(int index, Color color,
+      double size /*double width, double height*/, int activeValue) {
     setState(() {
       circles[index].color = color;
-      circles[index].circleWidth = width;
-      circles[index].circleHeight = height;
+      circles[index].circleWidth = size;
+      circles[index].circleHeight = size;
 
       activeValues[index] = activeValue;
     });
     lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
-  void resetAllCircles(
-      Color color, double width, double height, int activeValue) {
+  void resetAllCircles(Color color, double size /*double width, double height*/,
+      int activeValue) {
     setState(() {
       for (var circle in circles) {
         circle.color = color;
-        circle.circleWidth = width;
-        circle.circleHeight = height;
+        circle.circleWidth = size;
+        circle.circleHeight = size;
       }
       for (int i = 0; i < activeValues.length; i++) {
         activeValues[i] = activeValue;
@@ -532,25 +560,27 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   }
 
   void updateCirclePropertiesNoteOnset(List<int> squares, bool isActive) {
-    final double size = isActive ? 40.0 : 20.0;
+    final double size = isActive ? 30.0 : 25.0;
     final int activeValue = isActive ? 1 : 0;
 
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color = isActive ? Colors.green : Colors.blue;
+      circles[squares[i]].color =
+          isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
 
   void updateCircleProperties(List<int> squares, bool isActive) {
-    final double size = isActive ? 40.0 : 20.0;
+    final double size = isActive ? 30.0 : 25.0;
     final int activeValue = isActive ? 1 : 0;
 
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color = isActive ? Colors.yellow : Colors.blue;
+      circles[squares[i]].color =
+          isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
@@ -617,25 +647,21 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
               for (int i = 0; i < activeValues.length; i++) {
                 activeValues[i] = 0;
               }
-              updateCircleState(
-                  index, Colors.green, 40.0, 40.0, 1); // Mark as active
+              updateCircleState(index, Colors.yellow, 30, 1);
             }
           });
 
-          // Increase delay by 200ms for the next column
           delay += 200;
         }
         print(noteOnset);
-// Schedule the reset to blue for all circles, to happen after the last column has turned green
+
         Timer(Duration(milliseconds: delay), () {
-          resetAllCircles(Colors.blue, 20.0, 20.0, 0); // Mark all as inactive
+          resetAllCircles(const Color(0xff128BED), 20.0, 0);
         });
       } else if (noteOnset == 1) {
         updateCirclePropertiesNoteOnset(outerSquare, true);
         lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
-      } else if (activeValues
-          .every((value) => value == 0)) //active values is all 0
-      {
+      } else if (activeValues.every((value) => value == 0)) {
         updateCircleProperties(bassSquare, getBassBoolValue(bass));
         updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
         updateCircleProperties(
@@ -650,7 +676,69 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
 
       lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
+  }
+}
 
-    // Ensure a rebuild to reflect color and size changes
+class LineAudioVisualizerPainter extends CustomPainter {
+  final List<double> frequencies;
+  final double totalHeight;
+  final double totalWidth;
+  final Color color;
+  final int barsBetweenMainFrequencies;
+
+  LineAudioVisualizerPainter({
+    required this.frequencies,
+    required this.totalHeight,
+    required this.totalWidth,
+    required this.color,
+    this.barsBetweenMainFrequencies = 6,
+  });
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+
+    final int totalMainBars = frequencies.length;
+    final int totalBars = totalMainBars * (barsBetweenMainFrequencies + 1) - 1;
+    final double barWidth = size.width / totalBars;
+
+    for (int i = 0; i < totalBars; i++) {
+      final double x = barWidth * i + barWidth / 2;
+      final int mainIndex = i ~/ (barsBetweenMainFrequencies + 1);
+      final int subIndex = i % (barsBetweenMainFrequencies + 1);
+
+      double barHeight;
+      if (subIndex == 0 || subIndex == barsBetweenMainFrequencies) {
+        if (mainIndex < totalMainBars) {
+          barHeight = frequencies[mainIndex] * totalHeight;
+        } else {
+          barHeight = 0;
+        }
+      } else {
+        final double previousFreq = frequencies[mainIndex];
+        final double nextFreq = mainIndex + 1 < totalMainBars
+            ? frequencies[mainIndex + 1]
+            : previousFreq;
+        final double fraction = subIndex / (barsBetweenMainFrequencies + 1);
+        final double interpolatedFreq = previousFreq +
+            (nextFreq - previousFreq) *
+                (1 - (2 * fraction - 1) * (2 * fraction - 1));
+        barHeight = interpolatedFreq * totalHeight;
+      }
+
+      final double y = totalHeight - barHeight;
+      canvas.drawLine(
+        Offset(x, totalHeight),
+        Offset(x, y),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
