@@ -3,14 +3,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
@@ -22,6 +20,8 @@ import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/r
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/helper_functions.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/linear_visualizer_painter.dart';
+
 import 'package:rehab_flutter/injection_container.dart';
 
 class VisualizerScreenSlider extends StatefulWidget {
@@ -29,7 +29,7 @@ class VisualizerScreenSlider extends StatefulWidget {
   final double currentPositionSec; // Add this line
 
   // Update constructor
-  const VisualizerScreenSlider({
+  VisualizerScreenSlider({
     Key? key,
     required this.songData,
     this.currentPositionSec = 0.0, // Default to 0.0 if not provided
@@ -45,6 +45,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
   late StreamSubscription? positionSubscription;
+  bool isLoading = true;
 
   // initial values
   final double _totalHeight = 100.0;
@@ -53,7 +54,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   final double _circleWidth = 20.0;
   final double _rayHeight = -8.0;
   final double _rayWidth = 60.0;
-  final Color _color = Colors.blue;
+  final Color _color = const Color(0xff01FF99).withOpacity(0.3);
   bool isPlaying = false;
 
 // list of circles
@@ -100,6 +101,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   Map<String, int> lastSentPattern = {};
   double currentPositionSec = 0.0;
 
+  //linear spectrum visualizer
   List<double> getFrequencies() {
     return [
       blocks[currentIndex].midrange.toDouble(),
@@ -109,6 +111,9 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       blocks[currentIndex].lowerMidrange.toDouble(),
     ];
   }
+
+  final GlobalKey<_LineAudioVisualizerState> visualizerKey =
+      GlobalKey<_LineAudioVisualizerState>();
 
   @override
   void initState() {
@@ -155,24 +160,31 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
         currentPositionSec = position.inSeconds.toDouble();
       });
 
-      useClosestBlock(
-          position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
+      useClosestBlock(position.inMilliseconds / 1000.0);
+      visualizerKey.currentState?.updateFrequencies(getFrequencies());
     });
   }
 
   Future<void> fetchAndPlayAudio() async {
-    final firebaseRepository = FirebaseRepositoryImpl(
-        FirebaseFirestore.instance, FirebaseStorage.instance);
-    final audioUrl =
-        await firebaseRepository.getAudioUrl(widget.songData.audioSource);
+    try {
+      final firebaseRepository = FirebaseRepositoryImpl(
+          FirebaseFirestore.instance, FirebaseStorage.instance);
+      final audioUrl =
+          await firebaseRepository.getAudioUrl(widget.songData.audioSource);
 
-    audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
-      audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
-      audioPlayer.resume();
-    });
+      audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
+        audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
+        audioPlayer.resume();
+      });
 
-    await audioPlayer.play(UrlSource(audioUrl),
-        position: Duration(seconds: widget.currentPositionSec.toInt()));
+      await audioPlayer.play(UrlSource(audioUrl),
+          position: Duration(seconds: widget.currentPositionSec.toInt()));
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   void _pauseAnimation() {
@@ -316,37 +328,52 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                   ),
                 ),
               ),
-              Expanded(
-                flex: 5,
-                child: Container(
-                  decoration: const BoxDecoration(color: Color(0xff223e65)),
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: CustomPaint(
-                            size: Size(MediaQuery.of(context).size.width, 100),
-                            painter: LineAudioVisualizerPainter(
-                              frequencies: getFrequencies(),
-                              totalHeight: 100,
-                              totalWidth: 300,
-                              color: const Color(0xff01FF99).withOpacity(0.3),
-                            ),
+              isLoading
+                  ? Expanded(
+                      flex: 5,
+                      child: Container(
+                        decoration:
+                            const BoxDecoration(color: Color(0xff223e65)),
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xff01FF99),
                           ),
                         ),
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ...buildRayPainterRows(),
-                        ],
+                    )
+                  : Expanded(
+                      flex: 5,
+                      child: Container(
+                        decoration:
+                            const BoxDecoration(color: Color(0xff223e65)),
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: SizedBox(
+                                  height: _totalHeight,
+                                  child: LineAudioVisualizer(
+                                    key: visualizerKey,
+                                    initialFrequencies: getFrequencies(),
+                                    totalHeight: _totalHeight,
+                                    color: _color,
+                                    barsBetweenMainFrequencies: 6,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ...buildRayPainterRows(),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
               Expanded(
                 flex: 3,
                 child: Padding(
@@ -677,68 +704,91 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
   }
+
+  void updateFrequencies(List<double> newFrequencies) {
+    visualizerKey.currentState?.updateFrequencies(newFrequencies);
+  }
 }
 
-class LineAudioVisualizerPainter extends CustomPainter {
-  final List<double> frequencies;
+class LineAudioVisualizer extends StatefulWidget {
+  final List<double> initialFrequencies;
   final double totalHeight;
-  final double totalWidth;
   final Color color;
   final int barsBetweenMainFrequencies;
 
-  LineAudioVisualizerPainter({
-    required this.frequencies,
+  const LineAudioVisualizer({
+    Key? key,
+    required this.initialFrequencies,
     required this.totalHeight,
-    required this.totalWidth,
     required this.color,
     this.barsBetweenMainFrequencies = 6,
-  });
+  }) : super(key: key);
+
   @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = color
-      ..strokeWidth = 6
-      ..strokeCap = StrokeCap.round;
+  _LineAudioVisualizerState createState() => _LineAudioVisualizerState();
+}
 
-    final int totalMainBars = frequencies.length;
-    final int totalBars = totalMainBars * (barsBetweenMainFrequencies + 1) - 1;
-    final double barWidth = size.width / totalBars;
+class _LineAudioVisualizerState extends State<LineAudioVisualizer>
+    with SingleTickerProviderStateMixin {
+  late List<double> currentFrequencies;
+  late AnimationController _controller;
+  late List<Animation<double>> _animations;
 
-    for (int i = 0; i < totalBars; i++) {
-      final double x = barWidth * i + barWidth / 2;
-      final int mainIndex = i ~/ (barsBetweenMainFrequencies + 1);
-      final int subIndex = i % (barsBetweenMainFrequencies + 1);
+  @override
+  void initState() {
+    super.initState();
+    currentFrequencies = widget.initialFrequencies;
 
-      double barHeight;
-      if (subIndex == 0 || subIndex == barsBetweenMainFrequencies) {
-        if (mainIndex < totalMainBars) {
-          barHeight = frequencies[mainIndex] * totalHeight;
-        } else {
-          barHeight = 0;
-        }
-      } else {
-        final double previousFreq = frequencies[mainIndex];
-        final double nextFreq = mainIndex + 1 < totalMainBars
-            ? frequencies[mainIndex + 1]
-            : previousFreq;
-        final double fraction = subIndex / (barsBetweenMainFrequencies + 1);
-        final double interpolatedFreq = previousFreq +
-            (nextFreq - previousFreq) *
-                (1 - (2 * fraction - 1) * (2 * fraction - 1));
-        barHeight = interpolatedFreq * totalHeight;
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+
+    _initializeAnimations(widget.initialFrequencies);
+  }
+
+  void _initializeAnimations(List<double> frequencies) {
+    _animations = frequencies.map((frequency) {
+      return Tween<double>(begin: frequency, end: frequency)
+          .animate(_controller);
+    }).toList();
+  }
+
+  void updateFrequencies(List<double> newFrequencies) {
+    setState(() {
+      for (int i = 0; i < newFrequencies.length; i++) {
+        _animations[i] = Tween<double>(
+          begin: currentFrequencies[i],
+          end: newFrequencies[i],
+        ).animate(_controller);
       }
-
-      final double y = totalHeight - barHeight;
-      canvas.drawLine(
-        Offset(x, totalHeight),
-        Offset(x, y),
-        paint,
-      );
-    }
+      currentFrequencies = newFrequencies;
+    });
+    _controller.forward(from: 0);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          size: Size(MediaQuery.of(context).size.width, widget.totalHeight),
+          painter: LineAudioVisualizerPainter(
+            frequencies: _animations.map((anim) => anim.value).toList(),
+            totalHeight: widget.totalHeight,
+            totalWidth: MediaQuery.of(context).size.width,
+            color: widget.color,
+            barsBetweenMainFrequencies: widget.barsBetweenMainFrequencies,
+          ),
+        );
+      },
+    );
   }
 }
