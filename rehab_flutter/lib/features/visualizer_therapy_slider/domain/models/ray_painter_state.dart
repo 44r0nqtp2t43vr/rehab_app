@@ -10,6 +10,7 @@ class RayPainterState {
   double rayHeight;
   double rayWidth;
   Color color;
+  double circleSize;
 
   RayPainterState({
     required this.id,
@@ -21,6 +22,7 @@ class RayPainterState {
     required this.rayHeight,
     required this.rayWidth,
     required this.color,
+    required this.circleSize,
   });
 
   // Other methods or properties

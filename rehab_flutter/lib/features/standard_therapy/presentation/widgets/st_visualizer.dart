@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -17,6 +19,7 @@ import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controll
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/ray_painter_state.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/linear_visualizer.dart';
 
 class STVisualizer extends StatefulWidget {
   final AppUser user;
@@ -40,6 +43,7 @@ class _STVisualizerState extends State<STVisualizer>
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
   late StreamSubscription? positionSubscription;
+  bool isLoading = true;
 
   // initial values
   final double _totalHeight = 100.0;
@@ -48,7 +52,7 @@ class _STVisualizerState extends State<STVisualizer>
   final double _circleWidth = 20.0;
   final double _rayHeight = -8.0;
   final double _rayWidth = 60.0;
-  final Color _color = Colors.blue;
+  final Color _color = const Color(0xff01FF99).withOpacity(0.3);
   bool isPlaying = false;
 
 // list of circles
@@ -56,7 +60,7 @@ class _STVisualizerState extends State<STVisualizer>
 
   // AudioData variables
   List<dynamic> blocks = [];
-  int currentIndex = -1;
+  int currentIndex = 0;
   int prevIndex = -1;
 
   // Cols
@@ -95,6 +99,20 @@ class _STVisualizerState extends State<STVisualizer>
   Map<String, int> lastSentPattern = {};
   double currentPositionSec = 0.0;
 
+  //linear spectrum visualizer
+  List<double> getFrequencies() {
+    return [
+      blocks[currentIndex].midrange.toDouble(),
+      blocks[currentIndex].higherMidrange.toDouble(),
+      blocks[currentIndex].bass.toDouble(),
+      blocks[currentIndex].subBass.toDouble(),
+      blocks[currentIndex].lowerMidrange.toDouble(),
+    ];
+  }
+
+  final GlobalKey<LineAudioVisualizerState> visualizerKey =
+      GlobalKey<LineAudioVisualizerState>();
+
   @override
   void initState() {
     super.initState();
@@ -131,6 +149,7 @@ class _STVisualizerState extends State<STVisualizer>
         rayHeight: _rayHeight,
         rayWidth: _rayWidth,
         color: _color,
+        circleSize: 25.0,
       );
     });
     _controller.addListener(() {
@@ -153,6 +172,7 @@ class _STVisualizerState extends State<STVisualizer>
 
       useClosestBlock(
           position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
+      visualizerKey.currentState?.updateFrequencies(getFrequencies());
     });
 
     audioPlayer.onPlayerComplete.listen((_) {
@@ -161,18 +181,41 @@ class _STVisualizerState extends State<STVisualizer>
   }
 
   Future<void> fetchAndPlayAudio() async {
-    final firebaseRepository = FirebaseRepositoryImpl(
-        FirebaseFirestore.instance, FirebaseStorage.instance);
-    final audioUrl =
-        await firebaseRepository.getAudioUrl(widget.song.audioSource);
+    int retries = 3;
 
-    audioPlayer.setSource(UrlSource(widget.song.audioSource)).then((_) {
-      audioPlayer.seek(const Duration(seconds: 0));
-      audioPlayer.resume();
-    });
+    while (retries > 0) {
+      try {
+        final firebaseRepository = FirebaseRepositoryImpl(
+            FirebaseFirestore.instance, FirebaseStorage.instance);
+        final audioUrl =
+            await firebaseRepository.getAudioUrl(widget.song.audioSource);
 
-    await audioPlayer.play(UrlSource(audioUrl),
-        position: const Duration(seconds: 0));
+        audioPlayer.setSource(UrlSource(widget.song.audioSource)).then((_) {
+          audioPlayer.seek(const Duration(seconds: 0));
+          audioPlayer.resume();
+        });
+
+        await audioPlayer.play(UrlSource(audioUrl),
+            position: const Duration(seconds: 0));
+
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      } catch (e) {
+        print('Error: $e');
+        retries--;
+        if (retries == 0) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Failed to load audio. Please try again."),
+            ),
+          );
+        }
+      }
+    }
   }
 
   void _pauseAnimation() {
@@ -203,11 +246,55 @@ class _STVisualizerState extends State<STVisualizer>
     return Column(
       children: [
         const Spacer(),
-        Column(
-          children: [
-            ...buildRayPainterRows(),
-          ],
-        ),
+        isLoading
+            ? Expanded(
+                flex: 5,
+                child: Container(
+                  decoration: const BoxDecoration(color: Color(0xff223e65)),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xff01FF99),
+                    ),
+                  ),
+                ),
+              )
+            : Expanded(
+                flex: 5,
+                child: Container(
+                  decoration: const BoxDecoration(color: Color(0xff223e65)),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SizedBox(
+                            height: _totalHeight,
+                            child: LineAudioVisualizer(
+                              key: visualizerKey,
+                              initialFrequencies: getFrequencies(),
+                              totalHeight: _totalHeight,
+                              color: _color,
+                              barsBetweenMainFrequencies: 6,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ...buildRayPainterRows(),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+        // Column(
+        //   children: [
+        //     ...buildRayPainterRows(),
+        //   ],
+        // ),
         Expanded(
           flex: 3,
           child: Padding(
@@ -281,18 +368,18 @@ class _STVisualizerState extends State<STVisualizer>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           CupertinoIcons.shuffle,
                           size: 24,
-                          color: Colors.white,
+                          color: Colors.white.withOpacity(0.5),
                         ),
                         onPressed: () {},
                       ),
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           CupertinoIcons.backward_end_fill,
                           size: 24,
-                          color: Colors.white,
+                          color: Colors.white.withOpacity(0.5),
                         ),
                         onPressed: () {},
                       ),
@@ -308,18 +395,18 @@ class _STVisualizerState extends State<STVisualizer>
                             isPlaying ? _pauseAnimation() : _resumeAnimation(),
                       ),
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           CupertinoIcons.forward_end_fill,
                           size: 24,
-                          color: Colors.white,
+                          color: Colors.white.withOpacity(0.5),
                         ),
                         onPressed: () {},
                       ),
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           CupertinoIcons.square_list_fill,
                           size: 24,
-                          color: Colors.white,
+                          color: Colors.white.withOpacity(0.5),
                         ),
                         onPressed: () {},
                       ),
@@ -353,10 +440,10 @@ class _STVisualizerState extends State<STVisualizer>
             progress: circleState.progress,
             totalHeight: circleState.totalHeight,
             totalWidth: circleState.totalWidth,
-            circleHeight: circleState.circleHeight,
-            circleWidth: circleState.circleWidth,
-            rayHeight: circleState.rayHeight,
-            rayWidth: circleState.rayWidth,
+            // circleHeight: circleState.circleHeight,
+            // circleWidth: circleState.circleWidth,
+            // rayHeight: circleState.rayHeight,
+            // rayWidth: circleState.rayWidth,
             color: circleState.color,
           ),
         );
@@ -372,25 +459,25 @@ class _STVisualizerState extends State<STVisualizer>
     return rows;
   }
 
-  void updateCircleState(
-      int index, Color color, double width, double height, int activeValue) {
+  void updateCircleState(int index, Color color,
+      double size /*double width, double height*/, int activeValue) {
     setState(() {
       circles[index].color = color;
-      circles[index].circleWidth = width;
-      circles[index].circleHeight = height;
+      circles[index].circleWidth = size;
+      circles[index].circleHeight = size;
 
       activeValues[index] = activeValue;
     });
     lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
-  void resetAllCircles(
-      Color color, double width, double height, int activeValue) {
+  void resetAllCircles(Color color, double size /*double width, double height*/,
+      int activeValue) {
     setState(() {
       for (var circle in circles) {
         circle.color = color;
-        circle.circleWidth = width;
-        circle.circleHeight = height;
+        circle.circleWidth = size;
+        circle.circleHeight = size;
       }
       for (int i = 0; i < activeValues.length; i++) {
         activeValues[i] = activeValue;
@@ -399,25 +486,27 @@ class _STVisualizerState extends State<STVisualizer>
   }
 
   void updateCirclePropertiesNoteOnset(List<int> squares, bool isActive) {
-    final double size = isActive ? 40.0 : 20.0;
+    final double size = isActive ? 30.0 : 25.0;
     final int activeValue = isActive ? 1 : 0;
 
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color = isActive ? Colors.green : Colors.blue;
+      circles[squares[i]].color =
+          isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
 
   void updateCircleProperties(List<int> squares, bool isActive) {
-    final double size = isActive ? 40.0 : 20.0;
+    final double size = isActive ? 30.0 : 25.0;
     final int activeValue = isActive ? 1 : 0;
 
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color = isActive ? Colors.yellow : Colors.blue;
+      circles[squares[i]].color =
+          isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
@@ -458,6 +547,8 @@ class _STVisualizerState extends State<STVisualizer>
       for (int i = 0; i < activeValues.length; i++) {
         activeValues[i] = 0;
       }
+      print("Time: ${blocks[currentIndex].time}");
+      print("Position: $positionSec");
 
       if (noteOnset == 1 &&
           blocks[prevIndex].noteOnset == 0 &&
@@ -482,24 +573,21 @@ class _STVisualizerState extends State<STVisualizer>
               for (int i = 0; i < activeValues.length; i++) {
                 activeValues[i] = 0;
               }
-              updateCircleState(
-                  index, Colors.green, 40.0, 40.0, 1); // Mark as active
+              updateCircleState(index, Colors.yellow, 30, 1);
             }
           });
 
-          // Increase delay by 200ms for the next column
           delay += 200;
         }
-// Schedule the reset to blue for all circles, to happen after the last column has turned green
+        print(noteOnset);
+
         Timer(Duration(milliseconds: delay), () {
-          resetAllCircles(Colors.blue, 20.0, 20.0, 0); // Mark all as inactive
+          resetAllCircles(const Color(0xff128BED), 20.0, 0);
         });
       } else if (noteOnset == 1) {
         updateCirclePropertiesNoteOnset(outerSquare, true);
         lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
-      } else if (activeValues
-          .every((value) => value == 0)) //active values is all 0
-      {
+      } else if (activeValues.every((value) => value == 0)) {
         updateCircleProperties(bassSquare, getBassBoolValue(bass));
         updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
         updateCircleProperties(
@@ -514,7 +602,9 @@ class _STVisualizerState extends State<STVisualizer>
 
       lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
     });
+  }
 
-    // Ensure a rebuild to reflect color and size changes
+  void updateFrequencies(List<double> newFrequencies) {
+    visualizerKey.currentState?.updateFrequencies(newFrequencies);
   }
 }

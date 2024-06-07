@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -42,6 +44,7 @@ class _STPianoTilesState extends State<STPianoTiles>
   bool hasStarted = false;
   bool isPlaying = true;
   late String audioUrl;
+  bool isLoading = true;
 
   void _pauseAnimation() {
     animationController.stop();
@@ -152,13 +155,35 @@ class _STPianoTilesState extends State<STPianoTiles>
   }
 
   Future<void> fetchAndPlayAudio() async {
-    final firebaseRepository = FirebaseRepositoryImpl(
-        FirebaseFirestore.instance, FirebaseStorage.instance);
-    final audioUrl =
-        await firebaseRepository.getAudioUrl(widget.song.audioSource);
-    await player.play(UrlSource(audioUrl));
-    animationController.forward();
-    player.seek(Duration(milliseconds: currentNoteIndex * 300));
+    int retries = 3;
+    while (retries > 0) {
+      try {
+        final firebaseRepository = FirebaseRepositoryImpl(
+            FirebaseFirestore.instance, FirebaseStorage.instance);
+        final audioUrl =
+            await firebaseRepository.getAudioUrl(widget.song.audioSource);
+        await player.play(UrlSource(audioUrl));
+        animationController.forward();
+        player.seek(Duration(milliseconds: currentNoteIndex * 300));
+
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      } catch (e) {
+        print('Error: $e');
+        retries--;
+        if (retries == 0) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Failed to load audio. Please try again."),
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -177,17 +202,29 @@ class _STPianoTilesState extends State<STPianoTiles>
     return Column(
       children: [
         const Spacer(),
-        Expanded(
-          flex: 5,
-          child: LineContainer(
-            tileHeight: tileHeight,
-            tileWidth: tileWidth,
-            currentNotes: notesToRender,
-            currentNoteIndex: currentNoteIndex,
-            animation: animationController,
-            key: GlobalKey(),
-          ),
-        ),
+        isLoading
+            ? Expanded(
+                flex: 5,
+                child: Container(
+                  decoration: const BoxDecoration(color: Color(0xff223e65)),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xff01FF99),
+                    ),
+                  ),
+                ),
+              )
+            : Expanded(
+                flex: 5,
+                child: LineContainer(
+                  tileHeight: tileHeight,
+                  tileWidth: tileWidth,
+                  currentNotes: notesToRender,
+                  currentNoteIndex: currentNoteIndex,
+                  animation: animationController,
+                  key: GlobalKey(),
+                ),
+              ),
         Expanded(
           flex: 3,
           child: SingleChildScrollView(
@@ -266,18 +303,18 @@ class _STPianoTilesState extends State<STPianoTiles>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             CupertinoIcons.shuffle,
                             size: 24,
-                            color: Colors.white,
+                            color: Colors.white.withOpacity(0.5),
                           ),
                           onPressed: () {},
                         ),
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             CupertinoIcons.backward_end_fill,
                             size: 24,
-                            color: Colors.white,
+                            color: Colors.white.withOpacity(0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -294,43 +331,21 @@ class _STPianoTilesState extends State<STPianoTiles>
                               : _resumeAnimation(),
                         ),
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             CupertinoIcons.forward_end_fill,
                             size: 24,
-                            color: Colors.white,
+                            color: Colors.white.withOpacity(0.5),
                           ),
                           onPressed: () {},
                         ),
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             CupertinoIcons.square_list_fill,
                             size: 24,
-                            color: Colors.white,
+                            color: Colors.white.withOpacity(0.5),
                           ),
                           onPressed: () {},
                         ),
-                        // AppIconButton(
-                        //   icon: Icons.shuffle,
-                        //   onPressed: () {},
-                        // ),
-                        // AppIconButton(
-                        //   icon: Icons.arrow_back,
-                        //   onPressed: () {},
-                        // ),
-                        // AppIconButton(
-                        //   icon: isPlaying ? Icons.pause : Icons.play_arrow,
-                        //   onPressed: () => isPlaying
-                        //       ? _pauseAnimation()
-                        //       : _resumeAnimation(),
-                        // ),
-                        // AppIconButton(
-                        //   icon: Icons.arrow_forward,
-                        //   onPressed: () {},
-                        // ),
-                        // AppIconButton(
-                        //   icon: Icons.playlist_play,
-                        //   onPressed: () {},
-                        // ),
                       ],
                     ),
                   ),
