@@ -16,11 +16,10 @@ import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_sli
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/ray_painter_state.dart';
-
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/helper_functions.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/circle_painter.dart';
-import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/linear_visualizer_painter.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/presentation/widgets/linear_visualizer.dart';
 
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -29,7 +28,7 @@ class VisualizerScreenSlider extends StatefulWidget {
   final double currentPositionSec; // Add this line
 
   // Update constructor
-  VisualizerScreenSlider({
+  const VisualizerScreenSlider({
     Key? key,
     required this.songData,
     this.currentPositionSec = 0.0, // Default to 0.0 if not provided
@@ -112,8 +111,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     ];
   }
 
-  final GlobalKey<_LineAudioVisualizerState> visualizerKey =
-      GlobalKey<_LineAudioVisualizerState>();
+  final GlobalKey<LineAudioVisualizerState> visualizerKey =
+      GlobalKey<LineAudioVisualizerState>();
 
   @override
   void initState() {
@@ -166,24 +165,41 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   }
 
   Future<void> fetchAndPlayAudio() async {
-    try {
-      final firebaseRepository = FirebaseRepositoryImpl(
-          FirebaseFirestore.instance, FirebaseStorage.instance);
-      final audioUrl =
-          await firebaseRepository.getAudioUrl(widget.songData.audioSource);
+    int retries = 3;
 
-      audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
-        audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
-        audioPlayer.resume();
-      });
+    while (retries > 0) {
+      try {
+        final firebaseRepository = FirebaseRepositoryImpl(
+            FirebaseFirestore.instance, FirebaseStorage.instance);
+        final audioUrl =
+            await firebaseRepository.getAudioUrl(widget.songData.audioSource);
 
-      await audioPlayer.play(UrlSource(audioUrl),
-          position: Duration(seconds: widget.currentPositionSec.toInt()));
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      print('Error: $e');
+        audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
+          audioPlayer
+              .seek(Duration(seconds: widget.currentPositionSec.toInt()));
+          audioPlayer.resume();
+        });
+
+        await audioPlayer.play(UrlSource(audioUrl),
+            position: Duration(seconds: widget.currentPositionSec.toInt()));
+
+        if (!mounted) return;
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      } catch (e) {
+        print('Error: $e');
+        retries--;
+        if (retries == 0) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Failed to load audio. Please try again."),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -317,10 +333,10 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           CupertinoIcons.ellipsis_vertical,
                           size: 24,
-                          color: Colors.white,
+                          color: Colors.white.withOpacity(0.5),
                         ),
                         onPressed: () {},
                       ),
@@ -448,18 +464,18 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 CupertinoIcons.shuffle,
                                 size: 24,
-                                color: Colors.white,
+                                color: Colors.white.withOpacity(0.5),
                               ),
                               onPressed: () {},
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 CupertinoIcons.backward_end_fill,
                                 size: 24,
-                                color: Colors.white,
+                                color: Colors.white.withOpacity(0.5),
                               ),
                               onPressed: () {},
                             ),
@@ -476,18 +492,18 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                                   : _resumeAnimation(),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 CupertinoIcons.forward_end_fill,
                                 size: 24,
-                                color: Colors.white,
+                                color: Colors.white.withOpacity(0.5),
                               ),
                               onPressed: () {},
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 CupertinoIcons.square_list_fill,
                                 size: 24,
-                                color: Colors.white,
+                                color: Colors.white.withOpacity(0.5),
                               ),
                               onPressed: () {},
                             ),
@@ -707,88 +723,5 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
 
   void updateFrequencies(List<double> newFrequencies) {
     visualizerKey.currentState?.updateFrequencies(newFrequencies);
-  }
-}
-
-class LineAudioVisualizer extends StatefulWidget {
-  final List<double> initialFrequencies;
-  final double totalHeight;
-  final Color color;
-  final int barsBetweenMainFrequencies;
-
-  const LineAudioVisualizer({
-    Key? key,
-    required this.initialFrequencies,
-    required this.totalHeight,
-    required this.color,
-    this.barsBetweenMainFrequencies = 6,
-  }) : super(key: key);
-
-  @override
-  _LineAudioVisualizerState createState() => _LineAudioVisualizerState();
-}
-
-class _LineAudioVisualizerState extends State<LineAudioVisualizer>
-    with SingleTickerProviderStateMixin {
-  late List<double> currentFrequencies;
-  late AnimationController _controller;
-  late List<Animation<double>> _animations;
-
-  @override
-  void initState() {
-    super.initState();
-    currentFrequencies = widget.initialFrequencies;
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 100),
-      vsync: this,
-    );
-
-    _initializeAnimations(widget.initialFrequencies);
-  }
-
-  void _initializeAnimations(List<double> frequencies) {
-    _animations = frequencies.map((frequency) {
-      return Tween<double>(begin: frequency, end: frequency)
-          .animate(_controller);
-    }).toList();
-  }
-
-  void updateFrequencies(List<double> newFrequencies) {
-    setState(() {
-      for (int i = 0; i < newFrequencies.length; i++) {
-        _animations[i] = Tween<double>(
-          begin: currentFrequencies[i],
-          end: newFrequencies[i],
-        ).animate(_controller);
-      }
-      currentFrequencies = newFrequencies;
-    });
-    _controller.forward(from: 0);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return CustomPaint(
-          size: Size(MediaQuery.of(context).size.width, widget.totalHeight),
-          painter: LineAudioVisualizerPainter(
-            frequencies: _animations.map((anim) => anim.value).toList(),
-            totalHeight: widget.totalHeight,
-            totalWidth: MediaQuery.of(context).size.width,
-            color: widget.color,
-            barsBetweenMainFrequencies: widget.barsBetweenMainFrequencies,
-          ),
-        );
-      },
-    );
   }
 }
