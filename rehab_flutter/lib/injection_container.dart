@@ -34,6 +34,7 @@ import 'package:rehab_flutter/core/usecases/firebase/get_patients.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_therapist_patient_ids.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_therapists.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_user.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_user_details.dart';
 import 'package:rehab_flutter/core/usecases/firebase/logout_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/register_therapist.dart';
 import 'package:rehab_flutter/core/usecases/firebase/reset_session.dart';
@@ -136,6 +137,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetTherapistsUseCase>(GetTherapistsUseCase(sl()));
 
   sl.registerSingleton<GetUserUseCase>(GetUserUseCase(sl()));
+
+  sl.registerSingleton<GetUserDetailsUseCase>(GetUserDetailsUseCase(sl()));
 
   sl.registerSingleton<EditUserSessionUseCase>(EditUserSessionUseCase(sl()));
 

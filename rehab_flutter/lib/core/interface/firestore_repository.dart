@@ -22,6 +22,7 @@ abstract class FirebaseRepository {
   Future<void> logLogoutAttempt(String email, bool success);
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getLoginLogs();
   Future<dynamic> getUser(String userId);
+  Future<dynamic> getUserDetails(String userId);
   Future<void> registerUser(RegisterData data);
   Future<void> registerTherapist(RegisterTherapistData data);
   Future<void> updateCurrentSession(String userId, dynamic data);

@@ -159,6 +159,44 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
   }
 
+  @override
+  Future<dynamic> getUserDetails(String userId) async {
+    // Optionally fetch and do something with the user's document from Firestore
+    // For example, retrieving the user's profile information
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
+
+    if (!userDoc.exists) {
+      throw Exception('User document does not exist in Firestore.');
+    }
+
+    print('Got user with data: ${userDoc.data()}');
+
+    final rolesList = userDoc.data()!['roles'].cast<String>().toList();
+
+    if (rolesList.contains("therapist")) {
+    } else {
+      // Fetch the download URL of the profile image from Firebase Storage
+      String? imageURL = await _getUserImageURL(userId);
+
+      final currentUser = AppUser(
+        userId: userDoc.id,
+        firstName: userDoc.data()!['firstName'],
+        lastName: userDoc.data()!['lastName'],
+        gender: userDoc.data()!['gender'],
+        email: userDoc.data()!['email'],
+        phoneNumber: userDoc.data()!['phoneNumber'],
+        city: userDoc.data()!['city'],
+        birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+        registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+        conditions: userDoc.data()!['conditions'].cast<String>().toList(),
+        plans: [],
+        imageURL: imageURL,
+      );
+
+      return currentUser;
+    }
+  }
+
   Future<String?> _getUserImageURL(String userId) async {
     final storageRef = storage.ref();
     final userImageRef = storageRef.child("images/$userId.jpg");

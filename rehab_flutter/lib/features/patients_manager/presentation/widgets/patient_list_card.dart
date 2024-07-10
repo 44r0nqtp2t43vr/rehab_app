@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
+// import 'package:rehab_flutter/core/entities/plan.dart';
+// import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
@@ -20,8 +20,8 @@ class PatientListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Plan? currentPlan = patient.getCurrentPlan();
-    final Session? currentSession = patient.getCurrentSession();
+    // final Plan? currentPlan = patient.getCurrentPlan();
+    // final Session? currentSession = patient.getCurrentSession();
 
     return InkWell(
       highlightColor: Colors.white.withOpacity(0.2),
@@ -70,58 +70,58 @@ class PatientListCard extends StatelessWidget {
                             ),
                           ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Daily",
-                            style: TextStyle(
-                              fontFamily: 'Sailec Light',
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "${currentSession == null ? 0 : currentSession.getSessionPercentCompletion().toStringAsFixed(0)}",
-                            style: const TextStyle(
-                              fontFamily: 'Sailec Bold',
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Overall",
-                            style: TextStyle(
-                              fontFamily: 'Sailec Light',
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
-                            style: const TextStyle(
-                              fontFamily: 'Sailec Bold',
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(height: 12),
+                  // Row(
+                  //   children: [
+                  //     Column(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         const Text(
+                  //           "Daily",
+                  //           style: TextStyle(
+                  //             fontFamily: 'Sailec Light',
+                  //             fontSize: 8,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.white,
+                  //           ),
+                  //         ),
+                  //         Text(
+                  //           "${currentSession == null ? 0 : currentSession.getSessionPercentCompletion().toStringAsFixed(0)}",
+                  //           style: const TextStyle(
+                  //             fontFamily: 'Sailec Bold',
+                  //             fontSize: 18,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.white,
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     const SizedBox(width: 12),
+                  //     Column(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         const Text(
+                  //           "Overall",
+                  //           style: TextStyle(
+                  //             fontFamily: 'Sailec Light',
+                  //             fontSize: 8,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.white,
+                  //           ),
+                  //         ),
+                  //         Text(
+                  //           "${currentPlan == null ? 0 : currentPlan.getPlanPercentCompletion().toStringAsFixed(0)}",
+                  //           style: const TextStyle(
+                  //             fontFamily: 'Sailec Bold',
+                  //             fontSize: 18,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.white,
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               const SizedBox(width: 24),
@@ -161,24 +161,24 @@ class PatientListCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Text(
-                      "Current Plan: ${currentPlan == null ? "None" : "${DateFormat('MMMM dd, yyyy').format(currentPlan.startDate)}-${DateFormat('MMMM dd, yyyy').format(currentPlan.endDate)} - Plan #${patient.plans.indexWhere((plan) => plan.startDate.month == currentPlan.startDate.month && plan.startDate.day == currentPlan.startDate.day && plan.startDate.year == currentPlan.startDate.year) + 1}"}",
-                      style: const TextStyle(
-                        fontFamily: 'Sailec Light',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      "Current Session: ${currentSession == null ? "None" : "${DateFormat('MMMM dd, yyyy').format(currentSession.date)} - ${currentPlan!.sessions.indexWhere((session) => session.date.month == currentSession.date.month && session.date.day == currentSession.date.day && session.date.year == currentSession.date.year) + 1}/${currentPlan.sessions.length}"}",
-                      style: const TextStyle(
-                        fontFamily: 'Sailec Light',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // Text(
+                    //   "Current Plan: ${currentPlan == null ? "None" : "${DateFormat('MMMM dd, yyyy').format(currentPlan.startDate)}-${DateFormat('MMMM dd, yyyy').format(currentPlan.endDate)} - Plan #${patient.plans.indexWhere((plan) => plan.startDate.month == currentPlan.startDate.month && plan.startDate.day == currentPlan.startDate.day && plan.startDate.year == currentPlan.startDate.year) + 1}"}",
+                    //   style: const TextStyle(
+                    //     fontFamily: 'Sailec Light',
+                    //     fontSize: 12,
+                    //     fontWeight: FontWeight.bold,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
+                    // Text(
+                    //   "Current Session: ${currentSession == null ? "None" : "${DateFormat('MMMM dd, yyyy').format(currentSession.date)} - ${currentPlan!.sessions.indexWhere((session) => session.date.month == currentSession.date.month && session.date.day == currentSession.date.day && session.date.year == currentSession.date.year) + 1}/${currentPlan.sessions.length}"}",
+                    //   style: const TextStyle(
+                    //     fontFamily: 'Sailec Light',
+                    //     fontSize: 12,
+                    //     fontWeight: FontWeight.bold,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
