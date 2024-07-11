@@ -786,4 +786,35 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       return Session.empty();
     }
   }
+
+  @override
+  Future<List<Plan>> getPatientPlansList(String patientId) async {
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(patientId).get();
+
+    if (!userDoc.exists) {
+      throw Exception('User document does not exist in Firestore.');
+    }
+
+    print('Got user with data: ${userDoc.data()}');
+
+    List<Plan> plansList = [];
+
+    // Query Plans for the User
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
+
+    for (var planDoc in plansSnapshot.docs) {
+      // Combine Plan with its Sessions
+      Plan planWithSessions = Plan(
+        planId: planDoc.data()['planId'],
+        planName: planDoc.data()['planName'],
+        startDate: planDoc.data()['startDate'].toDate() as DateTime,
+        endDate: planDoc.data()['endDate'].toDate() as DateTime,
+        sessions: [],
+      );
+
+      plansList.add(planWithSessions);
+    }
+
+    return plansList;
+  }
 }

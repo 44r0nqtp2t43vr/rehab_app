@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plan_item.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/select_plan_dialog.dart';
 
 class PatientPlansList extends StatefulWidget {
   final AppUser patient;
+  final List<Plan> plansList;
 
-  const PatientPlansList({super.key, required this.patient});
+  const PatientPlansList({super.key, required this.patient, required this.plansList});
 
   @override
   State<PatientPlansList> createState() => _PatientPlansListState();
@@ -18,10 +20,19 @@ class PatientPlansList extends StatefulWidget {
 class _PatientPlansListState extends State<PatientPlansList> {
   bool showAll = false;
 
+  Plan? getCurrentPlan() {
+    final DateTime today = DateTime.now();
+    final Plan currentPlan = widget.plansList.lastWhere(
+      (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
+      orElse: () => Plan.empty(),
+    );
+    return currentPlan.planId.isEmpty ? null : currentPlan;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final plans = widget.patient.plans;
-    final currentPlan = widget.patient.getCurrentPlan();
+    final plans = widget.plansList;
+    final currentPlan = getCurrentPlan();
 
     return GlassContainer(
       shadowStrength: 2,
@@ -92,7 +103,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
                     : PatientPlanItem(
                         onPressedRoute: '/PatientPlanDetails',
                         patientPlan: PatientPlan(patient: widget.patient, plan: currentPlan),
-                        planNo: widget.patient.plans.indexWhere((plan) => plan.startDate.month == currentPlan.startDate.month && plan.startDate.day == currentPlan.startDate.day && plan.startDate.year == currentPlan.startDate.year) + 1,
+                        planNo: widget.plansList.indexWhere((plan) => plan.startDate.month == currentPlan.startDate.month && plan.startDate.day == currentPlan.startDate.day && plan.startDate.year == currentPlan.startDate.year) + 1,
                         isCurrent: true,
                       ),
             Padding(

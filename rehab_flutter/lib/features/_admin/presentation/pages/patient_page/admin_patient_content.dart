@@ -159,7 +159,11 @@ class _AdminPatientContentState extends State<AdminPatientContent> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      PatientPlansList(patient: widget.patient),
+                      //TODO: fix for admin
+                      PatientPlansList(
+                        patient: widget.patient,
+                        plansList: const [],
+                      ),
                       const SizedBox(height: 20),
                       Align(
                         alignment: Alignment.centerLeft,

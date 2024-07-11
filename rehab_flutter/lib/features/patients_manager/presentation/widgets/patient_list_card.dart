@@ -11,6 +11,8 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_event.dart';
 
 class PatientListCard extends StatelessWidget {
   final AppUser patient;
@@ -191,6 +193,7 @@ class PatientListCard extends StatelessWidget {
 
   void _onPatientCardPressed(BuildContext context) {
     BlocProvider.of<ViewedTherapistPatientBloc>(context).add(FetchViewedTherapistPatientEvent(patient));
+    BlocProvider.of<ViewedTherapistPatientPlansListBloc>(context).add(FetchViewedTherapistPatientPlansListEvent(patient.userId));
     Navigator.of(context).pushNamed(onPressedRoute);
   }
 }

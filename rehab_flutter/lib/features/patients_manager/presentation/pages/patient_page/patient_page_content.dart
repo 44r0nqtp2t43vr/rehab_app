@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
@@ -10,6 +11,8 @@ import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_details.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plans_list.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
@@ -147,7 +150,25 @@ class _PatientPageContentState extends State<PatientPageContent> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    PatientPlansList(patient: widget.patient),
+                    BlocBuilder<ViewedTherapistPatientPlansListBloc, ViewedTherapistPatientPlansListState>(
+                      builder: (context, state) {
+                        if (state is ViewedTherapistPatientPlansListLoading) {
+                          return const Center(
+                            child: CupertinoActivityIndicator(color: Colors.white),
+                          );
+                        }
+                        if (state is ViewedTherapistPatientPlansListDone) {
+                          final plansList = state.plansList;
+
+                          return PatientPlansList(
+                            patient: widget.patient,
+                            plansList: plansList,
+                          );
+                        }
+
+                        return const SizedBox();
+                      },
+                    ),
                     const SizedBox(height: 20),
                     Align(
                       alignment: Alignment.centerLeft,

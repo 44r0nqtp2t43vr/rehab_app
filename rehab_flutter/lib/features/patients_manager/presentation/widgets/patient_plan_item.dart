@@ -44,31 +44,12 @@ class PatientPlanItem extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      DateFormat('MMMM dd').format(patientPlan.plan.startDate),
-                      style: darkTextTheme().headlineSmall,
-                    ),
-                    Text(
-                      DateFormat('MMMM dd').format(patientPlan.plan.endDate),
-                      style: darkTextTheme().headlineSmall,
-                    ),
-                  ],
+                child: Text(
+                  "${DateFormat('MMMM dd, yyyy').format(patientPlan.plan.startDate)} - ${DateFormat('MMMM dd, yyyy').format(patientPlan.plan.endDate)}",
+                  style: darkTextTheme().headlineSmall,
                 ),
               ),
               const SizedBox(width: 8),
-              SizedBox(
-                width: 80,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    "${patientPlan.plan.getPlanPercentCompletion().toStringAsFixed(2)}%",
-                    style: darkTextTheme().headlineSmall,
-                  ),
-                ),
-              ),
               IconButton(
                 onPressed: () => _onPlanDeletePressed(context),
                 icon: const Icon(
