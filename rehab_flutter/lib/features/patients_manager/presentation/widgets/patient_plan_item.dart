@@ -9,6 +9,8 @@ import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_event.dart';
 
 class PatientPlanItem extends StatelessWidget {
   final PatientPlan patientPlan;
@@ -66,6 +68,7 @@ class PatientPlanItem extends StatelessWidget {
 
   void _onPatientCardPressed(BuildContext context) {
     BlocProvider.of<ViewedTherapistPatientPlanBloc>(context).add(UpdateTherapistPatientPlanEvent(patientPlan.plan, patientPlan.patient));
+    BlocProvider.of<ViewedTherapistPatientPlanSessionsListBloc>(context).add(FetchViewedTherapistPatientPlanSessionsListEvent(patientPlan.plan, patientPlan.patient));
     Navigator.of(context).pushNamed(onPressedRoute);
   }
 

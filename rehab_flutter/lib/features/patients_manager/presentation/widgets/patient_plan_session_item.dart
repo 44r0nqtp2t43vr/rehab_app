@@ -59,15 +59,15 @@ class PatientPlanSessionItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: session.items.isEmpty || !(session.items.any((item) => item.test == "pretest")) ? null : () => _onTestButtonPressed(context, isPretest: true),
-                          child: Text(session.items.isEmpty || session.pretestScore == null ? "Pretest" : "Pretest: ${session.pretestScore!.toStringAsFixed(0)}"),
+                          onPressed: session.pretestScore == null ? null : () => _onTestButtonPressed(context, isPretest: true),
+                          child: Text(session.pretestScore == null ? "Pretest" : "Pretest: ${session.pretestScore!.toStringAsFixed(0)}"),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: session.items.isEmpty || !(session.items.any((item) => item.test == "posttest")) ? null : () => _onTestButtonPressed(context, isPretest: false),
-                          child: Text(session.items.isEmpty || session.posttestScore == null ? "Posttest" : "Posttest: ${session.posttestScore!.toStringAsFixed(0)}"),
+                          onPressed: session.posttestScore == null ? null : () => _onTestButtonPressed(context, isPretest: false),
+                          child: Text(session.posttestScore == null ? "Posttest" : "Posttest: ${session.posttestScore!.toStringAsFixed(0)}"),
                         ),
                       ),
                     ],

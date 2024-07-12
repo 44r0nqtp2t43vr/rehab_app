@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
@@ -789,19 +790,10 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<List<Plan>> getPatientPlansList(String patientId) async {
-    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(patientId).get();
-
-    if (!userDoc.exists) {
-      throw Exception('User document does not exist in Firestore.');
-    }
-
-    print('Got user with data: ${userDoc.data()}');
+    // Query Plans for the User
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(patientId).collection('plans').get();
 
     List<Plan> plansList = [];
-
-    // Query Plans for the User
-    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').get();
-
     for (var planDoc in plansSnapshot.docs) {
       // Combine Plan with its Sessions
       Plan planWithSessions = Plan(
@@ -816,5 +808,23 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     return plansList;
+  }
+
+  @override
+  Future<List<Session>> getPatientPlanSessionsList(PatientPlan patientPlan) async {
+    // For each Plan, Query Sessions
+    QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(patientPlan.patient.userId).collection('plans').doc(patientPlan.plan.planId).collection('sessions').get();
+
+    List<Session> sessions = [];
+    for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+      // For each session, query testingitems
+      // QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+      // List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+      Session session = Session.fromMap(sessionSnapshotDoc.data());
+
+      sessions.add(session);
+    }
+
+    return sessions;
   }
 }

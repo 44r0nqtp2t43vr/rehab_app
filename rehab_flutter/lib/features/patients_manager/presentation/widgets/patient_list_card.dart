@@ -13,6 +13,12 @@ import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_event.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_event.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_event.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_event.dart';
 
 class PatientListCard extends StatelessWidget {
   final AppUser patient;
@@ -194,6 +200,10 @@ class PatientListCard extends StatelessWidget {
   void _onPatientCardPressed(BuildContext context) {
     BlocProvider.of<ViewedTherapistPatientBloc>(context).add(FetchViewedTherapistPatientEvent(patient));
     BlocProvider.of<ViewedTherapistPatientPlansListBloc>(context).add(FetchViewedTherapistPatientPlansListEvent(patient.userId));
+    BlocProvider.of<PatientPlansBloc>(context).add(FetchPatientPlansEvent(patient));
+    BlocProvider.of<PatientCurrentPlanBloc>(context).add(FetchPatientCurrentPlanEvent(patient));
+    BlocProvider.of<PatientCurrentSessionBloc>(context).add(FetchPatientCurrentSessionEvent(patient));
+
     Navigator.of(context).pushNamed(onPressedRoute);
   }
 }

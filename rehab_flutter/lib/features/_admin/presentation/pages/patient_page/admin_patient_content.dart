@@ -184,7 +184,7 @@ class _AdminPatientContentState extends State<AdminPatientContent> {
                               color: Colors.white.withOpacity(0.25),
                               child: DailyProgressCard(
                                 isTherapistView: true,
-                                todaySession: widget.patient.getCurrentSession(),
+                                todaySession: widget.patient.getCurrentSession()!,
                               ),
                             ),
                           ),

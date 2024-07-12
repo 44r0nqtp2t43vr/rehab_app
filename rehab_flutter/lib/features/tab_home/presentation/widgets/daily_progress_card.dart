@@ -11,14 +11,14 @@ import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_dat
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 
 class DailyProgressCard extends StatelessWidget {
-  final Session? todaySession;
+  final Session todaySession;
   final bool isTherapistView;
 
   const DailyProgressCard({super.key, required this.todaySession, this.isTherapistView = false});
 
   @override
   Widget build(BuildContext context) {
-    double percentCompletion = todaySession == null ? 0 : todaySession!.getSessionPercentCompletion();
+    double percentCompletion = todaySession.sessionId.isEmpty ? 0 : todaySession.getSessionPercentCompletion();
 
     return Container(
       height: 240,
@@ -87,8 +87,8 @@ class DailyProgressCard extends StatelessWidget {
     );
   }
 
-  void _onSeeDailyProgress(Session? session, BuildContext context) {
-    if (session == null) {
+  void _onSeeDailyProgress(Session session, BuildContext context) {
+    if (session.sessionId.isEmpty) {
       showDialog(
         context: context,
         barrierDismissible: false,

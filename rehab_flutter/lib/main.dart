@@ -12,6 +12,7 @@ import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_bloc.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PatientCurrentPlanBloc>(create: (BuildContext context) => sl()),
         BlocProvider<PatientCurrentSessionBloc>(create: (BuildContext context) => sl()),
         BlocProvider<ViewedTherapistPatientPlansListBloc>(create: (BuildContext context) => sl()),
+        BlocProvider<ViewedTherapistPatientPlanSessionsListBloc>(create: (BuildContext context) => sl()),
       ],
       child: MaterialApp(
         title: 'Haplos',
