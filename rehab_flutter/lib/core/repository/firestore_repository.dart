@@ -20,6 +20,7 @@ import 'package:rehab_flutter/features/patients_manager/domain/models/assign_pat
 import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_therapist_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/get_testanalytics_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -826,5 +827,19 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     return sessions;
+  }
+
+  @override
+  Future<List<TestingItem>> getTestAnalytics(GetTestAnalyticsData data) async {
+    // Query testingitems
+    QuerySnapshot<Map<String, dynamic>> testingItemsSnapshot = await db.collection('users').doc(data.patient.userId).collection('plans').doc(data.plan.planId).collection('sessions').doc(data.session.sessionId).collection('testingitems').where('test', isEqualTo: data.testType).get();
+
+    List<TestingItem> items = [];
+    for (var itemSnapshotDoc in testingItemsSnapshot.docs) {
+      TestingItem item = TestingItem.fromMap(itemSnapshotDoc.data());
+      items.add(item);
+    }
+
+    return items;
   }
 }
