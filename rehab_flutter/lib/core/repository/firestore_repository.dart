@@ -176,6 +176,28 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     final rolesList = userDoc.data()!['roles'].cast<String>().toList();
 
     if (rolesList.contains("therapist")) {
+      final patientIds = userDoc.data()!['patients'].cast<String>().toList();
+
+      // Fetch the download URL of the profile image from Firebase Storage
+      String? imageURL = await _getTherapistImageURL(userId);
+
+      final currentTherapist = Therapist(
+        therapistId: userDoc.id,
+        firstName: userDoc.data()!['firstName'],
+        lastName: userDoc.data()!['lastName'],
+        gender: userDoc.data()!['gender'],
+        email: userDoc.data()!['email'],
+        phoneNumber: userDoc.data()!['phoneNumber'],
+        city: userDoc.data()!['city'],
+        licenseNumber: userDoc.data()!['licenseNumber'],
+        birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+        registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+        patientsIds: patientIds,
+        patients: [],
+        imageURL: imageURL,
+      );
+
+      return currentTherapist;
     } else {
       // Fetch the download URL of the profile image from Firebase Storage
       String? imageURL = await _getUserImageURL(userId);
@@ -564,7 +586,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       if (fieldsToUpdate.isNotEmpty) {
         await db.collection('users').doc(data.user.therapistId).update(fieldsToUpdate);
       }
-      final Therapist user = await getUser(data.user.therapistId);
+      final Therapist user = await getUserDetails(data.user.therapistId);
       return user;
     }
   }

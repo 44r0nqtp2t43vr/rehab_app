@@ -74,7 +74,6 @@ class _AssignPatientsState extends State<AssignPatients> {
                 width: 400,
                 height: 400,
               ),
-              //CupertinoActivityIndicator(color: Colors.white),
             ),
           );
         }
@@ -171,14 +170,14 @@ class _AssignPatientsState extends State<AssignPatients> {
 
   void _onDetect(BuildContext context, BarcodeCapture capture, Therapist therapist) {
     final barcodes = capture.barcodes;
-    print('ondetect');
+
     setState(() {
       fromError = false;
     });
 
     if (barcodes.isNotEmpty) {
       _scannerController.dispose();
-      print('event running');
+
       BlocProvider.of<TherapistBloc>(context).add(AssignPatientEvent(AssignPatientData(
         therapist: therapist,
         patientId: barcodes.first.rawValue!,
