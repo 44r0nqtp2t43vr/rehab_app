@@ -529,7 +529,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<AppUser> editUserSession(EditSessionData data) async {
+  Future<void> editUserSession(EditSessionData data) async {
     await db.collection('users').doc(data.userId).collection('plans').doc(data.planId).collection('sessions').doc(data.sessionId).update({
       'standardOneType': data.standardOneType,
       'standardOneIntensity': data.standardOneIntensity,
@@ -537,9 +537,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'standardTwoIntensity': data.standardTwoIntensity,
       'passiveIntensity': data.passiveIntensity,
     });
-
-    final AppUser user = await getUser(data.userId);
-    return user;
   }
 
   @override

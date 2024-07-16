@@ -8,8 +8,8 @@ import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/standard_therapy_types.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/standard_therapy_type.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_event.dart';
 
 final intensityValues = [1, 2, 3, 4, 5];
 
@@ -44,7 +44,7 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
       standardTwoIntensity: standardTwoIntensity!.toString(),
     );
 
-    BlocProvider.of<ViewedTherapistPatientPlanBloc>(context).add(EditTherapistPatientPlanSessionEvent(editSessionData));
+    BlocProvider.of<ViewedTherapistPatientPlanSessionsListBloc>(context).add(EditViewedTherapistPatientPlanSessionsListEvent(editSessionData));
   }
 
   @override
