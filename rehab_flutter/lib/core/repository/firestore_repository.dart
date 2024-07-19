@@ -421,7 +421,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
     });
 
-    final AppUser user = await getUser(userId);
+    final AppUser user = await getUserDetails(userId);
     return user;
   }
 
@@ -860,5 +860,45 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     return items;
+  }
+
+  @override
+  Future<List<int>> getPatientNumbers(List<String> patientIds) async {
+    List<int> patientNumbers = [patientIds.length, 0, 0];
+
+    // Get the current date with only year, month, and day
+    DateTime currentDate = DateTime.now();
+    currentDate = DateTime(currentDate.year, currentDate.month, currentDate.day);
+
+    for (var patientId in patientIds) {
+      // Query to get the last plan document
+      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
+          .collection('users')
+          .doc(patientId)
+          .collection('plans')
+          .orderBy('startDate', descending: true) // Order by 'startDate' to get the latest
+          .limit(1) // Limit to get the last document
+          .get();
+
+      if (plansSnapshot.docs.isNotEmpty) {
+        var lastPlan = plansSnapshot.docs.first;
+        var startDate = lastPlan['startDate'].toDate(); // Assuming startDate is a Timestamp
+        var endDate = lastPlan['endDate'].toDate(); // Assuming endDate is a Timestamp
+
+        // Consider only the year, month, and day
+        startDate = DateTime(startDate.year, startDate.month, startDate.day);
+        endDate = DateTime(endDate.year, endDate.month, endDate.day);
+
+        if ((currentDate.isAfter(startDate) || currentDate.isAtSameMomentAs(startDate)) && currentDate.isBefore(endDate)) {
+          patientNumbers[1] = patientNumbers[1] + 1;
+        } else {
+          patientNumbers[2] = patientNumbers[2] + 1;
+        }
+      } else {
+        patientNumbers[2] = patientNumbers[2] + 1;
+      }
+    }
+
+    return patientNumbers;
   }
 }

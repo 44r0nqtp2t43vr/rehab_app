@@ -51,4 +51,5 @@ abstract class FirebaseRepository {
   Future<List<Plan>> getPatientPlansList(String patientId);
   Future<List<Session>> getPatientPlanSessionsList(PatientPlan patientPlan);
   Future<List<TestingItem>> getTestAnalytics(GetTestAnalyticsData data);
+  Future<List<int>> getPatientNumbers(List<String> patientIds);
 }

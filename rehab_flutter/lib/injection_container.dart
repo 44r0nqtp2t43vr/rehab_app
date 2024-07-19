@@ -30,6 +30,7 @@ import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.da
 import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_current_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_current_session.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_plans.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_patient_numbers.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patient_plan_sessions_list.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patient_plans_list.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patients.dart';
@@ -58,6 +59,7 @@ import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/pat
 import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
@@ -164,6 +166,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<GetTestAnalyticsUseCase>(GetTestAnalyticsUseCase(sl()));
 
+  sl.registerSingleton<GetPatientNumbersUseCase>(GetPatientNumbersUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
@@ -202,4 +206,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ViewedTherapistPatientPlanSessionsListBloc>(() => ViewedTherapistPatientPlanSessionsListBloc(sl(), sl()));
 
   sl.registerFactory<TestAnalyticsBloc>(() => TestAnalyticsBloc(sl()));
+
+  sl.registerFactory<PatientNumbersBloc>(() => PatientNumbersBloc(sl()));
 }

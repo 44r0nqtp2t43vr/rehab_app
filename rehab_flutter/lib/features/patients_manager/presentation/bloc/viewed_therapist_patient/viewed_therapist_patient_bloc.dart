@@ -67,7 +67,7 @@ class ViewedTherapistPatientBloc extends Bloc<ViewedTherapistPatientEvent, Viewe
     try {
       await _deletePlanUseCase(params: event.deletePlanData);
       AppUser updatedPatient = event.deletePlanData!.user;
-      updatedPatient.plans.removeWhere((plan) => plan.planId == event.deletePlanData!.planIdToDelete);
+      // updatedPatient.plans.removeWhere((plan) => plan.planId == event.deletePlanData!.planIdToDelete);
 
       emit(ViewedTherapistPatientDone(patient: updatedPatient, operation: TherapistPatientOperation.deletePlan));
     } catch (e) {
