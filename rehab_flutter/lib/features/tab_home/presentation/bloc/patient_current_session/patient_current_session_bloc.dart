@@ -14,6 +14,7 @@ class PatientCurrentSessionBloc extends Bloc<PatientCurrentSessionEvent, Patient
   }
 
   void onFetchPatientCurrentSession(FetchPatientCurrentSessionEvent event, Emitter<PatientCurrentSessionState> emit) async {
+    emit(const PatientCurrentSessionLoading());
     try {
       final patientCurrentSession = await _fetchPatientCurrentSessionUseCase(params: event.patient!.userId);
 

@@ -9,6 +9,8 @@ import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_event.dart';
 
 class PatientPlanItem extends StatelessWidget {
   final PatientPlan patientPlan;
@@ -44,31 +46,12 @@ class PatientPlanItem extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      DateFormat('MMMM dd').format(patientPlan.plan.startDate),
-                      style: darkTextTheme().headlineSmall,
-                    ),
-                    Text(
-                      DateFormat('MMMM dd').format(patientPlan.plan.endDate),
-                      style: darkTextTheme().headlineSmall,
-                    ),
-                  ],
+                child: Text(
+                  "${DateFormat('MMMM dd, yyyy').format(patientPlan.plan.startDate)} - ${DateFormat('MMMM dd, yyyy').format(patientPlan.plan.endDate)}",
+                  style: darkTextTheme().headlineSmall,
                 ),
               ),
               const SizedBox(width: 8),
-              SizedBox(
-                width: 80,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    "${patientPlan.plan.getPlanPercentCompletion().toStringAsFixed(2)}%",
-                    style: darkTextTheme().headlineSmall,
-                  ),
-                ),
-              ),
               IconButton(
                 onPressed: () => _onPlanDeletePressed(context),
                 icon: const Icon(
@@ -85,6 +68,7 @@ class PatientPlanItem extends StatelessWidget {
 
   void _onPatientCardPressed(BuildContext context) {
     BlocProvider.of<ViewedTherapistPatientPlanBloc>(context).add(UpdateTherapistPatientPlanEvent(patientPlan.plan, patientPlan.patient));
+    BlocProvider.of<ViewedTherapistPatientPlanSessionsListBloc>(context).add(FetchViewedTherapistPatientPlanSessionsListEvent(patientPlan.plan, patientPlan.patient));
     Navigator.of(context).pushNamed(onPressedRoute);
   }
 

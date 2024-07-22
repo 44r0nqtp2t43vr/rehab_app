@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
-import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/_admin/presentation/pages/main/admin_main.dart';
@@ -134,7 +133,7 @@ class AppRoutes {
         return _materialRoute(const AdminTherapistPage());
 
       case '/TestAnalytics':
-        return _materialRoute(TestAnalytics(items: settings.arguments as List<TestingItem>));
+        return _materialRoute(const TestAnalytics());
 
       default:
         return _materialRoute(const OnboardingScreen());

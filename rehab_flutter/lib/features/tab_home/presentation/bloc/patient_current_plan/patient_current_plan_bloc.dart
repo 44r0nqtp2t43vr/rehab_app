@@ -14,6 +14,7 @@ class PatientCurrentPlanBloc extends Bloc<PatientCurrentPlanEvent, PatientCurren
   }
 
   void onFetchPatientCurrentPlan(FetchPatientCurrentPlanEvent event, Emitter<PatientCurrentPlanState> emit) async {
+    emit(const PatientCurrentPlanLoading());
     try {
       final patientCurrentPlan = await _fetchPatientCurrentPlanUseCase(params: event.patient!.userId);
 

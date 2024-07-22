@@ -1,9 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_sorting_type.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_completion_rate.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_plan_details.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plan_session_item.dart';
@@ -109,19 +113,34 @@ class _PatientPlanDetailsState extends State<PatientPlanDetails> {
                                       ),
                                     ),
                                     const SizedBox(height: 12),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: widget.patientPlan.plan.sessions.length,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(bottom: 16.0),
-                                          child: PatientPlanSessionItem(
-                                            patientPlan: widget.patientPlan,
-                                            session: widget.patientPlan.plan.sessions[index],
-                                            index: index,
-                                          ),
-                                        );
+                                    BlocBuilder<ViewedTherapistPatientPlanSessionsListBloc, ViewedTherapistPatientPlanSessionsListState>(
+                                      builder: (context, state) {
+                                        if (state is ViewedTherapistPatientPlanSessionsListLoading) {
+                                          return const Center(
+                                            child: CupertinoActivityIndicator(color: Colors.white),
+                                          );
+                                        }
+                                        if (state is ViewedTherapistPatientPlanSessionsListDone) {
+                                          final sessionsList = state.sessionsList;
+
+                                          return ListView.builder(
+                                            shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            itemCount: sessionsList.length,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(bottom: 16.0),
+                                                child: PatientPlanSessionItem(
+                                                  patientPlan: widget.patientPlan,
+                                                  session: sessionsList[index],
+                                                  index: index,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }
+
+                                        return const SizedBox();
                                       },
                                     ),
                                   ],

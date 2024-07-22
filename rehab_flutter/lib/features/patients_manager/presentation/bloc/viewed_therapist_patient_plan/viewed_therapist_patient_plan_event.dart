@@ -14,9 +14,9 @@ abstract class ViewedTherapistPatientPlanEvent extends Equatable {
   List<Object> get props => [plan!, patient!, editSessionData!];
 }
 
-class EditTherapistPatientPlanSessionEvent extends ViewedTherapistPatientPlanEvent {
-  const EditTherapistPatientPlanSessionEvent(EditSessionData editSessionData) : super(editSessionData: editSessionData);
-}
+// class EditTherapistPatientPlanSessionEvent extends ViewedTherapistPatientPlanEvent {
+//   const EditTherapistPatientPlanSessionEvent(EditSessionData editSessionData) : super(editSessionData: editSessionData);
+// }
 
 class UpdateTherapistPatientPlanEvent extends ViewedTherapistPatientPlanEvent {
   const UpdateTherapistPatientPlanEvent(Plan plan, AppUser patient) : super(plan: plan, patient: patient);

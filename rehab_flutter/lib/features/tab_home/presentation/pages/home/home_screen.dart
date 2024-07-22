@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 if (state is PatientCurrentSessionDone) {
                                   return DailyProgressCard(
-                                    todaySession: state.currentSession,
+                                    todaySession: state.currentSession!,
                                   );
                                 }
 

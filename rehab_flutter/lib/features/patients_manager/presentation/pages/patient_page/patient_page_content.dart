@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
@@ -5,19 +6,24 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/assign_patient_data.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plans_list/viewed_therapist_patient_plans_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_details.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_plans_list.dart';
-import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
-import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_list.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/therapy_calendar.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_state.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_state.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/daily_progress_card.dart';
 import 'package:rehab_flutter/features/tab_profile/presentation/widgets/profile_info_card.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class PatientPageContent extends StatefulWidget {
   final AppUser patient;
@@ -29,78 +35,10 @@ class PatientPageContent extends StatefulWidget {
 }
 
 class _PatientPageContentState extends State<PatientPageContent> {
-  late Session currentSelectedSession;
-  late Map<String, Color?> dateColorsMap;
-  CalendarFormat _calendarFormat = CalendarFormat.week;
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-
-  Map<String, Color?> sessionsToDateColorsMap() {
-    Map<String, Color?> dateColorsMap = {};
-
-    for (var sesh in widget.patient.getAllSessionsFromAllPlans()) {
-      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
-      final List<bool> conditions = sesh.getSessionConditions();
-
-      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
-        dateColorsMap[dateString] = heatmap5;
-      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
-        dateColorsMap[dateString] = heatmap4;
-      } else if (conditions[0] && conditions[1] && conditions[2]) {
-        dateColorsMap[dateString] = heatmap3;
-      } else if (conditions[0] && conditions[1]) {
-        dateColorsMap[dateString] = heatmap2;
-      } else if (conditions[0]) {
-        dateColorsMap[dateString] = heatmap1;
-      } else {
-        dateColorsMap[dateString] = null;
-      }
-    }
-
-    return dateColorsMap;
-  }
-
-  bool _selectedDayPredicate(DateTime day) {
-    return isSameDay(_selectedDay, day);
-  }
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
-      currentSelectedSession = widget.patient.getAllSessionsFromAllPlans().firstWhere(
-            (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
-            orElse: () => Session.empty(),
-          );
-    });
-  }
-
-  void _onPageChanged(DateTime focusedDay) {
-    _focusedDay = focusedDay;
-  }
-
-  void _onToggleFormat() {
-    setState(() {
-      _calendarFormat = _calendarFormat == CalendarFormat.week ? CalendarFormat.month : CalendarFormat.week;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    dateColorsMap = sessionsToDateColorsMap();
-    currentSelectedSession = widget.patient.getAllSessionsFromAllPlans().firstWhere(
-          (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
-          orElse: () => Session.empty(),
-        );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TherapistBloc, TherapistState>(
       builder: (context, state) {
-        final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
-
         return Scaffold(
           body: SafeArea(
             child: SingleChildScrollView(
@@ -147,7 +85,25 @@ class _PatientPageContentState extends State<PatientPageContent> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    PatientPlansList(patient: widget.patient),
+                    BlocBuilder<ViewedTherapistPatientPlansListBloc, ViewedTherapistPatientPlansListState>(
+                      builder: (context, state) {
+                        if (state is ViewedTherapistPatientPlansListLoading) {
+                          return const Center(
+                            child: CupertinoActivityIndicator(color: Colors.white),
+                          );
+                        }
+                        if (state is ViewedTherapistPatientPlansListDone) {
+                          final plansList = state.plansList;
+
+                          return PatientPlansList(
+                            patient: widget.patient,
+                            plansList: plansList,
+                          );
+                        }
+
+                        return const SizedBox();
+                      },
+                    ),
                     const SizedBox(height: 20),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -166,9 +122,40 @@ class _PatientPageContentState extends State<PatientPageContent> {
                             shadowColor: Colors.black,
                             blur: 4,
                             color: Colors.white.withOpacity(0.25),
-                            child: DailyProgressCard(
-                              isTherapistView: true,
-                              todaySession: widget.patient.getCurrentSession(),
+                            child: BlocConsumer<PatientCurrentSessionBloc, PatientCurrentSessionState>(
+                              listener: (context, state) => setState(() {}),
+                              builder: (context, state) {
+                                if (state is PatientCurrentSessionLoading) {
+                                  return Container(
+                                    height: 240,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: const Center(child: CupertinoActivityIndicator(color: Colors.white)),
+                                  );
+                                }
+
+                                if (state is PatientCurrentSessionDone) {
+                                  return DailyProgressCard(
+                                    isTherapistView: true,
+                                    todaySession: state.currentSession!,
+                                  );
+                                }
+
+                                return Container(
+                                  height: 240,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "An error occurred while loading current session",
+                                      textAlign: TextAlign.center,
+                                      style: darkTextTheme().headlineSmall,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -180,7 +167,38 @@ class _PatientPageContentState extends State<PatientPageContent> {
                             shadowColor: Colors.black,
                             blur: 4,
                             color: Colors.white.withOpacity(0.25),
-                            child: ActivityChartCard(user: widget.patient),
+                            child: BlocConsumer<PatientCurrentPlanBloc, PatientCurrentPlanState>(
+                              listener: (context, state) => setState(() {}),
+                              builder: (context, state) {
+                                if (state is PatientCurrentPlanLoading) {
+                                  return Container(
+                                    height: 240,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: const Center(child: CupertinoActivityIndicator(color: Colors.white)),
+                                  );
+                                }
+
+                                if (state is PatientCurrentPlanDone) {
+                                  return ActivityChartCard(currentPlan: state.currentPlan);
+                                }
+
+                                return Container(
+                                  height: 240,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "An error occurred while loading current plan",
+                                      textAlign: TextAlign.center,
+                                      style: darkTextTheme().headlineSmall,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],
@@ -194,23 +212,23 @@ class _PatientPageContentState extends State<PatientPageContent> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Calendar(
-                      dateColorsMap: dateColorsMap,
-                      calendarFormat: _calendarFormat,
-                      focusedDay: _focusedDay,
-                      selectedDay: _selectedDay,
-                      selectedDayPredicate: _selectedDayPredicate,
-                      onDaySelected: _onDaySelected,
-                      onPageChanged: _onPageChanged,
-                      onToggleFormat: _onToggleFormat,
-                    ),
-                    const SizedBox(height: 20),
-                    EventList(
-                      isTherapistView: true,
-                      dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
-                      selectedDay: _selectedDay,
-                      currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
-                      conditions: currentSelectedSession.getSessionConditions(),
+                    BlocBuilder<PatientPlansBloc, PatientPlansState>(
+                      builder: (context, state) {
+                        if (state is PatientPlansLoading) {
+                          return const Center(
+                            child: CupertinoActivityIndicator(color: Colors.white),
+                          );
+                        }
+                        if (state is PatientPlansDone) {
+                          return TherapyCalendar(sessions: state.plans.expand((plan) => plan.sessions).toList());
+                        }
+                        return Center(
+                          child: Text(
+                            "An error occurred while loading plans",
+                            style: darkTextTheme().headlineSmall,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                     Row(

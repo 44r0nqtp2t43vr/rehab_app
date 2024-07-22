@@ -7,6 +7,10 @@ import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart'
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/therapist_dashboard/therapist_dashboard.dart';
@@ -22,6 +26,8 @@ class TherapistMainScreen extends StatelessWidget {
       case TabEnum.home:
         if (BlocProvider.of<TherapistPatientListBloc>(context).state.therapistPatientList.isEmpty) {
           BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(currentTherapist.therapistId));
+          BlocProvider.of<PatientNumbersBloc>(context).add(FetchPatientNumbersEvent(currentTherapist.patientsIds));
+          BlocProvider.of<TherapistPatientListSessionsBloc>(context).add(FetchTherapistPatientListSessionsEvent(currentTherapist.patientsIds));
         }
         return const TherapistDashboard();
       case TabEnum.patients:

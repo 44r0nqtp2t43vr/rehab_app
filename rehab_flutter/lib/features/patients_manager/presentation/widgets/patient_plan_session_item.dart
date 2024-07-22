@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/standard_therapy_types.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/get_testanalytics_data.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_edit_dialog.dart';
 
 class PatientPlanSessionItem extends StatelessWidget {
@@ -59,15 +63,15 @@ class PatientPlanSessionItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: session.items.isEmpty || !(session.items.any((item) => item.test == "pretest")) ? null : () => _onTestButtonPressed(context, isPretest: true),
-                          child: Text(session.items.isEmpty || session.pretestScore == null ? "Pretest" : "Pretest: ${session.pretestScore!.toStringAsFixed(0)}"),
+                          onPressed: session.pretestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: true),
+                          child: Text(session.pretestScore == null ? "Pretest" : "Pretest: ${session.pretestScore!.toStringAsFixed(0)}"),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: session.items.isEmpty || !(session.items.any((item) => item.test == "posttest")) ? null : () => _onTestButtonPressed(context, isPretest: false),
-                          child: Text(session.items.isEmpty || session.posttestScore == null ? "Posttest" : "Posttest: ${session.posttestScore!.toStringAsFixed(0)}"),
+                          onPressed: session.posttestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: false),
+                          child: Text(session.posttestScore == null ? "Posttest" : "Posttest: ${session.posttestScore!.toStringAsFixed(0)}"),
                         ),
                       ),
                     ],
@@ -118,11 +122,16 @@ class PatientPlanSessionItem extends StatelessWidget {
     );
   }
 
-  void _onTestButtonPressed(BuildContext context, {isPretest = true}) {
-    final items = session.items.where((item) => item.test == (isPretest ? "pretest" : "posttest")).toList();
-    items.sort((a, b) => a.itemNumber.compareTo(b.itemNumber));
-
-    Navigator.of(context).pushNamed("/TestAnalytics", arguments: items);
+  void _onTestButtonPressed(BuildContext context, PatientPlan patientPlan, Session session, {isPretest = true}) {
+    // final items = session.items.where((item) => item.test == (isPretest ? "pretest" : "posttest")).toList();
+    // items.sort((a, b) => a.itemNumber.compareTo(b.itemNumber));
+    BlocProvider.of<TestAnalyticsBloc>(context).add(FetchTestAnalyticsEvent(GetTestAnalyticsData(
+      patient: patientPlan.patient,
+      plan: patientPlan.plan,
+      session: session,
+      testType: isPretest ? "pretest" : "posttest",
+    )));
+    Navigator.of(context).pushNamed("/TestAnalytics");
   }
 }
 

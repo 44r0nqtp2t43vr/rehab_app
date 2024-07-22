@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
+import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/patient_sessions.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
@@ -19,6 +21,7 @@ import 'package:rehab_flutter/features/patients_manager/domain/models/assign_pat
 import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_therapist_data.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/get_testanalytics_data.dart';
 import 'package:rehab_flutter/features/standard_therapy/domain/entities/standard_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 import 'package:rehab_flutter/features/tab_profile/domain/entities/edit_user_data.dart';
@@ -152,6 +155,66 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
         conditions: userDoc.data()!['conditions'].cast<String>().toList(),
         plans: plansWithSessions,
+        imageURL: imageURL,
+      );
+
+      return currentUser;
+    }
+  }
+
+  @override
+  Future<dynamic> getUserDetails(String userId) async {
+    // Optionally fetch and do something with the user's document from Firestore
+    // For example, retrieving the user's profile information
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await db.collection('users').doc(userId).get();
+
+    if (!userDoc.exists) {
+      throw Exception('User document does not exist in Firestore.');
+    }
+
+    print('Got user with data: ${userDoc.data()}');
+
+    final rolesList = userDoc.data()!['roles'].cast<String>().toList();
+
+    if (rolesList.contains("therapist")) {
+      final patientIds = userDoc.data()!['patients'].cast<String>().toList();
+
+      // Fetch the download URL of the profile image from Firebase Storage
+      String? imageURL = await _getTherapistImageURL(userId);
+
+      final currentTherapist = Therapist(
+        therapistId: userDoc.id,
+        firstName: userDoc.data()!['firstName'],
+        lastName: userDoc.data()!['lastName'],
+        gender: userDoc.data()!['gender'],
+        email: userDoc.data()!['email'],
+        phoneNumber: userDoc.data()!['phoneNumber'],
+        city: userDoc.data()!['city'],
+        licenseNumber: userDoc.data()!['licenseNumber'],
+        birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+        registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+        patientsIds: patientIds,
+        patients: [],
+        imageURL: imageURL,
+      );
+
+      return currentTherapist;
+    } else {
+      // Fetch the download URL of the profile image from Firebase Storage
+      String? imageURL = await _getUserImageURL(userId);
+
+      final currentUser = AppUser(
+        userId: userDoc.id,
+        firstName: userDoc.data()!['firstName'],
+        lastName: userDoc.data()!['lastName'],
+        gender: userDoc.data()!['gender'],
+        email: userDoc.data()!['email'],
+        phoneNumber: userDoc.data()!['phoneNumber'],
+        city: userDoc.data()!['city'],
+        birthDate: userDoc.data()!['birthDate'].toDate() as DateTime,
+        registerDate: userDoc.data()!['registerDate'].toDate() as DateTime,
+        conditions: userDoc.data()!['conditions'].cast<String>().toList(),
+        plans: [],
         imageURL: imageURL,
       );
 
@@ -359,7 +422,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       }
     });
 
-    final AppUser user = await getUser(userId);
+    final AppUser user = await getUserDetails(userId);
     return user;
   }
 
@@ -489,7 +552,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<AppUser> editUserSession(EditSessionData data) async {
+  Future<void> editUserSession(EditSessionData data) async {
     await db.collection('users').doc(data.userId).collection('plans').doc(data.planId).collection('sessions').doc(data.sessionId).update({
       'standardOneType': data.standardOneType,
       'standardOneIntensity': data.standardOneIntensity,
@@ -497,9 +560,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'standardTwoIntensity': data.standardTwoIntensity,
       'passiveIntensity': data.passiveIntensity,
     });
-
-    final AppUser user = await getUser(data.userId);
-    return user;
   }
 
   @override
@@ -527,7 +587,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       if (fieldsToUpdate.isNotEmpty) {
         await db.collection('users').doc(data.user.therapistId).update(fieldsToUpdate);
       }
-      final Therapist user = await getUser(data.user.therapistId);
+      final Therapist user = await getUserDetails(data.user.therapistId);
       return user;
     }
   }
@@ -747,5 +807,131 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     } else {
       return Session.empty();
     }
+  }
+
+  @override
+  Future<List<Plan>> getPatientPlansList(String patientId) async {
+    // Query Plans for the User
+    QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(patientId).collection('plans').get();
+
+    List<Plan> plansList = [];
+    for (var planDoc in plansSnapshot.docs) {
+      // Combine Plan with its Sessions
+      Plan planWithSessions = Plan(
+        planId: planDoc.data()['planId'],
+        planName: planDoc.data()['planName'],
+        startDate: planDoc.data()['startDate'].toDate() as DateTime,
+        endDate: planDoc.data()['endDate'].toDate() as DateTime,
+        sessions: [],
+      );
+
+      plansList.add(planWithSessions);
+    }
+
+    return plansList;
+  }
+
+  @override
+  Future<List<Session>> getPatientPlanSessionsList(PatientPlan patientPlan) async {
+    // For each Plan, Query Sessions
+    QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(patientPlan.patient.userId).collection('plans').doc(patientPlan.plan.planId).collection('sessions').get();
+
+    List<Session> sessions = [];
+    for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
+      // For each session, query testingitems
+      // QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+      // List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+      Session session = Session.fromMap(sessionSnapshotDoc.data());
+
+      sessions.add(session);
+    }
+
+    return sessions;
+  }
+
+  @override
+  Future<List<TestingItem>> getTestAnalytics(GetTestAnalyticsData data) async {
+    // Query testingitems
+    QuerySnapshot<Map<String, dynamic>> testingItemsSnapshot = await db.collection('users').doc(data.patient.userId).collection('plans').doc(data.plan.planId).collection('sessions').doc(data.session.sessionId).collection('testingitems').where('test', isEqualTo: data.testType).get();
+
+    List<TestingItem> items = [];
+    for (var itemSnapshotDoc in testingItemsSnapshot.docs) {
+      TestingItem item = TestingItem.fromMap(itemSnapshotDoc.data());
+      items.add(item);
+    }
+
+    return items;
+  }
+
+  @override
+  Future<List<int>> getPatientNumbers(List<String> patientIds) async {
+    List<int> patientNumbers = [patientIds.length, 0, 0];
+
+    // Get the current date with only year, month, and day
+    DateTime currentDate = DateTime.now();
+    currentDate = DateTime(currentDate.year, currentDate.month, currentDate.day);
+
+    for (var patientId in patientIds) {
+      // Query to get the last plan document
+      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
+          .collection('users')
+          .doc(patientId)
+          .collection('plans')
+          .orderBy('startDate', descending: true) // Order by 'startDate' to get the latest
+          .limit(1) // Limit to get the last document
+          .get();
+
+      if (plansSnapshot.docs.isNotEmpty) {
+        var lastPlan = plansSnapshot.docs.first;
+        var startDate = lastPlan['startDate'].toDate(); // Assuming startDate is a Timestamp
+        var endDate = lastPlan['endDate'].toDate(); // Assuming endDate is a Timestamp
+
+        // Consider only the year, month, and day
+        startDate = DateTime(startDate.year, startDate.month, startDate.day);
+        endDate = DateTime(endDate.year, endDate.month, endDate.day);
+
+        if ((currentDate.isAfter(startDate) || currentDate.isAtSameMomentAs(startDate)) && currentDate.isBefore(endDate)) {
+          patientNumbers[1] = patientNumbers[1] + 1;
+        } else {
+          patientNumbers[2] = patientNumbers[2] + 1;
+        }
+      } else {
+        patientNumbers[2] = patientNumbers[2] + 1;
+      }
+    }
+
+    return patientNumbers;
+  }
+
+  @override
+  Future<List<PatientSessions>> getTherapistPatientListSessions(List<String> patientIds) async {
+    List<PatientSessions> patientSessions = [];
+
+    // Calculate the date 4 days ago
+    DateTime fourDaysAgo = DateTime.now().subtract(const Duration(days: 4));
+    fourDaysAgo = DateTime(fourDaysAgo.year, fourDaysAgo.month, fourDaysAgo.day);
+
+    for (var patientId in patientIds) {
+      final patient = await getUserDetails(patientId);
+
+      // Query to get all plans where 'endDate' is after the calculated date
+      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(patientId).collection('plans').where('endDate', isGreaterThan: Timestamp.fromDate(fourDaysAgo)).get();
+
+      List<Session> allSessions = [];
+
+      // Iterate through each plan and get its sessions
+      for (var planDoc in plansSnapshot.docs) {
+        QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(planDoc.id).collection('sessions').get();
+
+        // Add sessions to the list
+        for (var sessionDoc in sessionsSnapshot.docs) {
+          allSessions.add(Session.fromMap(sessionDoc.data()));
+        }
+      }
+
+      patientSessions.add(PatientSessions(patient: patient, sessions: allSessions));
+    }
+
+    return patientSessions;
   }
 }
