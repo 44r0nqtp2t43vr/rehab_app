@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/patient_sessions.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
@@ -900,5 +901,37 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     return patientNumbers;
+  }
+
+  @override
+  Future<List<PatientSessions>> getTherapistPatientListSessions(List<String> patientIds) async {
+    List<PatientSessions> patientSessions = [];
+
+    // Calculate the date 4 days ago
+    DateTime fourDaysAgo = DateTime.now().subtract(const Duration(days: 4));
+    fourDaysAgo = DateTime(fourDaysAgo.year, fourDaysAgo.month, fourDaysAgo.day);
+
+    for (var patientId in patientIds) {
+      final patient = await getUserDetails(patientId);
+
+      // Query to get all plans where 'endDate' is after the calculated date
+      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(patientId).collection('plans').where('endDate', isGreaterThan: Timestamp.fromDate(fourDaysAgo)).get();
+
+      List<Session> allSessions = [];
+
+      // Iterate through each plan and get its sessions
+      for (var planDoc in plansSnapshot.docs) {
+        QuerySnapshot<Map<String, dynamic>> sessionsSnapshot = await db.collection('users').doc(patientId).collection('plans').doc(planDoc.id).collection('sessions').get();
+
+        // Add sessions to the list
+        for (var sessionDoc in sessionsSnapshot.docs) {
+          allSessions.add(Session.fromMap(sessionDoc.data()));
+        }
+      }
+
+      patientSessions.add(PatientSessions(patient: patient, sessions: allSessions));
+    }
+
+    return patientSessions;
   }
 }

@@ -7,8 +7,8 @@ import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/therapist/therapist_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_state.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
-import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_state.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patient_progress_chart.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_numbers.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
@@ -60,14 +60,14 @@ class TherapistDashboard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  BlocBuilder<TherapistPatientListBloc, TherapistPatientListState>(
+                  BlocBuilder<TherapistPatientListSessionsBloc, TherapistPatientListSessionsState>(
                     builder: (context, state) {
-                      if (state is TherapistPatientListLoading) {
-                        // return const Center(child: CupertinoActivityIndicator(color: Colors.white));
-                        return PatientProgressChart(patients: state.therapistPatientList);
+                      if (state is TherapistPatientListSessionsLoading) {
+                        return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                        // return PatientProgressChart(patients: state.therapistPatientList);
                       }
-                      if (state is TherapistPatientListDone) {
-                        return PatientProgressChart(patients: state.therapistPatientList);
+                      if (state is TherapistPatientListSessionsDone) {
+                        return PatientProgressChart(patients: state.patientSessions);
                       }
                       return const SizedBox();
                     },

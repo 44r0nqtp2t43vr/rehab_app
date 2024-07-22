@@ -36,6 +36,7 @@ import 'package:rehab_flutter/core/usecases/firebase/get_patient_plans_list.dart
 import 'package:rehab_flutter/core/usecases/firebase/get_patients.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_test_analytics.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_therapist_patient_ids.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_therapist_patient_list_sessions.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_therapists.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_user.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_user_details.dart';
@@ -61,6 +62,7 @@ import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/v
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
@@ -168,6 +170,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<GetPatientNumbersUseCase>(GetPatientNumbersUseCase(sl()));
 
+  sl.registerSingleton<GetTherapistPatientListSessionsUseCase>(GetTherapistPatientListSessionsUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
@@ -208,4 +212,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<TestAnalyticsBloc>(() => TestAnalyticsBloc(sl()));
 
   sl.registerFactory<PatientNumbersBloc>(() => PatientNumbersBloc(sl()));
+
+  sl.registerFactory<TherapistPatientListSessionsBloc>(() => TherapistPatientListSessionsBloc(sl()));
 }

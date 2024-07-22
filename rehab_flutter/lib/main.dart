@@ -11,6 +11,7 @@ import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/v
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan/viewed_therapist_patient_plan_bloc.dart';
@@ -59,6 +60,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<ViewedTherapistPatientPlanSessionsListBloc>(create: (BuildContext context) => sl()),
         BlocProvider<TestAnalyticsBloc>(create: (BuildContext context) => sl()),
         BlocProvider<PatientNumbersBloc>(create: (BuildContext context) => sl()),
+        BlocProvider<TherapistPatientListSessionsBloc>(create: (BuildContext context) => sl()),
       ],
       child: MaterialApp(
         title: 'Haplos',

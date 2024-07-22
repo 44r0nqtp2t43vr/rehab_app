@@ -10,6 +10,8 @@ import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/therapist_patient_operations.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/patients_numbers/patients_numbers_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patient_list_sessions/therapist_patient_list_sessions_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
@@ -46,6 +48,7 @@ class PatientPage extends StatelessWidget {
                   // BlocProvider.of<ViewedPatientBloc>(context).add(AddPatientPlanEvent(AddPlanData(user: widget.patient, planSelected: int.parse(_weeksToAdd.text) * 7)));
                 } else if (userType is UserNone && userType.data is Therapist) {
                   BlocProvider.of<PatientNumbersBloc>(context).add(FetchPatientNumbersEvent(userType.data.patientsIds));
+                  BlocProvider.of<TherapistPatientListSessionsBloc>(context).add(FetchTherapistPatientListSessionsEvent(userType.data.patientsIds));
                 }
 
                 BlocProvider.of<ViewedTherapistPatientPlansListBloc>(context).add(FetchViewedTherapistPatientPlansListEvent(state.patient!.userId));

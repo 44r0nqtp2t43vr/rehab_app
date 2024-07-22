@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/entities/patient_sessions.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_progress_type.dart';
 
 class PatientProgressChart extends StatefulWidget {
-  final List<AppUser> patients;
+  final List<PatientSessions> patients;
 
   const PatientProgressChart({super.key, required this.patients});
 
@@ -18,9 +18,9 @@ class PatientProgressChart extends StatefulWidget {
 
 class _PatientProgressChartState extends State<PatientProgressChart> {
   final List<String> _availableTypes = availableTypes;
-  late List<AppUser> _patients;
+  late List<PatientSessions> _patients;
   late String _currentType;
-  AppUser? _patient;
+  PatientSessions? _patient;
 
   void _onTypeDropdownSelect(String? newValue) {
     setState(() {
@@ -28,7 +28,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
     });
   }
 
-  void _onPatientDropdownSelect(AppUser? newValue) {
+  void _onPatientDropdownSelect(PatientSessions? newValue) {
     setState(() {
       _patient = newValue!;
     });
@@ -121,7 +121,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                DropdownButtonFormField<AppUser>(
+                DropdownButtonFormField<PatientSessions>(
                   value: _patient,
                   style: const TextStyle(
                     color: Colors.black,
@@ -133,10 +133,10 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
                     labelText: 'Patient',
                   ),
                   onChanged: _onPatientDropdownSelect,
-                  items: widget.patients.map<DropdownMenuItem<AppUser>>((AppUser patient) {
-                    return DropdownMenuItem<AppUser>(
+                  items: widget.patients.map<DropdownMenuItem<PatientSessions>>((PatientSessions patient) {
+                    return DropdownMenuItem<PatientSessions>(
                       value: patient,
-                      child: Text(patient.getUserFullName()),
+                      child: Text(patient.patient.getUserFullName()),
                     );
                   }).toList(),
                 ),
@@ -148,7 +148,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
     );
   }
 
-  Widget buildLineChartOrText(AppUser? user) {
+  Widget buildLineChartOrText(PatientSessions? user) {
     if (user == null) {
       return Center(
         child: Text(
@@ -181,9 +181,9 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
     );
   }
 
-  LineChartData buildLineChartData(AppUser user, String type) {
+  LineChartData buildLineChartData(PatientSessions user, String type) {
     List<FlSpot> dataPoints = [];
-    List<Session> allSessions = user.getAllSessionsFromAllPlans();
+    List<Session> allSessions = user.sessions;
     final DateTime today = DateTime.now();
 
     if (type == availableTypes[0]) {
@@ -203,7 +203,12 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
         }
       }
 
-      double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
+      final Session currentSession = user.sessions.firstWhere(
+        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+        orElse: () => Session.empty(),
+      );
+
+      double currentPostTestScore = currentSession.posttestScore ?? 0;
       previousPostTestScores[4] = currentPostTestScore;
 
       for (int i = 0; i < previousPostTestScores.length; i++) {

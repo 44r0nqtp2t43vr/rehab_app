@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/patient_sessions.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
@@ -52,4 +53,5 @@ abstract class FirebaseRepository {
   Future<List<Session>> getPatientPlanSessionsList(PatientPlan patientPlan);
   Future<List<TestingItem>> getTestAnalytics(GetTestAnalyticsData data);
   Future<List<int>> getPatientNumbers(List<String> patientIds);
+  Future<List<PatientSessions>> getTherapistPatientListSessions(List<String> patientIds);
 }
