@@ -934,4 +934,41 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     return patientSessions;
   }
+
+  @override
+  Future<List<AppUser>> getAllPatients() async {
+    final List<AppUser> patients = [];
+
+    final QuerySnapshot querySnapshot = await db.collection('users').get();
+    final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+
+    for (DocumentSnapshot document in documentSnapshots) {
+      // Get the data of the document as Map<String, dynamic>
+      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+      final List<String> roles = data!['roles'].cast<String>().toList();
+
+      if (roles.contains("patient")) {
+        // Fetch the download URL of the profile image from Firebase Storage
+        String? imageURL = await _getUserImageURL(document.id);
+
+        final currentUser = AppUser(
+          userId: document.id,
+          firstName: data['firstName'],
+          lastName: data['lastName'],
+          gender: data['gender'],
+          email: data['email'],
+          phoneNumber: data['phoneNumber'],
+          city: data['city'],
+          birthDate: data['birthDate'].toDate() as DateTime,
+          registerDate: data['registerDate'].toDate() as DateTime,
+          conditions: data['conditions'].cast<String>().toList(),
+          plans: [],
+          imageURL: imageURL,
+        );
+        patients.add(currentUser);
+      }
+    }
+
+    return patients;
+  }
 }
