@@ -939,36 +939,76 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Future<List<AppUser>> getAllPatients() async {
     final List<AppUser> patients = [];
 
-    final QuerySnapshot querySnapshot = await db.collection('users').get();
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await db.collection('users').where('roles', arrayContains: 'patient').get();
     final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
 
     for (DocumentSnapshot document in documentSnapshots) {
       // Get the data of the document as Map<String, dynamic>
-      final Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
-      final List<String> roles = data!['roles'].cast<String>().toList();
+      final Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-      if (roles.contains("patient")) {
-        // Fetch the download URL of the profile image from Firebase Storage
-        String? imageURL = await _getUserImageURL(document.id);
+      // Fetch the download URL of the profile image from Firebase Storage
+      String? imageURL = await _getUserImageURL(document.id);
 
-        final currentUser = AppUser(
-          userId: document.id,
-          firstName: data['firstName'],
-          lastName: data['lastName'],
-          gender: data['gender'],
-          email: data['email'],
-          phoneNumber: data['phoneNumber'],
-          city: data['city'],
-          birthDate: data['birthDate'].toDate() as DateTime,
-          registerDate: data['registerDate'].toDate() as DateTime,
-          conditions: data['conditions'].cast<String>().toList(),
-          plans: [],
-          imageURL: imageURL,
-        );
-        patients.add(currentUser);
-      }
+      final currentUser = AppUser(
+        userId: document.id,
+        firstName: data['firstName'],
+        lastName: data['lastName'],
+        gender: data['gender'],
+        email: data['email'],
+        phoneNumber: data['phoneNumber'],
+        city: data['city'],
+        birthDate: data['birthDate'].toDate() as DateTime,
+        registerDate: data['registerDate'].toDate() as DateTime,
+        conditions: data['conditions'].cast<String>().toList(),
+        plans: [],
+        imageURL: imageURL,
+      );
+      patients.add(currentUser);
     }
 
     return patients;
+  }
+
+  @override
+  Future<List<int>> getAdminPatientNumbers() async {
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await db.collection('users').where('roles', arrayContains: 'patient').get();
+    final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+
+    List<int> patientNumbers = [documentSnapshots.length, 0, 0];
+
+    // Get the current date with only year, month, and day
+    DateTime currentDate = DateTime.now();
+    currentDate = DateTime(currentDate.year, currentDate.month, currentDate.day);
+
+    for (DocumentSnapshot document in documentSnapshots) {
+      // Query to get the last plan document
+      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db
+          .collection('users')
+          .doc(document.id)
+          .collection('plans')
+          .orderBy('startDate', descending: true) // Order by 'startDate' to get the latest
+          .limit(1) // Limit to get the last document
+          .get();
+
+      if (plansSnapshot.docs.isNotEmpty) {
+        var lastPlan = plansSnapshot.docs.first;
+        var startDate = lastPlan['startDate'].toDate(); // Assuming startDate is a Timestamp
+        var endDate = lastPlan['endDate'].toDate(); // Assuming endDate is a Timestamp
+
+        // Consider only the year, month, and day
+        startDate = DateTime(startDate.year, startDate.month, startDate.day);
+        endDate = DateTime(endDate.year, endDate.month, endDate.day);
+
+        if ((currentDate.isAfter(startDate) || currentDate.isAtSameMomentAs(startDate)) && currentDate.isBefore(endDate)) {
+          patientNumbers[1] = patientNumbers[1] + 1;
+        } else {
+          patientNumbers[2] = patientNumbers[2] + 1;
+        }
+      } else {
+        patientNumbers[2] = patientNumbers[2] + 1;
+      }
+    }
+
+    return patientNumbers;
   }
 }

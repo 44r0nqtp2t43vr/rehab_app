@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_event.dart';
-import 'package:rehab_flutter/features/_admin/presentation/widgets/admin_patients_numbers.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/admin_patient_numbers/admin_patient_numbers_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/admin_patient_numbers/admin_patient_numbers_state.dart';
 import 'package:rehab_flutter/features/_admin/presentation/widgets/therapists_numbers.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_numbers.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class AdminDashboard extends StatelessWidget {
@@ -38,7 +41,17 @@ class AdminDashboard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const AdminPatientsNumbers(),
+              BlocBuilder<AdminPatientNumbersBloc, AdminPatientNumbersState>(
+                builder: (context, state) {
+                  if (state is AdminPatientNumbersLoading) {
+                    return const Center(child: CupertinoActivityIndicator(color: Colors.white));
+                  }
+                  if (state is AdminPatientNumbersDone) {
+                    return PatientsNumbers(patientNumbers: state.patientNumbers);
+                  }
+                  return const SizedBox();
+                },
+              ),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -70,16 +83,13 @@ class AdminDashboard extends StatelessWidget {
                           foregroundColor: MaterialStateProperty.all<Color>(
                             Colors.white,
                           ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
+                          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
                           elevation: MaterialStateProperty.all<double>(0),
-                          shadowColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
+                          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
                           overlayColor: MaterialStateProperty.all<Color>(
                             Colors.white.withOpacity(0.2),
                           ),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
