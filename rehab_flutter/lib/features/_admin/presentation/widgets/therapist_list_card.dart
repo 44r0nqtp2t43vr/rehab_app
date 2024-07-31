@@ -8,6 +8,8 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/therapist.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_therapist/viewed_therapist_event.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patient_list_bloc.dart';
+import 'package:rehab_flutter/features/patients_manager/presentation/bloc/therapist_patients_list/therapist_patients_list_event.dart';
 
 class TherapistListCard extends StatelessWidget {
   final Therapist therapist;
@@ -39,10 +41,8 @@ class TherapistListCard extends StatelessWidget {
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: double.infinity,
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
+                          placeholder: (context, url) => const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
                         ),
                       )
                     : const Center(
@@ -80,7 +80,7 @@ class TherapistListCard extends StatelessWidget {
                       style: darkTextTheme().headlineSmall,
                     ),
                     Text(
-                      "No. of Patients: ${therapist.patients.length}",
+                      "No. of Patients: ${therapist.patientsIds.length}",
                       style: const TextStyle(
                         fontFamily: 'Sailec Light',
                         fontSize: 12,
@@ -99,8 +99,8 @@ class TherapistListCard extends StatelessWidget {
   }
 
   void _onTherapistListCardPressed(BuildContext context, Therapist therapist) {
-    BlocProvider.of<ViewedTherapistBloc>(context)
-        .add(FetchViewedTherapistEvent(therapist));
+    BlocProvider.of<ViewedTherapistBloc>(context).add(FetchViewedTherapistEvent(therapist));
+    BlocProvider.of<TherapistPatientListBloc>(context).add(FetchTherapistPatientListEvent(therapist.therapistId));
     Navigator.of(context).pushNamed("/AdminTherapistPage");
   }
 }

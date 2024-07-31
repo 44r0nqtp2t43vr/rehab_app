@@ -27,7 +27,12 @@ class ViewedTherapistBloc extends Bloc<ViewedTherapistEvent, ViewedTherapistStat
       await _assignPatientUseCase(params: event.assignData);
 
       Therapist updatedTherapist = event.assignData!.therapist;
-      updatedTherapist.patientsIds.remove(event.assignData!.patientId);
+
+      if (event.assignData!.isAssign == true) {
+        updatedTherapist.patientsIds.add(event.assignData!.patientId);
+      } else {
+        updatedTherapist.patientsIds.remove(event.assignData!.patientId);
+      }
 
       emit(ViewedTherapistDone(therapist: updatedTherapist));
     } catch (e) {

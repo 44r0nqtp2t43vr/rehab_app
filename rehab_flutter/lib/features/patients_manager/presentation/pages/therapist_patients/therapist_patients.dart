@@ -204,10 +204,13 @@ class TherapistPatients extends StatelessWidget {
               // const SizedBox(height: 16),
               BlocBuilder<TherapistPatientListBloc, TherapistPatientListState>(
                 builder: (context, state) {
+                  if (state is TherapistPatientListLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                   if (state is TherapistPatientListNone || (state is TherapistPatientListDone && state.therapistPatientList.isEmpty)) {
                     return const Text("You have no assigned patients", style: TextStyle(color: Colors.white));
                   }
-                  if (state is TherapistPatientListLoading || state is TherapistPatientListDone) {
+                  if (state is TherapistPatientListDone) {
                     return Column(
                       children: [
                         ListView.builder(

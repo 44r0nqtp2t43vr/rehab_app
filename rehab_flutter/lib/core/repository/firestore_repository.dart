@@ -594,7 +594,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<void> assignPatient(AssignPatientData data) async {
-    final List<String> currentPatients = data.therapist.patientsIds;
+    final List<String> currentPatients = List.from(data.therapist.patientsIds);
     if (data.isAssign) {
       final bool isValidInput = await doesPatientExist(data.patientId);
       if (isValidInput && !currentPatients.contains(data.patientId)) {
@@ -1010,5 +1010,40 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     return patientNumbers;
+  }
+
+  @override
+  Future<List<Therapist>> getAllTherapists() async {
+    final List<Therapist> therapists = [];
+
+    final QuerySnapshot<Map<String, dynamic>> querySnapshot = await db.collection('users').where('roles', arrayContains: 'therapist').get();
+    final List<DocumentSnapshot> documentSnapshots = querySnapshot.docs;
+
+    for (DocumentSnapshot document in documentSnapshots) {
+      // Get the data of the document as Map<String, dynamic>
+      final Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+      // Fetch the download URL of the profile image from Firebase Storage
+      String? imageURL = await _getUserImageURL(document.id);
+
+      final currentTherapist = Therapist(
+        therapistId: document.id,
+        firstName: data['firstName'],
+        lastName: data['lastName'],
+        gender: data['gender'],
+        email: data['email'],
+        phoneNumber: data['phoneNumber'],
+        city: data['city'],
+        licenseNumber: data['licenseNumber'],
+        birthDate: data['birthDate'].toDate() as DateTime,
+        registerDate: data['registerDate'].toDate() as DateTime,
+        patientsIds: data['patients'].cast<String>().toList(),
+        patients: [],
+        imageURL: imageURL,
+      );
+      therapists.add(currentTherapist);
+    }
+
+    return therapists;
   }
 }

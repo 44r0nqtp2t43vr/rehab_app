@@ -191,7 +191,7 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<PatientListBloc>(() => PatientListBloc(sl()));
 
-  sl.registerFactory<TherapistListBloc>(() => TherapistListBloc(sl(), sl()));
+  sl.registerFactory<TherapistListBloc>(() => TherapistListBloc(sl()));
 
   sl.registerFactory<ViewedTherapistBloc>(() => ViewedTherapistBloc(sl()));
 

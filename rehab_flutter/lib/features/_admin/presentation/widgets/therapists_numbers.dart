@@ -16,7 +16,7 @@ class TherapistsNumbers extends StatelessWidget {
     }
 
     for (int i = 0; i < therapists.length; i++) {
-      final numberOfPatients = therapists[i].patients.length;
+      final numberOfPatients = therapists[i].patientsIds.length;
       if (numberOfPatients == 0) {
         numbers[1] = numbers[1] + 1;
       } else {
