@@ -28,8 +28,8 @@ class AdminMainScreen extends StatelessWidget {
         }
         if (BlocProvider.of<PatientListBloc>(context).state.patientList.isEmpty) {
           BlocProvider.of<PatientListBloc>(context).add(const FetchPatientListEvent());
+          BlocProvider.of<AdminPatientNumbersBloc>(context).add(const FetchAdminPatientNumbersEvent());
         }
-        BlocProvider.of<AdminPatientNumbersBloc>(context).add(const FetchAdminPatientNumbersEvent());
         return const AdminDashboard();
       case TabEnum.therapists:
         return const AdminTherapists();
