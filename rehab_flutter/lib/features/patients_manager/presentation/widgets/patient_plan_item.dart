@@ -3,7 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
+import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
+import 'package:rehab_flutter/core/entities/therapist.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_event.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient/viewed_therapist_patient_event.dart';
@@ -73,6 +78,12 @@ class PatientPlanItem extends StatelessWidget {
   }
 
   void _onPlanDeletePressed(BuildContext context) {
-    BlocProvider.of<ViewedTherapistPatientBloc>(context).add(DeleteTherapistPatientPlanEvent(DeletePlanData(user: patientPlan.patient, planIdToDelete: patientPlan.plan.planId)));
+    final userType = BlocProvider.of<UserBloc>(context).state;
+
+    if (userType.data is Admin) {
+      BlocProvider.of<ViewedPatientBloc>(context).add(DeletePatientPlanEvent(DeletePlanData(user: patientPlan.patient, planIdToDelete: patientPlan.plan.planId)));
+    } else if (userType.data is Therapist) {
+      BlocProvider.of<ViewedTherapistPatientBloc>(context).add(DeleteTherapistPatientPlanEvent(DeletePlanData(user: patientPlan.patient, planIdToDelete: patientPlan.plan.planId)));
+    }
   }
 }

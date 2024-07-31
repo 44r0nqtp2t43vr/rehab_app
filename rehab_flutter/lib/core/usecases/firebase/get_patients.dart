@@ -1,15 +1,16 @@
+import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/interface/firestore_repository.dart';
 import 'package:rehab_flutter/core/usecase/usecase.dart';
 
-class GetPatientsUseCase implements UseCase<List<String>, void> {
+class GetPatientsUseCase implements UseCase<List<AppUser>, void> {
   final FirebaseRepository _firebaseRepository;
 
   GetPatientsUseCase(this._firebaseRepository);
 
   @override
-  Future<List<String>> call({void params}) {
+  Future<List<AppUser>> call({void params}) {
     try {
-      return _firebaseRepository.getPatientsIds();
+      return _firebaseRepository.getAllPatients();
     } catch (e) {
       throw GetPatientsException(e.toString());
     }

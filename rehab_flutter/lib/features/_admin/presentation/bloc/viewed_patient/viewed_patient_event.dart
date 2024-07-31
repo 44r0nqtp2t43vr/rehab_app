@@ -1,12 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/features/patients_manager/domain/models/delete_plan_data.dart';
 import 'package:rehab_flutter/features/tab_home/domain/entities/add_plan_data.dart';
 
 abstract class ViewedPatientEvent extends Equatable {
   final AppUser? currentPatient;
   final AddPlanData? addPlanData;
+  final DeletePlanData? deletePlanData;
 
-  const ViewedPatientEvent({this.currentPatient, this.addPlanData});
+  const ViewedPatientEvent({this.currentPatient, this.addPlanData, this.deletePlanData});
 
   @override
   List<Object> get props => [currentPatient!];
@@ -18,4 +20,8 @@ class FetchViewedPatientEvent extends ViewedPatientEvent {
 
 class AddPatientPlanEvent extends ViewedPatientEvent {
   const AddPatientPlanEvent(AddPlanData addPlanData) : super(addPlanData: addPlanData);
+}
+
+class DeletePatientPlanEvent extends ViewedPatientEvent {
+  const DeletePatientPlanEvent(DeletePlanData deletePlanData) : super(deletePlanData: deletePlanData);
 }

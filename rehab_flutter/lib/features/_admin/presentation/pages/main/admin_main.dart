@@ -6,6 +6,8 @@ import 'package:rehab_flutter/core/bloc/firebase/admin/admin_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/admin/admin_state.dart';
 import 'package:rehab_flutter/core/controller/navigation_controller.dart';
 import 'package:rehab_flutter/core/enums/nav_enums.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/admin_patient_numbers/admin_patient_numbers_bloc.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/admin_patient_numbers/admin_patient_numbers_event.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_event.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
@@ -21,19 +23,12 @@ class AdminMainScreen extends StatelessWidget {
   Widget getScreenFromTab(BuildContext context, TabEnum currentTab) {
     switch (currentTab) {
       case TabEnum.home:
-        if (BlocProvider.of<TherapistListBloc>(context)
-            .state
-            .therapistList
-            .isEmpty) {
-          BlocProvider.of<TherapistListBloc>(context)
-              .add(const FetchTherapistListEvent());
+        if (BlocProvider.of<TherapistListBloc>(context).state.therapistList.isEmpty) {
+          BlocProvider.of<TherapistListBloc>(context).add(const FetchTherapistListEvent());
         }
-        if (BlocProvider.of<PatientListBloc>(context)
-            .state
-            .patientList
-            .isEmpty) {
-          BlocProvider.of<PatientListBloc>(context)
-              .add(const FetchPatientListEvent());
+        if (BlocProvider.of<PatientListBloc>(context).state.patientList.isEmpty) {
+          BlocProvider.of<PatientListBloc>(context).add(const FetchPatientListEvent());
+          BlocProvider.of<AdminPatientNumbersBloc>(context).add(const FetchAdminPatientNumbersEvent());
         }
         return const AdminDashboard();
       case TabEnum.therapists:
@@ -87,48 +82,33 @@ class AdminMainScreen extends StatelessWidget {
                                 child: IconButton(
                                   highlightColor: Colors.white.withOpacity(0.1),
                                   icon: Icon(
-                                    currentTab == TabEnum.home
-                                        ? CupertinoIcons.house_fill
-                                        : CupertinoIcons.house,
+                                    currentTab == TabEnum.home ? CupertinoIcons.house_fill : CupertinoIcons.house,
                                     size: 30,
-                                    color: currentTab == TabEnum.home
-                                        ? Colors.white
-                                        : const Color(0XFF93aac9),
+                                    color: currentTab == TabEnum.home ? Colors.white : const Color(0XFF93aac9),
                                   ),
-                                  onPressed: () =>
-                                      _onHomeButtonPressed(currentTab),
+                                  onPressed: () => _onHomeButtonPressed(currentTab),
                                 ),
                               ),
                               Expanded(
                                 child: IconButton(
                                   highlightColor: Colors.white.withOpacity(0.1),
                                   icon: Icon(
-                                    currentTab == TabEnum.therapists
-                                        ? CupertinoIcons.person_fill
-                                        : CupertinoIcons.person,
+                                    currentTab == TabEnum.therapists ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                     size: 30,
-                                    color: currentTab == TabEnum.therapists
-                                        ? Colors.white
-                                        : const Color(0XFF93aac9),
+                                    color: currentTab == TabEnum.therapists ? Colors.white : const Color(0XFF93aac9),
                                   ),
-                                  onPressed: () =>
-                                      _onTherapistsButtonPressed(currentTab),
+                                  onPressed: () => _onTherapistsButtonPressed(currentTab),
                                 ),
                               ),
                               Expanded(
                                 child: IconButton(
                                   highlightColor: Colors.white.withOpacity(0.1),
                                   icon: Icon(
-                                    currentTab == TabEnum.patients
-                                        ? CupertinoIcons.person_fill
-                                        : CupertinoIcons.person,
+                                    currentTab == TabEnum.patients ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                     size: 30,
-                                    color: currentTab == TabEnum.patients
-                                        ? Colors.white
-                                        : const Color(0XFF93aac9),
+                                    color: currentTab == TabEnum.patients ? Colors.white : const Color(0XFF93aac9),
                                   ),
-                                  onPressed: () =>
-                                      _onPatientsButtonPressed(currentTab),
+                                  onPressed: () => _onPatientsButtonPressed(currentTab),
                                 ),
                               ),
                             ],

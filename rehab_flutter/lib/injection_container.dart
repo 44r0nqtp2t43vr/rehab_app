@@ -30,6 +30,7 @@ import 'package:rehab_flutter/core/usecases/firebase/fetch_login_user_attempt.da
 import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_current_plan.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_current_session.dart';
 import 'package:rehab_flutter/core/usecases/firebase/fetch_patient_plans.dart';
+import 'package:rehab_flutter/core/usecases/firebase/get_admin_patient_numbers.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patient_numbers.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patient_plan_sessions_list.dart';
 import 'package:rehab_flutter/core/usecases/firebase/get_patient_plans_list.dart';
@@ -56,6 +57,7 @@ import 'package:rehab_flutter/core/usecases/bluetooth/scan_devices.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/update_chara.dart';
 import 'package:rehab_flutter/core/usecases/bluetooth/write_data.dart';
 import 'package:rehab_flutter/core/usecases/firebase/submit_standard.dart';
+import 'package:rehab_flutter/features/_admin/presentation/bloc/admin_patient_numbers/admin_patient_numbers_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/patient_list/patient_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/therapist_list/therapist_list_bloc.dart';
 import 'package:rehab_flutter/features/_admin/presentation/bloc/viewed_patient/viewed_patient_bloc.dart';
@@ -172,6 +174,8 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<GetTherapistPatientListSessionsUseCase>(GetTherapistPatientListSessionsUseCase(sl()));
 
+  sl.registerSingleton<GetAdminPatientNumbersUseCase>(GetAdminPatientNumbersUseCase(sl()));
+
   // Blocs
   sl.registerFactory<BluetoothBloc>(() => BluetoothBloc(sl(), sl(), sl(), sl(), sl()));
 
@@ -185,13 +189,13 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory<LogsBloc>(() => LogsBloc(sl()));
 
-  sl.registerFactory<PatientListBloc>(() => PatientListBloc(sl(), sl()));
+  sl.registerFactory<PatientListBloc>(() => PatientListBloc(sl()));
 
-  sl.registerFactory<TherapistListBloc>(() => TherapistListBloc(sl(), sl()));
+  sl.registerFactory<TherapistListBloc>(() => TherapistListBloc(sl()));
 
   sl.registerFactory<ViewedTherapistBloc>(() => ViewedTherapistBloc(sl()));
 
-  sl.registerFactory<ViewedPatientBloc>(() => ViewedPatientBloc(sl()));
+  sl.registerFactory<ViewedPatientBloc>(() => ViewedPatientBloc(sl(), sl()));
 
   sl.registerFactory<TherapistPatientListBloc>(() => TherapistPatientListBloc(sl(), sl()));
 
@@ -214,4 +218,6 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<PatientNumbersBloc>(() => PatientNumbersBloc(sl()));
 
   sl.registerFactory<TherapistPatientListSessionsBloc>(() => TherapistPatientListSessionsBloc(sl()));
+
+  sl.registerFactory<AdminPatientNumbersBloc>(() => AdminPatientNumbersBloc(sl()));
 }
