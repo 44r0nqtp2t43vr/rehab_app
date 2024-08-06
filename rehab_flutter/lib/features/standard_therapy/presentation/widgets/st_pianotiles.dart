@@ -32,8 +32,7 @@ class STPianoTiles extends StatefulWidget {
   State<STPianoTiles> createState() => _STPianoTilesState();
 }
 
-class _STPianoTilesState extends State<STPianoTiles>
-    with SingleTickerProviderStateMixin {
+class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderStateMixin {
   final AudioPlayer player = AudioPlayer();
   late AnimationController animationController;
   late List<Note> notes;
@@ -69,8 +68,7 @@ class _STPianoTilesState extends State<STPianoTiles>
     } else {
       const String off = "000000";
       const String on = "255255";
-      String data =
-          "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
+      String data = "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
       await Future.delayed(const Duration(milliseconds: 10));
       sl<BluetoothBloc>().add(WriteDataEvent(data));
     }
@@ -78,8 +76,7 @@ class _STPianoTilesState extends State<STPianoTiles>
 
   void _onEnd() {
     player.pause();
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     setState(() {
       isPlaying = false;
     });
@@ -96,10 +93,8 @@ class _STPianoTilesState extends State<STPianoTiles>
       EdgeInsets safeAreaInsets = MediaQuery.of(context).padding;
 
       // Calculate the available screen size excluding the safe area
-      double availableScreenWidth =
-          screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
-      double availableScreenHeight =
-          screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
+      double availableScreenWidth = screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
+      double availableScreenHeight = screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
 
       setState(() {
         tileWidth = availableScreenWidth / 5;
@@ -113,7 +108,8 @@ class _STPianoTilesState extends State<STPianoTiles>
   void initState() {
     super.initState();
 
-    notes = List.from(widget.song.songNotes);
+    // TODO: fix
+    // notes = List.from(widget.song.songNotes);
     currentNoteIndex = 0;
     notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
 
@@ -129,8 +125,7 @@ class _STPianoTilesState extends State<STPianoTiles>
         } else {
           setState(() {
             currentNoteIndex++;
-            notesToRender =
-                notes.sublist(currentNoteIndex, currentNoteIndex + 4);
+            notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
           });
           _onPass();
           animationController.forward(from: 0);
@@ -140,8 +135,7 @@ class _STPianoTilesState extends State<STPianoTiles>
 
     animationController.addListener(() {
       if ((animationController.value * 10).round() == 9) {
-        sl<BluetoothBloc>()
-            .add(const WriteDataEvent("<000000000000000000000000000000>"));
+        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
       }
     });
 
@@ -158,10 +152,8 @@ class _STPianoTilesState extends State<STPianoTiles>
     int retries = 3;
     while (retries > 0) {
       try {
-        final firebaseRepository = FirebaseRepositoryImpl(
-            FirebaseFirestore.instance, FirebaseStorage.instance);
-        final audioUrl =
-            await firebaseRepository.getAudioUrl(widget.song.audioSource);
+        final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
+        final audioUrl = await firebaseRepository.getAudioUrl(widget.song.audioSource);
         await player.play(UrlSource(audioUrl));
         animationController.forward();
         player.seek(Duration(milliseconds: currentNoteIndex * 300));
@@ -188,8 +180,7 @@ class _STPianoTilesState extends State<STPianoTiles>
 
   @override
   void dispose() {
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     animationController.dispose();
     player.dispose();
     super.dispose();
@@ -268,8 +259,7 @@ class _STPianoTilesState extends State<STPianoTiles>
                     child: Row(
                       children: [
                         Text(
-                          secToMinSec(
-                              notes[currentNoteIndex].orderNumber * 0.3),
+                          secToMinSec(notes[currentNoteIndex].orderNumber * 0.3),
                           style: const TextStyle(
                             color: Colors.white,
                             fontFamily: 'Sailec Light',
@@ -320,15 +310,11 @@ class _STPianoTilesState extends State<STPianoTiles>
                         ),
                         IconButton(
                           icon: Icon(
-                            isPlaying
-                                ? CupertinoIcons.pause_fill
-                                : CupertinoIcons.play_arrow_solid,
+                            isPlaying ? CupertinoIcons.pause_fill : CupertinoIcons.play_arrow_solid,
                             size: 40,
                             color: Colors.white,
                           ),
-                          onPressed: () => isPlaying
-                              ? _pauseAnimation()
-                              : _resumeAnimation(),
+                          onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
                         ),
                         IconButton(
                           icon: Icon(

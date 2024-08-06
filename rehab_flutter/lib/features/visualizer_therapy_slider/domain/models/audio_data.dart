@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class AudioData {
   final double time;
   final double subBass;
@@ -8,6 +10,7 @@ class AudioData {
   final double higherMidrange;
   final double presence;
   final double brilliance;
+  final int? lineNumber;
 
   AudioData({
     required this.time,
@@ -19,9 +22,12 @@ class AudioData {
     required this.higherMidrange,
     required this.presence,
     required this.brilliance,
+    this.lineNumber,
   });
 
   factory AudioData.fromJson(Map<String, dynamic> json) {
+    final Random random = Random();
+
     return AudioData(
       time: json['time'].toDouble(),
       subBass: json['sub_bass'].toDouble(),
@@ -32,6 +38,7 @@ class AudioData {
       higherMidrange: json['higher_midrange'].toDouble(),
       presence: json['presence'].toDouble(),
       brilliance: json['brilliance'].toDouble(),
+      lineNumber: random.nextInt(5),
     );
   }
 }

@@ -43,7 +43,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
     final random = Random();
     final songList = SongProvider.songs;
 
-    songList.sort((a, b) => a.noteCountsPerFrame.compareTo(b.noteCountsPerFrame));
+    songList.sort((a, b) => a.tempo.compareTo(b.tempo));
 
     int startIndex = (songList.length * (widget.data.intensity - 1) ~/ 5).toInt();
     int endIndex = (songList.length * widget.data.intensity ~/ 5).toInt();
