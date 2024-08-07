@@ -1,19 +1,23 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
-import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/entities/song.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
-import 'package:rehab_flutter/core/resources/formatters.dart';
-import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_container.dart';
+import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/line_divider.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
+import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/tile.dart';
+import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class STPianoTiles extends StatefulWidget {
@@ -32,75 +36,61 @@ class STPianoTiles extends StatefulWidget {
   State<STPianoTiles> createState() => _STPianoTilesState();
 }
 
-class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderStateMixin {
-  final AudioPlayer player = AudioPlayer();
-  late AnimationController animationController;
-  late List<Note> notes;
-  late List<Note> notesToRender;
-  late double tileHeight;
-  late double tileWidth;
-  late int currentNoteIndex;
-  bool hasStarted = false;
-  bool isPlaying = true;
-  late String audioUrl;
+class _STPianoTilesState extends State<STPianoTiles> {
+  //  controllers
+  late AudioPlayer audioPlayer;
+  late StreamSubscription? positionSubscription;
   bool isLoading = true;
+  bool isPlaying = false;
+
+  // AudioData variables
+  List<AudioData> blocks = [];
+  List<AudioData> blocksToRender = [];
+  int currentIndex = 0;
+
+  // actuator vars
+  double currentPositionSec = 0.0;
+  double currentPositionMil = 0.0;
 
   void _pauseAnimation() {
-    animationController.stop();
-    player.pause();
+    audioPlayer.pause();
     setState(() {
       isPlaying = false;
     });
   }
 
   void _resumeAnimation() {
-    animationController.forward();
-    player.resume();
+    audioPlayer.resume();
     setState(() {
       isPlaying = true;
     });
   }
 
-  void _onPass() async {
-    List<int> lineNumbers = notes[currentNoteIndex].lines;
-    if (lineNumbers.isEmpty) {
-      return;
-    } else {
+  String secToMinSec(double seconds) {
+    int roundedSeconds = seconds.round();
+    int minutes = roundedSeconds ~/ 60;
+    int remainingSeconds = roundedSeconds % 60;
+    return "${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}";
+  }
+
+  void loadBlocks(String audioData) async {
+    String data = await rootBundle.loadString(audioData);
+    final List<dynamic> blockJson = json.decode(data);
+    blocks = blockJson.map((json) => AudioData.fromJson(json)).toList();
+    blocksToRender = blocks.sublist(currentIndex, currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6);
+  }
+
+  void _onPass(AudioData block) async {
+    if (block.noteOnset == 1) {
       const String off = "000000";
       const String on = "255255";
-      String data = "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
-      await Future.delayed(const Duration(milliseconds: 10));
+      String data = "<${block.lineNumber == 0 ? off : on}${block.lineNumber == 1 ? off : on}${block.lineNumber == 2 ? off : on}${block.lineNumber == 3 ? off : on}${block.lineNumber == 4 ? off : on}>";
+
       sl<BluetoothBloc>().add(WriteDataEvent(data));
-    }
-  }
-
-  void _onEnd() {
-    player.pause();
-    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-    setState(() {
-      isPlaying = false;
-    });
-    animationController.reset();
-    widget.submitCallback();
-  }
-
-  void _initBuild(BuildContext context) {
-    if (!hasStarted) {
-      // Get the screen size including the safe area
-      Size screenSize = MediaQuery.of(context).size;
-
-      // Get the safe area insets
-      EdgeInsets safeAreaInsets = MediaQuery.of(context).padding;
-
-      // Calculate the available screen size excluding the safe area
-      double availableScreenWidth = screenSize.width - safeAreaInsets.left - safeAreaInsets.right;
-      double availableScreenHeight = screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom;
-
-      setState(() {
-        tileWidth = availableScreenWidth / 5;
-        tileHeight = ((availableScreenHeight / 9) * 5) / 3;
-        hasStarted = true;
-      });
+      await Future.delayed(const Duration(milliseconds: 120));
+      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    } else {
+      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     }
   }
 
@@ -108,55 +98,51 @@ class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderSt
   void initState() {
     super.initState();
 
-    // TODO: fix
-    // notes = List.from(widget.song.songNotes);
-    currentNoteIndex = 0;
-    notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
+    audioPlayer = AudioPlayer();
+    isPlaying = true;
 
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(microseconds: 299725),
-    );
+    fetchAndPlayAudio();
 
-    animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed && isPlaying) {
-        if (currentNoteIndex == notes.last.orderNumber - 5) {
-          _onEnd();
-        } else {
-          setState(() {
-            currentNoteIndex++;
-            notesToRender = notes.sublist(currentNoteIndex, currentNoteIndex + 4);
-          });
-          _onPass();
-          animationController.forward(from: 0);
+    loadBlocks(widget.song.metaDataUrl);
+
+    positionSubscription = audioPlayer.onPositionChanged.listen((position) {
+      final positionSec = (position.inMilliseconds / 1000.0);
+
+      for (int i = 0; i < blocks.length; i++) {
+        if (i == blocks.length - 1 || (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
+          if (i != currentIndex) {
+            _onPass(blocks[currentIndex]);
+
+            setState(() {
+              currentIndex = i;
+              currentPositionSec = position.inSeconds.toDouble();
+              currentPositionMil = position.inMilliseconds.toDouble();
+              blocksToRender = blocks.sublist(currentIndex, currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6);
+            });
+
+            break;
+          }
         }
       }
     });
 
-    animationController.addListener(() {
-      if ((animationController.value * 10).round() == 9) {
-        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-      }
-    });
-
-    fetchAndPlayAudio();
-    // player
-    //     .play(AssetSource(widget.song.audioSource))
-    //     .then((value) => animationController.forward());
-    // animationController.forward();
-    // player.seek(Duration(milliseconds: currentNoteIndex * 300));
-    // player.play(AssetSource(widget.song.audioSource));
+    audioPlayer.onPlayerComplete.listen((event) => widget.submitCallback());
   }
 
   Future<void> fetchAndPlayAudio() async {
     int retries = 3;
+
     while (retries > 0) {
       try {
         final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
         final audioUrl = await firebaseRepository.getAudioUrl(widget.song.audioSource);
-        await player.play(UrlSource(audioUrl));
-        animationController.forward();
-        player.seek(Duration(milliseconds: currentNoteIndex * 300));
+
+        audioPlayer.setSource(UrlSource(widget.song.audioSource)).then((_) {
+          audioPlayer.seek(const Duration(seconds: 0));
+          audioPlayer.resume();
+        });
+
+        await audioPlayer.play(UrlSource(audioUrl), position: const Duration(seconds: 0));
 
         if (!mounted) return;
         setState(() {
@@ -181,15 +167,13 @@ class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderSt
   @override
   void dispose() {
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-    animationController.dispose();
-    player.dispose();
+    positionSubscription?.cancel();
+    audioPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    _initBuild(context);
-
     return Column(
       children: [
         const Spacer(),
@@ -207,13 +191,42 @@ class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderSt
               )
             : Expanded(
                 flex: 5,
-                child: LineContainer(
-                  tileHeight: tileHeight,
-                  tileWidth: tileWidth,
-                  currentNotes: notesToRender,
-                  currentNoteIndex: currentNoteIndex,
-                  animation: animationController,
-                  key: GlobalKey(),
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    // Retrieve available height and width
+                    final double availableHeight = constraints.maxHeight;
+                    final double availableWidth = constraints.maxWidth;
+
+                    // Use these values to calculate note size and positions
+                    final double noteWidth = availableWidth / 5; // Adjust note width
+                    final double noteHeight = availableHeight / 4; // Adjust note height
+
+                    return Stack(
+                      children: [
+                        Container(
+                          color: const Color(0xff223e65),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: List.generate(4, (index) => const LineDivider()),
+                        ),
+                        ...blocksToRender.indexed.map(((int, AudioData) note) {
+                          final (index, value) = note;
+
+                          return Positioned(
+                            top: (3 - index + ((currentPositionMil % 200) / 200)) * noteHeight,
+                            left: value.lineNumber! * noteWidth,
+                            child: value.noteOnset == 0
+                                ? const SizedBox()
+                                : Tile(
+                                    height: noteHeight,
+                                    width: noteWidth,
+                                  ),
+                          );
+                        }).toList(),
+                      ],
+                    );
+                  },
                 ),
               ),
         Expanded(
@@ -259,7 +272,7 @@ class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderSt
                     child: Row(
                       children: [
                         Text(
-                          secToMinSec(notes[currentNoteIndex].orderNumber * 0.3),
+                          secToMinSec(currentIndex * 0.2),
                           style: const TextStyle(
                             color: Colors.white,
                             fontFamily: 'Sailec Light',
@@ -269,7 +282,7 @@ class _STPianoTilesState extends State<STPianoTiles> with SingleTickerProviderSt
                         const SizedBox(width: 8),
                         Expanded(
                           child: SongSlider(
-                            currentDuration: currentNoteIndex * 0.3,
+                            currentDuration: currentIndex * 0.2,
                             minDuration: 0,
                             maxDuration: widget.song.duration,
                             onDurationChanged: (value) {},

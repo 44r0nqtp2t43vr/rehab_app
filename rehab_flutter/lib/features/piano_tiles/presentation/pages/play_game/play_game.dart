@@ -32,10 +32,9 @@ class PlayGame extends StatefulWidget {
   State<PlayGame> createState() => _PlayGameState();
 }
 
-class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin {
+class _PlayGameState extends State<PlayGame> {
   //  controllers
   late AudioPlayer audioPlayer;
-  late AnimationController _controller;
   late StreamSubscription? positionSubscription;
   bool isLoading = true;
   bool isPlaying = false;
@@ -47,6 +46,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
 
   // actuator vars
   double currentPositionSec = 0.0;
+  double currentPositionMil = 0.0;
 
   void _pauseAnimation() {
     audioPlayer.pause();
@@ -94,39 +94,26 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
     blocksToRender = blocks.sublist(currentIndex, currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6);
   }
 
-  // void _onPass() async {
-  //   // List<int> lineNumbers = notes[currentNoteIndex].lines;
-  //   List<int> lineNumbers = [];
-  //   if (lineNumbers.isEmpty) {
-  //     return;
-  //   } else {
-  //     const String off = "000000";
-  //     const String on = "255255";
-  //     String data = "<${lineNumbers[0] == 0 ? off : on}${lineNumbers[1] == 0 ? off : on}${lineNumbers[2] == 0 ? off : on}${lineNumbers[3] == 0 ? off : on}${lineNumbers[4] == 0 ? off : on}>";
-  //     await Future.delayed(const Duration(milliseconds: 10));
-  //     sl<BluetoothBloc>().add(WriteDataEvent(data));
-  //   }
-  // }
+  void _onPass(AudioData block) async {
+    if (block.noteOnset == 1) {
+      const String off = "000000";
+      const String on = "255255";
+      String data = "<${block.lineNumber == 0 ? off : on}${block.lineNumber == 1 ? off : on}${block.lineNumber == 2 ? off : on}${block.lineNumber == 3 ? off : on}${block.lineNumber == 4 ? off : on}>";
+
+      sl<BluetoothBloc>().add(WriteDataEvent(data));
+      await Future.delayed(const Duration(milliseconds: 120));
+      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    } else {
+      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
-    // animationController.addListener(() {
-    //   if ((animationController.value * 10).round() == 9) {
-    //     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-    //   }
-    // });
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-
     audioPlayer = AudioPlayer();
     isPlaying = true;
-
-    _controller.repeat();
 
     fetchAndPlayAudio();
 
@@ -138,11 +125,15 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
       for (int i = 0; i < blocks.length; i++) {
         if (i == blocks.length - 1 || (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
           if (i != currentIndex) {
+            _onPass(blocks[currentIndex]);
+
             setState(() {
               currentIndex = i;
               currentPositionSec = position.inSeconds.toDouble();
+              currentPositionMil = position.inMilliseconds.toDouble();
               blocksToRender = blocks.sublist(currentIndex, currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6);
             });
+
             break;
           }
         }
@@ -188,7 +179,6 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
   @override
   void dispose() {
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
-    _controller.dispose();
     positionSubscription?.cancel();
     audioPlayer.dispose();
     super.dispose();
@@ -339,7 +329,7 @@ class _PlayGameState extends State<PlayGame> with SingleTickerProviderStateMixin
                             final (index, value) = note;
 
                             return Positioned(
-                              top: (3 - index + _controller.value) * noteHeight,
+                              top: (3 - index + ((currentPositionMil % 200) / 200)) * noteHeight,
                               left: value.lineNumber! * noteWidth,
                               child: value.noteOnset == 0
                                   ? const SizedBox()
