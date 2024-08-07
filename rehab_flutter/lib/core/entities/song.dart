@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:rehab_flutter/core/entities/note.dart';
 import 'package:rehab_flutter/core/enums/genre_enum.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 
@@ -11,8 +8,6 @@ class Song {
   final Genre genre;
   final double tempo;
   final double duration;
-  final List<int> noteFrames;
-  final List<int> noteCounts;
   final String metaDataUrl;
 
   Song({
@@ -22,8 +17,6 @@ class Song {
     required this.genre,
     required this.tempo,
     required this.duration,
-    required this.noteFrames,
-    required this.noteCounts,
     this.metaDataUrl = '',
   });
 
@@ -35,44 +28,44 @@ class Song {
     return duration ~/ 0.3;
   }
 
-  double get noteCountsPerFrame {
-    // Calculate the sum of all numbers in the list
-    int sum = noteCounts.reduce((value, noteCount) => value + noteCount);
+  // double get noteCountsPerFrame {
+  //   // Calculate the sum of all numbers in the list
+  //   int sum = noteCounts.reduce((value, noteCount) => value + noteCount);
 
-    // Calculate the average
-    double average = sum / noteCounts.length;
+  //   // Calculate the average
+  //   double average = sum / noteCounts.length;
 
-    return average;
-  }
+  //   return average;
+  // }
 
-  List<Note> get songNotes {
-    final List<Note> notes = [];
-    final List<int> choiceLines = [0, 1, 2, 3, 4];
-    int noteFrameIndex = 0;
+  // List<Note> get songNotes {
+  //   final List<Note> notes = [];
+  //   final List<int> choiceLines = [0, 1, 2, 3, 4];
+  //   int noteFrameIndex = 0;
 
-    if (noteFrames.isEmpty) {
-      return notes;
-    }
+  //   if (noteFrames.isEmpty) {
+  //     return notes;
+  //   }
 
-    for (int i = 0; i < songLastNote + 5; i++) {
-      if (noteFrameIndex > noteFrames.length - 1 || i != noteFrames[noteFrameIndex]) {
-        notes.add(Note(i, []));
-        continue;
-      }
+  //   for (int i = 0; i < songLastNote + 5; i++) {
+  //     if (noteFrameIndex > noteFrames.length - 1 || i != noteFrames[noteFrameIndex]) {
+  //       notes.add(Note(i, []));
+  //       continue;
+  //     }
 
-      List<int> currentLines = [0, 0, 0, 0, 0];
-      List<int> currentChoiceLines = List.from(choiceLines);
-      for (int j = noteCounts[noteFrameIndex]; j > 0; j--) {
-        int randIndex = Random().nextInt(currentChoiceLines.length);
-        int lineNumber = currentChoiceLines[randIndex];
-        currentChoiceLines.removeAt(randIndex);
-        currentLines[lineNumber] = 1;
-      }
+  //     List<int> currentLines = [0, 0, 0, 0, 0];
+  //     List<int> currentChoiceLines = List.from(choiceLines);
+  //     for (int j = noteCounts[noteFrameIndex]; j > 0; j--) {
+  //       int randIndex = Random().nextInt(currentChoiceLines.length);
+  //       int lineNumber = currentChoiceLines[randIndex];
+  //       currentChoiceLines.removeAt(randIndex);
+  //       currentLines[lineNumber] = 1;
+  //     }
 
-      notes.add(Note(i, currentLines));
-      noteFrameIndex++;
-    }
+  //     notes.add(Note(i, currentLines));
+  //     noteFrameIndex++;
+  //   }
 
-    return notes;
-  }
+  //   return notes;
+  // }
 }

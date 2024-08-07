@@ -438,7 +438,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       // Creating a list of all StandardTherapy values and shuffling it
       List<StandardTherapy> allTherapies = StandardTherapy.values;
       List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
-      shuffledTherapies.remove(StandardTherapy.musicVisualizer);
 
       String standardOneType = shuffledTherapies[0].name;
       String standardTwoType = shuffledTherapies[1].name;

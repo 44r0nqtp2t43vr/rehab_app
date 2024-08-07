@@ -22,7 +22,7 @@ class SongSlider extends StatelessWidget {
       value: currentDuration,
       min: minDuration,
       max: maxDuration,
-      divisions: (maxDuration - minDuration) ~/ 0.3,
+      divisions: (maxDuration - minDuration) ~/ 0.2,
       label: secToMinSec(currentDuration),
       onChanged: onDurationChanged,
     );
