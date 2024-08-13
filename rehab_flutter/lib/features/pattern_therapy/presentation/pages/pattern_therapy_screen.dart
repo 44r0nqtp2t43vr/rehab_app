@@ -19,7 +19,7 @@ class PatternTherapy extends StatefulWidget {
 }
 
 class _PatternTherapyState extends State<PatternTherapy> {
-  bool isLeftHand = true;
+  bool isLeftHand = false;
   bool isDeviceConnected = false;
   bool isPatternActive = false;
   int? activePattern;

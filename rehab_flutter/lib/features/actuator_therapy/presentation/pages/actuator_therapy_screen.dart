@@ -13,6 +13,7 @@ class ActuatorTherapy extends StatefulWidget {
 }
 
 class ActuatorTherapyState extends State<ActuatorTherapy> {
+  final List<bool> _fingerStates = List.generate(5, (_) => true);
   final List<bool> _circleStates = List.generate(16, (_) => false);
   final List<bool> _permanentGreen = List.generate(16, (_) => false);
   final List<GlobalKey> _circleKeys = List.generate(16, (index) => GlobalKey());
@@ -20,24 +21,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
   List<bool> _initialCircleStates = [];
 
   // Assuming _cursorValues is accessible like this
-  final List<int> _cursorValues = [
-    1,
-    8,
-    1,
-    8,
-    2,
-    16,
-    2,
-    16,
-    4,
-    32,
-    4,
-    32,
-    64,
-    128,
-    64,
-    128,
-  ];
+  final List<int> _cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
 
   void _sendUpdatedPattern() {
     final sums = _calculateSumsOfActuators();
@@ -47,7 +31,16 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
   void sendPattern(int left, int right) {
     String leftString = left.toString().padLeft(3, '0');
     String rightString = right.toString().padLeft(3, '0');
-    String data = "<$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString$leftString$rightString>";
+    String leftRightString = "$leftString$rightString";
+    String nullString = "000000";
+
+    String finger0String = _fingerStates[0] ? leftRightString : nullString;
+    String finger1String = _fingerStates[1] ? leftRightString : nullString;
+    String finger2String = _fingerStates[2] ? leftRightString : nullString;
+    String finger3String = _fingerStates[3] ? leftRightString : nullString;
+    String finger4String = _fingerStates[4] ? leftRightString : nullString;
+
+    String data = "<$finger0String$finger1String$finger2String$finger3String$finger4String>";
 
     // Check if the data to be sent is different from the last sent pattern
     if (data != lastSentPattern) {
@@ -55,7 +48,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
       debugPrint("Pattern sent: $data");
       lastSentPattern = data; // Update the last sent pattern
     } else {
-      debugPrint("Pattern not sent, identical to last pattern.");
+      // debugPrint("Pattern not sent, identical to last pattern.");
     }
   }
 
@@ -116,6 +109,13 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
     for (int i = 0; i < _circleStates.length; i++) {
       _circleStates[i] = _initialCircleStates[i];
     }
+    _sendUpdatedPattern();
+  }
+
+  void _updateFingerState(int index) {
+    setState(() {
+      _fingerStates[index] = !_fingerStates[index];
+    });
     _sendUpdatedPattern();
   }
 
@@ -208,6 +208,54 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
                   },
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () => _updateFingerState(0),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: _fingerStates[0] ? Colors.green : Colors.red,
+                  ),
+                  child: const Text("0"),
+                ),
+                ElevatedButton(
+                  onPressed: () => _updateFingerState(1),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: _fingerStates[1] ? Colors.green : Colors.red,
+                  ),
+                  child: const Text("1"),
+                ),
+                ElevatedButton(
+                  onPressed: () => _updateFingerState(2),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: _fingerStates[2] ? Colors.green : Colors.red,
+                  ),
+                  child: const Text("2"),
+                ),
+                ElevatedButton(
+                  onPressed: () => _updateFingerState(3),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: _fingerStates[3] ? Colors.green : Colors.red,
+                  ),
+                  child: const Text("3"),
+                ),
+                ElevatedButton(
+                  onPressed: () => _updateFingerState(4),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: _fingerStates[4] ? Colors.green : Colors.red,
+                  ),
+                  child: const Text("4"),
+                ),
+              ],
             ),
           ],
         ),
