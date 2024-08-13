@@ -353,7 +353,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     }
 
     // Example of logging the login attempt (success case)
-    await logLoginAttempt(data.email, true);
+    // await logLoginAttempt(data.email, true);
 
     final dynamic user = await getUser(userCredential.user!.uid, isLogin: true);
     return user;
