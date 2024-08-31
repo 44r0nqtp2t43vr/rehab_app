@@ -28,18 +28,6 @@ class MainScreen extends StatelessWidget {
   Widget getScreenFromTab(BuildContext context, TabEnum currentTab, AppUser user) {
     switch (currentTab) {
       case TabEnum.home:
-        // if (BlocProvider.of<PatientPlansBloc>(context).state.plans.isEmpty) {
-        //   BlocProvider.of<PatientPlansBloc>(context).add(FetchPatientPlansEvent(user));
-        // }
-
-        // if (BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan == null) {
-        //   BlocProvider.of<PatientCurrentPlanBloc>(context).add(FetchPatientCurrentPlanEvent(user));
-        // }
-
-        // if (BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession == null) {
-        //   BlocProvider.of<PatientCurrentSessionBloc>(context).add(FetchPatientCurrentSessionEvent(user));
-        // }
-
         return const HomeScreen();
       case TabEnum.therapy:
         return const TherapyScreen();
@@ -87,8 +75,8 @@ class MainScreen extends StatelessWidget {
             final patientPlans = BlocProvider.of<PatientPlansBloc>(context).state.plans;
             final currentPlan = BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan!;
 
-            BlocProvider.of<PatientPlansBloc>(context).add(UpdatePatientPlansEvent(patientPlans, currentSession));
             BlocProvider.of<PatientCurrentSessionBloc>(context).add(UpdateCurrentSessionEvent(currentSession));
+            BlocProvider.of<PatientPlansBloc>(context).add(UpdatePatientPlansEvent(patientPlans, currentSession));
             BlocProvider.of<PatientCurrentPlanBloc>(context).add(UpdateCurrentPlanSessionEvent(currentPlan, currentSession));
           }
         }

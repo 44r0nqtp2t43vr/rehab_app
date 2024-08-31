@@ -1,9 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
-import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_list.dart';
@@ -87,62 +83,52 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (BuildContext context, UserState state) {
-        if (state is UserLoading) {
-          return const Center(child: CupertinoActivityIndicator());
-        }
-        if (state is UserDone) {
-          final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+    final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Activity Monitor",
-                          style: darkTextTheme().headlineLarge,
-                        ),
-                        Text(
-                          "Monthly Progress",
-                          style: darkTextTheme().headlineSmall,
-                        ),
-                      ],
-                    ),
+                  Text(
+                    "Activity Monitor",
+                    style: darkTextTheme().headlineLarge,
                   ),
-                  const SizedBox(height: 32),
-                  Calendar(
-                    dateColorsMap: dateColorsMap,
-                    calendarFormat: _calendarFormat,
-                    focusedDay: _focusedDay,
-                    selectedDay: _selectedDay,
-                    selectedDayPredicate: _selectedDayPredicate,
-                    onDaySelected: _onDaySelected,
-                    onPageChanged: _onPageChanged,
-                    onToggleFormat: _onToggleFormat,
-                  ),
-                  const SizedBox(height: 32),
-                  EventList(
-                    dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
-                    selectedDay: _selectedDay,
-                    currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
-                    conditions: currentSelectedSession.getSessionConditions(),
+                  Text(
+                    "Monthly Progress",
+                    style: darkTextTheme().headlineSmall,
                   ),
                 ],
               ),
             ),
-          );
-        }
-        return const SizedBox();
-      },
+            const SizedBox(height: 32),
+            Calendar(
+              dateColorsMap: dateColorsMap,
+              calendarFormat: _calendarFormat,
+              focusedDay: _focusedDay,
+              selectedDay: _selectedDay,
+              selectedDayPredicate: _selectedDayPredicate,
+              onDaySelected: _onDaySelected,
+              onPageChanged: _onPageChanged,
+              onToggleFormat: _onToggleFormat,
+            ),
+            const SizedBox(height: 32),
+            EventList(
+              dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
+              selectedDay: _selectedDay,
+              currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
+              conditions: currentSelectedSession.getSessionConditions(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
