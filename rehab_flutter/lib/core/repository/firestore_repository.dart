@@ -379,16 +379,25 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     for (int i = 0; i < data.planSelected; i++) {
       DateTime sessionDate = startDate.add(Duration(days: i));
       final String sessionDocumentName = 'session${i + 1}';
+
+      final Random random = Random();
+      // Creating a list of all StandardTherapy values and shuffling it
+      List<StandardTherapy> allTherapies = StandardTherapy.values;
+      List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
+
+      String standardOneType = shuffledTherapies[0].name;
+      String standardTwoType = shuffledTherapies[1].name;
+
       Session session = Session(
         sessionId: sessionDocumentName,
         date: sessionDate,
-        standardOneType: '',
-        standardOneIntensity: '',
+        standardOneType: standardOneType,
+        standardOneIntensity: '1',
         isStandardOneDone: false,
-        passiveIntensity: '',
+        passiveIntensity: '1',
         isPassiveDone: false,
-        standardTwoType: '',
-        standardTwoIntensity: '',
+        standardTwoType: standardTwoType,
+        standardTwoIntensity: '1',
         isStandardTwoDone: false,
         pretestScore: null,
         posttestScore: null,
@@ -434,29 +443,18 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<Session> submitTest(ResultsData data) async {
     if (data.isPretest) {
-      final Random random = Random();
-      // Creating a list of all StandardTherapy values and shuffling it
-      List<StandardTherapy> allTherapies = StandardTherapy.values;
-      List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
-
-      String standardOneType = shuffledTherapies[0].name;
-      String standardTwoType = shuffledTherapies[1].name;
       String intensityLevel = ((data.score / 20).ceil().clamp(1, 5)).toString();
 
       await updateCurrentSessionTesting(data.user.userId, data.items, {
         'pretestScore': data.score,
-        'standardOneType': standardOneType,
         'standardOneIntensity': intensityLevel,
-        'standardTwoType': standardTwoType,
         'standardTwoIntensity': intensityLevel,
         'passiveIntensity': intensityLevel,
       });
 
       Session currentSession = data.currentSession;
       currentSession.pretestScore = data.score;
-      currentSession.standardOneType = standardOneType;
       currentSession.standardOneIntensity = intensityLevel;
-      currentSession.standardTwoType = standardTwoType;
       currentSession.standardTwoIntensity = intensityLevel;
       currentSession.passiveIntensity = intensityLevel;
       currentSession.items = List.from(data.items);
