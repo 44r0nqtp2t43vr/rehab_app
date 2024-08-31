@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
@@ -40,8 +39,7 @@ class _EditProfileState extends State<EditProfile> {
 
   // Function to pick an image from gallery
   Future<void> _pickImage() async {
-    final pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       setState(() {
         _image = File(pickedImage.path);
@@ -80,8 +78,7 @@ class _EditProfileState extends State<EditProfile> {
 
   void _editUser() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate =
-        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     EditUserData editUserData = EditUserData(
@@ -105,8 +102,7 @@ class _EditProfileState extends State<EditProfile> {
     _firstNameController.text = widget.user.firstName;
     _lastNameController.text = widget.user.lastName;
     _cityController.text = widget.user.city;
-    _birthdateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
+    _birthdateController.text = DateFormat('yyyy-MM-dd').format(widget.user.birthDate);
     _phoneNumberController.text = widget.user.phoneNumber;
     _currentGender = widget.user.gender;
     _selectedConditions = List.from(widget.user.conditions);
@@ -116,8 +112,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
-      listenWhen: (previous, current) =>
-          previous is UserLoading && current is UserDone,
+      listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
       listener: (context, state) {
         if (state is UserDone) {
           Navigator.of(context).pop();
@@ -179,8 +174,7 @@ class _EditProfileState extends State<EditProfile> {
                           children: [
                             CircleAvatar(
                               backgroundColor: Colors.white,
-                              backgroundImage:
-                                  _image != null ? FileImage(_image!) : null,
+                              backgroundImage: _image != null ? FileImage(_image!) : null,
                               radius: 40,
                               child: _image != null
                                   ? ClipOval(
@@ -194,16 +188,12 @@ class _EditProfileState extends State<EditProfile> {
                                   : state.currentUser!.imageURL != null
                                       ? ClipOval(
                                           child: CachedNetworkImage(
-                                            imageUrl:
-                                                state.currentUser!.imageURL!,
+                                            imageUrl: state.currentUser!.imageURL!,
                                             fit: BoxFit.cover,
                                             width: double.infinity,
                                             height: double.infinity,
-                                            placeholder: (context, url) =>
-                                                const CircularProgressIndicator(),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Icon(Icons.error),
+                                            placeholder: (context, url) => const CircularProgressIndicator(),
+                                            errorWidget: (context, url, error) => const Icon(Icons.error),
                                           ),
                                         )
                                       : const Icon(
@@ -248,8 +238,7 @@ class _EditProfileState extends State<EditProfile> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _firstNameController,
-                                      decoration:
-                                          customInputDecoration.copyWith(
+                                      decoration: customInputDecoration.copyWith(
                                         labelText: 'First Name',
                                         hintText: 'Enter your First Name',
                                       ),
@@ -265,8 +254,7 @@ class _EditProfileState extends State<EditProfile> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _lastNameController,
-                                      decoration:
-                                          customInputDecoration.copyWith(
+                                      decoration: customInputDecoration.copyWith(
                                         labelText: 'Last Name',
                                         hintText: 'Enter your Last Name',
                                       ),
@@ -324,9 +312,7 @@ class _EditProfileState extends State<EditProfile> {
                                     _currentGender = newValue!;
                                   });
                                 },
-                                items: _availableGenders
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
+                                items: _availableGenders.map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -364,9 +350,7 @@ class _EditProfileState extends State<EditProfile> {
                                     _currentCondition = newValue!;
                                   });
                                 },
-                                items: availableConditions
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) {
+                                items: availableConditions.map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -388,8 +372,7 @@ class _EditProfileState extends State<EditProfile> {
                                 children: _selectedConditions
                                     .map((condition) => Chip(
                                           label: Text(condition),
-                                          onDeleted: () =>
-                                              _removeCondition(condition),
+                                          onDeleted: () => _removeCondition(condition),
                                         ))
                                     .toList(),
                               ),
@@ -429,22 +412,14 @@ class _EditProfileState extends State<EditProfile> {
                                   }
                                 },
                                 style: ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStateProperty.all<Color>(
+                                  foregroundColor: WidgetStateProperty.all<Color>(
                                     Colors.white,
                                   ),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.transparent),
-                                  elevation:
-                                      MaterialStateProperty.all<double>(0),
-                                  shadowColor: MaterialStateProperty.all<Color>(
-                                      Colors.transparent),
-                                  overlayColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.transparent),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
+                                  backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  elevation: WidgetStateProperty.all<double>(0),
+                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),

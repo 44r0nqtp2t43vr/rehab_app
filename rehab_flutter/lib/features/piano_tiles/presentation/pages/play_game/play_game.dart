@@ -188,7 +188,7 @@ class _PlayGameState extends State<PlayGame> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           return;
         }
@@ -234,13 +234,13 @@ class _PlayGameState extends State<PlayGame> {
                           ElevatedButton(
                             onPressed: null,
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(
+                              foregroundColor: WidgetStateProperty.all<Color>(
                                 Colors.white,
                               ),
-                              backgroundColor: MaterialStateProperty.all<Color>(
+                              backgroundColor: WidgetStateProperty.all<Color>(
                                 Colors.white.withOpacity(0.25),
                               ),
-                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                              padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                                 const EdgeInsets.symmetric(horizontal: 20),
                               ),
                             ),
@@ -255,16 +255,16 @@ class _PlayGameState extends State<PlayGame> {
                           ElevatedButton(
                             onPressed: () => _onSwitch(context),
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(
+                              foregroundColor: WidgetStateProperty.all<Color>(
                                 Colors.white,
                               ),
-                              backgroundColor: MaterialStateProperty.all<Color>(
+                              backgroundColor: WidgetStateProperty.all<Color>(
                                 Colors.transparent,
                               ),
-                              elevation: MaterialStateProperty.all<double>(0),
-                              shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                              overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                              elevation: WidgetStateProperty.all<double>(0),
+                              shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                              overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                              padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                                 const EdgeInsets.symmetric(horizontal: 20),
                               ),
                             ),

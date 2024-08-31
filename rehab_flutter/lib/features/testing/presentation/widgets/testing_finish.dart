@@ -440,16 +440,16 @@ class _TestingFinishState extends State<TestingFinish> {
                                 child: ElevatedButton(
                                   onPressed: () => _onFinish(context),
                                   style: ButtonStyle(
-                                    foregroundColor: MaterialStateProperty.all<Color>(
+                                    foregroundColor: WidgetStateProperty.all<Color>(
                                       Colors.white,
                                     ),
-                                    backgroundColor: MaterialStateProperty.all<Color>(
+                                    backgroundColor: WidgetStateProperty.all<Color>(
                                       const Color(0xff128BED),
                                     ),
-                                    elevation: MaterialStateProperty.all<double>(0),
-                                    shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                    overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                    elevation: WidgetStateProperty.all<double>(0),
+                                    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                    overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),

@@ -80,14 +80,14 @@ class _PatientPlansListState extends State<PatientPlansList> {
                                 child: ElevatedButton(
                                   onPressed: () => _onAddPlanButtonPressed(context, widget.patient),
                                   style: ButtonStyle(
-                                    foregroundColor: MaterialStateProperty.all<Color>(
+                                    foregroundColor: WidgetStateProperty.all<Color>(
                                       Colors.white,
                                     ),
-                                    backgroundColor: MaterialStateProperty.all<Color>(const Color(0xff128BED)),
-                                    elevation: MaterialStateProperty.all<double>(0),
-                                    shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                    overlayColor: MaterialStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
-                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                    backgroundColor: WidgetStateProperty.all<Color>(const Color(0xff128BED)),
+                                    elevation: WidgetStateProperty.all<double>(0),
+                                    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                    overlayColor: WidgetStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),

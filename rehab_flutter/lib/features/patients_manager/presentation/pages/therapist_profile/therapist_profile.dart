@@ -53,10 +53,8 @@ class TherapistProfile extends StatelessWidget {
                             fit: BoxFit.cover,
                             width: double.infinity,
                             height: double.infinity,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
+                            placeholder: (context, url) => const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
                           ),
                           //   Image.network(
                           //   therapist.imageURL!,
@@ -106,17 +104,14 @@ class TherapistProfile extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => _onEditProfileButtonPressed(context),
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(
+                      foregroundColor: WidgetStateProperty.all<Color>(
                         Colors.white,
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xff128BED)),
-                      elevation: MaterialStateProperty.all<double>(0),
-                      shadowColor:
-                          MaterialStateProperty.all<Color>(Colors.transparent),
-                      overlayColor: MaterialStateProperty.all<Color>(
-                          Colors.white.withOpacity(0.2)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      backgroundColor: WidgetStateProperty.all<Color>(const Color(0xff128BED)),
+                      elevation: WidgetStateProperty.all<double>(0),
+                      shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      overlayColor: WidgetStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -188,18 +183,14 @@ class TherapistProfile extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => _onLogoutButtonPressed(context),
                       style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(
+                        foregroundColor: WidgetStateProperty.all<Color>(
                           Colors.white,
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        elevation: MaterialStateProperty.all<double>(0),
-                        shadowColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent),
-                        overlayColor: MaterialStateProperty.all<Color>(
-                            Colors.white.withOpacity(0.2)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        elevation: WidgetStateProperty.all<double>(0),
+                        shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        overlayColor: WidgetStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -218,8 +209,7 @@ class TherapistProfile extends StatelessWidget {
   }
 
   void _onEditProfileButtonPressed(BuildContext context) {
-    Navigator.of(context)
-        .pushNamed("/EditTherapistProfile", arguments: therapist);
+    Navigator.of(context).pushNamed("/EditTherapistProfile", arguments: therapist);
   }
 
   void _onAssignPatientsButtonPressed(BuildContext context) {
@@ -227,8 +217,7 @@ class TherapistProfile extends StatelessWidget {
   }
 
   void _onLogoutButtonPressed(BuildContext context) {
-    BlocProvider.of<TherapistBloc>(context)
-        .add(LogoutTherapistEvent(therapist));
+    BlocProvider.of<TherapistBloc>(context).add(LogoutTherapistEvent(therapist));
   }
 
   void _showContentDialog(BuildContext context, String title) {

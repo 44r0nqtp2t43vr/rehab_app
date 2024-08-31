@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
@@ -28,8 +27,7 @@ class TexturesIntro extends StatefulWidget {
   State<TexturesIntro> createState() => _TexturesIntroState();
 }
 
-class _TexturesIntroState extends State<TexturesIntro>
-    with SingleTickerProviderStateMixin {
+class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   ImageTexture currentImageTexture = TestingDataProvider.imageTextures[0];
   int currentImageTextureInd = 0;
@@ -40,19 +38,16 @@ class _TexturesIntroState extends State<TexturesIntro>
     if (currentImageTextureInd < TestingDataProvider.imageTextures.length - 1) {
       setState(() {
         currentImageTextureInd++;
-        currentImageTexture =
-            TestingDataProvider.imageTextures[currentImageTextureInd];
+        currentImageTexture = TestingDataProvider.imageTextures[currentImageTextureInd];
         isPlaying = true;
       });
-      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(
-          src: currentImageTexture.texture, preload: false)));
+      sl<ActuatorsBloc>().add(LoadImageEvent(ActuatorsImageData(src: currentImageTexture.texture, preload: false)));
       animationController.forward();
     }
   }
 
   void _renderActuators(double imageSize) {
-    final Offset animatedPosition =
-        AniPatternProvider.doubleVPattern(imageSize, animationController.value);
+    final Offset animatedPosition = AniPatternProvider.doubleVPattern(imageSize, animationController.value);
     sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
 
     setState(() {});
@@ -122,26 +117,22 @@ class _TexturesIntroState extends State<TexturesIntro>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                currentImageTextureInd <
-                        TestingDataProvider.imageTextures.length - 1
+                currentImageTextureInd < TestingDataProvider.imageTextures.length - 1
                     ? Padding(
                         padding: const EdgeInsets.only(right: 12.0),
                         child: ElevatedButton(
                           onPressed: () => _onAnimationFinish(),
                           style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all<Color>(
+                            foregroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xff275492),
                             ),
-                            backgroundColor: MaterialStateProperty.all<Color>(
+                            backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xff01FF99),
                             ),
-                            elevation: MaterialStateProperty.all<double>(0),
-                            shadowColor: MaterialStateProperty.all<Color>(
-                                Colors.transparent),
-                            overlayColor: MaterialStateProperty.all<Color>(
-                                Colors.transparent),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
+                            elevation: WidgetStateProperty.all<double>(0),
+                            shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                            overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -167,18 +158,16 @@ class _TexturesIntroState extends State<TexturesIntro>
                 ElevatedButton(
                   onPressed: () => widget.onProceed(TestingState.textures),
                   style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(
+                    foregroundColor: WidgetStateProperty.all<Color>(
                       Colors.white,
                     ),
-                    backgroundColor: MaterialStateProperty.all<Color>(
+                    backgroundColor: WidgetStateProperty.all<Color>(
                       const Color(0XFF128BED),
                     ),
-                    elevation: MaterialStateProperty.all<double>(0),
-                    shadowColor:
-                        MaterialStateProperty.all<Color>(Colors.transparent),
-                    overlayColor:
-                        MaterialStateProperty.all<Color>(Colors.transparent),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    elevation: WidgetStateProperty.all<double>(0),
+                    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                    overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

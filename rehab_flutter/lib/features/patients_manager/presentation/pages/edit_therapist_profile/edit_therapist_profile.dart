@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
@@ -375,14 +374,14 @@ class _EditTherapistProfileState extends State<EditTherapistProfile> {
                                   }
                                 },
                                 style: ButtonStyle(
-                                  foregroundColor: MaterialStateProperty.all<Color>(
+                                  foregroundColor: WidgetStateProperty.all<Color>(
                                     Colors.white,
                                   ),
-                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  elevation: MaterialStateProperty.all<double>(0),
-                                  shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  elevation: WidgetStateProperty.all<double>(0),
+                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),

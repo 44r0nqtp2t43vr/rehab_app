@@ -93,19 +93,19 @@ TextTheme buttonTextTheme() {
 final ThemeData darkButtonTheme = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(
+      backgroundColor: WidgetStateProperty.all<Color>(
         const Color(0XFF275492),
       ),
-      foregroundColor: MaterialStateProperty.all<Color>(
+      foregroundColor: WidgetStateProperty.all<Color>(
         Colors.white,
       ),
-      textStyle: MaterialStateProperty.all<TextStyle>(
+      textStyle: WidgetStateProperty.all<TextStyle>(
         const TextStyle(
           fontFamily: 'Sailec Bold',
           fontSize: 16,
         ),
       ),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -117,19 +117,19 @@ final ThemeData darkButtonTheme = ThemeData(
 final ThemeData skipButtonTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(
+      backgroundColor: WidgetStateProperty.all<Color>(
         Colors.white,
       ),
-      foregroundColor: MaterialStateProperty.all<Color>(
+      foregroundColor: WidgetStateProperty.all<Color>(
         const Color(0xFF128BED),
       ),
-      textStyle: MaterialStateProperty.all<TextStyle>(
+      textStyle: WidgetStateProperty.all<TextStyle>(
         const TextStyle(
           fontFamily: 'Sailec Bold',
           fontSize: 16,
         ),
       ),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -141,10 +141,10 @@ final ThemeData skipButtonTheme = ThemeData(
 final ThemeData textButtonTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: MaterialStateProperty.all<Color>(
+      foregroundColor: WidgetStateProperty.all<Color>(
         Colors.white,
       ),
-      textStyle: MaterialStateProperty.all<TextStyle>(
+      textStyle: WidgetStateProperty.all<TextStyle>(
         const TextStyle(
           fontFamily: 'Sailec Medium',
           fontSize: 12,
@@ -157,10 +157,10 @@ final ThemeData textButtonTheme = ThemeData(
 final ThemeData signupButtonTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: MaterialStateProperty.all<Color>(
+      foregroundColor: WidgetStateProperty.all<Color>(
         Colors.white,
       ),
-      textStyle: MaterialStateProperty.all<TextStyle>(
+      textStyle: WidgetStateProperty.all<TextStyle>(
         const TextStyle(
           fontFamily: 'Sailec Medium',
           fontSize: 15,
@@ -173,21 +173,21 @@ final ThemeData signupButtonTheme = ThemeData(
 final ThemeData loginButtonTheme = ThemeData(
   iconButtonTheme: IconButtonThemeData(
     style: ButtonStyle(
-      iconSize: MaterialStateProperty.all<double>(
+      iconSize: WidgetStateProperty.all<double>(
         40,
       ),
-      backgroundColor: MaterialStateProperty.all<Color>(
+      backgroundColor: WidgetStateProperty.all<Color>(
         Colors.white,
       ),
-      foregroundColor: MaterialStateProperty.all<Color>(
+      foregroundColor: WidgetStateProperty.all<Color>(
         const Color(0XFF275492),
       ),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      fixedSize: MaterialStateProperty.all<Size>(
+      fixedSize: WidgetStateProperty.all<Size>(
         const Size(60, 60),
       ),
     ),
@@ -197,21 +197,21 @@ final ThemeData loginButtonTheme = ThemeData(
 final ThemeData smallIconButtonTheme = ThemeData(
   iconButtonTheme: IconButtonThemeData(
     style: ButtonStyle(
-      iconSize: MaterialStateProperty.all<double>(
+      iconSize: WidgetStateProperty.all<double>(
         20,
       ),
-      backgroundColor: MaterialStateProperty.all<Color>(
+      backgroundColor: WidgetStateProperty.all<Color>(
         Colors.white,
       ),
-      foregroundColor: MaterialStateProperty.all<Color>(
+      foregroundColor: WidgetStateProperty.all<Color>(
         const Color(0XFF275492),
       ),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      fixedSize: MaterialStateProperty.all<Size>(
+      fixedSize: WidgetStateProperty.all<Size>(
         const Size(40, 40),
       ),
     ),

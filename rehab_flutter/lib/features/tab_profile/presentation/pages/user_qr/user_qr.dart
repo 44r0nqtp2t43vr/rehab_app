@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:lottie/lottie.dart';
@@ -32,8 +31,7 @@ class UserQR extends StatelessWidget {
           return Scaffold(
             body: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0, horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -81,15 +79,12 @@ class UserQR extends StatelessWidget {
                                 child: state.currentUser!.imageURL != null
                                     ? ClipOval(
                                         child: CachedNetworkImage(
-                                          imageUrl:
-                                              state.currentUser!.imageURL!,
+                                          imageUrl: state.currentUser!.imageURL!,
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                           height: double.infinity,
-                                          placeholder: (context, url) =>
-                                              const CircularProgressIndicator(),
-                                          errorWidget: (context, url, error) =>
-                                              const Icon(Icons.error),
+                                          placeholder: (context, url) => const CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) => const Icon(Icons.error),
                                         ),
                                       )
                                     : const Center(
@@ -144,8 +139,7 @@ class UserQR extends StatelessWidget {
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(24),
-                                  child: PrettyQrView.data(
-                                      data: state.currentUser!.userId),
+                                  child: PrettyQrView.data(data: state.currentUser!.userId),
                                 ),
                               ),
                             ),

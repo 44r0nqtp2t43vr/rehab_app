@@ -25,34 +25,14 @@ class RhythmicPatternsIntro extends StatefulWidget {
 class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
   final int patternDelay = 500;
   final int durationPerRhythmicPattern = 10;
-  RhythmicPattern currentRhythmicPattern =
-      TestingDataProvider.rhythmicPatterns[0];
+  RhythmicPattern currentRhythmicPattern = TestingDataProvider.rhythmicPatterns[0];
   List<bool> circleStates = List.generate(16, (_) => false);
   int currentRhythmicPatternInd = 0;
   Timer? _patternTimer;
 
   int sideAndValueToCircleStateIndex(bool isLeft, int value) {
-    final List<int> cursorValues = [
-      1,
-      8,
-      1,
-      8,
-      2,
-      16,
-      2,
-      16,
-      4,
-      32,
-      4,
-      32,
-      64,
-      128,
-      64,
-      128
-    ];
-    return isLeft
-        ? cursorValues.indexOf(value)
-        : cursorValues.lastIndexOf(value);
+    final List<int> cursorValues = [1, 8, 1, 8, 2, 16, 2, 16, 4, 32, 4, 32, 64, 128, 64, 128];
+    return isLeft ? cursorValues.indexOf(value) : cursorValues.lastIndexOf(value);
   }
 
   List<bool> patternToCircleStates(String pattern) {
@@ -71,13 +51,11 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
     for (int i = 0; i < actuatorValues.length; i++) {
       if (left - actuatorValues[i] >= 0) {
         left -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] =
-            true;
+        circleStates[sideAndValueToCircleStateIndex(true, actuatorValues[i])] = true;
       }
       if (right - actuatorValues[i] >= 0) {
         right -= actuatorValues[i];
-        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] =
-            true;
+        circleStates[sideAndValueToCircleStateIndex(false, actuatorValues[i])] = true;
       }
     }
 
@@ -85,16 +63,13 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
   }
 
   void _onAnimationFinish() {
-    if (currentRhythmicPatternInd ==
-        TestingDataProvider.rhythmicPatterns.length - 1) {
+    if (currentRhythmicPatternInd == TestingDataProvider.rhythmicPatterns.length - 1) {
       stopPattern();
-    } else if (currentRhythmicPatternInd <
-        TestingDataProvider.rhythmicPatterns.length - 1) {
+    } else if (currentRhythmicPatternInd < TestingDataProvider.rhythmicPatterns.length - 1) {
       stopPattern();
       setState(() {
         currentRhythmicPatternInd++;
-        currentRhythmicPattern =
-            TestingDataProvider.rhythmicPatterns[currentRhythmicPatternInd];
+        currentRhythmicPattern = TestingDataProvider.rhythmicPatterns[currentRhythmicPatternInd];
       });
       startPattern();
     }
@@ -105,10 +80,8 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
   }
 
   void startPattern() {
-    _patternTimer =
-        Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
-      final String patternToSend = currentRhythmicPattern
-          .pattern[timer.tick % currentRhythmicPattern.pattern.length];
+    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
+      final String patternToSend = currentRhythmicPattern.pattern[timer.tick % currentRhythmicPattern.pattern.length];
       setState(() {
         circleStates = patternToCircleStates(patternToSend);
       });
@@ -138,8 +111,7 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
   @override
   void dispose() {
     _patternTimer?.cancel();
-    sl<BluetoothBloc>()
-        .add(const WriteDataEvent("<000000000000000000000000000000>"));
+    sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
 
@@ -163,26 +135,22 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              currentRhythmicPatternInd <
-                      TestingDataProvider.rhythmicPatterns.length - 1
+              currentRhythmicPatternInd < TestingDataProvider.rhythmicPatterns.length - 1
                   ? Padding(
                       padding: const EdgeInsets.only(right: 12.0),
                       child: ElevatedButton(
                         onPressed: () => _onAnimationFinish(),
                         style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(
+                          foregroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xff275492),
                           ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xff01FF99),
                           ),
-                          elevation: MaterialStateProperty.all<double>(0),
-                          shadowColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                          overlayColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                          elevation: WidgetStateProperty.all<double>(0),
+                          shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                          overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -206,21 +174,18 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
                   : const SizedBox(),
 
               ElevatedButton(
-                onPressed: () =>
-                    widget.onProceed(TestingState.rhythmicPatterns),
+                onPressed: () => widget.onProceed(TestingState.rhythmicPatterns),
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
+                  foregroundColor: WidgetStateProperty.all<Color>(
                     Colors.white,
                   ),
-                  backgroundColor: MaterialStateProperty.all<Color>(
+                  backgroundColor: WidgetStateProperty.all<Color>(
                     const Color(0XFF128BED),
                   ),
-                  elevation: MaterialStateProperty.all<double>(0),
-                  shadowColor:
-                      MaterialStateProperty.all<Color>(Colors.transparent),
-                  overlayColor:
-                      MaterialStateProperty.all<Color>(Colors.transparent),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  elevation: WidgetStateProperty.all<double>(0),
+                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                  overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

@@ -38,8 +38,7 @@ class VisualizerScreenSlider extends StatefulWidget {
   VisualizerScreenStateSlider createState() => VisualizerScreenStateSlider();
 }
 
-class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
-    with SingleTickerProviderStateMixin {
+class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with SingleTickerProviderStateMixin {
 //  controllers
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
@@ -111,8 +110,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     ];
   }
 
-  final GlobalKey<LineAudioVisualizerState> visualizerKey =
-      GlobalKey<LineAudioVisualizerState>();
+  final GlobalKey<LineAudioVisualizerState> visualizerKey = GlobalKey<LineAudioVisualizerState>();
 
   @override
   void initState() {
@@ -169,19 +167,15 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
 
     while (retries > 0) {
       try {
-        final firebaseRepository = FirebaseRepositoryImpl(
-            FirebaseFirestore.instance, FirebaseStorage.instance);
-        final audioUrl =
-            await firebaseRepository.getAudioUrl(widget.songData.audioSource);
+        final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
+        final audioUrl = await firebaseRepository.getAudioUrl(widget.songData.audioSource);
 
         audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
-          audioPlayer
-              .seek(Duration(seconds: widget.currentPositionSec.toInt()));
+          audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
           audioPlayer.resume();
         });
 
-        await audioPlayer.play(UrlSource(audioUrl),
-            position: Duration(seconds: widget.currentPositionSec.toInt()));
+        await audioPlayer.play(UrlSource(audioUrl), position: Duration(seconds: widget.currentPositionSec.toInt()));
 
         if (!mounted) return;
         setState(() {
@@ -230,7 +224,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
           return;
         }
@@ -269,23 +263,16 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                               ElevatedButton(
                                 onPressed: () => _onSwitch(context),
                                 style: ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStateProperty.all<Color>(
+                                  foregroundColor: WidgetStateProperty.all<Color>(
                                     Colors.white,
                                   ),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
+                                  backgroundColor: WidgetStateProperty.all<Color>(
                                     Colors.transparent,
                                   ),
-                                  elevation:
-                                      MaterialStateProperty.all<double>(0),
-                                  shadowColor: MaterialStateProperty.all<Color>(
-                                      Colors.transparent),
-                                  overlayColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.transparent),
-                                  padding: MaterialStateProperty.all<
-                                      EdgeInsetsGeometry>(
+                                  elevation: WidgetStateProperty.all<double>(0),
+                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(horizontal: 20),
                                   ),
                                 ),
@@ -300,23 +287,16 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                               ElevatedButton(
                                 onPressed: null,
                                 style: ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStateProperty.all<Color>(
+                                  foregroundColor: WidgetStateProperty.all<Color>(
                                     Colors.white,
                                   ),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
+                                  backgroundColor: WidgetStateProperty.all<Color>(
                                     Colors.white.withOpacity(0.25),
                                   ),
-                                  elevation:
-                                      MaterialStateProperty.all<double>(0),
-                                  shadowColor: MaterialStateProperty.all<Color>(
-                                      Colors.transparent),
-                                  overlayColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.transparent),
-                                  padding: MaterialStateProperty.all<
-                                      EdgeInsetsGeometry>(
+                                  elevation: WidgetStateProperty.all<double>(0),
+                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(horizontal: 20),
                                   ),
                                 ),
@@ -348,8 +328,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                   ? Expanded(
                       flex: 5,
                       child: Container(
-                        decoration:
-                            const BoxDecoration(color: Color(0xff223e65)),
+                        decoration: const BoxDecoration(color: Color(0xff223e65)),
                         child: const Center(
                           child: CircularProgressIndicator(
                             color: Color(0xff01FF99),
@@ -360,8 +339,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                   : Expanded(
                       flex: 5,
                       child: Container(
-                        decoration:
-                            const BoxDecoration(color: Color(0xff223e65)),
+                        decoration: const BoxDecoration(color: Color(0xff223e65)),
                         child: Stack(
                           children: [
                             Padding(
@@ -442,8 +420,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                                 currentDuration: currentPositionSec,
                                 minDuration: 0,
                                 maxDuration: widget.songData.duration,
-                                onDurationChanged: (value) =>
-                                    _onDurationChanged(value),
+                                onDurationChanged: (value) => _onDurationChanged(value),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -481,15 +458,11 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
                             ),
                             IconButton(
                               icon: Icon(
-                                isPlaying
-                                    ? CupertinoIcons.pause_fill
-                                    : CupertinoIcons.play_arrow_solid,
+                                isPlaying ? CupertinoIcons.pause_fill : CupertinoIcons.play_arrow_solid,
                                 size: 40,
                                 color: Colors.white,
                               ),
-                              onPressed: () => isPlaying
-                                  ? _pauseAnimation()
-                                  : _resumeAnimation(),
+                              onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
                             ),
                             IconButton(
                               icon: Icon(
@@ -548,9 +521,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     int itemsPerRow = 4;
 
     for (int i = 0; i < circles.length; i += itemsPerRow) {
-      List<Widget> rowItems = circles
-          .sublist(i, min(i + itemsPerRow, circles.length))
-          .map((circleState) {
+      List<Widget> rowItems = circles.sublist(i, min(i + itemsPerRow, circles.length)).map((circleState) {
         return CustomPaint(
           painter: RayPainter(
             progress: circleState.progress,
@@ -568,16 +539,13 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
 
       rows.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: rowItems),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: rowItems),
       ));
     }
     return rows;
   }
 
-  void updateCircleState(int index, Color color,
-      double size /*double width, double height*/, int activeValue) {
+  void updateCircleState(int index, Color color, double size /*double width, double height*/, int activeValue) {
     setState(() {
       circles[index].color = color;
       circles[index].circleWidth = size;
@@ -588,8 +556,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
-  void resetAllCircles(Color color, double size /*double width, double height*/,
-      int activeValue) {
+  void resetAllCircles(Color color, double size /*double width, double height*/, int activeValue) {
     setState(() {
       for (var circle in circles) {
         circle.color = color;
@@ -609,8 +576,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color =
-          isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
+      circles[squares[i]].color = isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
@@ -622,8 +588,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color =
-          isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
+      circles[squares[i]].color = isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
@@ -638,12 +603,10 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
     if (blocks.isEmpty) return;
 
     for (int i = 0; i < blocks.length; i++) {
-      if (i == blocks.length - 1 ||
-          (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
+      if (i == blocks.length - 1 || (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
         if (i != currentIndex) {
           setState(() {
-            prevIndex =
-                currentIndex; // Save the current index as previous before updating
+            prevIndex = currentIndex; // Save the current index as previous before updating
             currentIndex = i; // Now update the current index
           });
           break;
@@ -667,21 +630,12 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       print("Time: ${blocks[currentIndex].time}");
       print("Position: $positionSec");
 
-      if (noteOnset == 1 &&
-          blocks[prevIndex].noteOnset == 0 &&
-          blocks[prevIndex - 1].noteOnset == 0 &&
-          blocks[prevIndex - 2].noteOnset == 0 &&
-          blocks[prevIndex - 3].noteOnset == 0) {
+      if (noteOnset == 1 && blocks[prevIndex].noteOnset == 0 && blocks[prevIndex - 1].noteOnset == 0 && blocks[prevIndex - 2].noteOnset == 0 && blocks[prevIndex - 3].noteOnset == 0) {
         for (int i = 0; i < activeValues.length; i++) {
           activeValues[i] = 0;
         }
         int delay = 0; // Initial delay is 0ms for the first column
-        List<List<int>> columns = [
-          firstCol,
-          secondCol,
-          thirdCol,
-          fourthCol
-        ]; // List of column groups for iteration
+        List<List<int>> columns = [firstCol, secondCol, thirdCol, fourthCol]; // List of column groups for iteration
 
         for (var column in columns) {
           Timer(Duration(milliseconds: delay), () {
@@ -707,14 +661,11 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider>
       } else if (activeValues.every((value) => value == 0)) {
         updateCircleProperties(bassSquare, getBassBoolValue(bass));
         updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
-        updateCircleProperties(
-            lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
+        updateCircleProperties(lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
         updateCircleProperties(subBassSquare, getSubBassBoolValue(subBass));
         updateCircleProperties(presenceSquare, getPresenceBoolValue(presence));
-        updateCircleProperties(
-            higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
-        updateCircleProperties(
-            brillianceSquare, getBrillianceBoolValue(brilliance));
+        updateCircleProperties(higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
+        updateCircleProperties(brillianceSquare, getBrillianceBoolValue(brilliance));
       }
 
       lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);

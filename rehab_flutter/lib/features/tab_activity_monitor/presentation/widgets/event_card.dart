@@ -56,11 +56,8 @@ class EventCard extends StatelessWidget {
                             value: isCompleted,
                             groupValue: true,
                             onChanged: (value) {},
-                            fillColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              return (isCompleted)
-                                  ? const Color(0xff01FF99)
-                                  : Colors.white;
+                            fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+                              return (isCompleted) ? const Color(0xff01FF99) : Colors.white;
                             }),
                           ),
                           Expanded(
@@ -85,11 +82,8 @@ class EventCard extends StatelessWidget {
                             groupValue: true,
                             onChanged: (value) {},
                             activeColor: const Color(0xff01FF99),
-                            fillColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              return (isCompleted)
-                                  ? const Color(0xff01FF99)
-                                  : Colors.white;
+                            fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
+                              return (isCompleted) ? const Color(0xff01FF99) : Colors.white;
                             }),
                           ),
                           Expanded(

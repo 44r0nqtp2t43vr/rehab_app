@@ -20,7 +20,7 @@ class ServiceScreen extends StatelessWidget {
     return BlocProvider(
       create: (_) => sl<BluetoothBloc>()..add(ConnectDeviceEvent(targetDevice)),
       child: PopScope(
-        onPopInvoked: (didPop) => sl<BluetoothBloc>().add(const DisconnectDeviceEvent()),
+        onPopInvokedWithResult: (didPop, result) => sl<BluetoothBloc>().add(const DisconnectDeviceEvent()),
         child: Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -127,16 +127,16 @@ class ServiceScreen extends StatelessWidget {
                                       child: ElevatedButton(
                                         onPressed: () => _onCharacteristicButtonPressed(context, ffe2Characteristic!),
                                         style: ButtonStyle(
-                                          foregroundColor: MaterialStateProperty.all<Color>(
+                                          foregroundColor: WidgetStateProperty.all<Color>(
                                             Colors.white,
                                           ),
-                                          backgroundColor: MaterialStateProperty.all<Color>(
+                                          backgroundColor: WidgetStateProperty.all<Color>(
                                             Colors.white.withOpacity(.3),
                                           ),
-                                          elevation: MaterialStateProperty.all<double>(0),
-                                          shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                          elevation: WidgetStateProperty.all<double>(0),
+                                          shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                          overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10),
                                             ),
