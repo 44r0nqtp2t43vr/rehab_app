@@ -221,7 +221,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
                     foregroundColor: Colors.white,
                     backgroundColor: _fingerStates[0] ? Colors.green : Colors.red,
                   ),
-                  child: const Text("0"),
+                  child: const Text("1"),
                 ),
                 ElevatedButton(
                   onPressed: () => _updateFingerState(1),
@@ -229,7 +229,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
                     foregroundColor: Colors.white,
                     backgroundColor: _fingerStates[1] ? Colors.green : Colors.red,
                   ),
-                  child: const Text("1"),
+                  child: const Text("2"),
                 ),
                 ElevatedButton(
                   onPressed: () => _updateFingerState(2),
@@ -237,7 +237,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
                     foregroundColor: Colors.white,
                     backgroundColor: _fingerStates[2] ? Colors.green : Colors.red,
                   ),
-                  child: const Text("2"),
+                  child: const Text("3"),
                 ),
                 ElevatedButton(
                   onPressed: () => _updateFingerState(3),
@@ -245,7 +245,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
                     foregroundColor: Colors.white,
                     backgroundColor: _fingerStates[3] ? Colors.green : Colors.red,
                   ),
-                  child: const Text("3"),
+                  child: const Text("4"),
                 ),
                 ElevatedButton(
                   onPressed: () => _updateFingerState(4),
@@ -253,7 +253,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
                     foregroundColor: Colors.white,
                     backgroundColor: _fingerStates[4] ? Colors.green : Colors.red,
                   ),
-                  child: const Text("4"),
+                  child: const Text("5"),
                 ),
               ],
             ),

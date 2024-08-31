@@ -214,7 +214,7 @@ class _PatternTherapyState extends State<PatternTherapy> {
                     IconButton(
                       icon: const Icon(
                         CupertinoIcons.stop_circle_fill,
-                        size: 80,
+                        size: 60,
                         color: Colors.white,
                       ),
                       onPressed: stopPattern,
