@@ -11,10 +11,6 @@ import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
 import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/test_analytics_item.dart';
-import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
-import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_event.dart';
-import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
-import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_event.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
@@ -62,12 +58,11 @@ class _TestingFinishState extends State<TestingFinish> {
       ),
     ));
 
-    // TODO: temporary solution
-    final patientPlans = BlocProvider.of<PatientPlansBloc>(context).state.plans;
-    final currentPlan = BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan!;
+    // final patientPlans = BlocProvider.of<PatientPlansBloc>(context).state.plans;
+    // final currentPlan = BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan!;
 
-    BlocProvider.of<PatientPlansBloc>(context).add(UpdatePatientPlansEvent(patientPlans, currentSession));
-    BlocProvider.of<PatientCurrentPlanBloc>(context).add(UpdateCurrentPlanSessionEvent(currentPlan, currentSession));
+    // BlocProvider.of<PatientPlansBloc>(context).add(UpdatePatientPlansEvent(patientPlans, currentSession));
+    // BlocProvider.of<PatientCurrentPlanBloc>(context).add(UpdateCurrentPlanSessionEvent(currentPlan, currentSession));
   }
 
   @override

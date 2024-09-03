@@ -94,7 +94,7 @@ class _PatientPlanDetailsState extends State<PatientPlanDetails> {
                         children: [
                           Row(
                             children: [
-                              PatientsTherapyCompletionRate(plan: widget.patientPlan.plan),
+                              PatientsTherapyCompletionRate(),
                               const SizedBox(width: 16),
                               PatientsTherapyPlanDetails(patientPlan: widget.patientPlan),
                             ],

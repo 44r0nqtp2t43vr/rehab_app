@@ -494,6 +494,43 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<Session> resetSession(PassiveData data) async {
+    final DateTime today = DateTime.now();
+    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+    // Identify the active plan
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').doc(data.user.userId).collection('plans').where('endDate', isGreaterThanOrEqualTo: endOfDay).limit(1).get();
+
+    final activePlanId = querySnapshot.docs.first.id;
+
+    // Fetch sessions for the current date within the active plan
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(data.user.userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
+
+    // Assuming we update the first session of the day
+    final sessionDoc = sessionSnapshot.docs.first;
+    final sessionRef = FirebaseFirestore.instance.collection('users').doc(data.user.userId).collection('plans').doc(activePlanId).collection('sessions').doc(sessionDoc.id);
+
+    // Start a batch operation
+    final batch = FirebaseFirestore.instance.batch();
+
+    // Update the session data
+    // batch.update(sessionRef, data);
+
+    // Get the testingitems collection within the session
+    final testingItemsCollectionRef = sessionRef.collection('testingitems');
+    final testingItemsSnapshot = await testingItemsCollectionRef.get();
+
+    // Check if the testingitems collection has any documents before deleting
+    if (testingItemsSnapshot.docs.isNotEmpty) {
+      // Delete each document in the testingitems collection
+      for (var doc in testingItemsSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+    }
+
+    // Commit the batch operation
+    await batch.commit();
+
     await updateCurrentSession(data.user.userId, {
       'pretestScore': null,
       'posttestScore': null,
