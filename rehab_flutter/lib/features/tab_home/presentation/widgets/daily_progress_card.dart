@@ -319,19 +319,19 @@ class DailyProgressCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Theme(
-                          data: darkButtonTheme,
-                          child: ElevatedButton(
-                            onPressed: () => _onResetSessionPressed(context),
-                            child: const Text('Debug: Reset Session'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Theme(
+                    //       data: darkButtonTheme,
+                    //       child: ElevatedButton(
+                    //         onPressed: () => _onResetSessionPressed(context),
+                    //         child: const Text('Debug: Reset Session'),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

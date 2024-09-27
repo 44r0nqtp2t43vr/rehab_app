@@ -207,14 +207,14 @@ class _TestingScreenState extends State<TestingScreen> {
         ],
       ),
       actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.check,
-            size: 35,
-            color: Colors.white,
-          ),
-          onPressed: () => skipTest(context),
-        ),
+        // IconButton(
+        //   icon: const Icon(
+        //     Icons.check,
+        //     size: 35,
+        //     color: Colors.white,
+        //   ),
+        //   onPressed: () => skipTest(context),
+        // ),
       ],
     );
   }
