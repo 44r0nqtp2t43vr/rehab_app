@@ -57,7 +57,7 @@ class _TestingScreenState extends State<TestingScreen> {
         items: [],
       ),
     ));
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
   }
 
   void onProceed(TestingState newTestingState) {

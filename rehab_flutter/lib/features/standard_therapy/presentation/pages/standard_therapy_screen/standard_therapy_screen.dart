@@ -18,7 +18,12 @@ import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_pianotiles.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_textures.dart';
 import 'package:rehab_flutter/features/standard_therapy/presentation/widgets/st_visualizer.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_event.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_event.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_event.dart';
 
 class StandardTherapyScreen extends StatefulWidget {
   final StandardTherapyData data;
@@ -37,7 +42,6 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
     final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
 
     BlocProvider.of<UserBloc>(context).add(SubmitStandardEvent(StandardData(user: currentUser, currentSession: currentSession, isStandardOne: widget.data.isStandardOne)));
-
     // final patientPlans = BlocProvider.of<PatientPlansBloc>(context).state.plans;
     // final currentPlan = BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan!;
 
@@ -131,6 +135,16 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
       listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
       listener: (context, state) {
         if (state is UserDone) {
+          final currentSession = state.currentSession;
+
+          if (currentSession != null) {
+            final patientPlans = BlocProvider.of<PatientPlansBloc>(context).state.plans;
+            final currentPlan = BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan!;
+
+            BlocProvider.of<PatientCurrentSessionBloc>(context).add(UpdateCurrentSessionEvent(currentSession));
+            BlocProvider.of<PatientPlansBloc>(context).add(UpdatePatientPlansEvent(patientPlans, currentSession));
+            BlocProvider.of<PatientCurrentPlanBloc>(context).add(UpdateCurrentPlanSessionEvent(currentPlan, currentSession));
+          }
           Navigator.of(context).pop();
         }
       },

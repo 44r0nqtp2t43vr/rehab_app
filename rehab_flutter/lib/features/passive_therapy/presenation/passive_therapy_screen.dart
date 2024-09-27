@@ -12,7 +12,12 @@ import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_dat
 import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_therapy_data.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/pattern_bools.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/widgets/pattern_grid.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
+import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_event.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_event.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_event.dart';
 
 class PassiveTherapyScreen extends StatefulWidget {
   final PassiveTherapyData data;
@@ -215,6 +220,16 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with Ticker
       listenWhen: (previous, current) => previous is UserLoading && current is UserDone,
       listener: (context, state) {
         if (state is UserDone) {
+          final currentSession = state.currentSession;
+
+          if (currentSession != null) {
+            final patientPlans = BlocProvider.of<PatientPlansBloc>(context).state.plans;
+            final currentPlan = BlocProvider.of<PatientCurrentPlanBloc>(context).state.currentPlan!;
+
+            BlocProvider.of<PatientCurrentSessionBloc>(context).add(UpdateCurrentSessionEvent(currentSession));
+            BlocProvider.of<PatientPlansBloc>(context).add(UpdatePatientPlansEvent(patientPlans, currentSession));
+            BlocProvider.of<PatientCurrentPlanBloc>(context).add(UpdateCurrentPlanSessionEvent(currentPlan, currentSession));
+          }
           Navigator.of(context).pop();
         }
       },
