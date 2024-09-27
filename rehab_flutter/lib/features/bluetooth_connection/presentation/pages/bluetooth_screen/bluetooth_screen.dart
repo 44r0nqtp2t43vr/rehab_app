@@ -144,65 +144,64 @@ class BluetoothScreen extends StatelessWidget {
                               style: darkTextTheme().headlineMedium,
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(
-                              height: 24,
-                            ),
+                            const SizedBox(height: 24),
                             Text(
                               'via Bluetooth',
                               style: darkTextTheme().headlineSmall,
                             ),
+                            const SizedBox(height: 8),
                             Expanded(
-                              child: Column(
-                                children: [
-                                  GlassContainer(
-                                    blur: 4,
-                                    color: Colors.white.withOpacity(0.25),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            'Bluetooth Devices',
-                                            style: darkTextTheme().headlineMedium,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: scanResults.length,
-                                            itemBuilder: (context, index) {
-                                              final BluetoothDevice device = scanResults[index].device;
-                                              return Padding(
-                                                padding: const EdgeInsets.all(8),
-                                                child: GlassContainer(
-                                                  blur: 4,
-                                                  color: Colors.white.withOpacity(0.25),
-                                                  child: ListTile(
-                                                    leading: const Icon(
-                                                      Icons.bluetooth,
-                                                      size: 30,
-                                                      color: Colors.white,
-                                                    ),
-                                                    title: Text(
-                                                      device.platformName,
-                                                      style: darkTextTheme().displaySmall,
-                                                    ),
-                                                    onTap: () => _onDeviceCardPressed(context, device),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          )
-                                        ],
+                              child: GlassContainer(
+                                blur: 4,
+                                color: Colors.white.withOpacity(0.25),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Bluetooth Devices',
+                                        style: darkTextTheme().headlineMedium,
+                                        textAlign: TextAlign.center,
                                       ),
-                                    ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: scanResults.length,
+                                          physics: const BouncingScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            final BluetoothDevice device = scanResults[index].device;
+                                            return Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: GlassContainer(
+                                                blur: 4,
+                                                color: Colors.white.withOpacity(0.25),
+                                                child: ListTile(
+                                                  leading: const Icon(
+                                                    Icons.bluetooth,
+                                                    size: 30,
+                                                    color: Colors.white,
+                                                  ),
+                                                  title: Text(
+                                                    device.platformName,
+                                                    style: darkTextTheme().displaySmall,
+                                                  ),
+                                                  onTap: () => _onDeviceCardPressed(context, device),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
+                            const SizedBox(height: 24),
                             Padding(
                               padding: const EdgeInsets.all(16),
                               child: Row(
