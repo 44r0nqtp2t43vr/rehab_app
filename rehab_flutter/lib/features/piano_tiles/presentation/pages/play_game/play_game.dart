@@ -95,13 +95,31 @@ class _PlayGameState extends State<PlayGame> {
   }
 
   void _onPass(AudioData block) async {
+    print(block.lineNumber);
     if (block.noteOnset == 1) {
-      const String off = "000000";
-      const String on = "255255";
-      String data = "<${block.lineNumber == 0 ? off : on}${block.lineNumber == 1 ? off : on}${block.lineNumber == 2 ? off : on}${block.lineNumber == 3 ? off : on}${block.lineNumber == 4 ? off : on}>";
+      String data = "";
+      switch (block.lineNumber) {
+        case 0:
+          data = "<255255000000000000000000000000>";
+          break;
+        case 1:
+          data = "<000000255255000000000000000000>";
+          break;
+        case 2:
+          data = "<000000000000255255000000000000>";
+          break;
+        case 3:
+          data = "<000000000000000000255255000000>";
+          break;
+        case 4:
+          data = "<000000000000000000000000255255>";
+          break;
+        default:
+          data = "<000000000000000000000000000000>";
+      }
 
       sl<BluetoothBloc>().add(WriteDataEvent(data));
-      await Future.delayed(const Duration(milliseconds: 120));
+      await Future.delayed(const Duration(milliseconds: 40));
       sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     } else {
       sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
