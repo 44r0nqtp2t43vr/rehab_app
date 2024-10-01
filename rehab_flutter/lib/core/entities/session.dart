@@ -28,8 +28,8 @@ class Session {
     return {
       'sessionId': sessionId,
       'endDate': endDate,
-      'dailyActivities': [],
-      'testingItems': [],
+      'dailyActivities': dailyActivities,
+      'testingItems': testingItems,
     };
   }
 

@@ -369,7 +369,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Future<AppUser> addPlan(AddPlanData data) async {
     final userId = data.user.userId;
 
-    final DateTime startDate = data.startDate;
+    final DateTime startDate = DateTime(data.startDate.year, data.startDate.month, data.startDate.day);
     final DateTime endDate = startDate.add(Duration(days: data.planSelected * 7));
     final DateFormat formatter = DateFormat('MMddyyyy');
 
