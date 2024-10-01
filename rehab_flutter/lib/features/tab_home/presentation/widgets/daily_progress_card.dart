@@ -168,7 +168,7 @@ class DailyProgressCard extends StatelessWidget {
         },
       );
     } else {
-      final List<bool> conditions = session.getSessionConditions();
+      final List<bool> conditions = session.getSessionConditions("");
       showDialog(
         context: context,
         barrierDismissible: false,

@@ -17,25 +17,6 @@ class ContinueCard extends StatelessWidget {
 
   const ContinueCard({super.key, required this.user, required this.session});
 
-  // void _selectPlan(BuildContext context, String planName, AppUser user) {
-  //   int daysToAdd;
-  //   switch (planName) {
-  //     case 'One Week':
-  //       daysToAdd = 7;
-  //       break;
-  //     case 'One Month':
-  //       daysToAdd = 30;
-  //       break;
-  //     case 'Three Months':
-  //       daysToAdd = 90;
-  //       break;
-  //     default:
-  //       daysToAdd = 7;
-  //   }
-  //   Navigator.of(context).pop();
-  //   BlocProvider.of<UserBloc>(context).add(AddPlanEvent(AddPlanData(user: user, planSelected: daysToAdd)));
-  // }
-
   @override
   Widget build(BuildContext context) {
     // final Plan? currentPlan = user.getCurrentPlan();
@@ -255,7 +236,8 @@ class ContinueCard extends StatelessWidget {
         },
       );
     } else {
-      if (session.sessionId == Session.empty().sessionId) {
+      final todayActivities = session.getTodayActivities();
+      if (todayActivities == null) {
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -281,42 +263,39 @@ class ContinueCard extends StatelessWidget {
           },
         );
       } else {
-        List<bool> conditions = session.getSessionConditions();
+        List<bool> conditions = session.getSessionConditions(todayActivities);
+        // pretest
+        // Navigator.pushNamed(context, '/Testing', arguments: true);
+        // posttest
+        // Navigator.pushNamed(context, '/Testing', arguments: false);
         if (!conditions[0]) {
-          Navigator.pushNamed(context, '/Testing', arguments: true);
-        } else if (!conditions[1]) {
           Navigator.pushNamed(
             context,
             '/StandardTherapy',
             arguments: StandardTherapyData(
               userId: user.userId,
               isStandardOne: true,
-              type: session.getStandardOneType(),
-              // intensity: int.parse(session.standardOneIntensity),
-              intensity: 1,
+              type: session.getStandardOneType(todayActivities),
+              intensity: session.getStandardOneIntensity(todayActivities),
             ),
           );
-        } else if (!conditions[2]) {
+        } else if (!conditions[1]) {
           Navigator.pushNamed(context, '/PassiveTherapy',
               arguments: PassiveTherapyData(
                 user: user,
-                // intensity: int.parse(session.passiveIntensity),
-                intensity: 1,
+                intensity: session.getStandardOneIntensity(todayActivities),
               ));
-        } else if (!conditions[3]) {
+        } else if (!conditions[2]) {
           Navigator.pushNamed(
             context,
             '/StandardTherapy',
             arguments: StandardTherapyData(
               userId: user.userId,
               isStandardOne: false,
-              type: session.getStandardTwoType(),
-              // intensity: int.parse(session.standardTwoIntensity),
-              intensity: 1,
+              type: session.getStandardTwoType(todayActivities),
+              intensity: session.getStandardTwoIntensity(todayActivities),
             ),
           );
-        } else if (!conditions[4]) {
-          Navigator.pushNamed(context, '/Testing', arguments: false);
         } else {
           showDialog(
             context: context,

@@ -20,6 +20,7 @@ import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_ch
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/daily_progress_card.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/mini_calendar.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/take_test_button.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/welcome_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -101,9 +102,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           if (state is PatientCurrentSessionDone) {
-                            return ContinueCard(
-                              user: patient,
-                              session: state.currentSession!,
+                            final currentSession = state.currentSession!;
+
+                            return Column(
+                              children: [
+                                currentSession.testingItems.isEmpty
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
+                                        child: TakeTestButton(),
+                                      )
+                                    : const SizedBox(),
+                                ContinueCard(
+                                  user: patient,
+                                  session: state.currentSession!,
+                                ),
+                              ],
                             );
                           }
 

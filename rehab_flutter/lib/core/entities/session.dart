@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 
 class Session {
   String sessionId;
@@ -42,29 +43,64 @@ class Session {
     );
   }
 
-  List<bool> getSessionConditions() {
-    // return [
-    //   pretestScore != null,
-    //   isStandardOneDone,
-    //   isPassiveDone,
-    //   isStandardTwoDone,
-    //   posttestScore != null,
-    // ];
-    return [false, false, false, false, false];
+  String? getTodayActivities() {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
+    return todayActivities.isEmpty ? null : todayActivities;
+  }
+
+  List<bool> getSessionConditions(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return [false, false, false];
+    }
+
+    final dayActivitiesBools = dayActivities.split('_')[3];
+
+    return [
+      dayActivitiesBools[0] == 't' ? true : false,
+      dayActivitiesBools[1] == 't' ? true : false,
+      dayActivitiesBools[2] == 't' ? true : false,
+    ];
   }
 
   double getSessionPercentCompletion() {
-    final List<bool> conditions = getSessionConditions();
+    final List<bool> conditions = getSessionConditions("");
     return conditions.where((condition) => condition == true).length * (100 / conditions.length);
   }
 
-  StandardTherapy getStandardOneType() {
-    // return stringToStandardTherapyEnum(standardOneType);
-    return StandardTherapy.pod;
+  StandardTherapy getStandardOneType(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return StandardTherapy.pod;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[1];
+    return stringToStandardTherapyEnum(dayActivitiesStandardOne.substring(0, 3));
   }
 
-  StandardTherapy getStandardTwoType() {
-    // return stringToStandardTherapyEnum(standardTwoType);
-    return StandardTherapy.pod;
+  StandardTherapy getStandardTwoType(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return StandardTherapy.pod;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[2];
+    return stringToStandardTherapyEnum(dayActivitiesStandardOne.substring(0, 3));
+  }
+
+  int getStandardOneIntensity(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return 1;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[1];
+    return int.parse(dayActivitiesStandardOne[3]);
+  }
+
+  int getStandardTwoIntensity(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return 1;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[2];
+    return int.parse(dayActivitiesStandardOne[3]);
   }
 }

@@ -29,7 +29,7 @@ class _TestingFinishState extends State<TestingFinish> {
 
   void _submitTest(AppUser user, double score) {
     final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
-    bool isPretest = !currentSession.getSessionConditions()[0];
+    bool isPretest = !currentSession.getSessionConditions("")[0];
 
     List<TestingItem> items = [];
     for (var i = 0; i < widget.itemList.length; i++) {

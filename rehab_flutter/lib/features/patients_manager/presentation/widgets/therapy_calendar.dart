@@ -103,7 +103,7 @@ class _TherapyCalendarState extends State<TherapyCalendar> {
           dayColor: Colors.white,
           selectedDay: _selectedDay,
           currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
-          conditions: currentSelectedSession.getSessionConditions(),
+          conditions: currentSelectedSession.getSessionConditions(""),
         ),
       ],
     );

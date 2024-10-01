@@ -742,6 +742,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       plansWithSessions.add(planWithSessions);
     }
 
+    print(plansWithSessions);
     return plansWithSessions;
   }
 
@@ -804,17 +805,14 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
         .get();
 
     if (plansSnapshot.docs.isNotEmpty) {
-      DateTime startOfDay = DateTime(today.year, today.month, today.day);
-      DateTime endOfDay = startOfDay.add(const Duration(days: 1));
-
       QuerySnapshot<Map<String, dynamic>> sessionSnapshot = await db
           .collection('users')
           .doc(patientId)
           .collection('plans')
           .doc(plansSnapshot.docs.first.id) // Assuming currentPlan has an id
           .collection('sessions')
-          .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
-          .where('date', isLessThan: Timestamp.fromDate(endOfDay))
+          .where('endDate', isGreaterThan: Timestamp.fromDate(today))
+          .orderBy('endDate', descending: false) // Optional: Sorts plans by end date in ascending order
           .limit(1) // Optional: Limits the query to one result
           .get();
 

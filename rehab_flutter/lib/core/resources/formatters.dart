@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String secToMinSec(double duration) {
   int minutes = duration ~/ 60;
   int remainingSeconds = (duration % 60).floor();
@@ -55,4 +57,9 @@ String getDayOfWeek(int weekday) {
     default:
       return '';
   }
+}
+
+String formatDateMMDDYYYY(DateTime date) {
+  final DateFormat formatter = DateFormat('MMddyyyy');
+  return formatter.format(date);
 }
