@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
 
 class AppUser {
   final String userId;
@@ -57,84 +54,84 @@ class AppUser {
     return "${firstName.capitalize!} ${lastName.capitalize!}";
   }
 
-  Plan? getCurrentPlan() {
-    final DateTime today = DateTime.now();
-    final Plan currentPlan = plans.lastWhere(
-      (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
-      orElse: () => Plan.empty(),
-    );
-    return currentPlan.planId.isEmpty ? null : currentPlan;
-  }
+  // Plan? getCurrentPlan() {
+  //   final DateTime today = DateTime.now();
+  //   final Plan currentPlan = plans.lastWhere(
+  //     (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
+  //     orElse: () => Plan.empty(),
+  //   );
+  //   return currentPlan.planId.isEmpty ? null : currentPlan;
+  // }
 
-  int getIndexOfCurrentPlan() {
-    final DateTime today = DateTime.now();
-    final int indexOfCurrentPlan = plans.lastIndexWhere(
-      (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
-    );
-    return indexOfCurrentPlan;
-  }
+  // int getIndexOfCurrentPlan() {
+  //   final DateTime today = DateTime.now();
+  //   final int indexOfCurrentPlan = plans.lastIndexWhere(
+  //     (plan) => DateTime(plan.endDate.year, plan.endDate.month, plan.endDate.day).isAfter(today),
+  //   );
+  //   return indexOfCurrentPlan;
+  // }
 
-  Session? getCurrentSession() {
-    final DateTime today = DateTime.now();
-    final Plan? currentPlan = getCurrentPlan();
-    if (currentPlan == null) {
-      return null;
-    } else {
-      final Session currentSession = currentPlan.sessions.firstWhere(
-        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
-        orElse: () => Session.empty(),
-      );
-      return currentSession.sessionId.isEmpty ? null : currentSession;
-    }
-  }
+  // Session? getCurrentSession() {
+  //   final DateTime today = DateTime.now();
+  //   final Plan? currentPlan = getCurrentPlan();
+  //   if (currentPlan == null) {
+  //     return null;
+  //   } else {
+  //     final Session currentSession = currentPlan.sessions.firstWhere(
+  //       (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+  //       orElse: () => Session.empty(),
+  //     );
+  //     return currentSession.sessionId.isEmpty ? null : currentSession;
+  //   }
+  // }
 
-  int getIndexOfCurrentSession() {
-    final DateTime today = DateTime.now();
-    final Plan? currentPlan = getCurrentPlan();
-    if (currentPlan == null) {
-      return -1;
-    } else {
-      final int indexOfCurrentSession = currentPlan.sessions.indexWhere(
-        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
-      );
-      return indexOfCurrentSession;
-    }
-  }
+  // int getIndexOfCurrentSession() {
+  //   final DateTime today = DateTime.now();
+  //   final Plan? currentPlan = getCurrentPlan();
+  //   if (currentPlan == null) {
+  //     return -1;
+  //   } else {
+  //     final int indexOfCurrentSession = currentPlan.sessions.indexWhere(
+  //       (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+  //     );
+  //     return indexOfCurrentSession;
+  //   }
+  // }
 
-  List<Session> getAllSessionsFromAllPlans() {
-    return plans.expand((plan) => plan.sessions).toList();
-  }
+  // List<Session> getAllSessionsFromAllPlans() {
+  //   return plans.expand((plan) => plan.sessions).toList();
+  // }
 
-  Map<String, Color?> getDateColorsMap() {
-    Map<String, Color?> dateColorsMap = {};
-    List<Session> sessions = getAllSessionsFromAllPlans();
+  // Map<String, Color?> getDateColorsMap() {
+  //   Map<String, Color?> dateColorsMap = {};
+  //   List<Session> sessions = getAllSessionsFromAllPlans();
 
-    for (var sesh in sessions) {
-      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
-      final List<bool> conditions = sesh.getSessionConditions();
+  //   for (var sesh in sessions) {
+  //     final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+  //     final List<bool> conditions = sesh.getSessionConditions();
 
-      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
-        dateColorsMap[dateString] = heatmap5;
-      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
-        dateColorsMap[dateString] = heatmap4;
-      } else if (conditions[0] && conditions[1] && conditions[2]) {
-        dateColorsMap[dateString] = heatmap3;
-      } else if (conditions[0] && conditions[1]) {
-        dateColorsMap[dateString] = heatmap2;
-      } else if (conditions[0]) {
-        dateColorsMap[dateString] = heatmap1;
-      } else {
-        dateColorsMap[dateString] = null;
-      }
-    }
+  //     if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
+  //       dateColorsMap[dateString] = heatmap5;
+  //     } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
+  //       dateColorsMap[dateString] = heatmap4;
+  //     } else if (conditions[0] && conditions[1] && conditions[2]) {
+  //       dateColorsMap[dateString] = heatmap3;
+  //     } else if (conditions[0] && conditions[1]) {
+  //       dateColorsMap[dateString] = heatmap2;
+  //     } else if (conditions[0]) {
+  //       dateColorsMap[dateString] = heatmap1;
+  //     } else {
+  //       dateColorsMap[dateString] = null;
+  //     }
+  //   }
 
-    return dateColorsMap;
-  }
+  //   return dateColorsMap;
+  // }
 
-  void setCurrentSession(Session newSession) {
-    final indexOfCurrentPlan = getIndexOfCurrentPlan();
-    final indexOfCurrentSession = getIndexOfCurrentSession();
+  // void setCurrentSession(Session newSession) {
+  //   final indexOfCurrentPlan = getIndexOfCurrentPlan();
+  //   final indexOfCurrentSession = getIndexOfCurrentSession();
 
-    plans[indexOfCurrentPlan].sessions[indexOfCurrentSession] = newSession;
-  }
+  //   plans[indexOfCurrentPlan].sessions[indexOfCurrentSession] = newSession;
+  // }
 }

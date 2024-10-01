@@ -4,7 +4,6 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_sessions.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_progress_type.dart';
 
 class PatientProgressChart extends StatefulWidget {
@@ -183,55 +182,55 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
 
   LineChartData buildLineChartData(PatientSessions user, String type) {
     List<FlSpot> dataPoints = [];
-    List<Session> allSessions = user.sessions;
-    final DateTime today = DateTime.now();
+    // List<Session> allSessions = user.sessions;
+    // final DateTime today = DateTime.now();
 
     if (type == availableTypes[0]) {
-      List<double> previousPostTestScores = [0, 0, 0, 0, 0];
+      // List<double> previousPostTestScores = [0, 0, 0, 0, 0];
 
-      for (int i = 0; i < 5; i++) {
-        DateTime date = today.subtract(Duration(days: i));
-        Session? session = allSessions.firstWhere(
-          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
-          orElse: () => Session.empty(),
-        );
+      // for (int i = 0; i < 5; i++) {
+      //   DateTime date = today.subtract(Duration(days: i));
+      //   Session? session = allSessions.firstWhere(
+      //     (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
+      //     orElse: () => Session.empty(),
+      //   );
 
-        if (session.posttestScore != null) {
-          previousPostTestScores[4 - i] = session.posttestScore!;
-        } else {
-          previousPostTestScores[4 - i] = 0;
-        }
-      }
+      //   if (session.posttestScore != null) {
+      //     previousPostTestScores[4 - i] = session.posttestScore!;
+      //   } else {
+      //     previousPostTestScores[4 - i] = 0;
+      //   }
+      // }
 
-      final Session currentSession = user.sessions.firstWhere(
-        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
-        orElse: () => Session.empty(),
-      );
+      // final Session currentSession = user.sessions.firstWhere(
+      //   (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+      //   orElse: () => Session.empty(),
+      // );
 
-      double currentPostTestScore = currentSession.posttestScore ?? 0;
-      previousPostTestScores[4] = currentPostTestScore;
+      // double currentPostTestScore = currentSession.posttestScore ?? 0;
+      // previousPostTestScores[4] = currentPostTestScore;
 
-      for (int i = 0; i < previousPostTestScores.length; i++) {
-        dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
-      }
+      // for (int i = 0; i < previousPostTestScores.length; i++) {
+      //   dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
+      // }
     } else {
-      List<double> previousProgressScores = [0, 0, 0, 0, 0];
+      // List<double> previousProgressScores = [0, 0, 0, 0, 0];
 
-      for (int i = 0; i < 5; i++) {
-        DateTime date = today.subtract(Duration(days: i));
-        Session? session = allSessions.firstWhere(
-          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
-          orElse: () => Session.empty(),
-        );
+      // for (int i = 0; i < 5; i++) {
+      //   DateTime date = today.subtract(Duration(days: i));
+      //   Session? session = allSessions.firstWhere(
+      //     (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
+      //     orElse: () => Session.empty(),
+      //   );
 
-        if (session.sessionId.isNotEmpty) {
-          previousProgressScores[4 - i] = session.getSessionPercentCompletion();
-        } else {
-          previousProgressScores[4 - i] = 0;
-        }
+      //   if (session.sessionId.isNotEmpty) {
+      //     previousProgressScores[4 - i] = session.getSessionPercentCompletion();
+      //   } else {
+      //     previousProgressScores[4 - i] = 0;
+      //   }
 
-        dataPoints.add(FlSpot(i.toDouble(), previousProgressScores[i]));
-      }
+      //   dataPoints.add(FlSpot(i.toDouble(), previousProgressScores[i]));
+      // }
     }
 
     return LineChartData(

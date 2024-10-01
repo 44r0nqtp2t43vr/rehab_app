@@ -26,10 +26,13 @@ class SelectPlanDialog extends StatefulWidget {
 class _SelectPlanDialogState extends State<SelectPlanDialog> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _weeksToAdd = TextEditingController();
+  final TextEditingController _startDateController = TextEditingController();
+  DateTime _selectedStartDate = DateTime.now();
 
   @override
   void initState() {
     _weeksToAdd.text = "8";
+    _startDateController.text = _getFormattedDate(DateTime.now());
     super.initState();
   }
 
@@ -81,6 +84,21 @@ class _SelectPlanDialogState extends State<SelectPlanDialog> {
                 ],
               ),
               const SizedBox(height: 20),
+              // Start Date Picker
+              TextFormField(
+                controller: _startDateController,
+                decoration: customInputDecoration.copyWith(
+                  labelText: 'Start Date',
+                  hintText: 'Select Start Date',
+                ),
+                readOnly: true,
+                onTap: () => _selectStartDate(context),
+                validator: (value) {
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              // Weeks Picker
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -160,6 +178,25 @@ class _SelectPlanDialogState extends State<SelectPlanDialog> {
     );
   }
 
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedStartDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2028),
+    );
+    if (picked != null && picked != _selectedStartDate) {
+      setState(() {
+        _selectedStartDate = picked;
+        _startDateController.text = _getFormattedDate(picked);
+      });
+    }
+  }
+
+  String _getFormattedDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
   void _createPlan(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       Navigator.of(context).pop();
@@ -167,9 +204,17 @@ class _SelectPlanDialogState extends State<SelectPlanDialog> {
       final userType = BlocProvider.of<UserBloc>(context).state;
 
       if (userType is UserNone && userType.data is Admin) {
-        BlocProvider.of<ViewedPatientBloc>(context).add(AddPatientPlanEvent(AddPlanData(user: widget.patient, planSelected: int.parse(_weeksToAdd.text) * 7)));
+        BlocProvider.of<ViewedPatientBloc>(context).add(AddPatientPlanEvent(AddPlanData(
+          user: widget.patient,
+          planSelected: int.parse(_weeksToAdd.text),
+          startDate: _selectedStartDate,
+        )));
       } else if (userType is UserNone && userType.data is Therapist) {
-        BlocProvider.of<ViewedTherapistPatientBloc>(context).add(AddTherapistPatientPlanEvent(AddPlanData(user: widget.patient, planSelected: int.parse(_weeksToAdd.text) * 7)));
+        BlocProvider.of<ViewedTherapistPatientBloc>(context).add(AddTherapistPatientPlanEvent(AddPlanData(
+          user: widget.patient,
+          planSelected: int.parse(_weeksToAdd.text),
+          startDate: _selectedStartDate,
+        )));
       }
     }
   }

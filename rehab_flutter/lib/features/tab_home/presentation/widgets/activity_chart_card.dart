@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/entities/plan.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/core/entities/user.dart';
 
 class ActivityChartCard extends StatelessWidget {
@@ -13,8 +12,8 @@ class ActivityChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (currentPlan == null && user != null) {
-      double increasePercentage = calculateIncreasePercentage(user!);
-      bool hasPlans = user!.getCurrentPlan() != null;
+      // double increasePercentage = calculateIncreasePercentage(user!);
+      // bool hasPlans = user!.getCurrentPlan() != null;
 
       return Container(
         height: 240,
@@ -37,18 +36,18 @@ class ActivityChartCard extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              Text(
-                hasPlans ? "${increasePercentage.toStringAsFixed(0)}%" : 'No Active Plans',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Sailec Bold',
-                  height: 1,
-                  fontSize: hasPlans ? 36 : 24,
-                ),
-              ),
-              Expanded(
-                child: hasPlans ? buildLineChartOrText(user!) : Container(),
-              ),
+              // Text(
+              //   hasPlans ? "${increasePercentage.toStringAsFixed(0)}%" : 'No Active Plans',
+              //   style: TextStyle(
+              //     color: Colors.white,
+              //     fontFamily: 'Sailec Bold',
+              //     height: 1,
+              //     fontSize: hasPlans ? 36 : 24,
+              //   ),
+              // ),
+              // Expanded(
+              //   child: hasPlans ? buildLineChartOrText(user!) : Container(),
+              // ),
             ],
           ),
         ),
@@ -121,39 +120,39 @@ Widget buildLineChartOrText(AppUser user) {
 }
 
 double calculateIncreasePercentage(AppUser user) {
-  List<Session> allSessions = user.getAllSessionsFromAllPlans();
-  final DateTime today = DateTime.now();
-  final DateTime yesterday = today.subtract(const Duration(days: 1));
+  // List<Session> allSessions = user.getAllSessionsFromAllPlans();
+  // final DateTime today = DateTime.now();
+  // final DateTime yesterday = today.subtract(const Duration(days: 1));
 
-  double previousPostTestScore = 0;
-  double currentPostTestScore = 0;
+  // double previousPostTestScore = 0;
+  // double currentPostTestScore = 0;
 
-  bool hasPreviousScores = false;
+  // bool hasPreviousScores = false;
 
-  for (var session in allSessions) {
-    if (session.date.year == yesterday.year && session.date.month == yesterday.month && session.date.day == yesterday.day) {
-      if (session.posttestScore != null) {
-        previousPostTestScore = session.posttestScore!;
-        hasPreviousScores = true;
-      }
-    } else if (session.date.year == today.year && session.date.month == today.month && session.date.day == today.day) {
-      if (session.posttestScore != null) {
-        currentPostTestScore = session.posttestScore!;
-      }
-    }
-  }
+  // for (var session in allSessions) {
+  //   if (session.date.year == yesterday.year && session.date.month == yesterday.month && session.date.day == yesterday.day) {
+  //     if (session.posttestScore != null) {
+  //       previousPostTestScore = session.posttestScore!;
+  //       hasPreviousScores = true;
+  //     }
+  //   } else if (session.date.year == today.year && session.date.month == today.month && session.date.day == today.day) {
+  //     if (session.posttestScore != null) {
+  //       currentPostTestScore = session.posttestScore!;
+  //     }
+  //   }
+  // }
 
   double increasePercentage = 0;
 
-  if (hasPreviousScores) {
-    if (previousPostTestScore != 0) {
-      increasePercentage = ((currentPostTestScore - previousPostTestScore) / previousPostTestScore) * 100;
-    }
-  } else {
-    if (currentPostTestScore != 0) {
-      increasePercentage = 100;
-    }
-  }
+  // if (hasPreviousScores) {
+  //   if (previousPostTestScore != 0) {
+  //     increasePercentage = ((currentPostTestScore - previousPostTestScore) / previousPostTestScore) * 100;
+  //   }
+  // } else {
+  //   if (currentPostTestScore != 0) {
+  //     increasePercentage = 100;
+  //   }
+  // }
 
   // print('Increase percentage: $increasePercentage');
 
@@ -165,28 +164,28 @@ double calculateIncreasePercentage(AppUser user) {
 }
 
 LineChartData? buildLineChartData(AppUser user) {
-  List<Session> allSessions = user.getAllSessionsFromAllPlans();
+  // List<Session> allSessions = user.getAllSessionsFromAllPlans();
 
-  final DateTime today = DateTime.now();
+  // final DateTime today = DateTime.now();
 
   List<double> previousPostTestScores = [0, 0, 0];
 
-  for (int i = 0; i < 3; i++) {
-    DateTime date = today.subtract(Duration(days: i));
-    Session? session = allSessions.firstWhere(
-      (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
-      orElse: () => Session.empty(),
-    );
+  // for (int i = 0; i < 3; i++) {
+  //   DateTime date = today.subtract(Duration(days: i));
+  //   Session? session = allSessions.firstWhere(
+  //     (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
+  //     orElse: () => Session.empty(),
+  //   );
 
-    if (session.posttestScore != null) {
-      previousPostTestScores[2 - i] = session.posttestScore!;
-    } else {
-      previousPostTestScores[2 - i] = 0;
-    }
-  }
+  //   if (session.posttestScore != null) {
+  //     previousPostTestScores[2 - i] = session.posttestScore!;
+  //   } else {
+  //     previousPostTestScores[2 - i] = 0;
+  //   }
+  // }
 
-  double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
-  previousPostTestScores[2] = currentPostTestScore;
+  // double currentPostTestScore = user.getCurrentSession()?.posttestScore ?? 0;
+  // previousPostTestScores[2] = currentPostTestScore;
 
   print('prev $previousPostTestScores');
 
@@ -267,39 +266,39 @@ Widget buildLineChartOrTextFromPlan(Plan currentPlan) {
 }
 
 double calculateIncreasePercentageFromPlan(Plan currentPlan) {
-  List<Session> allSessions = currentPlan.sessions;
-  final DateTime today = DateTime.now();
-  final DateTime yesterday = today.subtract(const Duration(days: 1));
+  // List<Session> allSessions = currentPlan.sessions;
+  // final DateTime today = DateTime.now();
+  // final DateTime yesterday = today.subtract(const Duration(days: 1));
 
-  double previousPostTestScore = 0;
-  double currentPostTestScore = 0;
+  // double previousPostTestScore = 0;
+  // double currentPostTestScore = 0;
 
-  bool hasPreviousScores = false;
+  // bool hasPreviousScores = false;
 
-  for (var session in allSessions) {
-    if (session.date.year == yesterday.year && session.date.month == yesterday.month && session.date.day == yesterday.day) {
-      if (session.posttestScore != null) {
-        previousPostTestScore = session.posttestScore!;
-        hasPreviousScores = true;
-      }
-    } else if (session.date.year == today.year && session.date.month == today.month && session.date.day == today.day) {
-      if (session.posttestScore != null) {
-        currentPostTestScore = session.posttestScore!;
-      }
-    }
-  }
+  // for (var session in allSessions) {
+  //   if (session.date.year == yesterday.year && session.date.month == yesterday.month && session.date.day == yesterday.day) {
+  //     if (session.posttestScore != null) {
+  //       previousPostTestScore = session.posttestScore!;
+  //       hasPreviousScores = true;
+  //     }
+  //   } else if (session.date.year == today.year && session.date.month == today.month && session.date.day == today.day) {
+  //     if (session.posttestScore != null) {
+  //       currentPostTestScore = session.posttestScore!;
+  //     }
+  //   }
+  // }
 
   double increasePercentage = 0;
 
-  if (hasPreviousScores) {
-    if (previousPostTestScore != 0) {
-      increasePercentage = ((currentPostTestScore - previousPostTestScore) / previousPostTestScore) * 100;
-    }
-  } else {
-    if (currentPostTestScore != 0) {
-      increasePercentage = 100;
-    }
-  }
+  // if (hasPreviousScores) {
+  //   if (previousPostTestScore != 0) {
+  //     increasePercentage = ((currentPostTestScore - previousPostTestScore) / previousPostTestScore) * 100;
+  //   }
+  // } else {
+  //   if (currentPostTestScore != 0) {
+  //     increasePercentage = 100;
+  //   }
+  // }
 
   // print('Increase percentage: $increasePercentage');
 
@@ -311,51 +310,51 @@ double calculateIncreasePercentageFromPlan(Plan currentPlan) {
 }
 
 LineChartData? buildLineChartDataFromPlan(Plan currentPlan) {
-  List<Session> allSessions = currentPlan.sessions;
+  // List<Session> allSessions = currentPlan.sessions;
 
-  final DateTime today = DateTime.now();
+  // final DateTime today = DateTime.now();
 
-  List<double> previousPostTestScores = [0, 0, 0];
+  // List<double> previousPostTestScores = [0, 0, 0];
 
-  for (int i = 0; i < 3; i++) {
-    DateTime date = today.subtract(Duration(days: i));
-    Session? session = allSessions.firstWhere(
-      (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
-      orElse: () => Session.empty(),
-    );
+  // for (int i = 0; i < 3; i++) {
+  //   DateTime date = today.subtract(Duration(days: i));
+  //   Session? session = allSessions.firstWhere(
+  //     (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
+  //     orElse: () => Session.empty(),
+  //   );
 
-    if (session.posttestScore != null) {
-      previousPostTestScores[2 - i] = session.posttestScore!;
-    } else {
-      previousPostTestScores[2 - i] = 0;
-    }
-  }
+  //   if (session.posttestScore != null) {
+  //     previousPostTestScores[2 - i] = session.posttestScore!;
+  //   } else {
+  //     previousPostTestScores[2 - i] = 0;
+  //   }
+  // }
 
-  double currentPostTestScore = currentPlan.getCurrentSession()?.posttestScore ?? 0;
-  previousPostTestScores[2] = currentPostTestScore;
+  // double currentPostTestScore = currentPlan.getCurrentSession()?.posttestScore ?? 0;
+  // previousPostTestScores[2] = currentPostTestScore;
 
-  print('prev $previousPostTestScores');
+  // print('prev $previousPostTestScores');
 
-  List<FlSpot> dataPoints = [];
+  // List<FlSpot> dataPoints = [];
 
-  for (int i = 0; i < previousPostTestScores.length; i++) {
-    dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
-  }
+  // for (int i = 0; i < previousPostTestScores.length; i++) {
+  //   dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
+  // }
 
-  double maxY = previousPostTestScores.isNotEmpty ? previousPostTestScores.reduce((curr, next) => curr > next ? curr : next) : 0;
-  double minY = previousPostTestScores.isNotEmpty ? previousPostTestScores.reduce((curr, next) => curr < next ? curr : next) : 0;
+  // double maxY = previousPostTestScores.isNotEmpty ? previousPostTestScores.reduce((curr, next) => curr > next ? curr : next) : 0;
+  // double minY = previousPostTestScores.isNotEmpty ? previousPostTestScores.reduce((curr, next) => curr < next ? curr : next) : 0;
 
-  double centerValue = (maxY + minY) / 2;
+  // double centerValue = (maxY + minY) / 2;
 
   return LineChartData(
-    minY: centerValue - 50,
-    maxY: centerValue + 50,
+    // minY: centerValue - 50,
+    // maxY: centerValue + 50,
     gridData: const FlGridData(show: false),
     titlesData: const FlTitlesData(show: false),
     borderData: FlBorderData(show: false),
     lineBarsData: [
       LineChartBarData(
-        spots: dataPoints,
+        // spots: dataPoints,
         isCurved: true,
         color: const Color(0xff01FF99),
         barWidth: 4,

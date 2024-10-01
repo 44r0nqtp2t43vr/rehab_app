@@ -2,11 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
-import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
-import 'package:rehab_flutter/features/patients_manager/domain/enums/standard_therapy_types.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/get_testanalytics_data.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_event.dart';
@@ -47,7 +45,8 @@ class PatientPlanSessionItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        DateFormat('MMMM dd, yyyy').format(session.date),
+                        // DateFormat('MMMM dd, yyyy').format(session.date),
+                        "no date",
                         style: darkTextTheme().headlineSmall,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -58,37 +57,37 @@ class PatientPlanSessionItem extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: session.pretestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: true),
-                          child: Text(session.pretestScore == null ? "Pretest" : "Pretest: ${session.pretestScore!.toStringAsFixed(0)}"),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: session.posttestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: false),
-                          child: Text(session.posttestScore == null ? "Posttest" : "Posttest: ${session.posttestScore!.toStringAsFixed(0)}"),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Standard One: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardOneType).title} ${session.standardOneIntensity}"}",
-                    style: darkTextTheme().headlineSmall,
-                  ),
-                  Text(
-                    "Passive Intensity: ${session.passiveIntensity.isEmpty ? "TBD" : session.passiveIntensity}",
-                    style: darkTextTheme().headlineSmall,
-                  ),
-                  Text(
-                    "Standard Two: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardTwoType).title} ${session.standardTwoIntensity}"}",
-                    style: darkTextTheme().headlineSmall,
-                  ),
+                  // const SizedBox(height: 8),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: ElevatedButton(
+                  //         onPressed: session.pretestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: true),
+                  //         child: Text(session.pretestScore == null ? "Pretest" : "Pretest: ${session.pretestScore!.toStringAsFixed(0)}"),
+                  //       ),
+                  //     ),
+                  //     const SizedBox(width: 8),
+                  //     Expanded(
+                  //       child: ElevatedButton(
+                  //         onPressed: session.posttestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: false),
+                  //         child: Text(session.posttestScore == null ? "Posttest" : "Posttest: ${session.posttestScore!.toStringAsFixed(0)}"),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 8),
+                  // Text(
+                  //   "Standard One: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardOneType).title} ${session.standardOneIntensity}"}",
+                  //   style: darkTextTheme().headlineSmall,
+                  // ),
+                  // Text(
+                  //   "Passive Intensity: ${session.passiveIntensity.isEmpty ? "TBD" : session.passiveIntensity}",
+                  //   style: darkTextTheme().headlineSmall,
+                  // ),
+                  // Text(
+                  //   "Standard Two: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardTwoType).title} ${session.standardTwoIntensity}"}",
+                  //   style: darkTextTheme().headlineSmall,
+                  // ),
                 ],
               ),
             ),

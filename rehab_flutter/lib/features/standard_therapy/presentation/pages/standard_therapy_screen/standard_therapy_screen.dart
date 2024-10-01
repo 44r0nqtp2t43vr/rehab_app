@@ -63,15 +63,15 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
 
   String getNameFromType() {
     switch (widget.data.type) {
-      case StandardTherapy.actuatorTherapy:
+      case StandardTherapy.pod:
         return "Point Discrimination";
-      case StandardTherapy.textureTherapy:
+      case StandardTherapy.ttd:
         return "Texture Discrimination";
-      case StandardTherapy.patternTherapy:
+      case StandardTherapy.ptd:
         return "Pattern Discrimination";
-      case StandardTherapy.pianoTiles:
+      case StandardTherapy.bms:
         return "Music Stimulation - Basic";
-      case StandardTherapy.musicVisualizer:
+      case StandardTherapy.ims:
         return "Music Stimulation - Intermediate";
       default:
         return "";
@@ -80,7 +80,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
 
   Widget getWidgetFromType(AppUser user) {
     switch (widget.data.type) {
-      case StandardTherapy.actuatorTherapy:
+      case StandardTherapy.pod:
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: STActuator(
@@ -90,7 +90,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
             submitCallback: submit,
           ),
         );
-      case StandardTherapy.textureTherapy:
+      case StandardTherapy.ttd:
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: STTextures(
@@ -100,7 +100,7 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
             submitCallback: submit,
           ),
         );
-      case StandardTherapy.patternTherapy:
+      case StandardTherapy.ptd:
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: STPatterns(
@@ -110,9 +110,9 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
             submitCallback: submit,
           ),
         );
-      case StandardTherapy.pianoTiles:
+      case StandardTherapy.bms:
         return STPianoTiles(user: user, song: getSongFromIntensity(), submitCallback: submit);
-      case StandardTherapy.musicVisualizer:
+      case StandardTherapy.ims:
         return STVisualizer(user: user, song: getSongFromIntensity(), submitCallback: submit);
       default:
         return Container();

@@ -292,14 +292,16 @@ class ContinueCard extends StatelessWidget {
               userId: user.userId,
               isStandardOne: true,
               type: session.getStandardOneType(),
-              intensity: int.parse(session.standardOneIntensity),
+              // intensity: int.parse(session.standardOneIntensity),
+              intensity: 1,
             ),
           );
         } else if (!conditions[2]) {
           Navigator.pushNamed(context, '/PassiveTherapy',
               arguments: PassiveTherapyData(
                 user: user,
-                intensity: int.parse(session.passiveIntensity),
+                // intensity: int.parse(session.passiveIntensity),
+                intensity: 1,
               ));
         } else if (!conditions[3]) {
           Navigator.pushNamed(
@@ -309,7 +311,8 @@ class ContinueCard extends StatelessWidget {
               userId: user.userId,
               isStandardOne: false,
               type: session.getStandardTwoType(),
-              intensity: int.parse(session.standardTwoIntensity),
+              // intensity: int.parse(session.standardTwoIntensity),
+              intensity: 1,
             ),
           );
         } else if (!conditions[4]) {

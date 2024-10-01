@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_list.dart';
@@ -24,24 +23,24 @@ class _TherapyCalendarState extends State<TherapyCalendar> {
   Map<String, Color?> sessionsToDateColorsMap() {
     Map<String, Color?> dateColorsMap = {};
 
-    for (var sesh in widget.sessions) {
-      final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
-      final List<bool> conditions = sesh.getSessionConditions();
+    // for (var sesh in widget.sessions) {
+    //   final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
+    //   final List<bool> conditions = sesh.getSessionConditions();
 
-      if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
-        dateColorsMap[dateString] = heatmap5;
-      } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
-        dateColorsMap[dateString] = heatmap4;
-      } else if (conditions[0] && conditions[1] && conditions[2]) {
-        dateColorsMap[dateString] = heatmap3;
-      } else if (conditions[0] && conditions[1]) {
-        dateColorsMap[dateString] = heatmap2;
-      } else if (conditions[0]) {
-        dateColorsMap[dateString] = heatmap1;
-      } else {
-        dateColorsMap[dateString] = null;
-      }
-    }
+    //   if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
+    //     dateColorsMap[dateString] = heatmap5;
+    //   } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
+    //     dateColorsMap[dateString] = heatmap4;
+    //   } else if (conditions[0] && conditions[1] && conditions[2]) {
+    //     dateColorsMap[dateString] = heatmap3;
+    //   } else if (conditions[0] && conditions[1]) {
+    //     dateColorsMap[dateString] = heatmap2;
+    //   } else if (conditions[0]) {
+    //     dateColorsMap[dateString] = heatmap1;
+    //   } else {
+    //     dateColorsMap[dateString] = null;
+    //   }
+    // }
 
     return dateColorsMap;
   }
@@ -54,10 +53,10 @@ class _TherapyCalendarState extends State<TherapyCalendar> {
     setState(() {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
-      currentSelectedSession = widget.sessions.firstWhere(
-        (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
-        orElse: () => Session.empty(),
-      );
+      // currentSelectedSession = widget.sessions.firstWhere(
+      //   (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
+      //   orElse: () => Session.empty(),
+      // );
     });
   }
 
@@ -75,15 +74,15 @@ class _TherapyCalendarState extends State<TherapyCalendar> {
   void initState() {
     super.initState();
     dateColorsMap = sessionsToDateColorsMap();
-    currentSelectedSession = widget.sessions.firstWhere(
-      (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
-      orElse: () => Session.empty(),
-    );
+    // currentSelectedSession = widget.sessions.firstWhere(
+    //   (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
+    //   orElse: () => Session.empty(),
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
+    // final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
 
     return Column(
       children: [
@@ -100,7 +99,8 @@ class _TherapyCalendarState extends State<TherapyCalendar> {
         const SizedBox(height: 20),
         EventList(
           isTherapistView: true,
-          dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
+          // dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
+          dayColor: Colors.white,
           selectedDay: _selectedDay,
           currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
           conditions: currentSelectedSession.getSessionConditions(),

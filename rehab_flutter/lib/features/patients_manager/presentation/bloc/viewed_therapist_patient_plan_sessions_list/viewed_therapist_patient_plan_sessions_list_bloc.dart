@@ -39,11 +39,11 @@ class ViewedTherapistPatientPlanSessionsListBloc extends Bloc<ViewedTherapistPat
     try {
       await _editUserSessionUseCase(params: event.editSessionData);
 
-      sessionToEdit.standardOneType = event.editSessionData!.standardOneType;
-      sessionToEdit.standardOneIntensity = event.editSessionData!.standardOneIntensity;
-      sessionToEdit.standardTwoType = event.editSessionData!.standardTwoType;
-      sessionToEdit.standardTwoIntensity = event.editSessionData!.standardTwoIntensity;
-      sessionToEdit.passiveIntensity = event.editSessionData!.passiveIntensity;
+      // sessionToEdit.standardOneType = event.editSessionData!.standardOneType;
+      // sessionToEdit.standardOneIntensity = event.editSessionData!.standardOneIntensity;
+      // sessionToEdit.standardTwoType = event.editSessionData!.standardTwoType;
+      // sessionToEdit.standardTwoIntensity = event.editSessionData!.standardTwoIntensity;
+      // sessionToEdit.passiveIntensity = event.editSessionData!.passiveIntensity;
       currentList[currentListIndToEdit] = sessionToEdit;
 
       emit(ViewedTherapistPatientPlanSessionsListDone(sessionsList: List.from(currentList)));

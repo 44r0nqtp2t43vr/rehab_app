@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
-import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
@@ -49,13 +48,13 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
 
   @override
   void initState() {
-    standardOneType = standardTherapyTypes.firstWhere((type) => type.value == widget.session.standardOneType, orElse: () => StandardTherapyType.empty());
-    standardTwoType = standardTherapyTypes.firstWhere((type) => type.value == widget.session.standardTwoType, orElse: () => StandardTherapyType.empty());
-    standardOneType = standardOneType == StandardTherapyType.empty() ? null : standardOneType;
-    standardTwoType = standardTwoType == StandardTherapyType.empty() ? null : standardTwoType;
-    standardOneIntensity = widget.session.standardOneIntensity.isEmpty ? null : int.parse(widget.session.standardOneIntensity);
-    standardTwoIntensity = widget.session.standardTwoIntensity.isEmpty ? null : int.parse(widget.session.standardTwoIntensity);
-    passiveIntensity = widget.session.passiveIntensity.isEmpty ? null : int.parse(widget.session.passiveIntensity);
+    // standardOneType = standardTherapyTypes.firstWhere((type) => type.value == widget.session.standardOneType, orElse: () => StandardTherapyType.empty());
+    // standardTwoType = standardTherapyTypes.firstWhere((type) => type.value == widget.session.standardTwoType, orElse: () => StandardTherapyType.empty());
+    // standardOneType = standardOneType == StandardTherapyType.empty() ? null : standardOneType;
+    // standardTwoType = standardTwoType == StandardTherapyType.empty() ? null : standardTwoType;
+    // standardOneIntensity = widget.session.standardOneIntensity.isEmpty ? null : int.parse(widget.session.standardOneIntensity);
+    // standardTwoIntensity = widget.session.standardTwoIntensity.isEmpty ? null : int.parse(widget.session.standardTwoIntensity);
+    // passiveIntensity = widget.session.passiveIntensity.isEmpty ? null : int.parse(widget.session.passiveIntensity);
     super.initState();
   }
 
@@ -86,7 +85,8 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    "Date: ${DateFormat('MMMM dd, yyyy').format(widget.session.date)}",
+                    // "Date: ${DateFormat('MMMM dd, yyyy').format(widget.session.date)}",
+                    "no date",
                     style: darkTextTheme().headlineSmall,
                   ),
                   const SizedBox(height: 12),

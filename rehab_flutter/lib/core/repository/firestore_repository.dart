@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:rehab_flutter/core/entities/admin.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/patient_sessions.dart';
@@ -119,9 +120,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
           List<Session> sessions = [];
           for (var sessionSnapshotDoc in sessionsSnapshot.docs) {
             // For each session, query testingitems
-            QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
-            List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
-            Session session = Session.fromMap(sessionSnapshotDoc.data(), items: testingitems);
+            // QuerySnapshot<Map<String, dynamic>> testingitemsSnapshot = await db.collection('users').doc(userDoc.id).collection('plans').doc(planDoc.id).collection('sessions').doc(sessionSnapshotDoc.id).collection('testingitems').get();
+            // List<TestingItem> testingitems = testingitemsSnapshot.docs.map((doc) => TestingItem.fromMap(doc.data())).toList();
+            Session session = Session.fromMap(sessionSnapshotDoc.data());
 
             sessions.add(session);
           }
@@ -368,8 +369,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   Future<AppUser> addPlan(AddPlanData data) async {
     final userId = data.user.userId;
 
-    final DateTime startDate = DateTime.now();
-    final DateTime endDate = startDate.add(Duration(days: data.planSelected));
+    final DateTime startDate = data.startDate;
+    final DateTime endDate = startDate.add(Duration(days: data.planSelected * 7));
+    final DateFormat formatter = DateFormat('MMddyyyy');
 
     final plansCollection = FirebaseFirestore.instance.collection('users').doc(userId).collection('plans');
     final int planNumber = (await plansCollection.get()).docs.length + 1;
@@ -377,31 +379,28 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
     List<Session> sessions = [];
     for (int i = 0; i < data.planSelected; i++) {
-      DateTime sessionDate = startDate.add(Duration(days: i));
+      final DateTime sessionStartDate = startDate.add(Duration(days: i * 7));
+      final DateTime sessionEndDate = startDate.add(Duration(days: (i + 1) * 7));
       final String sessionDocumentName = 'session${i + 1}';
+      final List<String> dailyActivities = [];
 
-      final Random random = Random();
-      // Creating a list of all StandardTherapy values and shuffling it
-      List<StandardTherapy> allTherapies = StandardTherapy.values;
-      List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
+      for (int j = 0; j < 7; j++) {
+        final Random random = Random();
+        List<StandardTherapy> allTherapies = StandardTherapy.values;
+        List<StandardTherapy> shuffledTherapies = List.of(allTherapies)..shuffle(random);
 
-      String standardOneType = shuffledTherapies[0].name;
-      String standardTwoType = shuffledTherapies[1].name;
+        final DateTime dailyDate = sessionStartDate.add(Duration(days: j));
+        final String formattedDailyDate = formatter.format(dailyDate);
+
+        String dailyActivityString = "${formattedDailyDate}_${shuffledTherapies[0].name}1_${shuffledTherapies[1].name}1_fff";
+        dailyActivities.add(dailyActivityString);
+      }
 
       Session session = Session(
         sessionId: sessionDocumentName,
-        date: sessionDate,
-        standardOneType: standardOneType,
-        standardOneIntensity: '1',
-        isStandardOneDone: false,
-        passiveIntensity: '1',
-        isPassiveDone: false,
-        standardTwoType: standardTwoType,
-        standardTwoIntensity: '1',
-        isStandardTwoDone: false,
-        pretestScore: null,
-        posttestScore: null,
-        items: [],
+        endDate: sessionEndDate,
+        dailyActivities: dailyActivities,
+        testingItems: [],
       );
       sessions.add(session);
     }
@@ -412,8 +411,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       planName: planDocumentName,
       startDate: startDate,
       endDate: endDate,
-      sessionCount: data.planSelected,
-      isActive: true,
       sessions: sessions,
     );
     await plansCollection.doc(planDocumentName).set({
@@ -421,13 +418,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       'planName': planDocumentName,
       'startDate': plan.startDate,
       'endDate': plan.endDate,
-      'session_count': plan.sessionCount,
-      'isActive': plan.isActive,
-      // Not directly saving sessions here, they will be managed separately.
     }).then((_) async {
-      // Create sessions in Firestore under the plan document
       for (int i = 0; i < plan.sessions.length; i++) {
-        await plansCollection.doc(planDocumentName).collection('sessions').doc(plan.sessions[i].sessionId).set(plan.sessions[i].toMap()); // Assuming Session class has a toMap method for serialization
+        await plansCollection.doc(planDocumentName).collection('sessions').doc(plan.sessions[i].sessionId).set(plan.sessions[i].toMap());
       }
     });
 
@@ -443,27 +436,17 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<Session> submitTest(ResultsData data) async {
     if (data.isPretest) {
-      String intensityLevel = ((data.score / 20).ceil().clamp(1, 5)).toString();
-
-      await updateCurrentSessionTesting(data.user.userId, data.items, {
-        'pretestScore': data.score,
-        'standardOneIntensity': intensityLevel,
-        'standardTwoIntensity': intensityLevel,
-        'passiveIntensity': intensityLevel,
-      });
+      await updateCurrentSessionTesting(data.user.userId, data.items, {'pretestScore': data.score});
 
       Session currentSession = data.currentSession;
-      currentSession.pretestScore = data.score;
-      currentSession.standardOneIntensity = intensityLevel;
-      currentSession.standardTwoIntensity = intensityLevel;
-      currentSession.passiveIntensity = intensityLevel;
-      currentSession.items = List.from(data.items);
+      // currentSession.pretestScore = data.score;
+
       return currentSession;
     } else {
       await updateCurrentSessionTesting(data.user.userId, data.items, {'posttestScore': data.score});
 
       Session currentSession = data.currentSession;
-      currentSession.posttestScore = data.score;
+      // currentSession.posttestScore = data.score;
       return currentSession;
     }
 
@@ -479,7 +462,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     // final AppUser user = await getUser(data.user.userId);
     // return user;
     Session currentSession = data.currentSession;
-    data.isStandardOne ? currentSession.isStandardOneDone = true : currentSession.isStandardTwoDone = true;
+    // data.isStandardOne ? currentSession.isStandardOneDone = true : currentSession.isStandardTwoDone = true;
     return currentSession;
   }
 
@@ -488,7 +471,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     await updateCurrentSession(data.user.userId, {'isPassiveDone': true});
 
     Session currentSession = data.currentSession;
-    currentSession.isPassiveDone = true;
+    // currentSession.isPassiveDone = true;
     return currentSession;
   }
 
@@ -540,11 +523,11 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     });
 
     Session currentSession = data.currentSession;
-    currentSession.pretestScore = null;
-    currentSession.posttestScore = null;
-    currentSession.isStandardOneDone = false;
-    currentSession.isStandardTwoDone = false;
-    currentSession.isPassiveDone = false;
+    // currentSession.pretestScore = null;
+    // currentSession.posttestScore = null;
+    // currentSession.isStandardOneDone = false;
+    // currentSession.isStandardTwoDone = false;
+    // currentSession.isPassiveDone = false;
     return currentSession;
   }
 
