@@ -14,7 +14,7 @@ class TakeTestButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => {},
+          onTap: () => _onButtonPressed(context),
           child: Container(
             height: 32,
             width: double.infinity,
@@ -31,5 +31,9 @@ class TakeTestButton extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onButtonPressed(BuildContext context) {
+    Navigator.pushNamed(context, '/Testing', arguments: true);
   }
 }

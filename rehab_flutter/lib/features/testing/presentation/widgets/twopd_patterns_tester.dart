@@ -4,69 +4,79 @@ import 'package:flutter/material.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
-import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
-class RhythmicPatternsTester extends StatefulWidget {
+class TwoPDPatternsTester extends StatefulWidget {
   final void Function(String, String) onResponse;
-  final RhythmicPattern currentRhythmicPattern;
+  final StaticPattern currentStaticPattern;
   final int currentItemNo;
   final int totalItemNo;
 
-  const RhythmicPatternsTester({
+  const TwoPDPatternsTester({
     super.key,
     required this.onResponse,
-    required this.currentRhythmicPattern,
+    required this.currentStaticPattern,
     required this.currentItemNo,
     required this.totalItemNo,
   });
 
   @override
-  State<RhythmicPatternsTester> createState() => _RhythmicPatternsTesterState();
+  State<TwoPDPatternsTester> createState() => _TwoPDPatternsTesterState();
 }
 
-class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
-  final int patternDelay = 500;
-  Timer? _patternTimer;
+class _TwoPDPatternsTesterState extends State<TwoPDPatternsTester> {
+  Timer? _timer;
 
-  void sendPattern(String data) {
+  // double _calculateAccuracy(String answer) {
+  //   return answer == widget.currentStaticPattern.name[0] ? 100 : 0;
+  // }
+
+  void _onSubmit(String answer) {
+    _timer?.cancel();
+    widget.onResponse(widget.currentStaticPattern.name, answer);
+  }
+
+  void _sendPattern() {
+    String currentPatternString = widget.currentStaticPattern.pattern;
+    String data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
+
     sl<BluetoothBloc>().add(WriteDataEvent(data));
+    debugPrint("Pattern sent: $data");
   }
 
-  void startPattern() {
-    _patternTimer = Timer.periodic(Duration(milliseconds: patternDelay), (timer) {
-      sendPattern(widget.currentRhythmicPattern.pattern[timer.tick % widget.currentRhythmicPattern.pattern.length]);
+  void _sendPatternRepeatedly() {
+    // Cancel the previous timer if it exists
+    _timer?.cancel();
+
+    // Schedule a new timer to call _sendPattern every 3 seconds
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) async {
+      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      await Future.delayed(const Duration(milliseconds: 200));
+      _sendPattern();
     });
-  }
-
-  void stopPattern() {
-    _patternTimer?.cancel();
-    sendPattern("<000000000000000000000000000000>");
-  }
-
-  void _onSubmit(String value) {
-    stopPattern();
-    widget.onResponse(widget.currentRhythmicPattern.name, value);
   }
 
   @override
   void initState() {
     super.initState();
-    startPattern();
+    _sendPattern();
+    _sendPatternRepeatedly();
   }
 
   @override
-  void didUpdateWidget(covariant RhythmicPatternsTester oldWidget) {
+  void didUpdateWidget(covariant TwoPDPatternsTester oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.currentRhythmicPattern != oldWidget.currentRhythmicPattern) {
-      startPattern();
+    if (widget.currentStaticPattern != oldWidget.currentStaticPattern) {
+      _sendPattern();
+      _sendPatternRepeatedly();
     }
   }
 
   @override
   void dispose() {
-    _patternTimer?.cancel();
+    _timer?.cancel();
     sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
     super.dispose();
   }
@@ -74,7 +84,6 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 32),
         TestLabel(label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
@@ -83,7 +92,7 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
           flex: 2,
           child: Center(
             child: Text(
-              "What pattern do you feel?",
+              "How many points do you feel?",
               style: TextStyle(
                 fontFamily: 'Sailec Medium',
                 fontSize: 20,
@@ -98,10 +107,10 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
             alignment: WrapAlignment.center,
             spacing: 8.0,
             runSpacing: 8.0,
-            children: TestingDataProvider.rhythmicPatterns.map(
-              (rhythmicPattern) {
+            children: TestingDataProvider.twoPDOptions.map(
+              (twoPDOption) {
                 return ElevatedButton(
-                  onPressed: () => _onSubmit(rhythmicPattern.name),
+                  onPressed: () => _onSubmit(twoPDOption),
                   style: ButtonStyle(
                     foregroundColor: WidgetStateProperty.all<Color>(
                       Colors.white,
@@ -118,7 +127,7 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
                       ),
                     ),
                   ),
-                  child: Text(rhythmicPattern.name),
+                  child: Text(twoPDOption),
                 );
               },
             ).toList(),

@@ -434,23 +434,29 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<Session> submitTest(ResultsData data) async {
-    if (data.isPretest) {
-      await updateCurrentSessionTesting(data.user.userId, data.items, {'pretestScore': data.score});
+    // if (data.isPretest) {
+    //   await updateCurrentSessionTesting(data.user.userId, data.items, {'pretestScore': data.score});
 
-      Session currentSession = data.currentSession;
-      // currentSession.pretestScore = data.score;
+    //   Session currentSession = data.currentSession;
+    //   // currentSession.pretestScore = data.score;
 
-      return currentSession;
-    } else {
-      await updateCurrentSessionTesting(data.user.userId, data.items, {'posttestScore': data.score});
+    //   return currentSession;
+    // } else {
+    //   await updateCurrentSessionTesting(data.user.userId, data.items, {'posttestScore': data.score});
 
-      Session currentSession = data.currentSession;
-      // currentSession.posttestScore = data.score;
-      return currentSession;
-    }
+    //   Session currentSession = data.currentSession;
+    //   // currentSession.posttestScore = data.score;
+    //   return currentSession;
+    // }
 
     // final AppUser user = await getUser(data.user.userId);
     // return user;
+    data.currentSession.testingItems = List.from(data.items);
+
+    final dataToSend = {'testingItems': data.items};
+    await updateCurrentSession(data.user.userId, dataToSend);
+
+    return data.currentSession;
   }
 
   @override

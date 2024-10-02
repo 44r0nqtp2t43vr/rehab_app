@@ -16,10 +16,10 @@ import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.da
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/rhythmic_intro.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/rhythmic_patterns_tester.dart';
-import 'package:rehab_flutter/features/testing/presentation/widgets/static_patterns_tester.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/testing_finish.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/textures_intro.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/textures_tester.dart';
+import 'package:rehab_flutter/features/testing/presentation/widgets/twopd_patterns_tester.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
 class TestingScreen extends StatefulWidget {
@@ -33,15 +33,18 @@ class TestingScreen extends StatefulWidget {
 
 class _TestingScreenState extends State<TestingScreen> {
   final List<String> itemList = [];
-  final List<double> accuracyList = [];
-  final int numOfStaticPatternsItems = 10;
+  final List<String> answerList = [];
+  // final List<double> accuracyList = [];
+  // final int numOfStaticPatternsItems = 10;
+  final int numOfTwoPDPatternsItems = 10;
   final int numOfTexturesItems = 5;
   final int numOfRhythmicPatternsItems = 5;
   late Widget currentTestingWidget;
-  late List<StaticPattern> staticPatternsList;
+  // late List<StaticPattern> staticPatternsList;
+  late List<StaticPattern> twoPDPatternsList;
   late List<ImageTexture> imageTexturesList;
   late List<RhythmicPattern> rhythmicPatternsList;
-  TestingState testingState = TestingState.staticPatterns;
+  TestingState testingState = TestingState.twoPointDiscrimination;
   int currentItemInd = 0;
 
   void skipTest(BuildContext context) {
@@ -52,9 +55,7 @@ class _TestingScreenState extends State<TestingScreen> {
       ResultsData(
         user: user,
         currentSession: currentSession,
-        score: 0,
-        isPretest: widget.isPretest,
-        items: [],
+        items: [""],
       ),
     ));
     Navigator.of(context).pop(true);
@@ -67,17 +68,18 @@ class _TestingScreenState extends State<TestingScreen> {
     });
   }
 
-  void onResponse(double newAccuracy, String newItem) {
+  void onResponse(String newItem, String newAnswer) {
     setState(() {
       itemList.add(newItem);
-      accuracyList.add(newAccuracy);
+      answerList.add(newAnswer);
+      // accuracyList.add(newAccuracy);
       currentItemInd++;
 
-      if (currentItemInd == numOfStaticPatternsItems) {
-        testingState = TestingState.texturesIntro;
-      } else if (currentItemInd == numOfStaticPatternsItems + numOfTexturesItems) {
+      if (currentItemInd == numOfTwoPDPatternsItems) {
         testingState = TestingState.rhythmicPatternsIntro;
-      } else if (currentItemInd == numOfStaticPatternsItems + numOfTexturesItems + numOfRhythmicPatternsItems) {
+      } else if (currentItemInd == numOfTwoPDPatternsItems + numOfRhythmicPatternsItems) {
+        testingState = TestingState.texturesIntro;
+      } else if (currentItemInd == numOfTwoPDPatternsItems + numOfRhythmicPatternsItems + numOfRhythmicPatternsItems) {
         testingState = TestingState.finished;
       }
 
@@ -98,16 +100,16 @@ class _TestingScreenState extends State<TestingScreen> {
 
   String getTitleFromTestingState() {
     switch (testingState) {
-      case TestingState.staticPatterns:
+      case TestingState.twoPointDiscrimination:
         return "Static Patterns Test";
-      case TestingState.texturesIntro:
-        return "Textures Introduction";
-      case TestingState.textures:
-        return "Textures Test";
       case TestingState.rhythmicPatternsIntro:
         return "Rhythmic Patterns Introduction";
       case TestingState.rhythmicPatterns:
         return "Rhythmic Patterns Test";
+      case TestingState.texturesIntro:
+        return "Textures Introduction";
+      case TestingState.textures:
+        return "Textures Test";
       case TestingState.finished:
         return "Results";
       default:
@@ -117,33 +119,39 @@ class _TestingScreenState extends State<TestingScreen> {
 
   Widget getWidgetFromTestingState() {
     switch (testingState) {
-      case TestingState.staticPatterns:
-        return StaticPatternsTester(
+      case TestingState.twoPointDiscrimination:
+        // return StaticPatternsTester(
+        //   onResponse: onResponse,
+        //   currentItemNo: currentItemInd + 1,
+        //   totalItemNo: numOfStaticPatternsItems,
+        //   currentStaticPattern: staticPatternsList[currentItemInd],
+        // );
+        return TwoPDPatternsTester(
           onResponse: onResponse,
           currentItemNo: currentItemInd + 1,
-          totalItemNo: numOfStaticPatternsItems,
-          currentStaticPattern: staticPatternsList[currentItemInd],
-        );
-      case TestingState.texturesIntro:
-        return TexturesIntro(onProceed: onProceed);
-      case TestingState.textures:
-        return TexturesTester(
-          onResponse: onResponse,
-          currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems,
-          totalItemNo: numOfTexturesItems,
-          currentImageTexture: imageTexturesList[currentItemInd - numOfStaticPatternsItems],
+          totalItemNo: numOfTwoPDPatternsItems,
+          currentStaticPattern: twoPDPatternsList[currentItemInd],
         );
       case TestingState.rhythmicPatternsIntro:
         return RhythmicPatternsIntro(onProceed: onProceed);
       case TestingState.rhythmicPatterns:
         return RhythmicPatternsTester(
           onResponse: onResponse,
-          currentItemNo: (currentItemInd + 1) - numOfStaticPatternsItems - numOfTexturesItems,
+          currentItemNo: (currentItemInd + 1) - numOfTwoPDPatternsItems,
           totalItemNo: numOfRhythmicPatternsItems,
-          currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfStaticPatternsItems - numOfTexturesItems],
+          currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfTwoPDPatternsItems],
+        );
+      case TestingState.texturesIntro:
+        return TexturesIntro(onProceed: onProceed);
+      case TestingState.textures:
+        return TexturesTester(
+          onResponse: onResponse,
+          currentItemNo: (currentItemInd + 1) - numOfTwoPDPatternsItems - numOfRhythmicPatternsItems,
+          totalItemNo: numOfTexturesItems,
+          currentImageTexture: imageTexturesList[currentItemInd - numOfTwoPDPatternsItems - numOfRhythmicPatternsItems],
         );
       case TestingState.finished:
-        return TestingFinish(itemList: itemList, accuracyList: accuracyList);
+        return TestingFinish(itemList: itemList, answerList: answerList);
       default:
         return Container();
     }
@@ -155,11 +163,13 @@ class _TestingScreenState extends State<TestingScreen> {
 
     final Random random = Random();
 
-    staticPatternsList = List.from(TestingDataProvider.staticPatterns);
+    // staticPatternsList = List.from(TestingDataProvider.staticPatterns);
+    twoPDPatternsList = List.from(TestingDataProvider.twoPDPatterns);
     imageTexturesList = List.from(TestingDataProvider.imageTextures);
     rhythmicPatternsList = List.from(TestingDataProvider.rhythmicPatterns);
 
-    staticPatternsList.shuffle(random);
+    // staticPatternsList.shuffle(random);
+    twoPDPatternsList.shuffle(random);
     imageTexturesList.shuffle(random);
     rhythmicPatternsList.shuffle(random);
 
@@ -197,7 +207,8 @@ class _TestingScreenState extends State<TestingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.isPretest ? "Pre-test" : "Post-test",
+            // widget.isPretest ? "Pre-test" : "Post-test",
+            "Weekly Test",
             style: darkTextTheme().headlineLarge,
           ),
           Text(

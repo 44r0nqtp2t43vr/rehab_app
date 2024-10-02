@@ -343,8 +343,8 @@ class TestAnalytics extends StatelessWidget {
                               children: [
                                 TestAnalyticsItem(
                                   itemName: items[i].itemName,
-                                  itemType: items[i].itemType,
-                                  itemAccuracy: items[i].itemAccuracy,
+                                  answer: items[i].itemName,
+                                  isCorrect: true,
                                 ),
                                 const SizedBox(height: 12),
                               ],
