@@ -49,6 +49,33 @@ class Session {
     return todayActivities.isEmpty ? null : todayActivities;
   }
 
+  int getTodayActivitiesIndex() {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    return dailyActivities.indexWhere((daString) => daString.startsWith(todayString));
+  }
+
+  void updateTodayActivities(String newTodayActivities) {
+    dailyActivities[getTodayActivitiesIndex()] = newTodayActivities;
+  }
+
+  void updateTodayActivitiesTherapy(bool isStandardOne, bool isPassive) {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
+    final todayActivitiesIndex = dailyActivities.indexWhere((daString) => daString.startsWith(todayString));
+    final todayActivitiesList = todayActivities.split('_');
+
+    if (isStandardOne) {
+      todayActivitiesList[3] = "tff";
+    } else if (isPassive) {
+      todayActivitiesList[3] = "ttf";
+    } else {
+      todayActivitiesList[3] = "ttt";
+    }
+
+    final updatedTodayActivities = todayActivitiesList.join("_");
+    dailyActivities[todayActivitiesIndex] = updatedTodayActivities;
+  }
+
   List<bool> getSessionConditions(String dayActivities) {
     if (dayActivities.isEmpty) {
       return [false, false, false];

@@ -303,7 +303,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<void> updateCurrentSession(String userId, data) async {
     final DateTime today = DateTime.now();
-    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
     final DateTime endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
 
     // Identify the active plan
@@ -312,7 +311,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     final activePlanId = querySnapshot.docs.first.id;
 
     // Fetch sessions for the current date within the active plan
-    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('date', isGreaterThanOrEqualTo: startOfDay).where('date', isLessThanOrEqualTo: endOfDay).get();
+    final sessionSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).collection('plans').doc(activePlanId).collection('sessions').where('endDate', isGreaterThanOrEqualTo: endOfDay).limit(1).get();
 
     // Assuming we update the first session of the day
     final sessionDoc = sessionSnapshot.docs.first;
@@ -456,23 +455,22 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
 
   @override
   Future<Session> submitStandard(StandardData data) async {
-    final dataToSend = data.isStandardOne ? {'isStandardOneDone': true} : {'isStandardTwoDone': true};
+    data.currentSession.updateTodayActivitiesTherapy(data.isStandardOne, false);
+
+    final dataToSend = {'dailyActivities': data.currentSession.dailyActivities};
     await updateCurrentSession(data.user.userId, dataToSend);
 
-    // final AppUser user = await getUser(data.user.userId);
-    // return user;
-    Session currentSession = data.currentSession;
-    // data.isStandardOne ? currentSession.isStandardOneDone = true : currentSession.isStandardTwoDone = true;
-    return currentSession;
+    return data.currentSession;
   }
 
   @override
   Future<Session> submitPassive(PassiveData data) async {
-    await updateCurrentSession(data.user.userId, {'isPassiveDone': true});
+    data.currentSession.updateTodayActivitiesTherapy(false, true);
 
-    Session currentSession = data.currentSession;
-    // currentSession.isPassiveDone = true;
-    return currentSession;
+    final dataToSend = {'dailyActivities': data.currentSession.dailyActivities};
+    await updateCurrentSession(data.user.userId, dataToSend);
+
+    return data.currentSession;
   }
 
   @override
@@ -742,7 +740,6 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
       plansWithSessions.add(planWithSessions);
     }
 
-    print(plansWithSessions);
     return plansWithSessions;
   }
 
