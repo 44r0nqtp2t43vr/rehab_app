@@ -11,7 +11,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<bool> conditions = session.getSessionConditions("");
+    List<bool> conditions = session.getDayActivitiesConditions("");
 
     return GlassContainer(
       blur: 10,

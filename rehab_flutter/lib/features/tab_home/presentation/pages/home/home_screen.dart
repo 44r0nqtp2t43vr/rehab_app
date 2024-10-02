@@ -5,7 +5,6 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/entities/plan.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_event.dart';
@@ -45,32 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       focusedDay = newDate;
     });
-  }
-
-  Map<String, Color?> getDateColorsMapFromPlans(List<Plan> plans) {
-    Map<String, Color?> dateColorsMap = {};
-    // List<Session> sessions = plans.expand((plan) => plan.sessions).toList();
-
-    // for (var sesh in sessions) {
-    //   final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
-    //   final List<bool> conditions = sesh.getSessionConditions();
-
-    //   if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
-    //     dateColorsMap[dateString] = heatmap5;
-    //   } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
-    //     dateColorsMap[dateString] = heatmap4;
-    //   } else if (conditions[0] && conditions[1] && conditions[2]) {
-    //     dateColorsMap[dateString] = heatmap3;
-    //   } else if (conditions[0] && conditions[1]) {
-    //     dateColorsMap[dateString] = heatmap2;
-    //   } else if (conditions[0]) {
-    //     dateColorsMap[dateString] = heatmap1;
-    //   } else {
-    //     dateColorsMap[dateString] = null;
-    //   }
-    // }
-
-    return dateColorsMap;
   }
 
   @override
@@ -263,8 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                           if (state is PatientPlansDone) {
                             return MiniCalendar(
-                              user: null,
-                              dateColorsMap: getDateColorsMapFromPlans(state.plans),
+                              plans: state.plans,
                               focusedDay: focusedDay,
                               onPageChanged: _onCalendarPageChanged,
                             );

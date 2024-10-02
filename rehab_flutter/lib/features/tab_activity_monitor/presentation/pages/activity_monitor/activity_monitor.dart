@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/calendar.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_list.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -15,7 +16,6 @@ class ActivityMonitor extends StatefulWidget {
 }
 
 class _ActivityMonitorState extends State<ActivityMonitor> {
-  late Session currentSelectedSession;
   late Map<String, Color?> dateColorsMap;
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
@@ -24,26 +24,32 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
   Map<String, Color?> sessionsToDateColorsMap() {
     Map<String, Color?> dateColorsMap = {};
 
-    // for (var sesh in widget.sessions) {
-    //   final String dateString = "${sesh.date.year}${sesh.date.month}${sesh.date.day}";
-    //   final List<bool> conditions = sesh.getSessionConditions();
+    for (var sesh in widget.sessions) {
+      for (int i = 0; i < sesh.dailyActivities.length; i++) {
+        final String dateString = sesh.dailyActivities[i].split("_")[0];
+        final List<bool> conditions = sesh.getDayActivitiesConditions(dateString);
 
-    //   if (conditions[0] && conditions[1] && conditions[2] && conditions[3] && conditions[4]) {
-    //     dateColorsMap[dateString] = heatmap5;
-    //   } else if (conditions[0] && conditions[1] && conditions[2] && conditions[3]) {
-    //     dateColorsMap[dateString] = heatmap4;
-    //   } else if (conditions[0] && conditions[1] && conditions[2]) {
-    //     dateColorsMap[dateString] = heatmap3;
-    //   } else if (conditions[0] && conditions[1]) {
-    //     dateColorsMap[dateString] = heatmap2;
-    //   } else if (conditions[0]) {
-    //     dateColorsMap[dateString] = heatmap1;
-    //   } else {
-    //     dateColorsMap[dateString] = null;
-    //   }
-    // }
+        if (conditions[2]) {
+          dateColorsMap[dateString] = heatmap5;
+        } else if (conditions[1]) {
+          dateColorsMap[dateString] = heatmap3;
+        } else if (conditions[0]) {
+          dateColorsMap[dateString] = heatmap1;
+        } else {
+          dateColorsMap[dateString] = null;
+        }
+      }
+    }
 
     return dateColorsMap;
+  }
+
+  Session? getCurrentSelectedSession() {
+    final session = widget.sessions.firstWhere(
+      (session) => session.endDate.isAfter(_selectedDay),
+      orElse: () => Session.empty(),
+    );
+    return session.sessionId.isEmpty ? null : session;
   }
 
   bool _selectedDayPredicate(DateTime day) {
@@ -121,11 +127,9 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
             ),
             const SizedBox(height: 32),
             EventList(
-              // dayColor: dateColorsMap[currentSelectedSessionDateString] ?? Colors.white,
-              dayColor: Colors.white,
+              dayColor: dateColorsMap[formatDateMMDDYYYY(_selectedDay)] ?? Colors.white,
               selectedDay: _selectedDay,
-              currentSession: currentSelectedSession.sessionId.isEmpty ? null : currentSelectedSession,
-              conditions: currentSelectedSession.getSessionConditions(""),
+              currentSession: getCurrentSelectedSession(),
             ),
           ],
         ),

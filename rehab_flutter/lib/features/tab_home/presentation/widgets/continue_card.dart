@@ -263,7 +263,7 @@ class ContinueCard extends StatelessWidget {
           },
         );
       } else {
-        List<bool> conditions = session.getSessionConditions(todayActivities);
+        List<bool> conditions = session.getTodayActivitiesConditions();
         // pretest
         // Navigator.pushNamed(context, '/Testing', arguments: true);
         // posttest

@@ -51,7 +51,7 @@ class PatientPlanSessionItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${session.getSessionPercentCompletion()}%',
+                        '${session.getTodayActivitiesPercentCompletion()}%',
                         style: darkTextTheme().headlineSmall,
                         overflow: TextOverflow.ellipsis,
                       ),

@@ -13,9 +13,9 @@ class PatientsTherapyCompletionRate extends StatelessWidget {
 
   double getPlanPercentCompletion(List<Session> sessions) {
     double percent = 0;
-    for (var session in sessions) {
-      percent += session.getSessionPercentCompletion();
-    }
+    // for (var session in sessions) {
+    //   percent += session.getSessionPercentCompletion();
+    // }
     return percent / sessions.length;
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
 import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/domain/enums/event_enum.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/widgets/event_card.dart';
@@ -10,7 +11,6 @@ class EventList extends StatelessWidget {
   final Color dayColor;
   final DateTime selectedDay;
   final Session? currentSession;
-  final List<bool> conditions;
   final bool isTherapistView;
 
   const EventList({
@@ -18,21 +18,20 @@ class EventList extends StatelessWidget {
     required this.dayColor,
     required this.selectedDay,
     required this.currentSession,
-    required this.conditions,
     this.isTherapistView = false,
   });
 
-  String typeToString(String type) {
+  String typeToString(StandardTherapy type) {
     switch (type) {
-      case "actuatorTherapy":
+      case StandardTherapy.pod:
         return "point discrimination";
-      case "patternTherapy":
+      case StandardTherapy.ptd:
         return "pattern discrimination";
-      case "textureTherapy":
+      case StandardTherapy.ttd:
         return "texture discrimination";
-      case "pianoTiles":
+      case StandardTherapy.bms:
         return "basic music stimulation";
-      case "musicVisualizer":
+      case StandardTherapy.ims:
         return "intermediate music stimulation";
       default:
         return "";
@@ -41,6 +40,14 @@ class EventList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String selectedDayActivities = "";
+    List<bool> conditions = [];
+
+    if (currentSession != null) {
+      conditions = currentSession!.getDayActivitiesConditions(formatDateMMDDYYYY(selectedDay));
+      selectedDayActivities = currentSession!.getDayActivities(formatDateMMDDYYYY(selectedDay))!;
+    }
+
     return GlassContainer(
       shadowStrength: 2,
       shadowColor: Colors.black,
@@ -90,55 +97,42 @@ class EventList extends StatelessWidget {
                     )
                   : Column(
                       children: [
+                        // EventCard(
+                        //   isCompleted: conditions[0],
+                        //   // leftValue: currentSession!.pretestScore ?? 0,
+                        //   leftValue: 0,
+                        //   rightValue: "Take the Pretest",
+                        //   eventType: EventType.test,
+                        // ),
+                        // const SizedBox(height: 16),
                         EventCard(
                           isCompleted: conditions[0],
-                          // leftValue: currentSession!.pretestScore ?? 0,
-                          leftValue: 0,
-                          rightValue: "Take the Pretest",
-                          eventType: EventType.test,
+                          leftValue: null,
+                          rightValue: "Do an intensity-${currentSession!.getStandardOneIntensity(selectedDayActivities)} ${typeToString(currentSession!.getStandardOneType(selectedDayActivities))} session",
+                          eventType: EventType.timed,
                         ),
                         const SizedBox(height: 16),
-                        conditions[0]
-                            ? Column(
-                                children: [
-                                  EventCard(
-                                    isCompleted: conditions[1],
-                                    leftValue: null,
-                                    // rightValue: "Do an intensity-${currentSession!.standardOneIntensity} ${typeToString(currentSession!.standardOneType)} session",
-                                    rightValue: "",
-                                    eventType: EventType.timed,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  EventCard(
-                                    isCompleted: conditions[2],
-                                    leftValue: null,
-                                    // rightValue: "Complete an intensity-${currentSession!.passiveIntensity} passive therapy session",
-                                    rightValue: "",
-                                    eventType: EventType.timed,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  EventCard(
-                                    isCompleted: conditions[3],
-                                    leftValue: null,
-                                    // rightValue: "Do an intensity-${currentSession!.standardTwoIntensity} ${typeToString(currentSession!.standardTwoType)} session",
-                                    rightValue: "",
-                                    eventType: EventType.timed,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  EventCard(
-                                    isCompleted: conditions[4],
-                                    // leftValue: currentSession!.posttestScore ?? 0,
-                                    leftValue: 0,
-                                    rightValue: "Take the Posttest",
-                                    eventType: EventType.test,
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                "${isTherapistView ? "This patient has to take their Pretest" : "Take the Pretest"} to determine the next steps for this session",
-                                style: darkTextTheme().headlineSmall,
-                                textAlign: TextAlign.center,
-                              ),
+                        EventCard(
+                          isCompleted: conditions[1],
+                          leftValue: null,
+                          rightValue: "Complete an intensity-${currentSession!.getStandardOneIntensity(selectedDayActivities)} passive therapy session",
+                          eventType: EventType.timed,
+                        ),
+                        const SizedBox(height: 16),
+                        EventCard(
+                          isCompleted: conditions[2],
+                          leftValue: null,
+                          rightValue: "Do an intensity-${currentSession!.getStandardTwoIntensity(selectedDayActivities)} ${typeToString(currentSession!.getStandardTwoType(selectedDayActivities))} session",
+                          eventType: EventType.timed,
+                        ),
+                        // const SizedBox(height: 16),
+                        // EventCard(
+                        //   isCompleted: conditions[4],
+                        //   // leftValue: currentSession!.posttestScore ?? 0,
+                        //   leftValue: 0,
+                        //   rightValue: "Take the Posttest",
+                        //   eventType: EventType.test,
+                        // ),
                       ],
                     ),
             ],

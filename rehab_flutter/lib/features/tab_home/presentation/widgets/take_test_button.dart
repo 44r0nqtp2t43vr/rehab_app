@@ -23,7 +23,7 @@ class TakeTestButton extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                "Take your weekly test",
+                "Tap here to take your weekly test",
                 style: darkTextTheme().headlineSmall,
               ),
             ),

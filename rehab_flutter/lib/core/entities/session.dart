@@ -43,6 +43,11 @@ class Session {
     );
   }
 
+  String? getDayActivities(String dayString) {
+    final dayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(dayString), orElse: () => "");
+    return dayActivities.isEmpty ? null : dayActivities;
+  }
+
   String? getTodayActivities() {
     final todayString = formatDateMMDDYYYY(DateTime.now());
     final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
@@ -76,8 +81,10 @@ class Session {
     dailyActivities[todayActivitiesIndex] = updatedTodayActivities;
   }
 
-  List<bool> getSessionConditions(String dayActivities) {
-    if (dayActivities.isEmpty) {
+  List<bool> getDayActivitiesConditions(String dayString) {
+    final dayActivities = getDayActivities(dayString);
+
+    if (dayActivities == null || dayActivities.isEmpty) {
       return [false, false, false];
     }
 
@@ -90,8 +97,30 @@ class Session {
     ];
   }
 
-  double getSessionPercentCompletion() {
-    final List<bool> conditions = getSessionConditions("");
+  List<bool> getTodayActivitiesConditions() {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
+
+    if (todayActivities.isEmpty) {
+      return [false, false, false];
+    }
+
+    final todayActivitiesBools = todayActivities.split('_')[3];
+
+    return [
+      todayActivitiesBools[0] == 't' ? true : false,
+      todayActivitiesBools[1] == 't' ? true : false,
+      todayActivitiesBools[2] == 't' ? true : false,
+    ];
+  }
+
+  // double getSessionPercentCompletion() {
+  //   final List<bool> conditions = getSessionConditions("");
+  //   return conditions.where((condition) => condition == true).length * (100 / conditions.length);
+  // }
+
+  double getTodayActivitiesPercentCompletion() {
+    final List<bool> conditions = getTodayActivitiesConditions();
     return conditions.where((condition) => condition == true).length * (100 / conditions.length);
   }
 

@@ -63,3 +63,8 @@ String formatDateMMDDYYYY(DateTime date) {
   final DateFormat formatter = DateFormat('MMddyyyy');
   return formatter.format(date);
 }
+
+DateTime parseMMDDYYYY(String dateString) {
+  final DateFormat formatter = DateFormat('MMddyyyy');
+  return formatter.parseStrict(dateString);
+}
