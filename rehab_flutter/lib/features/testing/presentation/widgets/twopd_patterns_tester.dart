@@ -40,7 +40,30 @@ class _TwoPDPatternsTesterState extends State<TwoPDPatternsTester> {
 
   void _sendPattern() {
     String currentPatternString = widget.currentStaticPattern.pattern;
-    String data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
+    String data = "";
+    switch (widget.currentStaticPattern.fingerNum) {
+      case 0:
+        data = "<${currentPatternString}000000000000000000000000>";
+        break;
+      case 1:
+        data = "<000000${currentPatternString}000000000000000000>";
+        break;
+      case 2:
+        data = "<000000000000${currentPatternString}000000000000>";
+        break;
+      case 3:
+        data = "<000000000000000000${currentPatternString}000000>";
+        break;
+      case 4:
+        data = "<000000000000000000000000${currentPatternString}>";
+        break;
+      case 5:
+        data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
+        break;
+      default:
+        data = "<$currentPatternString$currentPatternString$currentPatternString$currentPatternString$currentPatternString>";
+        break;
+    }
 
     sl<BluetoothBloc>().add(WriteDataEvent(data));
     debugPrint("Pattern sent: $data");
