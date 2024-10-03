@@ -31,9 +31,9 @@ class Plan {
       return percent;
     }
 
-    // for (var session in sessions) {
-    //   percent += session.getSessionPercentCompletion();
-    // }
+    for (var session in sessions) {
+      percent += session.getSessionPercentCompletion();
+    }
     return percent / sessions.length;
   }
 

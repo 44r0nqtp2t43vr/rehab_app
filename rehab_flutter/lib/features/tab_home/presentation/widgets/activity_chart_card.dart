@@ -38,8 +38,6 @@ class ActivityChartCard extends StatelessWidget {
   LineChartData? buildLineChartData() {
     List<double> previousPostTestScores = getActivityPercentagesFromLastThreeDays();
 
-    print('prev $previousPostTestScores');
-
     List<FlSpot> dataPoints = [];
 
     for (int i = 0; i < previousPostTestScores.length; i++) {

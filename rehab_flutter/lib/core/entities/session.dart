@@ -114,10 +114,18 @@ class Session {
     ];
   }
 
-  // double getSessionPercentCompletion() {
-  //   final List<bool> conditions = getSessionConditions("");
-  //   return conditions.where((condition) => condition == true).length * (100 / conditions.length);
-  // }
+  double getSessionPercentCompletion() {
+    double sum = 0;
+    for (var dailyActivity in dailyActivities) {
+      final activityBools = dailyActivity.split("_")[3];
+      final tCount = activityBools.split('').where((char) => char == 't').length;
+
+      double percentage = (tCount / activityBools.length) * 100;
+      sum += percentage;
+    }
+
+    return sum / dailyActivities.length;
+  }
 
   double getTodayActivitiesPercentCompletion() {
     final List<bool> conditions = getTodayActivitiesConditions();
