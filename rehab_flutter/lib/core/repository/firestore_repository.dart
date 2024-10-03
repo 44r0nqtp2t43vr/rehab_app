@@ -932,8 +932,8 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
     for (var patientId in patientIds) {
       final patient = await getUserDetails(patientId);
 
-      // Query to get all plans where 'endDate' is after the calculated date
-      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(patientId).collection('plans').where('endDate', isGreaterThan: Timestamp.fromDate(fourDaysAgo)).get();
+      // Query to get all plans for the patient
+      QuerySnapshot<Map<String, dynamic>> plansSnapshot = await db.collection('users').doc(patientId).collection('plans').get();
 
       List<Session> allSessions = [];
 

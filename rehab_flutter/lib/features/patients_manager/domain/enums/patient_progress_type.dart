@@ -1,1 +1,1 @@
-final List<String> availableTypes = ["Posttest Scores", "Daily Progress Scores"];
+final List<String> availableTypes = ["Daily Activity %", "Test Scores"];
