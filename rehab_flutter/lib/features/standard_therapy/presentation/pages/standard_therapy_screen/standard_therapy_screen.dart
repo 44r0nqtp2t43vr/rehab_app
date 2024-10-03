@@ -53,12 +53,13 @@ class _StandardTherapyScreenState extends State<StandardTherapyScreen> {
     final random = Random();
     final songList = SongProvider.songs;
 
-    songList.sort((a, b) => a.tempo.compareTo(b.tempo));
+    // songList.sort((a, b) => a.tempo.compareTo(b.tempo));
 
-    int startIndex = (songList.length * (widget.data.intensity - 1) ~/ 5).toInt();
-    int endIndex = (songList.length * widget.data.intensity ~/ 5).toInt();
+    // int startIndex = (songList.length * (widget.data.intensity - 1) ~/ 5).toInt();
+    // int endIndex = (songList.length * widget.data.intensity ~/ 5).toInt();
 
-    return songList[startIndex + random.nextInt(endIndex - startIndex)];
+    // return songList[startIndex + random.nextInt(endIndex - startIndex)];
+    return songList[random.nextInt(songList.length)];
   }
 
   String getNameFromType() {
