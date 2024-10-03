@@ -60,10 +60,6 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
     setState(() {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
-      // currentSelectedSession = widget.sessions.firstWhere(
-      //   (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
-      //   orElse: () => Session.empty(),
-      // );
     });
   }
 
@@ -81,15 +77,10 @@ class _ActivityMonitorState extends State<ActivityMonitor> {
   void initState() {
     super.initState();
     dateColorsMap = sessionsToDateColorsMap();
-    // currentSelectedSession = widget.sessions.firstWhere(
-    //   (session) => session.date.year == _selectedDay.year && session.date.month == _selectedDay.month && session.date.day == _selectedDay.day,
-    //   orElse: () => Session.empty(),
-    // );
   }
 
   @override
   Widget build(BuildContext context) {
-    // final currentSelectedSessionDateString = currentSelectedSession.sessionId.isEmpty ? "" : "${currentSelectedSession.date.year}${currentSelectedSession.date.month}${currentSelectedSession.date.day}";
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
