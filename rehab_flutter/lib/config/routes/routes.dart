@@ -133,7 +133,7 @@ class AppRoutes {
         return _materialRoute(const AdminTherapistPage());
 
       case '/TestAnalytics':
-        return _materialRoute(const TestAnalytics());
+        return _materialRoute(TestAnalytics(testingItems: settings.arguments as List<String>));
 
       default:
         return _materialRoute(const OnboardingScreen());
