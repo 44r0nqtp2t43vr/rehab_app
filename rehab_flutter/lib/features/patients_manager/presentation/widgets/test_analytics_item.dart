@@ -14,7 +14,7 @@ class TestAnalyticsItem extends StatelessWidget {
       width: 40.0, // Define the size of the square
       height: 40.0,
       decoration: BoxDecoration(
-        color: isCorrect ? const Color(0xff01FF99) : Colors.red.withOpacity(0.3), // Background color based on isCorrect
+        color: isCorrect ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3), // Background color based on isCorrect
         borderRadius: BorderRadius.circular(8.0), // Rounded corners
       ),
       child: Center(

@@ -77,3 +77,13 @@ String formatDateMMDD(DateTime date) {
   final DateFormat formatter = DateFormat('MM/dd');
   return formatter.format(date);
 }
+
+String formatDateMMDDYYYYY(DateTime date) {
+  final DateFormat formatter = DateFormat('MM/dd/yyyy');
+  return formatter.format(date);
+}
+
+String formatDateToDayMonth(DateTime date) {
+  final DateFormat formatter = DateFormat('E, MMM d');
+  return formatter.format(date);
+}

@@ -5,6 +5,7 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/get_testanalytics_data.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/test_analytics/test_analytics_event.dart';
@@ -40,23 +41,134 @@ class PatientPlanSessionItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Session ${index + 1}',
-                        style: darkTextTheme().headlineSmall,
+                        'Week ${index + 1}',
+                        style: darkTextTheme().displaySmall,
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        // DateFormat('MMMM dd, yyyy').format(session.date),
-                        "no date",
-                        style: darkTextTheme().headlineSmall,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '${session.getTodayActivitiesPercentCompletion()}%',
-                        style: darkTextTheme().headlineSmall,
+                        '${session.getSessionPercentCompletion().toStringAsFixed(2)}%',
+                        style: darkTextTheme().displaySmall,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: session.dailyActivities.length,
+                    itemBuilder: (context, i) {
+                      final dailyActivity = session.dailyActivities[i];
+                      final dailyActivityDetails = session.getDayActivitiesDetailsFromDayActivities(dailyActivity);
+                      final dailyActivityBools = session.getDayActivitiesConditionsFromDayActivities(dailyActivity);
+                      final dailyActivityDateString = formatDateToDayMonth(parseMMDDYYYY(dailyActivity.split("_")[0]));
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                dailyActivityDateString,
+                                style: darkTextTheme().headlineSmall,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              width: 48.0,
+                              height: 28.0,
+                              decoration: BoxDecoration(
+                                color: dailyActivityBools[0] ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  dailyActivityDetails[0],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 48.0,
+                              height: 28.0,
+                              decoration: BoxDecoration(
+                                color: dailyActivityBools[1] ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  dailyActivityDetails[1],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 48.0,
+                              height: 28.0,
+                              decoration: BoxDecoration(
+                                color: dailyActivityBools[2] ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  dailyActivityDetails[2],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  session.testingItems.isEmpty
+                      ? const SizedBox()
+                      : Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
+                            child: Text(
+                              'Test taken on ${formatDateMMDDYYYYY(session.getTestTakenDate()!)}',
+                              textAlign: TextAlign.center,
+                              style: darkTextTheme().displaySmall,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                  session.testingItems.isEmpty
+                      ? const SizedBox()
+                      : GlassContainer(
+                          blur: 10,
+                          color: Colors.white.withOpacity(0.3),
+                          child: Material(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {},
+                              child: Container(
+                                height: 32,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Score: ${session.getTestScore().toStringAsFixed(2)}",
+                                    style: darkTextTheme().headlineSmall,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                   // const SizedBox(height: 8),
                   // Row(
                   //   children: [

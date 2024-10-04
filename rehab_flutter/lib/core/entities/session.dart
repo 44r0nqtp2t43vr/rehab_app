@@ -97,6 +97,20 @@ class Session {
     ];
   }
 
+  List<bool> getDayActivitiesConditionsFromDayActivities(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return [false, false, false];
+    }
+
+    final dayActivitiesBools = dayActivities.split('_')[3];
+
+    return [
+      dayActivitiesBools[0] == 't' ? true : false,
+      dayActivitiesBools[1] == 't' ? true : false,
+      dayActivitiesBools[2] == 't' ? true : false,
+    ];
+  }
+
   List<bool> getTodayActivitiesConditions() {
     final todayString = formatDateMMDDYYYY(DateTime.now());
     final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
@@ -112,6 +126,15 @@ class Session {
       todayActivitiesBools[1] == 't' ? true : false,
       todayActivitiesBools[2] == 't' ? true : false,
     ];
+  }
+
+  List<String> getDayActivitiesDetailsFromDayActivities(String dayActivities) {
+    final dayActivitiesList = dayActivities.split('_');
+    final standardOneString = "${dayActivitiesList[1].substring(0, 3)}-${dayActivitiesList[1][dayActivitiesList[1].length - 1]}";
+    final standardTwoString = "${dayActivitiesList[2].substring(0, 3)}-${dayActivitiesList[2][dayActivitiesList[2].length - 1]}";
+    final passiveString = "p-${standardOneString[standardOneString.length - 1]}";
+
+    return [standardOneString, passiveString, standardTwoString];
   }
 
   double getSessionPercentCompletion() {
@@ -166,5 +189,34 @@ class Session {
 
     final dayActivitiesStandardOne = dayActivities.split('_')[2];
     return int.parse(dayActivitiesStandardOne[3]);
+  }
+
+  DateTime? getTestTakenDate() {
+    if (testingItems.isEmpty) {
+      return null;
+    }
+
+    return parseMMDDYYYY(testingItems[0].split("_")[0]);
+  }
+
+  double getTestScore() {
+    if (testingItems.isEmpty) {
+      return 0;
+    }
+
+    int correctAnswersCount = 0;
+    for (int i = 0; i < testingItems.length; i++) {
+      final detailsList = testingItems[i].split("_");
+      final correctAnswer = detailsList[2];
+      final answer = detailsList[3];
+
+      if (i < 10) {
+        correctAnswersCount += correctAnswer[0] == answer ? 1 : 0;
+      } else {
+        correctAnswersCount += correctAnswer == answer ? 1 : 0;
+      }
+    }
+
+    return (correctAnswersCount / testingItems.length) * 100;
   }
 }
