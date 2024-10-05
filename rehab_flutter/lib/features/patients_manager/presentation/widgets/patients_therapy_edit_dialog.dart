@@ -4,13 +4,13 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
 import 'package:rehab_flutter/core/entities/session.dart';
-import 'package:rehab_flutter/features/patients_manager/domain/enums/standard_therapy_types.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/models/edit_session_data.dart';
-import 'package:rehab_flutter/features/patients_manager/domain/models/standard_therapy_type.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_event.dart';
 
-final intensityValues = [1, 2, 3, 4, 5];
+final intensityValues = ["1", "2", "3", "4", "5"];
+final standardTherapyValues = ["pod", "ptd", "ttd", "bms", "ims"];
 
 class PatientsTherapyEditDialog extends StatefulWidget {
   final PatientPlan patientPlan;
@@ -25,22 +25,20 @@ class PatientsTherapyEditDialog extends StatefulWidget {
 
 class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
   final _formKey = GlobalKey<FormState>();
-  late StandardTherapyType? standardOneType;
-  late StandardTherapyType? standardTwoType;
-  late int? standardOneIntensity;
-  late int? standardTwoIntensity;
-  late int? passiveIntensity;
+  late List<String> dailyActivities;
+
+  void setDailyActivities(int index, String newString) {
+    setState(() {
+      dailyActivities[index] = newString;
+    });
+  }
 
   void _editSession(BuildContext context) {
     EditSessionData editSessionData = EditSessionData(
       userId: widget.patientPlan.patient.userId,
       planId: widget.patientPlan.plan.planId,
       sessionId: widget.session.sessionId,
-      standardOneType: standardOneType!.value,
-      standardOneIntensity: standardOneIntensity!.toString(),
-      passiveIntensity: passiveIntensity!.toString(),
-      standardTwoType: standardTwoType!.value,
-      standardTwoIntensity: standardTwoIntensity!.toString(),
+      newDailyActivities: dailyActivities,
     );
 
     BlocProvider.of<ViewedTherapistPatientPlanSessionsListBloc>(context).add(EditViewedTherapistPatientPlanSessionsListEvent(editSessionData));
@@ -48,236 +46,288 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
 
   @override
   void initState() {
-    // standardOneType = standardTherapyTypes.firstWhere((type) => type.value == widget.session.standardOneType, orElse: () => StandardTherapyType.empty());
-    // standardTwoType = standardTherapyTypes.firstWhere((type) => type.value == widget.session.standardTwoType, orElse: () => StandardTherapyType.empty());
-    // standardOneType = standardOneType == StandardTherapyType.empty() ? null : standardOneType;
-    // standardTwoType = standardTwoType == StandardTherapyType.empty() ? null : standardTwoType;
-    // standardOneIntensity = widget.session.standardOneIntensity.isEmpty ? null : int.parse(widget.session.standardOneIntensity);
-    // standardTwoIntensity = widget.session.standardTwoIntensity.isEmpty ? null : int.parse(widget.session.standardTwoIntensity);
-    // passiveIntensity = widget.session.passiveIntensity.isEmpty ? null : int.parse(widget.session.passiveIntensity);
+    dailyActivities = List.from(widget.session.dailyActivities);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GlassContainer(
-      blur: 10,
-      color: Colors.white.withOpacity(0.3),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontFamily: 'Sailec Bold',
-                      fontSize: 22,
-                      height: 1.2,
-                      color: Colors.white,
-                    ),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: GlassContainer(
+        blur: 10,
+        color: Colors.white.withOpacity(0.3),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontFamily: 'Sailec Bold',
+                    fontSize: 22,
+                    height: 1.2,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    // "Date: ${DateFormat('MMMM dd, yyyy').format(widget.session.date)}",
-                    "no date",
-                    style: darkTextTheme().headlineSmall,
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<StandardTherapyType?>(
-                    value: standardOneType,
-                    isExpanded: true,
-                    decoration: customInputDecoration.copyWith(
-                      labelText: 'Standard One Intensity',
-                    ),
-                    onChanged: (StandardTherapyType? newValue) {
-                      setState(() {
-                        standardOneType = newValue!;
-                      });
-                    },
-                    items: [
-                      const DropdownMenuItem<StandardTherapyType?>(
-                        value: null,
-                        child: Text('Select'),
-                      ),
-                      ...standardTherapyTypes.map<DropdownMenuItem<StandardTherapyType>>((StandardTherapyType value) {
-                        return DropdownMenuItem<StandardTherapyType>(
-                          value: value,
-                          child: Text(
-                            value.title,
-                            overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 12),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: dailyActivities.length,
+                  itemBuilder: (context, i) {
+                    final dailyActivity = dailyActivities[i];
+                    final dailyActivityDetails = dailyActivity.split("_");
+                    final dailyActivityDateString = formatDateMMDD(parseMMDDYYYY(dailyActivity.split("_")[0]));
+
+                    final standardOneType = dailyActivityDetails[1].substring(0, 3);
+                    final standardTwoType = dailyActivityDetails[2].substring(0, 3);
+
+                    final standardOneIntensity = dailyActivityDetails[1][3];
+                    final standardTwoIntensity = dailyActivityDetails[2][3];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              dailyActivityDateString,
+                              style: darkTextTheme().headlineSmall,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        );
-                      }).toList(),
-                    ],
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a value';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<int?>(
-                    value: standardOneIntensity,
-                    decoration: customInputDecoration.copyWith(
-                      labelText: 'Standard One Intensity',
-                    ),
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        standardOneIntensity = newValue!;
-                      });
-                    },
-                    items: [
-                      const DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text('Select'),
-                      ),
-                      ...intensityValues.map<DropdownMenuItem<int?>>((int? value) {
-                        return DropdownMenuItem<int?>(
-                          value: value,
-                          child: Text(value.toString()),
-                        );
-                      }).toList(),
-                    ],
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a value';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<int?>(
-                    value: passiveIntensity,
-                    decoration: customInputDecoration.copyWith(
-                      labelText: 'Passive Intensity',
-                    ),
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        passiveIntensity = newValue!;
-                      });
-                    },
-                    items: [
-                      const DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text('Select'),
-                      ),
-                      ...intensityValues.map<DropdownMenuItem<int?>>((int? value) {
-                        return DropdownMenuItem<int?>(
-                          value: value,
-                          child: Text(value.toString()),
-                        );
-                      }).toList(),
-                    ],
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a value';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<StandardTherapyType?>(
-                    value: standardTwoType,
-                    isExpanded: true,
-                    decoration: customInputDecoration.copyWith(
-                      labelText: 'Standard One Intensity',
-                    ),
-                    onChanged: (StandardTherapyType? newValue) {
-                      setState(() {
-                        standardTwoType = newValue!;
-                      });
-                    },
-                    items: [
-                      const DropdownMenuItem<StandardTherapyType?>(
-                        value: null,
-                        child: Text('Select'),
-                      ),
-                      ...standardTherapyTypes.map<DropdownMenuItem<StandardTherapyType>>((StandardTherapyType value) {
-                        return DropdownMenuItem<StandardTherapyType>(
-                          value: value,
-                          child: Text(
-                            value.title,
-                            overflow: TextOverflow.ellipsis,
+                          SizedBox(
+                            width: 60,
+                            child: DropdownButtonFormField<String>(
+                              value: standardOneType,
+                              dropdownColor: Color(0XFF275492),
+                              borderRadius: BorderRadius.circular(12),
+                              decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white.withOpacity(0.5),
+                              ),
+                              onChanged: (String? newValue) {
+                                final newStandardOneDetails = "${newValue}${standardOneIntensity}";
+                                final newDailyActivityDetails = List.from(dailyActivityDetails);
+                                newDailyActivityDetails[1] = newStandardOneDetails;
+
+                                final newDailyActivityString = newDailyActivityDetails.join("_");
+                                setDailyActivities(i, newDailyActivityString);
+                              },
+                              items: [
+                                ...standardTherapyValues.map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ],
+                              validator: (value) {
+                                if (value == null) {
+                                  return "";
+                                }
+                                return null;
+                              },
+                            ),
                           ),
-                        );
-                      }).toList(),
-                    ],
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a value';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<int?>(
-                    value: standardTwoIntensity,
-                    decoration: customInputDecoration.copyWith(
-                      labelText: 'Standard Two Intensity',
-                    ),
-                    onChanged: (int? newValue) {
-                      setState(() {
-                        standardTwoIntensity = newValue!;
-                      });
-                    },
-                    items: [
-                      const DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text('Select'),
+                          SizedBox(
+                            width: 40,
+                            child: DropdownButtonFormField<String>(
+                              value: standardOneIntensity,
+                              dropdownColor: Color(0XFF275492),
+                              borderRadius: BorderRadius.circular(12),
+                              decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white.withOpacity(0.5),
+                              ),
+                              onChanged: (String? newValue) {
+                                final newStandardOneDetails = "${standardOneType}${newValue}";
+                                final newDailyActivityDetails = List.from(dailyActivityDetails);
+                                newDailyActivityDetails[1] = newStandardOneDetails;
+
+                                final newDailyActivityString = newDailyActivityDetails.join("_");
+                                setDailyActivities(i, newDailyActivityString);
+                              },
+                              items: [
+                                ...intensityValues.map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ],
+                              validator: (value) {
+                                if (value == null) {
+                                  return "";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: DropdownButtonFormField<String>(
+                              value: standardTwoType,
+                              dropdownColor: Color(0XFF275492),
+                              borderRadius: BorderRadius.circular(12),
+                              decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white.withOpacity(0.5),
+                              ),
+                              onChanged: (String? newValue) {
+                                final newStandardTwoDetails = "${newValue}${standardTwoIntensity}";
+                                final newDailyActivityDetails = List.from(dailyActivityDetails);
+                                newDailyActivityDetails[2] = newStandardTwoDetails;
+
+                                final newDailyActivityString = newDailyActivityDetails.join("_");
+                                setDailyActivities(i, newDailyActivityString);
+                              },
+                              items: [
+                                ...standardTherapyValues.map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ],
+                              validator: (value) {
+                                if (value == null) {
+                                  return "";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 40,
+                            child: DropdownButtonFormField<String>(
+                              value: standardTwoIntensity,
+                              dropdownColor: Color(0XFF275492),
+                              borderRadius: BorderRadius.circular(12),
+                              decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                ),
+                              ),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white.withOpacity(0.5),
+                              ),
+                              onChanged: (String? newValue) {
+                                final newStandardTwoDetails = "${standardTwoType}${newValue}";
+                                final newDailyActivityDetails = List.from(dailyActivityDetails);
+                                newDailyActivityDetails[2] = newStandardTwoDetails;
+
+                                final newDailyActivityString = newDailyActivityDetails.join("_");
+                                setDailyActivities(i, newDailyActivityString);
+                              },
+                              items: [
+                                ...intensityValues.map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ],
+                              validator: (value) {
+                                if (value == null) {
+                                  return "";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      ...intensityValues.map<DropdownMenuItem<int?>>((int? value) {
-                        return DropdownMenuItem<int?>(
-                          value: value,
-                          child: Text(value.toString()),
-                        );
-                      }).toList(),
-                    ],
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Please select a value';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Theme(
-                    data: darkButtonTheme,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Close'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Theme(
-                    data: darkButtonTheme,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Theme(
+                      data: darkButtonTheme,
+                      child: ElevatedButton(
+                        onPressed: () {
                           Navigator.of(context).pop();
-                          _editSession(context);
-                        }
-                      },
-                      child: const Text('Save'),
+                        },
+                        child: const Text('Close'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 12),
+                    Theme(
+                      data: darkButtonTheme,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            Navigator.of(context).pop();
+                            _editSession(context);
+                          }
+                        },
+                        child: const Text('Save'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

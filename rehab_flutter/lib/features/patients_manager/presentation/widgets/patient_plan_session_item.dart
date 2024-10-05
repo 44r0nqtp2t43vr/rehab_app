@@ -165,37 +165,6 @@ class PatientPlanSessionItem extends StatelessWidget {
                             ),
                           ),
                         ),
-                  // const SizedBox(height: 8),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: ElevatedButton(
-                  //         onPressed: session.pretestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: true),
-                  //         child: Text(session.pretestScore == null ? "Pretest" : "Pretest: ${session.pretestScore!.toStringAsFixed(0)}"),
-                  //       ),
-                  //     ),
-                  //     const SizedBox(width: 8),
-                  //     Expanded(
-                  //       child: ElevatedButton(
-                  //         onPressed: session.posttestScore == null ? null : () => _onTestButtonPressed(context, patientPlan, session, isPretest: false),
-                  //         child: Text(session.posttestScore == null ? "Posttest" : "Posttest: ${session.posttestScore!.toStringAsFixed(0)}"),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  // const SizedBox(height: 8),
-                  // Text(
-                  //   "Standard One: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardOneType).title} ${session.standardOneIntensity}"}",
-                  //   style: darkTextTheme().headlineSmall,
-                  // ),
-                  // Text(
-                  //   "Passive Intensity: ${session.passiveIntensity.isEmpty ? "TBD" : session.passiveIntensity}",
-                  //   style: darkTextTheme().headlineSmall,
-                  // ),
-                  // Text(
-                  //   "Standard Two: ${session.standardOneType.isEmpty ? "TBD" : "${standardTherapyTypes.firstWhere((type) => type.value == session.standardTwoType).title} ${session.standardTwoIntensity}"}",
-                  //   style: darkTextTheme().headlineSmall,
-                  // ),
                 ],
               ),
             ),
@@ -208,7 +177,7 @@ class PatientPlanSessionItem extends StatelessWidget {
             context,
             patientPlan,
             session,
-            "Session ${index + 1}",
+            "Week ${index + 1}",
           ),
           child: GlassContainer(
             shadowStrength: 2,
@@ -230,14 +199,6 @@ class PatientPlanSessionItem extends StatelessWidget {
   }
 
   void _onTestButtonPressed(BuildContext context) {
-    // final items = session.items.where((item) => item.test == (isPretest ? "pretest" : "posttest")).toList();
-    // items.sort((a, b) => a.itemNumber.compareTo(b.itemNumber));
-    // BlocProvider.of<TestAnalyticsBloc>(context).add(FetchTestAnalyticsEvent(GetTestAnalyticsData(
-    //   patient: patientPlan.patient,
-    //   plan: patientPlan.plan,
-    //   session: session,
-    //   testType: isPretest ? "pretest" : "posttest",
-    // )));
     Navigator.of(context).pushNamed("/TestAnalytics", arguments: session.testingItems);
   }
 }

@@ -575,11 +575,7 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   @override
   Future<void> editUserSession(EditSessionData data) async {
     await db.collection('users').doc(data.userId).collection('plans').doc(data.planId).collection('sessions').doc(data.sessionId).update({
-      'standardOneType': data.standardOneType,
-      'standardOneIntensity': data.standardOneIntensity,
-      'standardTwoType': data.standardTwoType,
-      'standardTwoIntensity': data.standardTwoIntensity,
-      'passiveIntensity': data.passiveIntensity,
+      'dailyActivities': data.newDailyActivities,
     });
   }
 
