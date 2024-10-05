@@ -1,1 +1,1 @@
-enum TestingState { staticPatterns, texturesIntro, textures, rhythmicPatternsIntro, rhythmicPatterns, finished }
+enum TestingState { twoPointDiscrimination, texturesIntro, textures, rhythmicPatternsIntro, rhythmicPatterns, finished }

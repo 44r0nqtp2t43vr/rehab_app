@@ -14,6 +14,7 @@ import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/take_test_button.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/music_therapy/music_therapy.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/specific_genre/specific_genre.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -67,9 +68,21 @@ class _TherapyScreenState extends State<TherapyScreen> {
                           }
 
                           if (state is PatientCurrentSessionDone) {
-                            return ContinueCard(
-                              user: patient,
-                              session: state.currentSession!,
+                            final currentSession = state.currentSession!;
+
+                            return Column(
+                              children: [
+                                currentSession.testingItems.isEmpty
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
+                                        child: TakeTestButton(),
+                                      )
+                                    : const SizedBox(),
+                                ContinueCard(
+                                  user: patient,
+                                  session: state.currentSession!,
+                                ),
+                              ],
                             );
                           }
 

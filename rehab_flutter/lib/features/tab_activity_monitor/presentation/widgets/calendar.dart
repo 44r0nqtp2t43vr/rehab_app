@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatelessWidget {
@@ -93,7 +94,7 @@ class Calendar extends StatelessWidget {
             calendarBuilders: CalendarBuilders(
               // Customize the appearance of individual calendar cells
               markerBuilder: (context, date, events) {
-                final dateString = "${date.year}${date.month}${date.day}";
+                final dateString = formatDateMMDDYYYY(date);
                 final color = dateColorsMap[dateString];
                 if (color != null) {
                   return Positioned(
@@ -220,9 +221,9 @@ class Calendar extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     _buildLegendItem(heatmap1),
-                    _buildLegendItem(heatmap2),
+                    // _buildLegendItem(heatmap2),
                     _buildLegendItem(heatmap3),
-                    _buildLegendItem(heatmap4),
+                    // _buildLegendItem(heatmap4),
                     _buildLegendItem(heatmap5),
                     const SizedBox(width: 4),
                     const Text(

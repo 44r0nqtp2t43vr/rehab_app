@@ -4,7 +4,7 @@ import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_sessions.dart';
-import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_progress_type.dart';
 
 class PatientProgressChart extends StatefulWidget {
@@ -84,7 +84,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
               children: [
                 const SizedBox(height: 8),
                 const Text(
-                  "Sort by Type:",
+                  "Type:",
                   style: TextStyle(
                     fontFamily: 'Sailec Medium',
                     fontSize: 12,
@@ -113,7 +113,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  "Sort by Patient Name:",
+                  "Patient Name:",
                   style: TextStyle(
                     fontFamily: 'Sailec Medium',
                     fontSize: 12,
@@ -146,6 +146,134 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
         ],
       ),
     );
+  }
+
+  List<double> getActivityPercentagesFromLastFiveDays() {
+    if (_patient == null || _patient!.sessions.isEmpty) {
+      return [0, 0, 0, 0, 0];
+    }
+
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    final yesterdayString = formatDateMMDDYYYY(DateTime.now().subtract(const Duration(days: 1)));
+    final twoDaysAgoString = formatDateMMDDYYYY(DateTime.now().subtract(const Duration(days: 2)));
+    final threeDaysAgoString = formatDateMMDDYYYY(DateTime.now().subtract(const Duration(days: 3)));
+    final fourDaysAgoString = formatDateMMDDYYYY(DateTime.now().subtract(const Duration(days: 4)));
+
+    final List<String> allDailyActivities = [];
+    for (var session in _patient!.sessions) {
+      allDailyActivities.addAll(session.dailyActivities);
+    }
+
+    final todayIndex = allDailyActivities.indexWhere((daString) => daString.startsWith(todayString));
+
+    int yesterdayIndex = -1;
+    int twoDaysAgoIndex = -1;
+    int threeDaysAgoIndex = -1;
+    int fourDaysAgoIndex = -1;
+
+    if (todayIndex > 0) {
+      yesterdayIndex = allDailyActivities[todayIndex - 1].startsWith(yesterdayString) ? todayIndex - 1 : -1;
+    }
+    if (todayIndex > 1) {
+      twoDaysAgoIndex = allDailyActivities[todayIndex - 2].startsWith(twoDaysAgoString) ? todayIndex - 2 : -1;
+    }
+    if (todayIndex > 2) {
+      threeDaysAgoIndex = allDailyActivities[todayIndex - 3].startsWith(threeDaysAgoString) ? todayIndex - 3 : -1;
+    }
+    if (todayIndex > 3) {
+      fourDaysAgoIndex = allDailyActivities[todayIndex - 4].startsWith(fourDaysAgoString) ? todayIndex - 4 : -1;
+    }
+
+    final List<String> lastThreeDailyActivities = [
+      fourDaysAgoIndex != -1 ? allDailyActivities[fourDaysAgoIndex] : "",
+      threeDaysAgoIndex != -1 ? allDailyActivities[threeDaysAgoIndex] : "",
+      twoDaysAgoIndex != -1 ? allDailyActivities[twoDaysAgoIndex] : "",
+      yesterdayIndex != -1 ? allDailyActivities[yesterdayIndex] : "",
+      todayIndex != -1 ? allDailyActivities[todayIndex] : "",
+    ];
+
+    final List<double> activityPercentages = [];
+    for (var str in lastThreeDailyActivities) {
+      if (str.isEmpty) {
+        activityPercentages.add(0);
+        continue;
+      }
+
+      final activityBools = str.split("_")[3];
+      final tCount = activityBools.split('').where((char) => char == 't').length;
+
+      double percentage = (tCount / activityBools.length) * 100;
+      activityPercentages.add(percentage);
+    }
+
+    return activityPercentages;
+  }
+
+  Map<String, List<dynamic>> getTestScoresFromLastFiveTests() {
+    if (_patient == null || _patient!.sessions.isEmpty) {
+      return {
+        'dates': ["", "", "", "", ""],
+        'scores': [0, 0, 0, 0, 0],
+      };
+    }
+
+    final Map<String, List<String>> allTestingItems = {};
+    for (var session in _patient!.sessions) {
+      if (session.testingItems.isEmpty) {
+        continue;
+      }
+
+      final dateString = session.testingItems[0].split("_")[0];
+      final date = parseMMDDYYYY(dateString);
+      final dateKey = formatDateMMDD(date);
+      allTestingItems[dateKey] = List.from(session.testingItems);
+    }
+
+    if (allTestingItems.keys.isEmpty) {
+      return {
+        'dates': ["", "", "", "", ""],
+        'scores': [0, 0, 0, 0, 0],
+      };
+    }
+
+    final List<double> testScores = [];
+    List<String> testDates = allTestingItems.keys.toList();
+
+    if (testDates.length > 5) {
+      testDates = testDates.sublist(testDates.length - 5, testDates.length);
+    }
+
+    for (var testDate in testDates) {
+      int correctAnswersCount = 0;
+      final testingItems = allTestingItems[testDate]!;
+
+      for (int i = 0; i < testingItems.length; i++) {
+        final detailsList = testingItems[i].split("_");
+        final correctAnswer = detailsList[2];
+        final answer = detailsList[3];
+
+        if (i < 10) {
+          correctAnswersCount += correctAnswer[0] == answer ? 1 : 0;
+        } else {
+          correctAnswersCount += correctAnswer == answer ? 1 : 0;
+        }
+      }
+
+      testScores.add((correctAnswersCount / testingItems.length) * 100);
+    }
+
+    final needToAdd = 5 - testDates.length;
+    if (needToAdd > 0) {
+      for (int i = 0; i < needToAdd; i++) {
+        testDates.insert(0, "");
+        testScores.insert(0, 0);
+      }
+    }
+
+    return {
+      'dates': testDates,
+      'scores': testScores,
+    };
   }
 
   Widget buildLineChartOrText(PatientSessions? user) {
@@ -183,54 +311,38 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
 
   LineChartData buildLineChartData(PatientSessions user, String type) {
     List<FlSpot> dataPoints = [];
-    List<Session> allSessions = user.sessions;
-    final DateTime today = DateTime.now();
+    Widget Function(double, TitleMeta) getTitlesWidget = bottomTitles;
 
     if (type == availableTypes[0]) {
-      List<double> previousPostTestScores = [0, 0, 0, 0, 0];
+      final List<double> activityPercentages = getActivityPercentagesFromLastFiveDays();
 
-      for (int i = 0; i < 5; i++) {
-        DateTime date = today.subtract(Duration(days: i));
-        Session? session = allSessions.firstWhere(
-          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
-          orElse: () => Session.empty(),
-        );
-
-        if (session.posttestScore != null) {
-          previousPostTestScores[4 - i] = session.posttestScore!;
-        } else {
-          previousPostTestScores[4 - i] = 0;
-        }
-      }
-
-      final Session currentSession = user.sessions.firstWhere(
-        (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
-        orElse: () => Session.empty(),
-      );
-
-      double currentPostTestScore = currentSession.posttestScore ?? 0;
-      previousPostTestScores[4] = currentPostTestScore;
-
-      for (int i = 0; i < previousPostTestScores.length; i++) {
-        dataPoints.add(FlSpot(i.toDouble(), previousPostTestScores[i]));
+      for (int i = 0; i < activityPercentages.length; i++) {
+        dataPoints.add(FlSpot(i.toDouble(), activityPercentages[i]));
       }
     } else {
-      List<double> previousProgressScores = [0, 0, 0, 0, 0];
+      final testDatesMap = getTestScoresFromLastFiveTests();
+      final datesStringList = testDatesMap['dates'];
+      final scoresList = testDatesMap['scores'];
 
-      for (int i = 0; i < 5; i++) {
-        DateTime date = today.subtract(Duration(days: i));
-        Session? session = allSessions.firstWhere(
-          (session) => session.date.year == date.year && session.date.month == date.month && session.date.day == date.day,
-          orElse: () => Session.empty(),
+      Widget customBottomTitles(double value, TitleMeta meta) {
+        final valueInt = value.toInt();
+
+        const style = TextStyle(
+          fontFamily: 'Sailec Medium',
+          fontSize: 8,
+          color: Colors.white,
         );
 
-        if (session.sessionId.isNotEmpty) {
-          previousProgressScores[4 - i] = session.getSessionPercentCompletion();
-        } else {
-          previousProgressScores[4 - i] = 0;
-        }
+        return SideTitleWidget(
+          axisSide: meta.axisSide,
+          child: Text(datesStringList![valueInt], style: style),
+        );
+      }
 
-        dataPoints.add(FlSpot(i.toDouble(), previousProgressScores[i]));
+      getTitlesWidget = customBottomTitles;
+
+      for (int i = 0; i < scoresList!.length; i++) {
+        dataPoints.add(FlSpot(i.toDouble(), scoresList[i]));
       }
     }
 
@@ -274,7 +386,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
             interval: 1.0,
             reservedSize: 20,
             showTitles: true,
-            getTitlesWidget: bottomTitles,
+            getTitlesWidget: getTitlesWidget,
           ),
         ),
       ),

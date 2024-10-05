@@ -8,52 +8,56 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_state.dart';
-import 'package:rehab_flutter/core/entities/testing_item.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/test_analytics_item.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
 
 class TestingFinish extends StatefulWidget {
   final List<String> itemList;
-  final List<double> accuracyList;
+  final List<String> answerList;
 
-  const TestingFinish({super.key, required this.itemList, required this.accuracyList});
+  const TestingFinish({super.key, required this.itemList, required this.answerList});
 
   @override
   State<TestingFinish> createState() => _TestingFinishState();
 }
 
 class _TestingFinishState extends State<TestingFinish> {
-  late double score;
+  late List<double> accuracyList;
+  late List<double> scores;
 
-  void _submitTest(AppUser user, double score) {
+  void _submitTest() {
+    final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
     final currentSession = BlocProvider.of<PatientCurrentSessionBloc>(context).state.currentSession!;
-    bool isPretest = !currentSession.getSessionConditions()[0];
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    // bool isPretest = !currentSession.getDayActivitiesConditions("")[0];
 
-    List<TestingItem> items = [];
-    for (var i = 0; i < widget.itemList.length; i++) {
-      final nextItem = TestingItem(
-        test: isPretest ? "pretest" : "posttest",
-        itemNumber: i + 1,
-        itemName: widget.itemList[i],
-        itemType: i < 10
-            ? "static pattern"
-            : i < 15
-                ? "texture"
-                : "rhythmic pattern",
-        itemAccuracy: widget.accuracyList[i],
-      );
-
-      items.add(nextItem);
+    List<String> items = [];
+    for (int i = 0; i < widget.itemList.length; i++) {
+      final itemString = "${todayString}_${i + 1}_${widget.itemList[i]}_${widget.answerList[i]}";
+      items.add(itemString);
     }
+    // for (var i = 0; i < widget.itemList.length; i++) {
+    //   final nextItem = TestingItem(
+    //     test: isPretest ? "pretest" : "posttest",
+    //     itemNumber: i + 1,
+    //     itemName: widget.itemList[i],
+    //     itemType: i < 10
+    //         ? "static pattern"
+    //         : i < 15
+    //             ? "texture"
+    //             : "rhythmic pattern",
+    //     itemAccuracy: widget.accuracyList[i],
+    //   );
+
+    //   items.add(nextItem);
+    // }
 
     BlocProvider.of<UserBloc>(context).add(SubmitTestEvent(
       ResultsData(
-        user: user,
+        user: currentUser,
         currentSession: currentSession,
-        score: score,
-        isPretest: isPretest,
         items: items,
       ),
     ));
@@ -65,43 +69,64 @@ class _TestingFinishState extends State<TestingFinish> {
     // BlocProvider.of<PatientCurrentPlanBloc>(context).add(UpdateCurrentPlanSessionEvent(currentPlan, currentSession));
   }
 
+  List<double> calculateAverages(List<double> accuracies) {
+    // Helper function to calculate the average of a sublist
+    double calculateAverage(List<double> sublist) {
+      if (sublist.isEmpty) return 0.0;
+      return sublist.reduce((a, b) => a + b) / sublist.length;
+    }
+
+    // Calculate the averages
+    double overallAverage = calculateAverage(accuracies);
+    double firstTenAverage = calculateAverage(accuracies.sublist(0, 10));
+    double elevenToFifteenAverage = calculateAverage(accuracies.sublist(10, 15));
+    double sixteenToTwentyAverage = calculateAverage(accuracies.sublist(15, 20));
+
+    return [overallAverage, firstTenAverage, elevenToFifteenAverage, sixteenToTwentyAverage];
+  }
+
   @override
   void initState() {
-    final currentUser = BlocProvider.of<UserBloc>(context).state.currentUser!;
-    score = (widget.accuracyList.reduce((value, element) => value + element) / widget.accuracyList.length);
-    _submitTest(currentUser, score);
+    accuracyList = List<double>.generate(widget.answerList.length, (index) {
+      if (index < 10) {
+        return widget.answerList[index] == widget.itemList[index][0] ? 100.00 : 0.00;
+      }
+      return widget.answerList[index] == widget.itemList[index] ? 100.00 : 0.00;
+    });
+    scores = calculateAverages(accuracyList);
+    _submitTest();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> staticPatterns = [];
-    List<String> textures = [];
-    List<String> rhythmicPatterns = [];
-    List<double> staticPatternsScores = [];
-    List<double> texturesScores = [];
-    List<double> rhythmicPatternsScores = [];
+    // List<String> twoPointDiscrimination = [];
+    // List<String> textures = [];
+    // List<String> rhythmicPatterns = [];
+    // List<double> twoPointDiscriminationScores = [];
+    // List<double> texturesScores = [];
+    // List<double> rhythmicPatternsScores = [];
 
-    for (int i = 0; i < widget.itemList.length; i++) {
-      if (i < 10) {
-        staticPatterns.add(widget.itemList[i]);
-        staticPatternsScores.add(widget.accuracyList[i]);
-      } else if (i < 15) {
-        textures.add(widget.itemList[i]);
-        texturesScores.add(widget.accuracyList[i]);
-      } else {
-        rhythmicPatterns.add(widget.itemList[i]);
-        rhythmicPatternsScores.add(widget.accuracyList[i]);
-      }
-    }
+    // for (int i = 0; i < widget.itemList.length; i++) {
+    //   if (i < 10) {
+    //     twoPointDiscrimination.add(widget.itemList[i]);
+    //     twoPointDiscriminationScores.add(widget.accuracyList[i]);
+    //   } else if (i < 15) {
+    //     textures.add(widget.itemList[i]);
+    //     texturesScores.add(widget.accuracyList[i]);
+    //   } else {
+    //     rhythmicPatterns.add(widget.itemList[i]);
+    //     rhythmicPatternsScores.add(widget.accuracyList[i]);
+    //   }
+    // }
 
-    double averageStaticPatterns = staticPatternsScores.isNotEmpty ? staticPatternsScores.reduce((a, b) => a + b) / staticPatternsScores.length : 0;
+    // double averagetwoPointDiscrimination = twoPointDiscriminationScores.isNotEmpty ? twoPointDiscriminationScores.reduce((a, b) => a + b) / twoPointDiscriminationScores.length : 0;
 
-    double averageTextures = texturesScores.isNotEmpty ? texturesScores.reduce((a, b) => a + b) / texturesScores.length : 0;
-    double averageRhythmicPatterns = rhythmicPatternsScores.isNotEmpty ? rhythmicPatternsScores.reduce((a, b) => a + b) / rhythmicPatternsScores.length : 0;
+    // double averageTextures = texturesScores.isNotEmpty ? texturesScores.reduce((a, b) => a + b) / texturesScores.length : 0;
+    // double averageRhythmicPatterns = rhythmicPatternsScores.isNotEmpty ? rhythmicPatternsScores.reduce((a, b) => a + b) / rhythmicPatternsScores.length : 0;
 
-    // print('TEST: $averageStaticPatterns');
+    // print('TEST: $averagetwoPointDiscrimination');
     // print('TEST: $averageTextures');
     // print('TEST: $averageRhythmicPatterns');
 
@@ -229,7 +254,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                         bottomRight: Radius.zero,
                                                       ),
                                                       width: 20,
-                                                      toY: averageStaticPatterns,
+                                                      toY: scores[1],
                                                       color: const Color(0xffdbfff0),
                                                     ),
                                                   ]),
@@ -242,7 +267,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                         bottomRight: Radius.zero,
                                                       ),
                                                       width: 20,
-                                                      toY: averageTextures,
+                                                      toY: scores[2],
                                                       color: const Color(0xFF49ffb6),
                                                     ),
                                                   ]),
@@ -255,7 +280,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                         bottomRight: Radius.zero,
                                                       ),
                                                       width: 20,
-                                                      toY: averageRhythmicPatterns,
+                                                      toY: scores[3],
                                                       color: const Color(0xFF00b66d),
                                                     ),
                                                   ]),
@@ -271,7 +296,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                     const Color(0xffdbfff0),
                                                   ),
                                                   const Text(
-                                                    'SP: Static Patterns',
+                                                    '2PD: 2-Point Discrimination',
                                                     style: TextStyle(
                                                       fontFamily: 'Sailec Medium',
                                                       fontSize: 8,
@@ -289,7 +314,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                     const Color(0xFF49ffb6),
                                                   ),
                                                   const Text(
-                                                    'T: Textures',
+                                                    'RP: Rhythmic Patterns',
                                                     style: TextStyle(
                                                       fontFamily: 'Sailec Medium',
                                                       fontSize: 8,
@@ -307,7 +332,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                     const Color(0xFF00b66d),
                                                   ),
                                                   const Text(
-                                                    'RP: Rhythmic Patterns',
+                                                    'T: Textures',
                                                     style: TextStyle(
                                                       fontFamily: 'Sailec Medium',
                                                       fontSize: 8,
@@ -343,9 +368,9 @@ class _TestingFinishState extends State<TestingFinish> {
                                             CircularPercentIndicator(
                                               radius: 0.4 * 136,
                                               lineWidth: 10.0,
-                                              percent: score / 100,
+                                              percent: scores[0] / 100,
                                               center: Text(
-                                                "${score.toStringAsFixed(0)}%",
+                                                "${scores[0].toStringAsFixed(0)}%",
                                                 style: const TextStyle(
                                                   fontFamily: "Sailec Bold",
                                                   fontSize: 24,
@@ -381,9 +406,19 @@ class _TestingFinishState extends State<TestingFinish> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          "Accuracy per Items",
-                          style: darkTextTheme().displaySmall,
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            "Correct Answers",
+                            style: darkTextTheme().displaySmall,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 5,
+                          child: Text(
+                            "Submitted Answers",
+                            style: darkTextTheme().displaySmall,
+                          ),
                         ),
                       ],
                     ),
@@ -393,24 +428,12 @@ class _TestingFinishState extends State<TestingFinish> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: widget.itemList.length,
                       itemBuilder: (context, i) {
-                        final nextItem = TestingItem(
-                          test: "",
-                          itemNumber: i + 1,
-                          itemName: widget.itemList[i],
-                          itemType: i < 10
-                              ? "static pattern"
-                              : i < 15
-                                  ? "texture"
-                                  : "rhythmic pattern",
-                          itemAccuracy: widget.accuracyList[i],
-                        );
-
                         return Column(
                           children: [
                             TestAnalyticsItem(
-                              itemName: nextItem.itemName,
-                              itemType: nextItem.itemType,
-                              itemAccuracy: nextItem.itemAccuracy,
+                              itemName: widget.itemList[i],
+                              answer: widget.answerList[i],
+                              isCorrect: i < 10 ? widget.answerList[i] == widget.itemList[i][0] : widget.answerList[i] == widget.itemList[i],
                             ),
                             const SizedBox(height: 12),
                           ],
@@ -496,10 +519,10 @@ class _TestingFinishState extends State<TestingFinish> {
         text = 'SP';
         break;
       case 1:
-        text = 'T';
+        text = 'RP';
         break;
       case 2:
-        text = 'RP';
+        text = 'T';
         break;
       default:
         text = '';

@@ -4,45 +4,82 @@ import 'package:rehab_flutter/config/theme/app_themes.dart';
 
 class TestAnalyticsItem extends StatelessWidget {
   final String itemName;
-  final String itemType;
-  final double itemAccuracy;
+  final String answer;
+  final bool isCorrect;
 
-  const TestAnalyticsItem({super.key, required this.itemName, required this.itemType, required this.itemAccuracy});
+  const TestAnalyticsItem({super.key, required this.itemName, required this.answer, required this.isCorrect});
 
   Widget _buildAccuracyIndicator() {
-    if (itemType == "static pattern") {
-      return Text(
-        "${itemAccuracy.toString()}%",
-        style: darkTextTheme().displaySmall,
-      );
-    }
-    return itemAccuracy == 100 ? const Icon(Icons.check_circle, color: Color(0xff01FF99), size: 24.0) : Icon(Icons.cancel, color: Colors.red.withOpacity(0.3), size: 24.0);
+    return Container(
+      width: 40.0, // Define the size of the square
+      height: 40.0,
+      decoration: BoxDecoration(
+        color: isCorrect ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3), // Background color based on isCorrect
+        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+      ),
+      child: Center(
+        child: Icon(
+          isCorrect ? Icons.check : Icons.close, // Icon based on isCorrect
+          color: Colors.white, // Icon color is always white
+          size: 24.0,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GlassContainer(
-      shadowStrength: 1,
-      shadowColor: Colors.black,
-      blur: 4,
-      color: Colors.white.withOpacity(0.25),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 12,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              itemName,
-              style: darkTextTheme().headlineSmall,
-              overflow: TextOverflow.ellipsis,
+    return Row(
+      children: [
+        Expanded(
+          flex: 4,
+          child: GlassContainer(
+            shadowStrength: 1,
+            shadowColor: Colors.black,
+            blur: 4,
+            color: Colors.white.withOpacity(0.25),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              child: Text(
+                itemName,
+                textAlign: TextAlign.center,
+                style: darkTextTheme().headlineSmall,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            _buildAccuracyIndicator(),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 4,
+          child: GlassContainer(
+            shadowStrength: 1,
+            shadowColor: Colors.black,
+            blur: 4,
+            color: Colors.white.withOpacity(0.25),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 12,
+              ),
+              child: Text(
+                answer,
+                textAlign: TextAlign.center,
+                style: darkTextTheme().headlineSmall,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 1,
+          child: _buildAccuracyIndicator(),
+        ),
+      ],
     );
   }
 }

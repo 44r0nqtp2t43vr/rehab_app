@@ -17,34 +17,59 @@ class TestingDataProvider {
     StaticPattern(name: "Horizontal Line, Fourth Row", pattern: "192192"),
   ];
 
+  static final List<String> twoPDOptions = ["0", "1", "2"];
+
+  static final List<StaticPattern> twoPDPatterns = [
+    StaticPattern(name: "1P, Left of Pinky", pattern: "004000", fingerNum: 0),
+    StaticPattern(name: "2P, Left of Pinky", pattern: "005000", fingerNum: 0),
+    StaticPattern(name: "1P, Right of Pinky", pattern: "000032", fingerNum: 0),
+    StaticPattern(name: "2P, Right of Pinky", pattern: "000040", fingerNum: 0),
+    StaticPattern(name: "1P, Left of Ring", pattern: "004000", fingerNum: 1),
+    StaticPattern(name: "2P, Left of Ring", pattern: "005000", fingerNum: 1),
+    StaticPattern(name: "1P, Right of Ring", pattern: "000032", fingerNum: 1),
+    StaticPattern(name: "2P, Right of Ring", pattern: "000040", fingerNum: 1),
+    StaticPattern(name: "1P, Left of Middle", pattern: "004000", fingerNum: 2),
+    StaticPattern(name: "2P, Left of Middle", pattern: "005000", fingerNum: 2),
+    StaticPattern(name: "1P, Right of Middle", pattern: "000032", fingerNum: 2),
+    StaticPattern(name: "2P, Right of Middle", pattern: "000040", fingerNum: 2),
+    StaticPattern(name: "1P, Left of Pointer", pattern: "004000", fingerNum: 3),
+    StaticPattern(name: "2P, Left of Pointer", pattern: "005000", fingerNum: 3),
+    StaticPattern(name: "1P, Right of Pointer", pattern: "000032", fingerNum: 3),
+    StaticPattern(name: "2P, Right of Pointer", pattern: "000040", fingerNum: 3),
+    StaticPattern(name: "1P, Left of Thumb", pattern: "004000", fingerNum: 4),
+    StaticPattern(name: "2P, Left of Thumb", pattern: "005000", fingerNum: 4),
+    StaticPattern(name: "1P, Right of Thumb", pattern: "000032", fingerNum: 4),
+    StaticPattern(name: "2P, Right of Thumb", pattern: "000040", fingerNum: 4),
+  ];
+
   static final List<ImageTexture> imageTextures = [
     ImageTexture(
-      name: 'bricks',
+      name: 'Bricks',
       image: 'assets/images/image_texture/images/bricks.png',
       texture: 'assets/images/image_texture/textures/bricks.png',
     ),
     ImageTexture(
-      name: 'corduroy',
+      name: 'Corduroy',
       image: 'assets/images/image_texture/images/corduroy.png',
       texture: 'assets/images/image_texture/textures/corduroy.png',
     ),
     ImageTexture(
-      name: 'ratan',
+      name: 'Ratan',
       image: 'assets/images/image_texture/images/ratan.png',
       texture: 'assets/images/image_texture/textures/ratan.png',
     ),
     ImageTexture(
-      name: 'sandpaper',
+      name: 'Sandpaper',
       image: 'assets/images/image_texture/images/sandpaper.png',
       texture: 'assets/images/image_texture/textures/sandpaper.png',
     ),
     ImageTexture(
-      name: 'steel',
+      name: 'Steel',
       image: 'assets/images/image_texture/images/steel.png',
       texture: 'assets/images/image_texture/textures/steel.png',
     ),
     ImageTexture(
-      name: 'tiles',
+      name: 'Tiles',
       image: 'assets/images/image_texture/images/tiles.png',
       texture: 'assets/images/image_texture/textures/tiles.png',
     ),

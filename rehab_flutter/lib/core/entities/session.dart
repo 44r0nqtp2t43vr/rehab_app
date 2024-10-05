@@ -1,134 +1,222 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rehab_flutter/core/entities/testing_item.dart';
 import 'package:rehab_flutter/core/enums/standard_therapy_enums.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 
 class Session {
   String sessionId;
-  DateTime date;
-
-  // Standard 1
-  String standardOneType;
-  String standardOneIntensity;
-  bool isStandardOneDone;
-
-  // Passive
-  String passiveIntensity;
-  bool isPassiveDone;
-
-  // Standard 2
-  String standardTwoType;
-  String standardTwoIntensity;
-  bool isStandardTwoDone;
-
-  // Tests
-  double? pretestScore;
-  double? posttestScore;
-
-  // Testing Items
-  List<TestingItem> items;
+  DateTime endDate;
+  List<String> dailyActivities;
+  List<String> testingItems;
 
   Session({
     required this.sessionId,
-    required this.date,
-    required this.standardOneType,
-    required this.standardOneIntensity,
-    required this.isStandardOneDone,
-    required this.passiveIntensity,
-    required this.isPassiveDone,
-    required this.standardTwoType,
-    required this.standardTwoIntensity,
-    required this.isStandardTwoDone,
-    required this.items,
-    this.pretestScore,
-    this.posttestScore,
+    required this.endDate,
+    required this.dailyActivities,
+    required this.testingItems,
   });
 
   // Static method to create a Session object with default values
   static Session empty() {
     return Session(
       sessionId: '',
-      date: DateTime.now(),
-      standardOneType: '',
-      standardOneIntensity: '',
-      isStandardOneDone: false,
-      passiveIntensity: '',
-      isPassiveDone: false,
-      standardTwoType: '',
-      standardTwoIntensity: '',
-      isStandardTwoDone: false,
-      items: [],
+      endDate: DateTime.now(),
+      dailyActivities: [],
+      testingItems: [],
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'sessionId': sessionId,
-      'date': date,
-      'standardOneType': standardOneType,
-      'standardOneIntensity': standardOneIntensity,
-      'isStandardOneDone': isStandardOneDone,
-      'passiveIntensity': passiveIntensity,
-      'isPassiveDone': isPassiveDone,
-      'standardTwoType': standardTwoType,
-      'standardTwoIntensity': standardTwoIntensity,
-      'isStandardTwoDone': isStandardTwoDone,
-      'pretestScore': pretestScore,
-      'posttestScore': posttestScore,
+      'endDate': endDate,
+      'dailyActivities': dailyActivities,
+      'testingItems': testingItems,
     };
   }
 
-  factory Session.fromMap(Map<String, dynamic> map, {List<TestingItem> items = const []}) {
+  factory Session.fromMap(Map<String, dynamic> map) {
     return Session(
       sessionId: map['sessionId'],
-      date: (map['date'] as Timestamp).toDate(),
-      standardOneType: map['standardOneType'],
-      standardOneIntensity: map['standardOneIntensity'],
-      isStandardOneDone: map['isStandardOneDone'],
-      passiveIntensity: map['passiveIntensity'],
-      isPassiveDone: map['isPassiveDone'],
-      standardTwoType: map['standardTwoType'],
-      standardTwoIntensity: map['standardTwoIntensity'],
-      isStandardTwoDone: map['isStandardTwoDone'],
-      pretestScore: map['pretestScore'],
-      posttestScore: map['posttestScore'],
-      items: items,
+      endDate: (map['endDate'] as Timestamp).toDate(),
+      dailyActivities: List<String>.from(map['dailyActivities'] ?? []),
+      testingItems: List<String>.from(map['testingItems'] ?? []),
     );
   }
 
-  List<bool> getSessionConditions() {
+  String? getDayActivities(String dayString) {
+    final dayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(dayString), orElse: () => "");
+    return dayActivities.isEmpty ? null : dayActivities;
+  }
+
+  String? getTodayActivities() {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
+    return todayActivities.isEmpty ? null : todayActivities;
+  }
+
+  int getTodayActivitiesIndex() {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    return dailyActivities.indexWhere((daString) => daString.startsWith(todayString));
+  }
+
+  void updateTodayActivities(String newTodayActivities) {
+    dailyActivities[getTodayActivitiesIndex()] = newTodayActivities;
+  }
+
+  void updateTodayActivitiesTherapy(bool isStandardOne, bool isPassive) {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
+    final todayActivitiesIndex = dailyActivities.indexWhere((daString) => daString.startsWith(todayString));
+    final todayActivitiesList = todayActivities.split('_');
+
+    if (isStandardOne) {
+      todayActivitiesList[3] = "tff";
+    } else if (isPassive) {
+      todayActivitiesList[3] = "ttf";
+    } else {
+      todayActivitiesList[3] = "ttt";
+    }
+
+    final updatedTodayActivities = todayActivitiesList.join("_");
+    dailyActivities[todayActivitiesIndex] = updatedTodayActivities;
+  }
+
+  List<bool> getDayActivitiesConditions(String dayString) {
+    final dayActivities = getDayActivities(dayString);
+
+    if (dayActivities == null || dayActivities.isEmpty) {
+      return [false, false, false];
+    }
+
+    final dayActivitiesBools = dayActivities.split('_')[3];
+
     return [
-      pretestScore != null,
-      isStandardOneDone,
-      isPassiveDone,
-      isStandardTwoDone,
-      posttestScore != null,
+      dayActivitiesBools[0] == 't' ? true : false,
+      dayActivitiesBools[1] == 't' ? true : false,
+      dayActivitiesBools[2] == 't' ? true : false,
     ];
   }
 
+  List<bool> getDayActivitiesConditionsFromDayActivities(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return [false, false, false];
+    }
+
+    final dayActivitiesBools = dayActivities.split('_')[3];
+
+    return [
+      dayActivitiesBools[0] == 't' ? true : false,
+      dayActivitiesBools[1] == 't' ? true : false,
+      dayActivitiesBools[2] == 't' ? true : false,
+    ];
+  }
+
+  List<bool> getTodayActivitiesConditions() {
+    final todayString = formatDateMMDDYYYY(DateTime.now());
+    final todayActivities = dailyActivities.firstWhere((daString) => daString.startsWith(todayString), orElse: () => "");
+
+    if (todayActivities.isEmpty) {
+      return [false, false, false];
+    }
+
+    final todayActivitiesBools = todayActivities.split('_')[3];
+
+    return [
+      todayActivitiesBools[0] == 't' ? true : false,
+      todayActivitiesBools[1] == 't' ? true : false,
+      todayActivitiesBools[2] == 't' ? true : false,
+    ];
+  }
+
+  List<String> getDayActivitiesDetailsFromDayActivities(String dayActivities) {
+    final dayActivitiesList = dayActivities.split('_');
+    final standardOneString = "${dayActivitiesList[1].substring(0, 3)}-${dayActivitiesList[1][dayActivitiesList[1].length - 1]}";
+    final standardTwoString = "${dayActivitiesList[2].substring(0, 3)}-${dayActivitiesList[2][dayActivitiesList[2].length - 1]}";
+    final passiveString = "p-${standardOneString[standardOneString.length - 1]}";
+
+    return [standardOneString, passiveString, standardTwoString];
+  }
+
   double getSessionPercentCompletion() {
-    final List<bool> conditions = getSessionConditions();
+    double sum = 0;
+    for (var dailyActivity in dailyActivities) {
+      final activityBools = dailyActivity.split("_")[3];
+      final tCount = activityBools.split('').where((char) => char == 't').length;
+
+      double percentage = (tCount / activityBools.length) * 100;
+      sum += percentage;
+    }
+
+    return sum / dailyActivities.length;
+  }
+
+  double getTodayActivitiesPercentCompletion() {
+    final List<bool> conditions = getTodayActivitiesConditions();
     return conditions.where((condition) => condition == true).length * (100 / conditions.length);
   }
 
-  StandardTherapy getStandardOneType() {
-    return stringToStandardTherapyEnum(standardOneType);
+  StandardTherapy getStandardOneType(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return StandardTherapy.pod;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[1];
+    return stringToStandardTherapyEnum(dayActivitiesStandardOne.substring(0, 3));
   }
 
-  StandardTherapy getStandardTwoType() {
-    return stringToStandardTherapyEnum(standardTwoType);
+  StandardTherapy getStandardTwoType(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return StandardTherapy.pod;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[2];
+    return stringToStandardTherapyEnum(dayActivitiesStandardOne.substring(0, 3));
+  }
+
+  int getStandardOneIntensity(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return 1;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[1];
+    return int.parse(dayActivitiesStandardOne[3]);
+  }
+
+  int getStandardTwoIntensity(String dayActivities) {
+    if (dayActivities.isEmpty) {
+      return 1;
+    }
+
+    final dayActivitiesStandardOne = dayActivities.split('_')[2];
+    return int.parse(dayActivitiesStandardOne[3]);
+  }
+
+  DateTime? getTestTakenDate() {
+    if (testingItems.isEmpty) {
+      return null;
+    }
+
+    return parseMMDDYYYY(testingItems[0].split("_")[0]);
+  }
+
+  double getTestScore() {
+    if (testingItems.isEmpty) {
+      return 0;
+    }
+
+    int correctAnswersCount = 0;
+    for (int i = 0; i < testingItems.length; i++) {
+      final detailsList = testingItems[i].split("_");
+      final correctAnswer = detailsList[2];
+      final answer = detailsList[3];
+
+      if (i < 10) {
+        correctAnswersCount += correctAnswer[0] == answer ? 1 : 0;
+      } else {
+        correctAnswersCount += correctAnswer == answer ? 1 : 0;
+      }
+    }
+
+    return (correctAnswersCount / testingItems.length) * 100;
   }
 }
-// Session Provider
-// Sessions are categorized by 1, 2, 3, 4, and 5
-// 1 is each standard therapy is 1 and the passive therapy is 4 minutes
-// 2 is one standard therapy is 1, the other standard therapy is 2 and the passive therapy is 8 minutes
-// 3 is each standard therapy is medium and the passive therapy is 12 minutes
-// 4 is one medium, one hard standard therapy and the passive therapy is 16 minutes
-// 5 is each standard therapy is hard and the passive therapy is 20 minutes
-// Each session is determined by the pretest.
-// The pretest is a score from 0 to 100.
-// if pretest is 0 to 20, the session is easy
-// if pretest is 21 to 40, the session is easy-medium
-// if pretest is 41 to 60, the session is medium
-// if pretest is 61 to 80, the session is medium-hard
-// if pretest is 81 to 100, the session is hard

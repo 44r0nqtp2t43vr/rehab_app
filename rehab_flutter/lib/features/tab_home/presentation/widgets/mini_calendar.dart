@@ -1,21 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
+import 'package:rehab_flutter/core/entities/plan.dart';
+import 'package:rehab_flutter/core/entities/session.dart';
+import 'package:rehab_flutter/core/resources/formatters.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class MiniCalendar extends StatelessWidget {
-  final AppUser? user;
+class MiniCalendar extends StatefulWidget {
   final DateTime focusedDay;
-  final Map<String, Color?> dateColorsMap;
+  final List<Plan> plans;
   final Function(DateTime) onPageChanged;
 
-  const MiniCalendar(
-      {super.key,
-      required this.user,
-      required this.dateColorsMap,
-      required this.focusedDay,
-      required this.onPageChanged});
+  const MiniCalendar({
+    super.key,
+    required this.plans,
+    required this.focusedDay,
+    required this.onPageChanged,
+  });
+
+  @override
+  State<MiniCalendar> createState() => _MiniCalendarState();
+}
+
+class _MiniCalendarState extends State<MiniCalendar> {
+  late Map<String, Color?> dateColorsMap;
+
+  Map<String, Color?> getDateColorsMapFromPlans(List<Plan> plans) {
+    Map<String, Color?> dateColorsMap = {};
+    List<Session> sessions = plans.expand((plan) => plan.sessions).toList();
+
+    for (var sesh in sessions) {
+      for (int i = 0; i < sesh.dailyActivities.length; i++) {
+        final String dateString = sesh.dailyActivities[i].split("_")[0];
+        final List<bool> conditions = sesh.getDayActivitiesConditions(dateString);
+
+        if (conditions[2]) {
+          dateColorsMap[dateString] = heatmap5;
+        } else if (conditions[1]) {
+          dateColorsMap[dateString] = heatmap3;
+        } else if (conditions[0]) {
+          dateColorsMap[dateString] = heatmap1;
+        } else {
+          dateColorsMap[dateString] = null;
+        }
+      }
+    }
+
+    return dateColorsMap;
+  }
+
+  @override
+  void initState() {
+    dateColorsMap = getDateColorsMapFromPlans(widget.plans);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +65,10 @@ class MiniCalendar extends StatelessWidget {
       child: TableCalendar(
         firstDay: DateTime.utc(2024, 1, 1),
         lastDay: DateTime.utc(2024, 12, 31),
-        focusedDay: focusedDay,
+        focusedDay: widget.focusedDay,
         calendarFormat: CalendarFormat.month,
         headerVisible: false,
-        onPageChanged: onPageChanged,
+        onPageChanged: widget.onPageChanged,
         calendarStyle: CalendarStyle(
           outsideDaysVisible: false,
           tablePadding: const EdgeInsets.all(16),
@@ -54,7 +92,7 @@ class MiniCalendar extends StatelessWidget {
         calendarBuilders: CalendarBuilders(
           // Customize the appearance of individual calendar cells
           defaultBuilder: (context, date, _) {
-            final dateString = "${date.year}${date.month}${date.day}";
+            final dateString = formatDateMMDDYYYY(date);
             final color = dateColorsMap[dateString];
 
             if (color != null) {
@@ -73,9 +111,7 @@ class MiniCalendar extends StatelessWidget {
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(
-                          color: color == heatmap4 || color == heatmap5
-                              ? Colors.white.withOpacity(0.3)
-                              : Colors.black.withOpacity(0.3),
+                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3),
                         ),
                       ),
                     ),
@@ -98,9 +134,7 @@ class MiniCalendar extends StatelessWidget {
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(
-                          color: color == heatmap4 || color == heatmap5
-                              ? Colors.white.withOpacity(0.3)
-                              : Colors.black.withOpacity(0.3),
+                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3),
                         ),
                       ),
                     ),
@@ -139,7 +173,7 @@ class MiniCalendar extends StatelessWidget {
             );
           },
           todayBuilder: (context, date, _) {
-            final dateString = "${date.year}${date.month}${date.day}";
+            final dateString = formatDateMMDDYYYY(date);
             final color = dateColorsMap[dateString];
 
             if (color != null) {
@@ -158,9 +192,7 @@ class MiniCalendar extends StatelessWidget {
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(
-                          color: color == heatmap4 || color == heatmap5
-                              ? Colors.white.withOpacity(0.3)
-                              : Colors.black.withOpacity(0.3),
+                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3),
                         ),
                       ),
                     ),

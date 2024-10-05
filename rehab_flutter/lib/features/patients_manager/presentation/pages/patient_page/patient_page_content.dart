@@ -17,8 +17,6 @@ import 'package:rehab_flutter/features/patients_manager/presentation/widgets/pat
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/therapy_calendar.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_state.dart';
-import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
-import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
@@ -167,10 +165,10 @@ class _PatientPageContentState extends State<PatientPageContent> {
                             shadowColor: Colors.black,
                             blur: 4,
                             color: Colors.white.withOpacity(0.25),
-                            child: BlocConsumer<PatientCurrentPlanBloc, PatientCurrentPlanState>(
+                            child: BlocConsumer<PatientPlansBloc, PatientPlansState>(
                               listener: (context, state) => setState(() {}),
                               builder: (context, state) {
-                                if (state is PatientCurrentPlanLoading) {
+                                if (state is PatientPlansLoading) {
                                   return Container(
                                     height: 240,
                                     decoration: BoxDecoration(
@@ -180,8 +178,8 @@ class _PatientPageContentState extends State<PatientPageContent> {
                                   );
                                 }
 
-                                if (state is PatientCurrentPlanDone) {
-                                  return ActivityChartCard(currentPlan: state.currentPlan);
+                                if (state is PatientPlansDone) {
+                                  return ActivityChartCard(plans: state.plans);
                                 }
 
                                 return Container(

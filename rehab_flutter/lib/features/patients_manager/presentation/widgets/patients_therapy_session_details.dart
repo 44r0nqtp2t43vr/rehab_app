@@ -11,7 +11,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<bool> conditions = session.getSessionConditions();
+    List<bool> conditions = session.getDayActivitiesConditions("");
 
     return GlassContainer(
       blur: 10,
@@ -75,7 +75,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                session.pretestScore!.toStringAsFixed(1),
+                                                // session.pretestScore!.toStringAsFixed(1),
+                                                "no score",
                                                 style: darkTextTheme().headlineLarge,
                                               ),
                                               Text(
@@ -104,7 +105,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                !conditions[4] ? '0' : session.posttestScore!.toStringAsFixed(1),
+                                                // !conditions[4] ? '0' : session.posttestScore!.toStringAsFixed(1),
+                                                "no score",
                                                 style: darkTextTheme().headlineLarge,
                                               ),
                                               Text(
@@ -151,7 +153,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                     style: darkTextTheme().headlineSmall,
                                                   ),
                                                   Text(
-                                                    session.standardOneType,
+                                                    // session.standardOneType,
+                                                    "no type",
                                                     style: darkTextTheme().displaySmall,
                                                   ),
                                                 ],
@@ -164,7 +167,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    session.standardOneIntensity,
+                                                    // session.standardOneIntensity,
+                                                    "no intensity",
                                                     style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
@@ -208,7 +212,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    session.passiveIntensity,
+                                                    // session.passiveIntensity,
+                                                    "no intensity",
                                                     style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
@@ -256,7 +261,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                     style: darkTextTheme().headlineSmall,
                                                   ),
                                                   Text(
-                                                    session.standardTwoType,
+                                                    // session.standardTwoType,
+                                                    "no type",
                                                     style: darkTextTheme().displaySmall,
                                                   ),
                                                 ],
@@ -269,7 +275,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    session.standardTwoIntensity,
+                                                    // session.standardTwoIntensity,
+                                                    "no intensity",
                                                     style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
