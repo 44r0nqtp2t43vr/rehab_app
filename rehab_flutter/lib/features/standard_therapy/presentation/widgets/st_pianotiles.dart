@@ -118,8 +118,10 @@ class _STPianoTilesState extends State<STPianoTiles> {
     audioPlayer = AudioPlayer();
     isPlaying = true;
 
+    // Start playing the audio
     fetchAndPlayAudio();
 
+    // Load blocks from the song's metadata
     loadBlocks(widget.song.metaDataUrl);
 
     positionSubscription = audioPlayer.onPositionChanged.listen((position) {
@@ -134,7 +136,10 @@ class _STPianoTilesState extends State<STPianoTiles> {
               currentIndex = i;
               currentPositionSec = position.inSeconds.toDouble();
               currentPositionMil = position.inMilliseconds.toDouble();
-              blocksToRender = blocks.sublist(currentIndex, currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6);
+              blocksToRender = blocks.sublist(
+                currentIndex,
+                currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6,
+              );
             });
 
             break;
@@ -142,43 +147,39 @@ class _STPianoTilesState extends State<STPianoTiles> {
         }
       }
     });
-
-    audioPlayer.onPlayerComplete.listen((event) => widget.submitCallback());
   }
 
   Future<void> fetchAndPlayAudio() async {
-    int retries = 3;
+    final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
+    final audioUrl = await firebaseRepository.getAudioUrl(widget.song.audioSource);
 
-    while (retries > 0) {
-      try {
-        final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
-        final audioUrl = await firebaseRepository.getAudioUrl(widget.song.audioSource);
+    try {
+      await audioPlayer.setSource(UrlSource(audioUrl));
+      await audioPlayer.seek(const Duration(seconds: 0));
+      await audioPlayer.resume();
 
-        audioPlayer.setSource(UrlSource(widget.song.audioSource)).then((_) {
-          audioPlayer.seek(const Duration(seconds: 0));
-          audioPlayer.resume();
-        });
+      // Audio has successfully started playing
+      _listenToPlayerCompletion();
 
-        await audioPlayer.play(UrlSource(audioUrl), position: const Duration(seconds: 0));
-
-        if (!mounted) return;
-        setState(() {
-          isLoading = false;
-        });
-        return;
-      } catch (e) {
-        print('Error: $e');
-        retries--;
-        if (retries == 0) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Failed to load audio. Please try again."),
-            ),
-          );
-        }
-      }
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to load audio. Please try again."),
+        ),
+      );
     }
+  }
+
+  void _listenToPlayerCompletion() {
+    // Listen to when the audio completes only if it was successfully played
+    audioPlayer.onPlayerComplete.listen((event) {
+      widget.submitCallback();
+    });
   }
 
   @override

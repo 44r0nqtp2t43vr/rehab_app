@@ -37,8 +37,7 @@ class STVisualizer extends StatefulWidget {
   State<STVisualizer> createState() => _STVisualizerState();
 }
 
-class _STVisualizerState extends State<STVisualizer>
-    with SingleTickerProviderStateMixin {
+class _STVisualizerState extends State<STVisualizer> with SingleTickerProviderStateMixin {
   //  controllers
   late AudioPlayer audioPlayer;
   late AnimationController _controller;
@@ -110,8 +109,7 @@ class _STVisualizerState extends State<STVisualizer>
     ];
   }
 
-  final GlobalKey<LineAudioVisualizerState> visualizerKey =
-      GlobalKey<LineAudioVisualizerState>();
+  final GlobalKey<LineAudioVisualizerState> visualizerKey = GlobalKey<LineAudioVisualizerState>();
 
   @override
   void initState() {
@@ -123,22 +121,16 @@ class _STVisualizerState extends State<STVisualizer>
     )..addListener(() {
         setState(() {});
       });
+
     audioPlayer = AudioPlayer();
     isPlaying = true;
+
     // Start playing the audio
-
     fetchAndPlayAudio();
-    // audioPlayer.setSource(AssetSource(widget.song.audioSource)).then((_) {
-    //   audioPlayer.seek(const Duration(seconds: 0));
-    //   audioPlayer.resume();
-    // });
-
-    // audioPlayer.play(AssetSource(widget.song.audioSource),
-    //     position: const Duration(seconds: 0));
 
     _controller.repeat(reverse: true);
+
     circles = List.generate(16, (index) {
-      // Assuming you want 16 blocks as per your UI setup
       return RayPainterState(
         id: '$index',
         progress: _controller.value,
@@ -152,6 +144,7 @@ class _STVisualizerState extends State<STVisualizer>
         circleSize: 25.0,
       );
     });
+
     _controller.addListener(() {
       setState(() {
         // Update the progress value for each circle
@@ -163,59 +156,49 @@ class _STVisualizerState extends State<STVisualizer>
 
     // Load blocks from forest_of_blocks.json
     loadBlocks(widget.song.metaDataUrl);
-    // Subscribe to the onPositionChanged event
 
+    // Subscribe to the onPositionChanged event
     positionSubscription = audioPlayer.onPositionChanged.listen((position) {
       setState(() {
         currentPositionSec = position.inSeconds.toDouble();
       });
 
-      useClosestBlock(
-          position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
+      useClosestBlock(position.inMilliseconds / 1000.0); // Convert milliseconds to seconds
       visualizerKey.currentState?.updateFrequencies(getFrequencies());
-    });
-
-    audioPlayer.onPlayerComplete.listen((_) {
-      widget.submitCallback();
     });
   }
 
   Future<void> fetchAndPlayAudio() async {
-    int retries = 3;
+    final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
+    final audioUrl = await firebaseRepository.getAudioUrl(widget.song.audioSource);
 
-    while (retries > 0) {
-      try {
-        final firebaseRepository = FirebaseRepositoryImpl(
-            FirebaseFirestore.instance, FirebaseStorage.instance);
-        final audioUrl =
-            await firebaseRepository.getAudioUrl(widget.song.audioSource);
+    try {
+      await audioPlayer.setSource(UrlSource(audioUrl));
+      await audioPlayer.seek(const Duration(seconds: 0));
+      await audioPlayer.resume();
 
-        audioPlayer.setSource(UrlSource(widget.song.audioSource)).then((_) {
-          audioPlayer.seek(const Duration(seconds: 0));
-          audioPlayer.resume();
-        });
+      // Audio has successfully started playing
+      _listenToPlayerCompletion();
 
-        await audioPlayer.play(UrlSource(audioUrl),
-            position: const Duration(seconds: 0));
-
-        if (!mounted) return;
-        setState(() {
-          isLoading = false;
-        });
-        return;
-      } catch (e) {
-        print('Error: $e');
-        retries--;
-        if (retries == 0) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Failed to load audio. Please try again."),
-            ),
-          );
-        }
-      }
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to load audio. Please try again."),
+        ),
+      );
     }
+  }
+
+  void _listenToPlayerCompletion() {
+    // Listen to when the audio completes only if it was successfully played
+    audioPlayer.onPlayerComplete.listen((_) {
+      widget.submitCallback();
+    });
   }
 
   void _pauseAnimation() {
@@ -385,14 +368,11 @@ class _STVisualizerState extends State<STVisualizer>
                       ),
                       IconButton(
                         icon: Icon(
-                          isPlaying
-                              ? CupertinoIcons.pause_fill
-                              : CupertinoIcons.play_arrow_solid,
+                          isPlaying ? CupertinoIcons.pause_fill : CupertinoIcons.play_arrow_solid,
                           size: 40,
                           color: Colors.white,
                         ),
-                        onPressed: () =>
-                            isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                        onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
                       ),
                       IconButton(
                         icon: Icon(
@@ -432,9 +412,7 @@ class _STVisualizerState extends State<STVisualizer>
     List<Widget> rows = [];
     int itemsPerRow = 4; // Number of RayPainters per row
     for (int i = 0; i < circles.length; i += itemsPerRow) {
-      List<Widget> rowItems = circles
-          .sublist(i, min(i + itemsPerRow, circles.length))
-          .map((circleState) {
+      List<Widget> rowItems = circles.sublist(i, min(i + itemsPerRow, circles.length)).map((circleState) {
         return CustomPaint(
           painter: RayPainter(
             progress: circleState.progress,
@@ -451,16 +429,13 @@ class _STVisualizerState extends State<STVisualizer>
 
       rows.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: rowItems),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: rowItems),
       ));
     }
     return rows;
   }
 
-  void updateCircleState(int index, Color color,
-      double size /*double width, double height*/, int activeValue) {
+  void updateCircleState(int index, Color color, double size /*double width, double height*/, int activeValue) {
     setState(() {
       circles[index].color = color;
       circles[index].circleWidth = size;
@@ -471,8 +446,7 @@ class _STVisualizerState extends State<STVisualizer>
     lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
   }
 
-  void resetAllCircles(Color color, double size /*double width, double height*/,
-      int activeValue) {
+  void resetAllCircles(Color color, double size /*double width, double height*/, int activeValue) {
     setState(() {
       for (var circle in circles) {
         circle.color = color;
@@ -492,8 +466,7 @@ class _STVisualizerState extends State<STVisualizer>
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color =
-          isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
+      circles[squares[i]].color = isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
@@ -505,8 +478,7 @@ class _STVisualizerState extends State<STVisualizer>
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color =
-          isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
+      circles[squares[i]].color = isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
       activeValues[squares[i]] = activeValue;
     }
   }
@@ -521,12 +493,10 @@ class _STVisualizerState extends State<STVisualizer>
     if (blocks.isEmpty) return;
 
     for (int i = 0; i < blocks.length; i++) {
-      if (i == blocks.length - 1 ||
-          (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
+      if (i == blocks.length - 1 || (blocks[i].time <= positionSec && blocks[i + 1].time > positionSec)) {
         if (i != currentIndex) {
           setState(() {
-            prevIndex =
-                currentIndex; // Save the current index as previous before updating
+            prevIndex = currentIndex; // Save the current index as previous before updating
             currentIndex = i; // Now update the current index
           });
           break;
@@ -550,21 +520,12 @@ class _STVisualizerState extends State<STVisualizer>
       print("Time: ${blocks[currentIndex].time}");
       print("Position: $positionSec");
 
-      if (noteOnset == 1 &&
-          blocks[prevIndex].noteOnset == 0 &&
-          blocks[prevIndex - 1].noteOnset == 0 &&
-          blocks[prevIndex - 2].noteOnset == 0 &&
-          blocks[prevIndex - 3].noteOnset == 0) {
+      if (noteOnset == 1 && blocks[prevIndex].noteOnset == 0 && blocks[prevIndex - 1].noteOnset == 0 && blocks[prevIndex - 2].noteOnset == 0 && blocks[prevIndex - 3].noteOnset == 0) {
         for (int i = 0; i < activeValues.length; i++) {
           activeValues[i] = 0;
         }
         int delay = 0; // Initial delay is 0ms for the first column
-        List<List<int>> columns = [
-          firstCol,
-          secondCol,
-          thirdCol,
-          fourthCol
-        ]; // List of column groups for iteration
+        List<List<int>> columns = [firstCol, secondCol, thirdCol, fourthCol]; // List of column groups for iteration
 
         for (var column in columns) {
           Timer(Duration(milliseconds: delay), () {
@@ -590,14 +551,11 @@ class _STVisualizerState extends State<STVisualizer>
       } else if (activeValues.every((value) => value == 0)) {
         updateCircleProperties(bassSquare, getBassBoolValue(bass));
         updateCircleProperties(midRangeSquare, getMidrangeBoolValue(midRange));
-        updateCircleProperties(
-            lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
+        updateCircleProperties(lowerMidrangeSquare, getLowerMidrangeBoolValue(lowerMidrange));
         updateCircleProperties(subBassSquare, getSubBassBoolValue(subBass));
         updateCircleProperties(presenceSquare, getPresenceBoolValue(presence));
-        updateCircleProperties(
-            higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
-        updateCircleProperties(
-            brillianceSquare, getBrillianceBoolValue(brilliance));
+        updateCircleProperties(higherMidrangeSquare, getUpperMidrangeBoolValue(higherMidrange));
+        updateCircleProperties(brillianceSquare, getBrillianceBoolValue(brilliance));
       }
 
       lastSentPattern = sendUpdatedPattern(activeValues, lastSentPattern);
