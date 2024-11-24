@@ -52,6 +52,8 @@ class _STPianoTilesState extends State<STPianoTiles> {
   double currentPositionSec = 0.0;
   double currentPositionMil = 0.0;
 
+  String lastSentPattern = '';
+
   void _pauseAnimation() {
     audioPlayer.pause();
     setState(() {
@@ -103,11 +105,23 @@ class _STPianoTilesState extends State<STPianoTiles> {
           data = "<000000000000000000000000000000>";
       }
 
-      sl<BluetoothBloc>().add(WriteDataEvent(data));
-      await Future.delayed(const Duration(milliseconds: 40));
-      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      if (lastSentPattern == data) {
+        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+        await Future.delayed(const Duration(milliseconds: 20));
+        sl<BluetoothBloc>().add(WriteDataEvent(data));
+        setState(() {
+          lastSentPattern = data;
+        });
+      } else {
+        sl<BluetoothBloc>().add(WriteDataEvent(data));
+        setState(() {
+          lastSentPattern = data;
+        });
+      }
     } else {
-      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      if (lastSentPattern != "<000000000000000000000000000000>") {
+        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      }
     }
   }
 
