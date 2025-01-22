@@ -38,7 +38,7 @@ class Calendar extends StatelessWidget {
         children: [
           TableCalendar(
             firstDay: DateTime.utc(2024, 1, 1),
-            lastDay: DateTime.utc(2024, 12, 31),
+            lastDay: DateTime.utc(2025, 12, 31),
             focusedDay: focusedDay,
             calendarFormat: calendarFormat,
             selectedDayPredicate: selectedDayPredicate,
