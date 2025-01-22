@@ -64,7 +64,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
       color: Colors.white.withOpacity(0.25),
       child: TableCalendar(
         firstDay: DateTime.utc(2024, 1, 1),
-        lastDay: DateTime.utc(2024, 12, 31),
+        lastDay: DateTime.utc(2025, 12, 31),
         focusedDay: widget.focusedDay,
         calendarFormat: CalendarFormat.month,
         headerVisible: false,
