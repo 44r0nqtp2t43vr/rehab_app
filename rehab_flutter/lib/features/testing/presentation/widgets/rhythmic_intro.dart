@@ -174,7 +174,8 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
                   : const SizedBox(),
 
               ElevatedButton(
-                onPressed: () => widget.onProceed(TestingState.rhythmicPatterns),
+                // onPressed: () => widget.onProceed(TestingState.rhythmicPatterns),
+                onPressed: () {},
                 style: ButtonStyle(
                   foregroundColor: WidgetStateProperty.all<Color>(
                     Colors.white,

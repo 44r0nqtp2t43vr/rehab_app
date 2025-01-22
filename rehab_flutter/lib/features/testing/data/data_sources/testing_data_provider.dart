@@ -1,6 +1,7 @@
 import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/tdt_pair.dart';
 
 class TestingDataProvider {
   static final List<StaticPattern> staticPatterns = [
@@ -74,6 +75,25 @@ class TestingDataProvider {
       texture: 'assets/images/image_texture/textures/tiles.png',
     ),
   ];
+
+  static final List<TdtPair> tdtPairs = _generatePairs();
+
+  static List<TdtPair> _generatePairs() {
+    final List<TdtPair> generatedPairs = [];
+    for (int i = 0; i < imageTextures.length; i++) {
+      for (int j = i + 1; j < imageTextures.length; j++) {
+        generatedPairs.add(TdtPair(
+          distractor: imageTextures[i],
+          answer: imageTextures[j],
+        ));
+        generatedPairs.add(TdtPair(
+          distractor: imageTextures[j],
+          answer: imageTextures[i],
+        ));
+      }
+    }
+    return generatedPairs;
+  }
 
   static final List<RhythmicPattern> rhythmicPatterns = [
     RhythmicPattern(

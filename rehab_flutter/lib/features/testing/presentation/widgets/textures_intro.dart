@@ -156,7 +156,8 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
                     : const SizedBox(),
 
                 ElevatedButton(
-                  onPressed: () => widget.onProceed(TestingState.textures),
+                  // onPressed: () => widget.onProceed(TestingState.textures),
+                  onPressed: () {},
                   style: ButtonStyle(
                     foregroundColor: WidgetStateProperty.all<Color>(
                       Colors.white,

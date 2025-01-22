@@ -79,10 +79,11 @@ class _TestingFinishState extends State<TestingFinish> {
     // Calculate the averages
     double overallAverage = calculateAverage(accuracies);
     double firstTenAverage = calculateAverage(accuracies.sublist(0, 10));
-    double elevenToFifteenAverage = calculateAverage(accuracies.sublist(10, 15));
-    double sixteenToTwentyAverage = calculateAverage(accuracies.sublist(15, 20));
+    // double elevenToFifteenAverage = calculateAverage(accuracies.sublist(10, 15));
+    // double sixteenToTwentyAverage = calculateAverage(accuracies.sublist(15, 20));
+    double elevenToTwentyAverage = calculateAverage(accuracies.sublist(10, 20));
 
-    return [overallAverage, firstTenAverage, elevenToFifteenAverage, sixteenToTwentyAverage];
+    return [overallAverage, firstTenAverage, elevenToTwentyAverage];
   }
 
   @override
@@ -91,7 +92,8 @@ class _TestingFinishState extends State<TestingFinish> {
       if (index < 10) {
         return widget.answerList[index] == widget.itemList[index][0] ? 100.00 : 0.00;
       }
-      return widget.answerList[index] == widget.itemList[index] ? 100.00 : 0.00;
+      // return widget.answerList[index] == widget.itemList[index] ? 100.00 : 0.00;
+      return widget.answerList[index] == widget.itemList[index].split(" ")[0] ? 100.00 : 0.00;
     });
     scores = calculateAverages(accuracyList);
     _submitTest();
@@ -271,19 +273,19 @@ class _TestingFinishState extends State<TestingFinish> {
                                                       color: const Color(0xFF49ffb6),
                                                     ),
                                                   ]),
-                                                  BarChartGroupData(x: 2, barRods: [
-                                                    BarChartRodData(
-                                                      borderRadius: const BorderRadius.only(
-                                                        topLeft: Radius.circular(4),
-                                                        topRight: Radius.circular(4),
-                                                        bottomLeft: Radius.zero,
-                                                        bottomRight: Radius.zero,
-                                                      ),
-                                                      width: 20,
-                                                      toY: scores[3],
-                                                      color: const Color(0xFF00b66d),
-                                                    ),
-                                                  ]),
+                                                  // BarChartGroupData(x: 2, barRods: [
+                                                  //   BarChartRodData(
+                                                  //     borderRadius: const BorderRadius.only(
+                                                  //       topLeft: Radius.circular(4),
+                                                  //       topRight: Radius.circular(4),
+                                                  //       bottomLeft: Radius.zero,
+                                                  //       bottomRight: Radius.zero,
+                                                  //     ),
+                                                  //     width: 20,
+                                                  //     toY: scores[3],
+                                                  //     color: const Color(0xFF00b66d),
+                                                  //   ),
+                                                  // ]),
                                                 ],
                                               ),
                                             ),
@@ -314,7 +316,7 @@ class _TestingFinishState extends State<TestingFinish> {
                                                     const Color(0xFF49ffb6),
                                                   ),
                                                   const Text(
-                                                    'RP: Rhythmic Patterns',
+                                                    'TD: Tactile Discrimination',
                                                     style: TextStyle(
                                                       fontFamily: 'Sailec Medium',
                                                       fontSize: 8,
@@ -323,24 +325,24 @@ class _TestingFinishState extends State<TestingFinish> {
                                                   ),
                                                 ],
                                               ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  _buildLegendItem(
-                                                    const Color(0xFF00b66d),
-                                                  ),
-                                                  const Text(
-                                                    'T: Textures',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Sailec Medium',
-                                                      fontSize: 8,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                              // const SizedBox(
+                                              //   height: 8,
+                                              // ),
+                                              // Row(
+                                              //   children: [
+                                              //     _buildLegendItem(
+                                              //       const Color(0xFF00b66d),
+                                              //     ),
+                                              //     const Text(
+                                              //       'T: Textures',
+                                              //       style: TextStyle(
+                                              //         fontFamily: 'Sailec Medium',
+                                              //         fontSize: 8,
+                                              //         color: Colors.white,
+                                              //       ),
+                                              //     ),
+                                              //   ],
+                                              // ),
                                             ],
                                           ),
                                         ],
@@ -433,7 +435,7 @@ class _TestingFinishState extends State<TestingFinish> {
                             TestAnalyticsItem(
                               itemName: widget.itemList[i],
                               answer: widget.answerList[i],
-                              isCorrect: i < 10 ? widget.answerList[i] == widget.itemList[i][0] : widget.answerList[i] == widget.itemList[i],
+                              isCorrect: i < 10 ? widget.answerList[i] == widget.itemList[i][0] : widget.answerList[i] == widget.itemList[i].split(" ")[0],
                             ),
                             const SizedBox(height: 12),
                           ],
@@ -516,13 +518,10 @@ class _TestingFinishState extends State<TestingFinish> {
     String text;
     switch (value.toInt()) {
       case 0:
-        text = 'SP';
+        text = '2PD';
         break;
       case 1:
-        text = 'RP';
-        break;
-      case 2:
-        text = 'T';
+        text = 'TD';
         break;
       default:
         text = '';

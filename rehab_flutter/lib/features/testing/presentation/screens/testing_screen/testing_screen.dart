@@ -7,18 +7,14 @@ import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_bloc.dart';
 import 'package:rehab_flutter/core/bloc/bluetooth/bluetooth_event.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_bloc.dart';
 import 'package:rehab_flutter/core/bloc/firebase/user/user_event.dart';
-import 'package:rehab_flutter/core/entities/image_texture.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/testing/data/data_sources/testing_data_provider.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/results_data.dart';
-import 'package:rehab_flutter/features/testing/domain/entities/rhythmic_pattern.dart';
 import 'package:rehab_flutter/features/testing/domain/entities/static_pattern.dart';
+import 'package:rehab_flutter/features/testing/domain/entities/tdt_pair.dart';
 import 'package:rehab_flutter/features/testing/domain/enums/testing_enums.dart';
-import 'package:rehab_flutter/features/testing/presentation/widgets/rhythmic_intro.dart';
-import 'package:rehab_flutter/features/testing/presentation/widgets/rhythmic_patterns_tester.dart';
+import 'package:rehab_flutter/features/testing/presentation/widgets/tdt_pairs_tester.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/testing_finish.dart';
-import 'package:rehab_flutter/features/testing/presentation/widgets/textures_intro.dart';
-import 'package:rehab_flutter/features/testing/presentation/widgets/textures_tester.dart';
 import 'package:rehab_flutter/features/testing/presentation/widgets/twopd_patterns_tester.dart';
 import 'package:rehab_flutter/injection_container.dart';
 
@@ -37,13 +33,15 @@ class _TestingScreenState extends State<TestingScreen> {
   // final List<double> accuracyList = [];
   // final int numOfStaticPatternsItems = 10;
   final int numOfTwoPDPatternsItems = 10;
-  final int numOfTexturesItems = 5;
-  final int numOfRhythmicPatternsItems = 5;
+  // final int numOfTexturesItems = 5;
+  // final int numOfRhythmicPatternsItems = 5;
+  final int numOfTdtPairsItems = 10;
   late Widget currentTestingWidget;
   // late List<StaticPattern> staticPatternsList;
   late List<StaticPattern> twoPDPatternsList;
-  late List<ImageTexture> imageTexturesList;
-  late List<RhythmicPattern> rhythmicPatternsList;
+  // late List<ImageTexture> imageTexturesList;
+  // late List<RhythmicPattern> rhythmicPatternsList;
+  late List<TdtPair> tdtPairsList;
   TestingState testingState = TestingState.twoPointDiscrimination;
   int currentItemInd = 0;
 
@@ -76,10 +74,8 @@ class _TestingScreenState extends State<TestingScreen> {
       currentItemInd++;
 
       if (currentItemInd == numOfTwoPDPatternsItems) {
-        testingState = TestingState.rhythmicPatternsIntro;
-      } else if (currentItemInd == numOfTwoPDPatternsItems + numOfRhythmicPatternsItems) {
-        testingState = TestingState.texturesIntro;
-      } else if (currentItemInd == numOfTwoPDPatternsItems + numOfRhythmicPatternsItems + numOfRhythmicPatternsItems) {
+        testingState = TestingState.tactileDiscrimination;
+      } else if (currentItemInd == numOfTwoPDPatternsItems + numOfTdtPairsItems) {
         testingState = TestingState.finished;
       }
 
@@ -101,19 +97,11 @@ class _TestingScreenState extends State<TestingScreen> {
   String getTitleFromTestingState() {
     switch (testingState) {
       case TestingState.twoPointDiscrimination:
-        return "Static Patterns Test";
-      case TestingState.rhythmicPatternsIntro:
-        return "Rhythmic Patterns Introduction";
-      case TestingState.rhythmicPatterns:
-        return "Rhythmic Patterns Test";
-      case TestingState.texturesIntro:
-        return "Textures Introduction";
-      case TestingState.textures:
-        return "Textures Test";
+        return "2-Point Discrimination Test";
+      case TestingState.tactileDiscrimination:
+        return "Tactile Discrimination Test";
       case TestingState.finished:
         return "Results";
-      default:
-        return "";
     }
   }
 
@@ -132,28 +120,35 @@ class _TestingScreenState extends State<TestingScreen> {
           totalItemNo: numOfTwoPDPatternsItems,
           currentStaticPattern: twoPDPatternsList[currentItemInd],
         );
-      case TestingState.rhythmicPatternsIntro:
-        return RhythmicPatternsIntro(onProceed: onProceed);
-      case TestingState.rhythmicPatterns:
-        return RhythmicPatternsTester(
+      // case TestingState.rhythmicPatternsIntro:
+      //   return RhythmicPatternsIntro(onProceed: onProceed);
+      // case TestingState.rhythmicPatterns:
+      //   return RhythmicPatternsTester(
+      //     onResponse: onResponse,
+      //     currentItemNo: (currentItemInd + 1) - numOfTwoPDPatternsItems,
+      //     totalItemNo: numOfRhythmicPatternsItems,
+      //     currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfTwoPDPatternsItems],
+      //   );
+      // case TestingState.texturesIntro:
+      //   return TexturesIntro(onProceed: onProceed);
+      // case TestingState.textures:
+      //   return TexturesTester(
+      //     onResponse: onResponse,
+      //     currentItemNo: (currentItemInd + 1) - numOfTwoPDPatternsItems - numOfRhythmicPatternsItems,
+      //     totalItemNo: numOfTexturesItems,
+      //     currentImageTexture: imageTexturesList[currentItemInd - numOfTwoPDPatternsItems - numOfRhythmicPatternsItems],
+      //   );
+      case TestingState.tactileDiscrimination:
+        final currentTdtPair = tdtPairsList[currentItemInd - numOfTwoPDPatternsItems];
+        return TdtPairsTester(
           onResponse: onResponse,
           currentItemNo: (currentItemInd + 1) - numOfTwoPDPatternsItems,
-          totalItemNo: numOfRhythmicPatternsItems,
-          currentRhythmicPattern: rhythmicPatternsList[currentItemInd - numOfTwoPDPatternsItems],
-        );
-      case TestingState.texturesIntro:
-        return TexturesIntro(onProceed: onProceed);
-      case TestingState.textures:
-        return TexturesTester(
-          onResponse: onResponse,
-          currentItemNo: (currentItemInd + 1) - numOfTwoPDPatternsItems - numOfRhythmicPatternsItems,
-          totalItemNo: numOfTexturesItems,
-          currentImageTexture: imageTexturesList[currentItemInd - numOfTwoPDPatternsItems - numOfRhythmicPatternsItems],
+          totalItemNo: numOfTdtPairsItems,
+          currentTdtPair: currentTdtPair,
+          optionsList: currentTdtPair.getRandomizedList(),
         );
       case TestingState.finished:
         return TestingFinish(itemList: itemList, answerList: answerList);
-      default:
-        return Container();
     }
   }
 
@@ -165,13 +160,15 @@ class _TestingScreenState extends State<TestingScreen> {
 
     // staticPatternsList = List.from(TestingDataProvider.staticPatterns);
     twoPDPatternsList = List.from(TestingDataProvider.twoPDPatterns);
-    imageTexturesList = List.from(TestingDataProvider.imageTextures);
-    rhythmicPatternsList = List.from(TestingDataProvider.rhythmicPatterns);
+    // imageTexturesList = List.from(TestingDataProvider.imageTextures);
+    // rhythmicPatternsList = List.from(TestingDataProvider.rhythmicPatterns);
+    tdtPairsList = List.from(TestingDataProvider.tdtPairs);
 
     // staticPatternsList.shuffle(random);
     twoPDPatternsList.shuffle(random);
-    imageTexturesList.shuffle(random);
-    rhythmicPatternsList.shuffle(random);
+    // imageTexturesList.shuffle(random);
+    // rhythmicPatternsList.shuffle(random);
+    tdtPairsList.shuffle(random);
 
     currentTestingWidget = getWidgetFromTestingState();
   }
@@ -217,7 +214,7 @@ class _TestingScreenState extends State<TestingScreen> {
           ),
         ],
       ),
-      actions: [
+      actions: const [
         // IconButton(
         //   icon: const Icon(
         //     Icons.check,

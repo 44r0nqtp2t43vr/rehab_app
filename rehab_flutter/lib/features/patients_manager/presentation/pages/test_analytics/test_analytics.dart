@@ -13,8 +13,9 @@ class TestAnalytics extends StatelessWidget {
   List<double> calculateAverages() {
     int overallSum = 0;
     int firstTenSum = 0;
-    int elevenToFifteenSum = 0;
-    int sixteenToTwentySum = 0;
+    // int elevenToFifteenSum = 0;
+    // int sixteenToTwentySum = 0;
+    int elevenToTwentySum = 0;
 
     for (int i = 0; i < testingItems.length; i++) {
       final testingItemDetailsList = testingItems[i].split("_");
@@ -26,20 +27,15 @@ class TestAnalytics extends StatelessWidget {
           overallSum += 1;
           firstTenSum += 1;
         }
-      } else if (i >= 10 && i < 15) {
-        if (answer == itemName) {
-          overallSum += 1;
-          elevenToFifteenSum += 1;
-        }
       } else {
-        if (answer == itemName) {
+        if (answer == itemName.split(" ")[0]) {
           overallSum += 1;
-          sixteenToTwentySum += 1;
+          elevenToTwentySum += 1;
         }
       }
     }
 
-    return [(overallSum / 20) * 100, (firstTenSum / 10) * 100, (elevenToFifteenSum / 5) * 100, (sixteenToTwentySum / 5) * 100];
+    return [(overallSum / 20) * 100, (firstTenSum / 10) * 100, (elevenToTwentySum / 5) * 100];
   }
 
   @override
@@ -176,19 +172,19 @@ class TestAnalytics extends StatelessWidget {
                                                   color: const Color(0xFF49ffb6),
                                                 ),
                                               ]),
-                                              BarChartGroupData(x: 2, barRods: [
-                                                BarChartRodData(
-                                                  borderRadius: const BorderRadius.only(
-                                                    topLeft: Radius.circular(4),
-                                                    topRight: Radius.circular(4),
-                                                    bottomLeft: Radius.zero,
-                                                    bottomRight: Radius.zero,
-                                                  ),
-                                                  width: 20,
-                                                  toY: scores[3],
-                                                  color: const Color(0xFF00b66d),
-                                                ),
-                                              ]),
+                                              // BarChartGroupData(x: 2, barRods: [
+                                              //   BarChartRodData(
+                                              //     borderRadius: const BorderRadius.only(
+                                              //       topLeft: Radius.circular(4),
+                                              //       topRight: Radius.circular(4),
+                                              //       bottomLeft: Radius.zero,
+                                              //       bottomRight: Radius.zero,
+                                              //     ),
+                                              //     width: 20,
+                                              //     toY: scores[3],
+                                              //     color: const Color(0xFF00b66d),
+                                              //   ),
+                                              // ]),
                                             ],
                                           ),
                                         ),
@@ -219,7 +215,7 @@ class TestAnalytics extends StatelessWidget {
                                                 const Color(0xFF49ffb6),
                                               ),
                                               const Text(
-                                                'RP: Rhythmic Patterns',
+                                                'TD: Tactile Discrimination',
                                                 style: TextStyle(
                                                   fontFamily: 'Sailec Medium',
                                                   fontSize: 8,
@@ -228,24 +224,24 @@ class TestAnalytics extends StatelessWidget {
                                               ),
                                             ],
                                           ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Row(
-                                            children: [
-                                              _buildLegendItem(
-                                                const Color(0xFF00b66d),
-                                              ),
-                                              const Text(
-                                                'T: Textures',
-                                                style: TextStyle(
-                                                  fontFamily: 'Sailec Medium',
-                                                  fontSize: 8,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                          // const SizedBox(
+                                          //   height: 8,
+                                          // ),
+                                          // Row(
+                                          //   children: [
+                                          //     _buildLegendItem(
+                                          //       const Color(0xFF00b66d),
+                                          //     ),
+                                          //     const Text(
+                                          //       'T: Textures',
+                                          //       style: TextStyle(
+                                          //         fontFamily: 'Sailec Medium',
+                                          //         fontSize: 8,
+                                          //         color: Colors.white,
+                                          //       ),
+                                          //     ),
+                                          //   ],
+                                          // ),
                                         ],
                                       ),
                                     ],
@@ -342,7 +338,7 @@ class TestAnalytics extends StatelessWidget {
                         TestAnalyticsItem(
                           itemName: itemName,
                           answer: answer,
-                          isCorrect: i < 10 ? answer == itemName[0] : answer == itemName,
+                          isCorrect: i < 10 ? answer == itemName[0] : answer == itemName.split(" ")[0],
                         ),
                         const SizedBox(height: 12),
                       ],
@@ -451,13 +447,10 @@ class TestAnalytics extends StatelessWidget {
     String text;
     switch (value.toInt()) {
       case 0:
-        text = 'SP';
+        text = '2PD';
         break;
       case 1:
-        text = 'RP';
-        break;
-      case 2:
-        text = 'T';
+        text = 'TD';
         break;
       default:
         text = '';
