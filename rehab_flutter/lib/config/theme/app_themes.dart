@@ -344,7 +344,7 @@ Widget cuButton({
                 ),
               ),
               Container(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
               ),
               Positioned(
                 left: -20,
@@ -353,7 +353,7 @@ Widget cuButton({
                   svgPath,
                   width: svgWidth,
                   height: svgHeight,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                 ),
               ),
               Positioned.fill(
@@ -412,7 +412,7 @@ Widget cuButtonDialog({
       borderRadius: BorderRadius.circular(10),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.15),
+          color: Colors.black.withValues(alpha: 0.15),
           spreadRadius: 0,
           blurRadius: 20,
           offset: const Offset(4, 4),
@@ -437,7 +437,7 @@ Widget cuButtonDialog({
             ),
           ),
           Container(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
           ),
           Positioned(
             left: -20,
@@ -446,7 +446,7 @@ Widget cuButtonDialog({
               svgPath,
               width: 100,
               height: 100,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
             ),
           ),
           Row(
@@ -493,7 +493,7 @@ Widget cuButtonDialog({
               color: Colors.transparent,
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-                highlightColor: Colors.white.withOpacity(0.2),
+                highlightColor: Colors.white.withValues(alpha: 0.2),
                 onTap: onPressed,
                 child: Container(),
               ),
@@ -520,7 +520,7 @@ Widget cuSelectPlanButtons({
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             spreadRadius: 0,
             blurRadius: 20,
             offset: const Offset(4, 4),
@@ -545,7 +545,7 @@ Widget cuSelectPlanButtons({
               ),
             ),
             Container(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
             ),
             Row(
               children: [
@@ -597,7 +597,7 @@ Widget musicTopButtons({
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               spreadRadius: 0,
               blurRadius: 20,
               offset: const Offset(4, 4),
@@ -639,7 +639,7 @@ Widget musicTopButtons({
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
-                  highlightColor: Colors.white.withOpacity(0.2),
+                  highlightColor: Colors.white.withValues(alpha: 0.2),
                   onTap: onPressed,
                   child: Container(),
                 ),

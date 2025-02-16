@@ -19,14 +19,14 @@ class TherapistListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      highlightColor: Colors.white.withOpacity(0.2),
+      highlightColor: Colors.white.withValues(alpha: 0.2),
       borderRadius: BorderRadius.circular(10),
       onTap: () => _onTherapistListCardPressed(context, therapist),
       child: GlassContainer(
         shadowStrength: 2,
         shadowColor: Colors.black,
         blur: 4,
-        color: Colors.white.withOpacity(0.25),
+        color: Colors.white.withValues(alpha: 0.25),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(

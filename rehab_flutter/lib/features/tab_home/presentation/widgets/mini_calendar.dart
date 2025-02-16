@@ -61,7 +61,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
       shadowStrength: 2,
       shadowColor: Colors.black,
       blur: 4,
-      color: Colors.white.withOpacity(0.25),
+      color: Colors.white.withValues(alpha: 0.25),
       child: TableCalendar(
         firstDay: DateTime.utc(2024, 1, 1),
         lastDay: DateTime.utc(2025, 12, 31),
@@ -111,7 +111,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(
-                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3),
+                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.3),
                         ),
                       ),
                     ),
@@ -134,7 +134,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(
-                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3),
+                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.3),
                         ),
                       ),
                     ),
@@ -192,7 +192,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(
-                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3),
+                          color: color == heatmap4 || color == heatmap5 ? Colors.white.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.3),
                         ),
                       ),
                     ),

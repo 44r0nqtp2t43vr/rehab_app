@@ -38,7 +38,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
       shadowStrength: 2,
       shadowColor: Colors.black,
       blur: 4,
-      color: Colors.white.withOpacity(0.25),
+      color: Colors.white.withValues(alpha: 0.25),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -86,7 +86,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
                                     backgroundColor: WidgetStateProperty.all<Color>(const Color(0xff128BED)),
                                     elevation: WidgetStateProperty.all<double>(0),
                                     shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                                    overlayColor: WidgetStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                                    overlayColor: WidgetStateProperty.all<Color>(Colors.white.withValues(alpha: 0.2)),
                                     shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -111,7 +111,7 @@ class _PatientPlansListState extends State<PatientPlansList> {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  highlightColor: Colors.white.withOpacity(0.1),
+                  highlightColor: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                   onTap: () => setState(() {
                     showAll = !showAll;

@@ -59,7 +59,7 @@ class ActivityChartCard extends StatelessWidget {
           isStrokeCapRound: true,
           belowBarData: BarAreaData(
             show: true,
-            color: const Color(0xff01FF99).withOpacity(0.3),
+            color: const Color(0xff01FF99).withValues(alpha: 0.3),
           ),
         ),
       ],

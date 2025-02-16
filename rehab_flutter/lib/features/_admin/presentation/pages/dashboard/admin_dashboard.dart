@@ -70,7 +70,7 @@ class AdminDashboard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             spreadRadius: 10,
                             blurRadius: 20,
                             offset: const Offset(1, 1),
@@ -87,7 +87,7 @@ class AdminDashboard extends StatelessWidget {
                           elevation: WidgetStateProperty.all<double>(0),
                           shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                           overlayColor: WidgetStateProperty.all<Color>(
-                            Colors.white.withOpacity(0.2),
+                            Colors.white.withValues(alpha: 0.2),
                           ),
                           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(

@@ -60,7 +60,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
       shadowStrength: 2,
       shadowColor: Colors.black,
       blur: 4,
-      color: Colors.white.withOpacity(0.25),
+      color: Colors.white.withValues(alpha: 0.25),
       child: Column(
         children: [
           SizedBox(
@@ -394,13 +394,13 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
         show: true,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             strokeWidth: 1,
           );
         },
         getDrawingVerticalLine: (value) {
           return FlLine(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             strokeWidth: 1,
           );
         },
@@ -420,7 +420,7 @@ class _PatientProgressChartState extends State<PatientProgressChart> {
           isStrokeCapRound: true,
           belowBarData: BarAreaData(
             show: true,
-            color: const Color(0xff01FF99).withOpacity(0.3),
+            color: const Color(0xff01FF99).withValues(alpha: 0.3),
           ),
         ),
       ],

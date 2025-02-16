@@ -36,7 +36,7 @@ class PatientsTherapyCompletionRate extends StatelessWidget {
               shadowStrength: 2,
               shadowColor: Colors.black,
               blur: 4,
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,

@@ -78,7 +78,7 @@ class TherapistMainScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: IconButton(
-                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  highlightColor: Colors.white.withValues(alpha: 0.1),
                                   icon: Icon(
                                     currentTab == TabEnum.home ? CupertinoIcons.house_fill : CupertinoIcons.house,
                                     size: 30,
@@ -89,7 +89,7 @@ class TherapistMainScreen extends StatelessWidget {
                               ),
                               Expanded(
                                 child: IconButton(
-                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  highlightColor: Colors.white.withValues(alpha: 0.1),
                                   icon: Icon(
                                     CupertinoIcons.calendar,
                                     size: 30,
@@ -100,7 +100,7 @@ class TherapistMainScreen extends StatelessWidget {
                               ),
                               Expanded(
                                 child: IconButton(
-                                  highlightColor: Colors.white.withOpacity(0.1),
+                                  highlightColor: Colors.white.withValues(alpha: 0.1),
                                   icon: Icon(
                                     currentTab == TabEnum.profile ? CupertinoIcons.person_fill : CupertinoIcons.person,
                                     size: 30,

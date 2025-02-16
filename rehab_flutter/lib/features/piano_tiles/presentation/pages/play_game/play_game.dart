@@ -255,7 +255,7 @@ class _PlayGameState extends State<PlayGame> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xff3572C6).withOpacity(0.50),
+                      color: const Color(0xff3572C6).withValues(alpha: 0.50),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Padding(
@@ -270,7 +270,7 @@ class _PlayGameState extends State<PlayGame> {
                                 Colors.white,
                               ),
                               backgroundColor: WidgetStateProperty.all<Color>(
-                                Colors.white.withOpacity(0.25),
+                                Colors.white.withValues(alpha: 0.25),
                               ),
                               padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                                 const EdgeInsets.symmetric(horizontal: 20),
@@ -316,7 +316,7 @@ class _PlayGameState extends State<PlayGame> {
                     icon: Icon(
                       CupertinoIcons.ellipsis_vertical,
                       size: 24,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                     onPressed: () {},
                   ),
@@ -452,7 +452,7 @@ class _PlayGameState extends State<PlayGame> {
                           icon: Icon(
                             CupertinoIcons.shuffle,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -460,7 +460,7 @@ class _PlayGameState extends State<PlayGame> {
                           icon: Icon(
                             CupertinoIcons.backward_end_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -482,7 +482,7 @@ class _PlayGameState extends State<PlayGame> {
                           icon: Icon(
                             CupertinoIcons.forward_end_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -490,7 +490,7 @@ class _PlayGameState extends State<PlayGame> {
                           icon: Icon(
                             CupertinoIcons.square_list_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),

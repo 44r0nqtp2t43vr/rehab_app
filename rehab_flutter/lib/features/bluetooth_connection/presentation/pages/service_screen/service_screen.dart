@@ -56,7 +56,7 @@ class ServiceScreen extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                 ),
                 _buildBody(),
               ],
@@ -131,7 +131,7 @@ class ServiceScreen extends StatelessWidget {
                                             Colors.white,
                                           ),
                                           backgroundColor: WidgetStateProperty.all<Color>(
-                                            Colors.white.withOpacity(.3),
+                                            Colors.white.withValues(alpha: .3),
                                           ),
                                           elevation: WidgetStateProperty.all<double>(0),
                                           shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),

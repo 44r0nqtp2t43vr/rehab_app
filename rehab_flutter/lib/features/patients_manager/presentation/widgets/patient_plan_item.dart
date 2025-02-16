@@ -28,14 +28,14 @@ class PatientPlanItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      highlightColor: Colors.white.withOpacity(0.2),
+      highlightColor: Colors.white.withValues(alpha: 0.2),
       borderRadius: BorderRadius.circular(10),
       onTap: () => _onPatientCardPressed(context),
       child: GlassContainer(
         shadowStrength: 2,
         shadowColor: Colors.black,
         blur: 4,
-        color: isCurrent ? const Color(0xff01FF99).withOpacity(0.25) : Colors.white.withOpacity(0.25),
+        color: isCurrent ? const Color(0xff01FF99).withValues(alpha: 0.25) : Colors.white.withValues(alpha: 0.25),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           child: Row(

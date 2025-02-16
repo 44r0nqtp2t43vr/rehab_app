@@ -15,7 +15,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
 
     return GlassContainer(
       blur: 10,
-      color: Colors.white.withOpacity(0.3),
+      color: Colors.white.withValues(alpha: 0.3),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         child: Column(
@@ -65,7 +65,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                         shadowStrength: 1,
                                         shadowColor: Colors.black,
                                         blur: 4,
-                                        color: Colors.white.withOpacity(0.25),
+                                        color: Colors.white.withValues(alpha: 0.25),
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
@@ -95,7 +95,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                         shadowStrength: 1,
                                         shadowColor: Colors.black,
                                         blur: 4,
-                                        color: Colors.white.withOpacity(0.25),
+                                        color: Colors.white.withValues(alpha: 0.25),
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
@@ -134,7 +134,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                       shadowStrength: 1,
                                       shadowColor: Colors.black,
                                       blur: 4,
-                                      color: Colors.white.withOpacity(0.25),
+                                      color: Colors.white.withValues(alpha: 0.25),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -197,7 +197,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                       shadowStrength: 1,
                                       shadowColor: Colors.black,
                                       blur: 4,
-                                      color: Colors.white.withOpacity(0.25),
+                                      color: Colors.white.withValues(alpha: 0.25),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -242,7 +242,7 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                       shadowStrength: 1,
                                       shadowColor: Colors.black,
                                       blur: 4,
-                                      color: Colors.white.withOpacity(0.25),
+                                      color: Colors.white.withValues(alpha: 0.25),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,

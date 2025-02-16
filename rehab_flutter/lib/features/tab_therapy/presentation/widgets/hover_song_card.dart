@@ -17,7 +17,7 @@ class HoverSongCard extends GetView<SongController> {
           ? GlassContainer(
               height: 60,
               blur: 20,
-              color: Colors.white.withOpacity(0.35),
+              color: Colors.white.withValues(alpha: 0.35),
               child: Row(
                 children: [
                   const Padding(
@@ -51,8 +51,7 @@ class HoverSongCard extends GetView<SongController> {
                             startPadding: 5.0,
                             accelerationDuration: const Duration(seconds: 1),
                             accelerationCurve: Curves.linear,
-                            decelerationDuration:
-                                const Duration(milliseconds: 500),
+                            decelerationDuration: const Duration(milliseconds: 500),
                             decelerationCurve: Curves.easeOut,
                             showFadingOnlyWhenScrolling: true,
                             fadingEdgeStartFraction: 0.1,

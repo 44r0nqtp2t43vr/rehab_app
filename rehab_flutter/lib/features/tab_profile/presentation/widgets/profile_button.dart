@@ -19,7 +19,7 @@ class ProfileButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        splashColor: Colors.white.withOpacity(0.1),
+        splashColor: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),

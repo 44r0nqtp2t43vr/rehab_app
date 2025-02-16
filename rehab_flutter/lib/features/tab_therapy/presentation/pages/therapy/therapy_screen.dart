@@ -176,7 +176,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -281,7 +281,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(

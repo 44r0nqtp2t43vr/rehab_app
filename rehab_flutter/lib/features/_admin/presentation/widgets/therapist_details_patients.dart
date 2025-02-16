@@ -81,9 +81,9 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                                               shadowStrength: 2,
                                               shadowColor: Colors.black,
                                               blur: 4,
-                                              color: Colors.white.withOpacity(0.25),
+                                              color: Colors.white.withValues(alpha: 0.25),
                                               child: IconButton(
-                                                highlightColor: Colors.white.withOpacity(0.2),
+                                                highlightColor: Colors.white.withValues(alpha: 0.2),
                                                 onPressed: () => _onRemovePatientButtonPressed(context, patient),
                                                 icon: const Icon(
                                                   Icons.delete,
@@ -115,7 +115,7 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                         backgroundColor: WidgetStateProperty.all<Color>(const Color(0xff128BED)),
                         elevation: WidgetStateProperty.all<double>(0),
                         shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                        overlayColor: WidgetStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                        overlayColor: WidgetStateProperty.all<Color>(Colors.white.withValues(alpha: 0.2)),
                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -147,7 +147,7 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Form(
@@ -254,7 +254,7 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Form(

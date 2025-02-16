@@ -144,7 +144,7 @@ class _AssignPatientsState extends State<AssignPatients> {
                       shadowStrength: 2,
                       shadowColor: Colors.black,
                       blur: 4,
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: SizedBox(
@@ -194,7 +194,7 @@ class OverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
+      ..color = Colors.black.withValues(alpha: 0.5)
       ..style = PaintingStyle.fill;
 
     final backgroundPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));

@@ -24,7 +24,7 @@ class PatientPlanSessionItem extends StatelessWidget {
             shadowStrength: 1,
             shadowColor: Colors.black,
             blur: 4,
-            color: Colors.white.withOpacity(0.25),
+            color: Colors.white.withValues(alpha: 0.25),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 12,
@@ -74,7 +74,7 @@ class PatientPlanSessionItem extends StatelessWidget {
                               width: 48.0,
                               height: 28.0,
                               decoration: BoxDecoration(
-                                color: dailyActivityBools[0] ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3),
+                                color: dailyActivityBools[0] ? const Color(0xFF01B36C) : Colors.red.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               child: Center(
@@ -91,7 +91,7 @@ class PatientPlanSessionItem extends StatelessWidget {
                               width: 48.0,
                               height: 28.0,
                               decoration: BoxDecoration(
-                                color: dailyActivityBools[1] ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3),
+                                color: dailyActivityBools[1] ? const Color(0xFF01B36C) : Colors.red.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               child: Center(
@@ -108,7 +108,7 @@ class PatientPlanSessionItem extends StatelessWidget {
                               width: 48.0,
                               height: 28.0,
                               decoration: BoxDecoration(
-                                color: dailyActivityBools[2] ? const Color(0xFF01B36C) : Colors.red.withOpacity(0.3),
+                                color: dailyActivityBools[2] ? const Color(0xFF01B36C) : Colors.red.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               child: Center(
@@ -143,7 +143,7 @@ class PatientPlanSessionItem extends StatelessWidget {
                       ? const SizedBox()
                       : GlassContainer(
                           blur: 10,
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           child: Material(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.transparent,
@@ -183,7 +183,7 @@ class PatientPlanSessionItem extends StatelessWidget {
             shadowStrength: 2,
             shadowColor: Colors.black,
             blur: 4,
-            color: Colors.white.withOpacity(0.25),
+            color: Colors.white.withValues(alpha: 0.25),
             child: const Padding(
               padding: EdgeInsets.all(8),
               child: Icon(

@@ -31,7 +31,7 @@ class ContinueCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   spreadRadius: 0,
                   blurRadius: 20,
                   offset: const Offset(4, 4),
@@ -56,7 +56,7 @@ class ContinueCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                   ),
                   Positioned(
                     left: -30,
@@ -65,7 +65,7 @@ class ContinueCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Sailec Bold',
                         fontSize: 150,
-                        color: Colors.white.withOpacity(0.25),
+                        color: Colors.white.withValues(alpha: 0.25),
                       ),
                     ),
                   ),
@@ -160,7 +160,7 @@ class ContinueCard extends StatelessWidget {
 
                   return InkWell(
                     borderRadius: BorderRadius.circular(10),
-                    highlightColor: Colors.white.withOpacity(0.2),
+                    highlightColor: Colors.white.withValues(alpha: 0.2),
                     onTap: () => _onTap(context, user, currentPlan, session),
                     child: Container(),
                   );
@@ -187,7 +187,7 @@ class ContinueCard extends StatelessWidget {
             backgroundColor: Colors.transparent,
             content: GlassContainer(
               blur: 10,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -307,7 +307,7 @@ class ContinueCard extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 content: GlassContainer(
                   blur: 10,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: Column(

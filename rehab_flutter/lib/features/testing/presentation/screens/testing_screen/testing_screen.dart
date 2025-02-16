@@ -85,7 +85,7 @@ class _TestingScreenState extends State<TestingScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 1),
-        backgroundColor: Colors.white.withOpacity(0.3),
+        backgroundColor: Colors.white.withValues(alpha: 0.3),
         content: Text('Submitted Response', style: darkTextTheme().displaySmall),
       ),
     );

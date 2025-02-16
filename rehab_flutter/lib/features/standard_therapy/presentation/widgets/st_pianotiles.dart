@@ -341,7 +341,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.shuffle,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -349,7 +349,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.backward_end_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -365,7 +365,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.forward_end_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -373,7 +373,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.square_list_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),

@@ -52,7 +52,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
   final double _circleWidth = 20.0;
   final double _rayHeight = -8.0;
   final double _rayWidth = 60.0;
-  final Color _color = const Color(0xff01FF99).withOpacity(0.3);
+  final Color _color = const Color(0xff01FF99).withValues(alpha: 0.3);
   bool isPlaying = false;
 
 // list of circles
@@ -252,7 +252,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xff3572C6).withOpacity(0.50),
+                          color: const Color(0xff3572C6).withValues(alpha: 0.50),
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: Padding(
@@ -291,7 +291,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                                     Colors.white,
                                   ),
                                   backgroundColor: WidgetStateProperty.all<Color>(
-                                    Colors.white.withOpacity(0.25),
+                                    Colors.white.withValues(alpha: 0.25),
                                   ),
                                   elevation: WidgetStateProperty.all<double>(0),
                                   shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
@@ -316,7 +316,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                         icon: Icon(
                           CupertinoIcons.ellipsis_vertical,
                           size: 24,
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                         ),
                         onPressed: () {},
                       ),
@@ -444,7 +444,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               icon: Icon(
                                 CupertinoIcons.shuffle,
                                 size: 24,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onPressed: () {},
                             ),
@@ -452,7 +452,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               icon: Icon(
                                 CupertinoIcons.backward_end_fill,
                                 size: 24,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onPressed: () {},
                             ),
@@ -468,7 +468,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               icon: Icon(
                                 CupertinoIcons.forward_end_fill,
                                 size: 24,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onPressed: () {},
                             ),
@@ -476,7 +476,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               icon: Icon(
                                 CupertinoIcons.square_list_fill,
                                 size: 24,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onPressed: () {},
                             ),

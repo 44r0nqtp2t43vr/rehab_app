@@ -56,7 +56,7 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
       width: MediaQuery.of(context).size.width,
       child: GlassContainer(
         blur: 10,
-        color: Colors.white.withOpacity(0.3),
+        color: Colors.white.withValues(alpha: 0.3),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           child: Form(
@@ -109,15 +109,15 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
                               borderRadius: BorderRadius.circular(12),
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                               ),
                               icon: Icon(
                                 Icons.arrow_drop_down,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onChanged: (String? newValue) {
                                 final newStandardOneDetails = "${newValue}${standardOneIntensity}";
@@ -157,15 +157,15 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
                               borderRadius: BorderRadius.circular(12),
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                               ),
                               icon: Icon(
                                 Icons.arrow_drop_down,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onChanged: (String? newValue) {
                                 final newStandardOneDetails = "${standardOneType}${newValue}";
@@ -205,15 +205,15 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
                               borderRadius: BorderRadius.circular(12),
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                               ),
                               icon: Icon(
                                 Icons.arrow_drop_down,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onChanged: (String? newValue) {
                                 final newStandardTwoDetails = "${newValue}${standardTwoIntensity}";
@@ -253,15 +253,15 @@ class _PatientsTherapyEditDialogState extends State<PatientsTherapyEditDialog> {
                               borderRadius: BorderRadius.circular(12),
                               decoration: InputDecoration(
                                 enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.5)),
                                 ),
                               ),
                               icon: Icon(
                                 Icons.arrow_drop_down,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withValues(alpha: 0.5),
                               ),
                               onChanged: (String? newValue) {
                                 final newStandardTwoDetails = "${standardTwoType}${newValue}";

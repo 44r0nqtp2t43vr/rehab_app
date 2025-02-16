@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               shadowStrength: 2,
                               shadowColor: Colors.black,
                               blur: 4,
-                              color: Colors.white.withOpacity(0.25),
+                              color: Colors.white.withValues(alpha: 0.25),
                               child: BlocConsumer<PatientCurrentSessionBloc, PatientCurrentSessionState>(
                                 listener: (context, state) => setState(() {}),
                                 builder: (context, state) {
@@ -162,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               shadowStrength: 2,
                               shadowColor: Colors.black,
                               blur: 4,
-                              color: Colors.white.withOpacity(0.25),
+                              color: Colors.white.withValues(alpha: 0.25),
                               child: BlocConsumer<PatientPlansBloc, PatientPlansState>(
                                 listener: (context, state) => setState(() {}),
                                 builder: (context, state) {

@@ -51,7 +51,7 @@ class _STVisualizerState extends State<STVisualizer> with SingleTickerProviderSt
   final double _circleWidth = 20.0;
   final double _rayHeight = -8.0;
   final double _rayWidth = 60.0;
-  final Color _color = const Color(0xff01FF99).withOpacity(0.3);
+  final Color _color = const Color(0xff01FF99).withValues(alpha: 0.3);
   bool isPlaying = false;
 
 // list of circles
@@ -354,7 +354,7 @@ class _STVisualizerState extends State<STVisualizer> with SingleTickerProviderSt
                         icon: Icon(
                           CupertinoIcons.shuffle,
                           size: 24,
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                         ),
                         onPressed: () {},
                       ),
@@ -362,7 +362,7 @@ class _STVisualizerState extends State<STVisualizer> with SingleTickerProviderSt
                         icon: Icon(
                           CupertinoIcons.backward_end_fill,
                           size: 24,
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                         ),
                         onPressed: () {},
                       ),
@@ -378,7 +378,7 @@ class _STVisualizerState extends State<STVisualizer> with SingleTickerProviderSt
                         icon: Icon(
                           CupertinoIcons.forward_end_fill,
                           size: 24,
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                         ),
                         onPressed: () {},
                       ),
@@ -386,7 +386,7 @@ class _STVisualizerState extends State<STVisualizer> with SingleTickerProviderSt
                         icon: Icon(
                           CupertinoIcons.square_list_fill,
                           size: 24,
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                         ),
                         onPressed: () {},
                       ),

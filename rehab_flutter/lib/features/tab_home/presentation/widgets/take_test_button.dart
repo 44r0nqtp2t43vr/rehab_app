@@ -9,7 +9,7 @@ class TakeTestButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       blur: 10,
-      color: Colors.white.withOpacity(0.3),
+      color: Colors.white.withValues(alpha: 0.3),
       child: Material(
         borderRadius: BorderRadius.circular(10),
         color: Colors.transparent,
