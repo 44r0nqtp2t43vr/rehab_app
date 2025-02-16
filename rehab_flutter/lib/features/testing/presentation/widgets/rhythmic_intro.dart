@@ -148,7 +148,7 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
                             const Color(0xff01FF99),
                           ),
                           elevation: WidgetStateProperty.all<double>(0),
-                          shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                          // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                           overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -184,7 +184,7 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
                     const Color(0XFF128BED),
                   ),
                   elevation: WidgetStateProperty.all<double>(0),
-                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                  // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                   overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(

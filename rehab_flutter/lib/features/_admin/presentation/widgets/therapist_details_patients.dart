@@ -79,7 +79,7 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                                           Expanded(
                                             child: GlassContainer(
                                               shadowStrength: 2,
-                                              shadowColor: Colors.black,
+                                              // shadowColor: Colors.black,
                                               blur: 4,
                                               color: Colors.white.withValues(alpha: 0.25),
                                               child: IconButton(
@@ -114,7 +114,7 @@ class _TherapistDetailsPatientsState extends State<TherapistDetailsPatients> {
                         ),
                         backgroundColor: WidgetStateProperty.all<Color>(const Color(0xff128BED)),
                         elevation: WidgetStateProperty.all<double>(0),
-                        shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                         overlayColor: WidgetStateProperty.all<Color>(Colors.white.withValues(alpha: 0.2)),
                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(

@@ -63,7 +63,7 @@ class TestAnalytics extends StatelessWidget {
                               flex: 5,
                               child: GlassContainer(
                                 shadowStrength: 2,
-                                shadowColor: Colors.black,
+                                // shadowColor: Colors.black,
                                 blur: 4,
                                 color: Colors.white.withValues(alpha: 0.25),
                                 child: Padding(
@@ -254,7 +254,7 @@ class TestAnalytics extends StatelessWidget {
                               flex: 4,
                               child: GlassContainer(
                                 shadowStrength: 2,
-                                shadowColor: Colors.black,
+                                // shadowColor: Colors.black,
                                 blur: 4,
                                 color: Colors.white.withValues(alpha: 0.25),
                                 child: Center(
@@ -381,7 +381,7 @@ class TestAnalytics extends StatelessWidget {
                                   const Color(0xff128BED),
                                 ),
                                 elevation: WidgetStateProperty.all<double>(0),
-                                shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                 overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(

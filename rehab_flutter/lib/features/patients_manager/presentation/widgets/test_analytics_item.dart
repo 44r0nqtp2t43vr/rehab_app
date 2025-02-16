@@ -35,7 +35,7 @@ class TestAnalyticsItem extends StatelessWidget {
           flex: 4,
           child: GlassContainer(
             shadowStrength: 1,
-            shadowColor: Colors.black,
+            // shadowColor: Colors.black,
             blur: 4,
             color: Colors.white.withValues(alpha: 0.25),
             child: Padding(
@@ -57,7 +57,7 @@ class TestAnalyticsItem extends StatelessWidget {
           flex: 4,
           child: GlassContainer(
             shadowStrength: 1,
-            shadowColor: Colors.black,
+            // shadowColor: Colors.black,
             blur: 4,
             color: Colors.white.withValues(alpha: 0.25),
             child: Padding(

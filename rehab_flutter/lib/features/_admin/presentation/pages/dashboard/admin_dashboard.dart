@@ -85,7 +85,7 @@ class AdminDashboard extends StatelessWidget {
                           ),
                           backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
                           elevation: WidgetStateProperty.all<double>(0),
-                          shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                          // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                           overlayColor: WidgetStateProperty.all<Color>(
                             Colors.white.withValues(alpha: 0.2),
                           ),

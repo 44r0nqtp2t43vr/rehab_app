@@ -210,7 +210,7 @@ class _EditTherapistProfileState extends State<EditTherapistProfile> {
                       GlassContainer(
                         width: double.infinity,
                         shadowStrength: 2,
-                        shadowColor: Colors.black,
+                        // shadowColor: Colors.black,
                         blur: 4,
                         color: Colors.white.withValues(alpha: 0.25),
                         child: Padding(
@@ -379,7 +379,7 @@ class _EditTherapistProfileState extends State<EditTherapistProfile> {
                                   ),
                                   backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   elevation: WidgetStateProperty.all<double>(0),
-                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                     RoundedRectangleBorder(

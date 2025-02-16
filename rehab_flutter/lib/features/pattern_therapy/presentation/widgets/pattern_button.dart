@@ -26,7 +26,7 @@ class PatternButton extends StatelessWidget {
             isActive ? const Color(0xff128BED) : Colors.white.withValues(alpha: .3),
           ),
           elevation: WidgetStateProperty.all<double>(0),
-          shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+          // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
           overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(

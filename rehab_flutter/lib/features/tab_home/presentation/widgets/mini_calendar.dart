@@ -59,7 +59,7 @@ class _MiniCalendarState extends State<MiniCalendar> {
   Widget build(BuildContext context) {
     return GlassContainer(
       shadowStrength: 2,
-      shadowColor: Colors.black,
+      // shadowColor: Colors.black,
       blur: 4,
       color: Colors.white.withValues(alpha: 0.25),
       child: TableCalendar(

@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             flex: 4,
                             child: GlassContainer(
                               shadowStrength: 2,
-                              shadowColor: Colors.black,
+                              // shadowColor: Colors.black,
                               blur: 4,
                               color: Colors.white.withValues(alpha: 0.25),
                               child: BlocConsumer<PatientCurrentSessionBloc, PatientCurrentSessionState>(
@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             flex: 5,
                             child: GlassContainer(
                               shadowStrength: 2,
-                              shadowColor: Colors.black,
+                              // shadowColor: Colors.black,
                               blur: 4,
                               color: Colors.white.withValues(alpha: 0.25),
                               child: BlocConsumer<PatientPlansBloc, PatientPlansState>(

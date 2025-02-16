@@ -270,7 +270,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                                     Colors.transparent,
                                   ),
                                   elevation: WidgetStateProperty.all<double>(0),
-                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(horizontal: 20),
@@ -294,7 +294,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                                     Colors.white.withValues(alpha: 0.25),
                                   ),
                                   elevation: WidgetStateProperty.all<double>(0),
-                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                                     const EdgeInsets.symmetric(horizontal: 20),

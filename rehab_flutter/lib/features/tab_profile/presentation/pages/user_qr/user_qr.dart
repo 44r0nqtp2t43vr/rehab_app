@@ -127,7 +127,7 @@ class UserQR extends StatelessWidget {
                         children: [
                           GlassContainer(
                             shadowStrength: 2,
-                            shadowColor: Colors.black,
+                            // shadowColor: Colors.black,
                             blur: 4,
                             color: Colors.white.withValues(alpha: 0.25),
                             child: Padding(
