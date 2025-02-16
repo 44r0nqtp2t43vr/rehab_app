@@ -14,13 +14,7 @@ class ScrollTextureFrame extends StatefulWidget {
   final AnimationDirection animationDirection;
   final bool isPlaying;
 
-  const ScrollTextureFrame(
-      {super.key,
-      required this.imgSize,
-      required this.imageTexture,
-      required this.animationController,
-      required this.animationDirection,
-      required this.isPlaying});
+  const ScrollTextureFrame({super.key, required this.imgSize, required this.imageTexture, required this.animationController, required this.animationDirection, required this.isPlaying});
 
   @override
   State<ScrollTextureFrame> createState() => _ScrollTextureFrameState();
@@ -32,19 +26,13 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     super.initState();
   }
 
-  void _renderActuators(
-      BuildContext context, dynamic details, double imageSize) {
+  void _renderActuators(BuildContext context, dynamic details, double imageSize) {
     if (details != null) {
       RenderBox box = context.findRenderObject() as RenderBox;
       final Offset localPosition = box.globalToLocal(details.globalPosition);
       sl<ActuatorsBloc>().add(UpdateActuatorsEvent(localPosition));
     } else {
-      final Offset animatedPosition =
-          widget.animationDirection == AnimationDirection.vertical
-              ? AniPatternProvider.verticalPattern(
-                  imageSize, widget.animationController.value)
-              : AniPatternProvider.horizontalPattern(
-                  imageSize, widget.animationController.value);
+      final Offset animatedPosition = widget.animationDirection == AnimationDirection.vertical ? AniPatternProvider.verticalPattern(imageSize, widget.animationController.value) : AniPatternProvider.horizontalPattern(imageSize, widget.animationController.value);
       sl<ActuatorsBloc>().add(UpdateActuatorsEvent(animatedPosition));
     }
 
@@ -60,12 +48,8 @@ class _ScrollTextureFrameState extends State<ScrollTextureFrame> {
     }
 
     return GestureDetector(
-      onTapDown: (details) => widget.isPlaying
-          ? {}
-          : _renderActuators(context, details, screenWidth),
-      onPanUpdate: (details) => widget.isPlaying
-          ? {}
-          : _renderActuators(context, details, screenWidth),
+      onTapDown: (details) => widget.isPlaying ? {} : _renderActuators(context, details, screenWidth),
+      onPanUpdate: (details) => widget.isPlaying ? {} : _renderActuators(context, details, screenWidth),
       child: Stack(
         children: [
           Container(

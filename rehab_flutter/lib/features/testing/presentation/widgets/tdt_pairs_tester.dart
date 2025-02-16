@@ -199,6 +199,7 @@ class _TdtPairsTesterState extends State<TdtPairsTester> with SingleTickerProvid
         //   flex: 2,
         //   child:
         // ),
+        const Spacer(),
         _selectedTexture == null
             ? const SizedBox()
             : BlocProvider(
@@ -215,6 +216,18 @@ class _TdtPairsTesterState extends State<TdtPairsTester> with SingleTickerProvid
                   child: _buildBody(_selectedTexture!, desiredSize),
                 ),
               ),
+        const Center(
+          child: Text(
+            "Click a button to feel the item's texture",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Sailec Medium',
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 8.0,
@@ -269,6 +282,7 @@ class _TdtPairsTesterState extends State<TdtPairsTester> with SingleTickerProvid
             ),
           ],
         ),
+        const Spacer(),
         const Center(
           child: Text(
             "Which item has a different texture?",
@@ -279,6 +293,7 @@ class _TdtPairsTesterState extends State<TdtPairsTester> with SingleTickerProvid
             ),
           ),
         ),
+        const SizedBox(height: 8),
         Expanded(
           flex: 1,
           child: Wrap(

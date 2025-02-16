@@ -319,7 +319,7 @@ Widget cuButton({
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               spreadRadius: 0,
               blurRadius: 20,
               offset: const Offset(4, 4),
