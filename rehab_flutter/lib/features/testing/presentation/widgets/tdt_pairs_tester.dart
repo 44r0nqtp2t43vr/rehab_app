@@ -200,22 +200,22 @@ class _TdtPairsTesterState extends State<TdtPairsTester> with SingleTickerProvid
         //   child:
         // ),
         const Spacer(),
-        _selectedTexture == null
-            ? const SizedBox()
-            : BlocProvider(
-                create: (_) => sl<ActuatorsBloc>()
-                  ..add(InitActuatorsEvent(ActuatorsInitData(
-                    imgSrc: _selectedTexture!.texture,
-                    orientation: ActuatorsOrientation.landscape,
-                    numOfFingers: ActuatorsNumOfFingers.five,
-                    imagesHeight: desiredSize,
-                    imagesWidth: desiredSize,
-                  ))),
-                child: SizedBox(
-                  height: desiredSize.toDouble(),
-                  child: _buildBody(_selectedTexture!, desiredSize),
-                ),
-              ),
+        // _selectedTexture == null
+        //     ? const SizedBox()
+        //     : BlocProvider(
+        //         create: (_) => sl<ActuatorsBloc>()
+        //           ..add(InitActuatorsEvent(ActuatorsInitData(
+        //             imgSrc: _selectedTexture!.texture,
+        //             orientation: ActuatorsOrientation.landscape,
+        //             numOfFingers: ActuatorsNumOfFingers.five,
+        //             imagesHeight: desiredSize,
+        //             imagesWidth: desiredSize,
+        //           ))),
+        //         child: SizedBox(
+        //           height: desiredSize.toDouble(),
+        //           child: _buildBody(_selectedTexture!, desiredSize),
+        //         ),
+        //       ),
         const Center(
           child: Text(
             "Click a button to feel the item's texture",
