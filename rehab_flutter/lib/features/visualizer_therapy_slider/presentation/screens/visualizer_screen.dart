@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/core/repository/firestore_repository.dart';
@@ -250,65 +251,77 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                         ),
                         onPressed: () => _onMinimize(context),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xff3572C6).withOpacity(0.50),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () => _onSwitch(context),
-                                style: ButtonStyle(
-                                  foregroundColor: WidgetStateProperty.all<Color>(
-                                    Colors.white,
-                                  ),
-                                  backgroundColor: WidgetStateProperty.all<Color>(
-                                    Colors.transparent,
-                                  ),
-                                  elevation: WidgetStateProperty.all<double>(0),
-                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                                  overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Basic',
-                                  style: TextStyle(
-                                    fontFamily: 'Sailec Light',
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: null,
-                                style: ButtonStyle(
-                                  foregroundColor: WidgetStateProperty.all<Color>(
-                                    Colors.white,
-                                  ),
-                                  backgroundColor: WidgetStateProperty.all<Color>(
-                                    Colors.white.withOpacity(0.25),
-                                  ),
-                                  elevation: WidgetStateProperty.all<double>(0),
-                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                                  overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Intermediate',
-                                  style: TextStyle(
-                                    fontFamily: 'Sailec Medium',
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ],
+                      // Container(
+                      //     // decoration: BoxDecoration(
+                      //     //   color: const Color(0xff3572C6).withOpacity(0.50),
+                      //     //   borderRadius: BorderRadius.circular(50),
+                      //     // ),
+
+                      //     // child: Padding(
+                      //     //   padding: const EdgeInsets.symmetric(horizontal: 4),
+                      //     //   child: Row(
+                      //     //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     //     children: [
+                      //     //       ElevatedButton(
+                      //     //         onPressed: () => _onSwitch(context),
+                      //     //         style: ButtonStyle(
+                      //     //           foregroundColor: WidgetStateProperty.all<Color>(
+                      //     //             Colors.white,
+                      //     //           ),
+                      //     //           backgroundColor: WidgetStateProperty.all<Color>(
+                      //     //             Colors.transparent,
+                      //     //           ),
+                      //     //           elevation: WidgetStateProperty.all<double>(0),
+                      //     //           shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      //     //           overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      //     //           padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                      //     //             const EdgeInsets.symmetric(horizontal: 20),
+                      //     //           ),
+                      //     //         ),
+                      //     //         child: const Text(
+                      //     //           'Basic',
+                      //     //           style: TextStyle(
+                      //     //             fontFamily: 'Sailec Light',
+                      //     //             fontSize: 12,
+                      //     //           ),
+                      //     //         ),
+                      //     //       ),
+                      //     //       ElevatedButton(
+                      //     //         onPressed: null,
+                      //     //         style: ButtonStyle(
+                      //     //           foregroundColor: WidgetStateProperty.all<Color>(
+                      //     //             Colors.white,
+                      //     //           ),
+                      //     //           backgroundColor: WidgetStateProperty.all<Color>(
+                      //     //             Colors.white.withOpacity(0.25),
+                      //     //           ),
+                      //     //           elevation: WidgetStateProperty.all<double>(0),
+                      //     //           shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      //     //           overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      //     //           padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                      //     //             const EdgeInsets.symmetric(horizontal: 20),
+                      //     //           ),
+                      //     //         ),
+                      //     //         child: const Text(
+                      //     //           'Intermediate',
+                      //     //           style: TextStyle(
+                      //     //             fontFamily: 'Sailec Medium',
+                      //     //             fontSize: 12,
+                      //     //           ),
+                      //     //         ),
+                      //     //       ),
+                      //     //     ],
+                      //     //   ),
+                      //     // ),
+                      //     ),
+                      const Expanded(
+                        child: Text(
+                          "Music Stimulation",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Sailec Medium',
+                            fontSize: 40,
+                            height: 1.2,
                           ),
                         ),
                       ),
@@ -342,22 +355,22 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                         decoration: const BoxDecoration(color: Color(0xff223e65)),
                         child: Stack(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: SizedBox(
-                                  height: _totalHeight,
-                                  child: LineAudioVisualizer(
-                                    key: visualizerKey,
-                                    initialFrequencies: getFrequencies(),
-                                    totalHeight: _totalHeight,
-                                    color: _color,
-                                    barsBetweenMainFrequencies: 6,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(bottom: 10),
+                            //   child: Align(
+                            //     alignment: Alignment.bottomCenter,
+                            //     child: SizedBox(
+                            //       height: _totalHeight,
+                            //       child: LineAudioVisualizer(
+                            //         key: visualizerKey,
+                            //         initialFrequencies: getFrequencies(),
+                            //         totalHeight: _totalHeight,
+                            //         color: _color,
+                            //         barsBetweenMainFrequencies: 6,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -381,7 +394,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                         style: const TextStyle(
                           color: Colors.white,
                           fontFamily: 'Sailec Medium',
-                          fontSize: 20,
+                          fontSize: 40,
                           height: 1.2,
                         ),
                         maxLines: 2,
@@ -395,8 +408,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontFamily: 'Sailec Light',
-                          fontSize: 16,
+                          fontFamily: 'Sailec Medium',
+                          fontSize: 32,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -411,7 +424,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Sailec Light',
-                                fontSize: 12,
+                                fontSize: 32,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -429,7 +442,7 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Sailec Light',
-                                fontSize: 12,
+                                fontSize: 32,
                               ),
                             ),
                           ],
@@ -522,24 +535,27 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
 
     for (int i = 0; i < circles.length; i += itemsPerRow) {
       List<Widget> rowItems = circles.sublist(i, min(i + itemsPerRow, circles.length)).map((circleState) {
-        return CustomPaint(
-          painter: RayPainter(
-            progress: circleState.progress,
-            totalHeight: circleState.totalHeight,
-            totalWidth: circleState.totalWidth,
-            // circleHeight: circleState.circleHeight,
-            // circleWidth: circleState.circleWidth,
-            // rayHeight: circleState.rayHeight,
-            // rayWidth: circleState.rayWidth,
-            color: circleState.color,
-            circleSize: circleState.circleHeight,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 8),
+          child: CustomPaint(
+            painter: RayPainter(
+              progress: circleState.progress,
+              totalHeight: circleState.totalHeight,
+              totalWidth: circleState.totalWidth,
+              // circleHeight: circleState.circleHeight,
+              // circleWidth: circleState.circleWidth,
+              // rayHeight: circleState.rayHeight,
+              // rayWidth: circleState.rayWidth,
+              color: circleState.color,
+              // circleSize: circleState.circleHeight,
+            ),
           ),
         );
       }).toList();
 
       rows.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: rowItems),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: rowItems),
       ));
     }
     return rows;
@@ -576,7 +592,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color = isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
+      // circles[squares[i]].color = isActive ? const Color(0xff01FF99) : const Color(0xff128BED);
+      circles[squares[i]].color = isActive ? Colors.yellow : Colors.blue;
       activeValues[squares[i]] = activeValue;
     }
   }
@@ -588,7 +605,8 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     for (int i = 0; i < squares.length; i++) {
       circles[squares[i]].circleWidth = size;
       circles[squares[i]].circleHeight = size;
-      circles[squares[i]].color = isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
+      // circles[squares[i]].color = isActive ? const Color(0xffCDE9FF) : const Color(0xff128BED);
+      circles[squares[i]].color = isActive ? Colors.yellow : Colors.blue;
       activeValues[squares[i]] = activeValue;
     }
   }

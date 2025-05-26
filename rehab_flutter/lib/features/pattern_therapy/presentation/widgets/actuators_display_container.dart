@@ -25,7 +25,7 @@ class ActuatorsDisplayContainer extends StatelessWidget {
         children: [
           Expanded(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -34,16 +34,17 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                       size: gridSize,
                       patternData: circleStates,
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      isLeftHand ? "Pinky" : "Thumb",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // const SizedBox(height: 12),
+                    // Text(
+                    //   isLeftHand ? "Pinky" : "Thumb",
+                    //   style: const TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ],
                 ),
+                const SizedBox(width: 20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -51,16 +52,17 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                       size: gridSize,
                       patternData: circleStates,
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      isLeftHand ? "Ring" : "Index",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // const SizedBox(height: 12),
+                    // Text(
+                    //   isLeftHand ? "Ring" : "Index",
+                    //   style: const TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ],
                 ),
+                const SizedBox(width: 20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -68,14 +70,14 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                       size: gridSize,
                       patternData: circleStates,
                     ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      "Middle",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // const SizedBox(height: 12),
+                    // const Text(
+                    //   "Middle",
+                    //   style: TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ],
                 ),
               ],
@@ -83,7 +85,7 @@ class ActuatorsDisplayContainer extends StatelessWidget {
           ),
           Expanded(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -92,16 +94,17 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                       size: gridSize,
                       patternData: circleStates,
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      isLeftHand ? "Index" : "Ring",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // const SizedBox(height: 12),
+                    // Text(
+                    //   isLeftHand ? "Index" : "Ring",
+                    //   style: const TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ],
                 ),
+                const SizedBox(width: 20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -109,14 +112,14 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                       size: gridSize,
                       patternData: circleStates,
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      isLeftHand ? "Thumb" : "Pinky",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
+                    // const SizedBox(height: 12),
+                    // Text(
+                    //   isLeftHand ? "Thumb" : "Pinky",
+                    //   style: const TextStyle(
+                    //     fontSize: 12,
+                    //     color: Colors.white,
+                    //   ),
+                    // ),
                   ],
                 ),
               ],

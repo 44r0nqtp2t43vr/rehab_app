@@ -25,9 +25,17 @@ class TextureNameSelector extends StatelessWidget {
         onPageChanged: onPageChanged,
         itemBuilder: (context, index) {
           return Center(
+            // child: Text(
+            //   imageTextures[index].name,
+            //   style: darkTextTheme().headlineMedium,
+            // ),
             child: Text(
               imageTextures[index].name,
-              style: darkTextTheme().headlineMedium,
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'Sailec Medium',
+                fontSize: 32,
+              ),
             ),
           );
         },

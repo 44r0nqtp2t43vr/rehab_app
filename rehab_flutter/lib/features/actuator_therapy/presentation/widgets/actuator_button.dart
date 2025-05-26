@@ -14,13 +14,13 @@ class ActuatorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      key: circleKeys[index], // Use the passed index
-      decoration: BoxDecoration(
-        color: circleStates[index]
-            ? const Color(0xff01FF99)
-            : Colors.white, // Use the passed index
-        shape: BoxShape.circle,
+    return Center(
+      child: Container(
+        key: circleKeys[index], // Use the passed index
+        decoration: BoxDecoration(
+          color: circleStates[index] ? const Color(0xff01FF99) : Colors.white, // Use the passed index
+          shape: BoxShape.circle,
+        ),
       ),
     );
   }

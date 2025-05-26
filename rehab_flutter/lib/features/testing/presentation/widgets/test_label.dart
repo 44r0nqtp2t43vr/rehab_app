@@ -15,9 +15,14 @@ class TestLabel extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          fontSize: 16,
+        // style: const TextStyle(
+        //   fontSize: 16,
+        //   color: Colors.white,
+        // ),
+        style: TextStyle(
           color: Colors.white,
+          fontFamily: 'Sailec Light',
+          fontSize: 36,
         ),
       ),
     );

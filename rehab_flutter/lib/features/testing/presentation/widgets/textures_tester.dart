@@ -95,7 +95,8 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    int desiredSize = MediaQuery.of(context).size.width.toInt();
+    // int desiredSize = MediaQuery.of(context).size.width.toInt();
+    int desiredSize = 300;
 
     if (isPlaying) {
       _renderActuators(desiredSize.toDouble());
@@ -122,40 +123,56 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
           const SizedBox(height: 4),
           const Text(
             "What texture do you feel?",
+            // style: TextStyle(
+            //   color: Colors.white,
+            //   fontFamily: 'Sailec Light',
+            //   fontSize: 36,
+            // ),
             style: TextStyle(
-              fontFamily: 'Sailec Medium',
-              fontSize: 16,
               color: Colors.white,
+              fontFamily: 'Sailec Medium',
+              fontSize: 36,
             ),
           ),
           const SizedBox(height: 16),
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            children: TestingDataProvider.imageTextures.map(
-              (imageTexture) {
-                return ElevatedButton(
-                  onPressed: () => _onSubmit(imageTexture.name),
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all<Color>(
-                      Colors.white,
-                    ),
-                    backgroundColor: WidgetStateProperty.all<Color>(
-                      const Color(0xff128BED),
-                    ),
-                    elevation: WidgetStateProperty.all<double>(0),
-                    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                    overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+          SizedBox(
+            width: 600,
+            child: Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              alignment: WrapAlignment.center,
+              children: TestingDataProvider.imageTextures.map(
+                (imageTexture) {
+                  return ElevatedButton(
+                    onPressed: () => _onSubmit(imageTexture.name),
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.all<Color>(
+                        Colors.white,
+                      ),
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        const Color(0xff128BED),
+                      ),
+                      elevation: WidgetStateProperty.all<double>(0),
+                      shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                  ),
-                  child: Text(imageTexture.name),
-                );
-              },
-            ).toList(),
+                    child: Text(
+                      imageTexture.name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Sailec Medium',
+                        fontSize: 36,
+                      ),
+                    ),
+                  );
+                },
+              ).toList(),
+            ),
           ),
           const SizedBox(height: 16),
         ],

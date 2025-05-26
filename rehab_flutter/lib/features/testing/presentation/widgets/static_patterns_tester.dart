@@ -157,11 +157,10 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
         TestLabel(label: "Item ${widget.currentItemNo} of ${widget.totalItemNo}"),
         const SizedBox(height: 16),
         Expanded(
-          flex: 2,
+          flex: 4,
           child: Center(
             child: Container(
               color: const Color(0xff223E64),
-              padding: const EdgeInsets.all(48.0),
               child: GestureDetector(
                 onPanStart: (DragStartDetails details) {
                   // Capture initial state of circles
@@ -223,7 +222,12 @@ class _StaticPatternsTesterState extends State<StaticPatternsTester> {
                 ),
                 child: Text(
                   'Submit',
-                  style: darkTextTheme().displaySmall,
+                  // style: darkTextTheme().displaySmall,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Sailec Medium',
+                    fontSize: 36,
+                  ),
                 ),
               ),
               // AppButton(

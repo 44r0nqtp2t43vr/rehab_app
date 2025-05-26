@@ -117,7 +117,8 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = 500;
     double gridSize = (screenWidth - 40) / 3;
 
     return Column(
@@ -126,7 +127,7 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
         TestLabel(label: currentRhythmicPattern.name.capitalize!),
         const SizedBox(height: 16),
         ActuatorsDisplayContainer(
-          height: screenWidth,
+          height: 400,
           gridSize: gridSize,
           isLeftHand: false,
           circleStates: circleStates,
@@ -158,11 +159,16 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
                         ),
                         child: const Text(
                           'Next Pattern',
+                          // style: TextStyle(
+                          //   fontFamily: 'Sailec Medium',
+                          //   fontSize: 15,
+                          //   height: 1.2,
+                          //   color: Color(0XFF275492),
+                          // ),
                           style: TextStyle(
+                            color: Colors.white,
                             fontFamily: 'Sailec Medium',
-                            fontSize: 15,
-                            height: 1.2,
-                            color: Color(0XFF275492),
+                            fontSize: 36,
                           ),
                         ),
                       ),
@@ -195,7 +201,12 @@ class _RhythmicPatternsIntroState extends State<RhythmicPatternsIntro> {
                   children: [
                     Text(
                       'Proceed',
-                      style: darkTextTheme().displaySmall,
+                      // style: darkTextTheme().displaySmall,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Sailec Medium',
+                        fontSize: 36,
+                      ),
                     ),
                     const SizedBox(
                       width: 8,

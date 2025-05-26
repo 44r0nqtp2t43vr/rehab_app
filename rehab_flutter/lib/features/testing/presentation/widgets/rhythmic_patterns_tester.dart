@@ -84,44 +84,59 @@ class _RhythmicPatternsTesterState extends State<RhythmicPatternsTester> {
           child: Center(
             child: Text(
               "What pattern do you feel?",
+              // style: TextStyle(
+              //   fontFamily: 'Sailec Medium',
+              //   fontSize: 20,
+              //   color: Colors.white,
+              // ),
               style: TextStyle(
-                fontFamily: 'Sailec Medium',
-                fontSize: 20,
                 color: Colors.white,
+                fontFamily: 'Sailec Medium',
+                fontSize: 36,
               ),
             ),
           ),
         ),
         Expanded(
           flex: 1,
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8.0,
-            runSpacing: 8.0,
-            children: TestingDataProvider.rhythmicPatterns.map(
-              (rhythmicPattern) {
-                return ElevatedButton(
-                  onPressed: () => _onSubmit(rhythmicPattern.name),
-                  style: ButtonStyle(
-                    foregroundColor: WidgetStateProperty.all<Color>(
-                      Colors.white,
-                    ),
-                    backgroundColor: WidgetStateProperty.all<Color>(
-                      const Color(0xff128BED),
-                    ),
-                    elevation: WidgetStateProperty.all<double>(0),
-                    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                    overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+          child: SizedBox(
+            width: 600,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: TestingDataProvider.rhythmicPatterns.map(
+                (rhythmicPattern) {
+                  return ElevatedButton(
+                    onPressed: () => _onSubmit(rhythmicPattern.name),
+                    style: ButtonStyle(
+                      foregroundColor: WidgetStateProperty.all<Color>(
+                        Colors.white,
+                      ),
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        const Color(0xff128BED),
+                      ),
+                      elevation: WidgetStateProperty.all<double>(0),
+                      shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                  ),
-                  child: Text(rhythmicPattern.name),
-                );
-              },
-            ).toList(),
+                    child: Text(
+                      rhythmicPattern.name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Sailec Medium',
+                        fontSize: 36,
+                      ),
+                    ),
+                  );
+                },
+              ).toList(),
+            ),
           ),
         ),
       ],

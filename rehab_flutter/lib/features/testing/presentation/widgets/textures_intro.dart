@@ -87,7 +87,8 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    int desiredSize = MediaQuery.of(context).size.width.toInt();
+    // int desiredSize = MediaQuery.of(context).size.width.toInt();
+    int desiredSize = 500;
 
     if (isPlaying) {
       _renderActuators(desiredSize.toDouble());

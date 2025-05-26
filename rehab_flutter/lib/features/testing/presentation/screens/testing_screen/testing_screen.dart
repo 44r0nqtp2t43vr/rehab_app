@@ -182,7 +182,7 @@ class _TestingScreenState extends State<TestingScreen> {
 
   _buildAppBar() {
     return AppBar(
-      centerTitle: false,
+      centerTitle: true,
       leading: IconButton(
         icon: const Icon(
           Icons.chevron_left,
@@ -193,18 +193,27 @@ class _TestingScreenState extends State<TestingScreen> {
           Navigator.of(context).pop();
         },
       ),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.isPretest ? "Pre-test" : "Post-test",
-            style: darkTextTheme().headlineLarge,
-          ),
-          Text(
-            getTitleFromTestingState(),
-            style: darkTextTheme().headlineSmall,
-          ),
-        ],
+      // title: Column(
+      //   crossAxisAlignment: CrossAxisAlignment.start,
+      //   children: [
+      //     Text(
+      //       widget.isPretest ? "Pre-test" : "Post-test",
+      //       style: darkTextTheme().headlineLarge,
+      //     ),
+      //     Text(
+      //       getTitleFromTestingState(),
+      //       style: darkTextTheme().headlineSmall,
+      //     ),
+      //   ],
+      // ),
+      title: Text(
+        getTitleFromTestingState(),
+        style: TextStyle(
+          color: Colors.white,
+          fontFamily: 'Sailec Medium',
+          fontSize: 40,
+          height: 1.2,
+        ),
       ),
       actions: [
         // IconButton(

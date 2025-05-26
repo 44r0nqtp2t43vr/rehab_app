@@ -102,7 +102,8 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     ImageTexture currentTexture = imageTextureProvider.imageTextures[currentIndex];
-    int desiredSize = MediaQuery.of(context).size.width.toInt();
+    // int desiredSize = MediaQuery.of(context).size.width.toInt();
+    int desiredSize = 560;
 
     return BlocProvider(
       create: (_) => sl<ActuatorsBloc>()
@@ -142,19 +143,28 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                         Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Cutaneous',
-                                style: darkTextTheme().headlineLarge,
-                              ),
-                              Text(
-                                "Texture Discrimination",
-                                style: darkTextTheme().headlineSmall,
-                              ),
-                            ],
+                          // child: Column(
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     Text(
+                          //       'Cutaneous',
+                          //       style: darkTextTheme().headlineLarge,
+                          //     ),
+                          //     Text(
+                          //       "Texture Discrimination",
+                          //       style: darkTextTheme().headlineSmall,
+                          //     ),
+                          //   ],
+                          // ),
+                          child: Text(
+                            "Texture Discrimination",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Sailec Medium',
+                              fontSize: 40,
+                              height: 1.2,
+                            ),
                           ),
                         ),
                       ],
@@ -180,96 +190,96 @@ class _TextureTherapyState extends State<TextureTherapy> with SingleTickerProvid
                     },
                   ),
                   const Spacer(flex: 1),
-                  AnimationSlider(
-                    animationDuration: animationDuration,
-                    onDurationChanged: (value) {
-                      setState(() {
-                        animationDuration = value.toInt();
-                        animationController.stop();
-                        animationController.duration = Duration(seconds: animationDuration);
-                        animationController.forward();
-                      });
-                    },
-                  ),
-                  const Spacer(flex: 1),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        padding: const EdgeInsets.all(0),
-                        icon: Icon(
-                          isPlaying ? CupertinoIcons.pause_circle_fill : CupertinoIcons.play_circle_fill,
-                          size: 40,
-                          color: isPlaying ? const Color(0xff01FF99) : Colors.white,
-                        ),
-                        onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.all(0),
-                        icon: const Icon(
-                          CupertinoIcons.stop_circle_fill,
-                          size: 40,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => _stopAnimation(),
-                      ),
-                      IconButton(
-                        padding: const EdgeInsets.all(0),
-                        icon: const Icon(
-                          CupertinoIcons.arrow_swap,
-                          size: 40,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => _toggleAniDirection(),
-                      ),
-                      TextButton.icon(
-                        onPressed: () => _onSTButtonPressed(context),
-                        label: const Text('Scroll'),
-                        icon: const Icon(
-                          CupertinoIcons.arrow_right,
-                          color: Colors.white,
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all<Color>(
-                            const Color(0xFF128BED),
-                          ),
-                          foregroundColor: WidgetStateProperty.all<Color>(
-                            Colors.white,
-                          ),
-                          textStyle: WidgetStateProperty.all<TextStyle>(
-                            const TextStyle(
-                              fontFamily: 'Sailec Medium',
-                              fontSize: 16,
-                            ),
-                          ),
-                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // AnimationButton(
-                      //   icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                      //   onPressed: () =>
-                      //       isPlaying ? _pauseAnimation() : _resumeAnimation(),
-                      // ),
-                      // AnimationButton(
-                      //   icon: const Icon(Icons.stop),
-                      //   onPressed: () => _stopAnimation(),
-                      // ),
-                      // AnimationButton(
-                      //   icon: const Icon(Icons.swap_calls),
-                      //   onPressed: () => _toggleAniDirection(),
-                      // ),
-                      // AppIconButtonText(
-                      //   icon: const Icon(Icons.chevron_right),
-                      //   text: const Text("Scroll Textures"),
-                      //   onPressed: () => _onSTButtonPressed(context),
-                      // ),
-                    ],
-                  ),
-                  const Spacer(flex: 2),
+                  // AnimationSlider(
+                  //   animationDuration: animationDuration,
+                  //   onDurationChanged: (value) {
+                  //     setState(() {
+                  //       animationDuration = value.toInt();
+                  //       animationController.stop();
+                  //       animationController.duration = Duration(seconds: animationDuration);
+                  //       animationController.forward();
+                  //     });
+                  //   },
+                  // ),
+                  // const Spacer(flex: 1),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //   children: [
+                  //     IconButton(
+                  //       padding: const EdgeInsets.all(0),
+                  //       icon: Icon(
+                  //         isPlaying ? CupertinoIcons.pause_circle_fill : CupertinoIcons.play_circle_fill,
+                  //         size: 40,
+                  //         color: isPlaying ? const Color(0xff01FF99) : Colors.white,
+                  //       ),
+                  //       onPressed: () => isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                  //     ),
+                  //     IconButton(
+                  //       padding: const EdgeInsets.all(0),
+                  //       icon: const Icon(
+                  //         CupertinoIcons.stop_circle_fill,
+                  //         size: 40,
+                  //         color: Colors.white,
+                  //       ),
+                  //       onPressed: () => _stopAnimation(),
+                  //     ),
+                  //     IconButton(
+                  //       padding: const EdgeInsets.all(0),
+                  //       icon: const Icon(
+                  //         CupertinoIcons.arrow_swap,
+                  //         size: 40,
+                  //         color: Colors.white,
+                  //       ),
+                  //       onPressed: () => _toggleAniDirection(),
+                  //     ),
+                  //     TextButton.icon(
+                  //       onPressed: () => _onSTButtonPressed(context),
+                  //       label: const Text('Scroll'),
+                  //       icon: const Icon(
+                  //         CupertinoIcons.arrow_right,
+                  //         color: Colors.white,
+                  //       ),
+                  //       style: ButtonStyle(
+                  //         backgroundColor: WidgetStateProperty.all<Color>(
+                  //           const Color(0xFF128BED),
+                  //         ),
+                  //         foregroundColor: WidgetStateProperty.all<Color>(
+                  //           Colors.white,
+                  //         ),
+                  //         textStyle: WidgetStateProperty.all<TextStyle>(
+                  //           const TextStyle(
+                  //             fontFamily: 'Sailec Medium',
+                  //             fontSize: 16,
+                  //           ),
+                  //         ),
+                  //         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                  //           RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(10),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     // AnimationButton(
+                  //     //   icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                  //     //   onPressed: () =>
+                  //     //       isPlaying ? _pauseAnimation() : _resumeAnimation(),
+                  //     // ),
+                  //     // AnimationButton(
+                  //     //   icon: const Icon(Icons.stop),
+                  //     //   onPressed: () => _stopAnimation(),
+                  //     // ),
+                  //     // AnimationButton(
+                  //     //   icon: const Icon(Icons.swap_calls),
+                  //     //   onPressed: () => _toggleAniDirection(),
+                  //     // ),
+                  //     // AppIconButtonText(
+                  //     //   icon: const Icon(Icons.chevron_right),
+                  //     //   text: const Text("Scroll Textures"),
+                  //     //   onPressed: () => _onSTButtonPressed(context),
+                  //     // ),
+                  //   ],
+                  // ),
+                  // const Spacer(flex: 2),
                 ],
               ),
             ),

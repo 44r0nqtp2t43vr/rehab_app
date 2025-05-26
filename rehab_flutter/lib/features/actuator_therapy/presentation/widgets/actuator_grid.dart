@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rehab_flutter/features/actuator_therapy/presentation/widgets/actuator_button.dart';
 
 class ActuatorGrid extends StatelessWidget {
   final List<GlobalKey> circleKeys;
@@ -15,36 +14,38 @@ class ActuatorGrid extends StatelessWidget {
     required this.updateState,
   }) : super(key: key);
 
-  // This method now correctly calculates the sum based on the circleStates
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xff223E64),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          padding: const EdgeInsets.all(10.0),
-          itemCount: 16,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () => updateState(index, !permanentGreen[index]),
-              child: ActuatorButton(
-                index: index,
-                circleKeys: circleKeys,
-                circleStates: circleStates,
-              ),
-            );
-          },
-        ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(4, (row) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(4, (col) {
+              int index = row * 4 + col;
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: GestureDetector(
+                  onTap: () => updateState(index, !permanentGreen[index]),
+                  child: Container(
+                    key: circleKeys[index],
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: circleStates[index] ? const Color(0xff01FF99) : Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              );
+            }),
+          );
+        }),
       ),
     );
   }
