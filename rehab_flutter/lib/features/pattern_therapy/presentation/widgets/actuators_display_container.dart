@@ -25,7 +25,7 @@ class ActuatorsDisplayContainer extends StatelessWidget {
         children: [
           Expanded(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +44,6 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                     // ),
                   ],
                 ),
-                const SizedBox(width: 20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -62,7 +61,6 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                     // ),
                   ],
                 ),
-                const SizedBox(width: 20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -80,13 +78,6 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                     // ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -104,7 +95,6 @@ class ActuatorsDisplayContainer extends StatelessWidget {
                     // ),
                   ],
                 ),
-                const SizedBox(width: 20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -125,6 +115,48 @@ class ActuatorsDisplayContainer extends StatelessWidget {
               ],
             ),
           ),
+          // Expanded(
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Column(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           ActuatorDisplayGrid(
+          //             size: gridSize,
+          //             patternData: circleStates,
+          //           ),
+          //           // const SizedBox(height: 12),
+          //           // Text(
+          //           //   isLeftHand ? "Index" : "Ring",
+          //           //   style: const TextStyle(
+          //           //     fontSize: 12,
+          //           //     color: Colors.white,
+          //           //   ),
+          //           // ),
+          //         ],
+          //       ),
+          //       const SizedBox(width: 20),
+          //       Column(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           ActuatorDisplayGrid(
+          //             size: gridSize,
+          //             patternData: circleStates,
+          //           ),
+          //           // const SizedBox(height: 12),
+          //           // Text(
+          //           //   isLeftHand ? "Thumb" : "Pinky",
+          //           //   style: const TextStyle(
+          //           //     fontSize: 12,
+          //           //     color: Colors.white,
+          //           //   ),
+          //           // ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

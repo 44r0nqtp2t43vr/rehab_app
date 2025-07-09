@@ -19,8 +19,8 @@ class ActuatorDisplayGrid extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
-          crossAxisSpacing: 2,
-          mainAxisSpacing: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
         ),
         itemCount: 16,
         itemBuilder: (context, index) {

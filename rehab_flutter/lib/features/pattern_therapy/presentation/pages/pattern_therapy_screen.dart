@@ -180,8 +180,8 @@ class _PatternTherapyState extends State<PatternTherapy> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ActuatorsDisplayContainer(
-                      height: screenWidth,
-                      gridSize: gridSize,
+                      height: 400,
+                      gridSize: 200,
                       isLeftHand: isLeftHand,
                       circleStates: circleStates,
                     ),
