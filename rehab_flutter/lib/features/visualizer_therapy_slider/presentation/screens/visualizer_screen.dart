@@ -4,14 +4,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rehab_flutter/core/controller/song_controller.dart';
 import 'package:rehab_flutter/core/enums/song_enums.dart';
-import 'package:rehab_flutter/core/repository/firestore_repository.dart';
+// import 'package:rehab_flutter/core/repository/firestore_repository.dart';
 import 'package:rehab_flutter/features/piano_tiles/presentation/widgets/song_slider.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/controllers/bluetooth_controller.dart';
 import 'package:rehab_flutter/features/visualizer_therapy_slider/domain/models/audio_data.dart';
@@ -162,38 +162,74 @@ class VisualizerScreenStateSlider extends State<VisualizerScreenSlider> with Sin
     });
   }
 
+  // Firebase audio fetch and play
+  // Future<void> fetchAndPlayAudio() async {
+  //   int retries = 3;
+
+  //   while (retries > 0) {
+  //     try {
+  //       final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
+  //       final audioUrl = await firebaseRepository.getAudioUrl(widget.songData.audioSource);
+
+  //       audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
+  //         audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
+  //         audioPlayer.resume();
+  //       });
+
+  //       await audioPlayer.play(UrlSource(audioUrl), position: Duration(seconds: widget.currentPositionSec.toInt()));
+
+  //       if (!mounted) return;
+  //       setState(() {
+  //         isLoading = false;
+  //       });
+  //       return;
+  //     } catch (e) {
+  //       print('Error: $e');
+  //       retries--;
+  //       if (retries == 0) {
+  //         if (!mounted) return;
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //             content: Text("Failed to load audio. Please try again."),
+  //           ),
+  //         );
+  //       }
+  //     }
+  //   }
+  // }
+
+  // Bundled audio fetch and play
   Future<void> fetchAndPlayAudio() async {
-    int retries = 3;
+    // Use AssetSource assuming widget.songData.audioSource is a path to a file
+    // inside the /assets folder defined in pubspec.yaml.
+    Source audioSource = AssetSource(widget.songData.audioSource);
 
-    while (retries > 0) {
-      try {
-        final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
-        final audioUrl = await firebaseRepository.getAudioUrl(widget.songData.audioSource);
+    try {
+      // 1. Set the audio source to the local asset path
+      await audioPlayer.setSource(audioSource);
 
-        audioPlayer.setSource(UrlSource(widget.songData.audioSource)).then((_) {
-          audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
-          audioPlayer.resume();
-        });
+      // 2. Seek to the current position
+      await audioPlayer.seek(Duration(seconds: widget.currentPositionSec.toInt()));
 
-        await audioPlayer.play(UrlSource(audioUrl), position: Duration(seconds: widget.currentPositionSec.toInt()));
+      // 3. Start playing
+      await audioPlayer.resume();
 
-        if (!mounted) return;
-        setState(() {
-          isLoading = false;
-        });
-        return;
-      } catch (e) {
-        print('Error: $e');
-        retries--;
-        if (retries == 0) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Failed to load audio. Please try again."),
-            ),
-          );
-        }
-      }
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    } catch (e) {
+      print('Error playing asset audio: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to load asset audio. Check the path and pubspec.yaml."),
+        ),
+      );
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
