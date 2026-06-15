@@ -99,6 +99,8 @@ flutter:
     - assets/images/image_texture/textures/
     - assets/data/
     - assets/lotties/
+    - assets/audio-mt/
+    - assets/data-mt/
     # - assets/data/
   # An image asset can refer to one or more resolution-specific "variants", seepog
   # https://flutter.dev/assets-and-images/#resolution-aware

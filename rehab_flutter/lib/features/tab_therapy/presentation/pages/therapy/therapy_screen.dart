@@ -235,6 +235,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     svgPath: 'assets/images/intermediate.svg',
                   ),
                   const SizedBox(height: 20),
+                  cuButtonDialog(
+                    context: context,
+                    onPressed: () => _onComplexMTButtonPressed(context),
+                    title: 'Complex',
+                    svgPath: 'assets/images/intermediate.svg',
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -268,6 +275,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
     sl<SongController>().setMTType(MusicTherapy.intermediate);
     sl<SongController>().setSong(null);
     sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
+  }
+
+  void _onComplexMTButtonPressed(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.pushNamed(context, '/MusicTactalizer');
+    // sl<SongController>().setMTType(MusicTherapy.intermediate);
+    // sl<SongController>().setSong(null);
+    // sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
   }
 
   void _onCTButtonPressed() {
