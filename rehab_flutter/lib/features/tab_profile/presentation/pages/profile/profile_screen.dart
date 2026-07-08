@@ -55,9 +55,9 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       backgroundColor: WidgetStateProperty.all<Color>(const Color(0xff128BED)),
                       elevation: WidgetStateProperty.all<double>(0),
-                      shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                      // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                       overlayColor: WidgetStateProperty.all<Color>(
-                        Colors.white.withOpacity(0.2),
+                        Colors.white.withValues(alpha: 0.2),
                       ),
                       shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -73,9 +73,9 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             GlassContainer(
               shadowStrength: 2,
-              shadowColor: Colors.black,
+              // shadowColor: Colors.black,
               blur: 4,
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -126,7 +126,7 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           spreadRadius: 10,
                           blurRadius: 20,
                           offset: const Offset(1, 1),
@@ -141,8 +141,8 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
                         elevation: WidgetStateProperty.all<double>(0),
-                        shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                        overlayColor: WidgetStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                        // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        overlayColor: WidgetStateProperty.all<Color>(Colors.white.withValues(alpha: 0.2)),
                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -199,7 +199,7 @@ class ProfileScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(

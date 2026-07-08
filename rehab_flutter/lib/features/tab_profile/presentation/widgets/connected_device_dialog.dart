@@ -14,7 +14,7 @@ class ConnectedDeviceDialog extends StatelessWidget {
 
     return GlassContainer(
       blur: 10,
-      color: Colors.white.withOpacity(0.3),
+      color: Colors.white.withValues(alpha: 0.3),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

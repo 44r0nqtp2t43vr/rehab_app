@@ -17,8 +17,6 @@ import 'package:rehab_flutter/features/patients_manager/presentation/widgets/pat
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/therapy_calendar.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_bloc.dart';
 import 'package:rehab_flutter/features/tab_activity_monitor/presentation/bloc/patient_plans/patient_plans_state.dart';
-import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_bloc.dart';
-import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_plan/patient_current_plan_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/activity_chart_card.dart';
@@ -53,7 +51,7 @@ class _PatientPageContentState extends State<PatientPageContent> {
                     Row(
                       children: [
                         IconButton(
-                          highlightColor: Colors.white.withOpacity(0.1),
+                          highlightColor: Colors.white.withValues(alpha: 0.1),
                           icon: const Icon(
                             Icons.chevron_left,
                             size: 35,
@@ -119,9 +117,9 @@ class _PatientPageContentState extends State<PatientPageContent> {
                           flex: 4,
                           child: GlassContainer(
                             shadowStrength: 2,
-                            shadowColor: Colors.black,
+                            // shadowColor: Colors.black,
                             blur: 4,
-                            color: Colors.white.withOpacity(0.25),
+                            color: Colors.white.withValues(alpha: 0.25),
                             child: BlocConsumer<PatientCurrentSessionBloc, PatientCurrentSessionState>(
                               listener: (context, state) => setState(() {}),
                               builder: (context, state) {
@@ -164,13 +162,13 @@ class _PatientPageContentState extends State<PatientPageContent> {
                           flex: 5,
                           child: GlassContainer(
                             shadowStrength: 2,
-                            shadowColor: Colors.black,
+                            // shadowColor: Colors.black,
                             blur: 4,
-                            color: Colors.white.withOpacity(0.25),
-                            child: BlocConsumer<PatientCurrentPlanBloc, PatientCurrentPlanState>(
+                            color: Colors.white.withValues(alpha: 0.25),
+                            child: BlocConsumer<PatientPlansBloc, PatientPlansState>(
                               listener: (context, state) => setState(() {}),
                               builder: (context, state) {
-                                if (state is PatientCurrentPlanLoading) {
+                                if (state is PatientPlansLoading) {
                                   return Container(
                                     height: 240,
                                     decoration: BoxDecoration(
@@ -180,8 +178,8 @@ class _PatientPageContentState extends State<PatientPageContent> {
                                   );
                                 }
 
-                                if (state is PatientCurrentPlanDone) {
-                                  return ActivityChartCard(currentPlan: state.currentPlan);
+                                if (state is PatientPlansDone) {
+                                  return ActivityChartCard(plans: state.plans);
                                 }
 
                                 return Container(
@@ -245,8 +243,8 @@ class _PatientPageContentState extends State<PatientPageContent> {
                               ),
                               backgroundColor: WidgetStateProperty.all<Color>(const Color(0xff128BED)),
                               elevation: WidgetStateProperty.all<double>(0),
-                              shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
-                              overlayColor: WidgetStateProperty.all<Color>(Colors.white.withOpacity(0.2)),
+                              // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                              overlayColor: WidgetStateProperty.all<Color>(Colors.white.withValues(alpha: 0.2)),
                               shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -280,7 +278,7 @@ class _PatientPageContentState extends State<PatientPageContent> {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(

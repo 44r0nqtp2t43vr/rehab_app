@@ -108,7 +108,7 @@ class SpecificGenre extends StatelessWidget {
                     children: [
                       GlassContainer(
                         blur: 4,
-                        color: Colors.white.withOpacity(0.25),
+                        color: Colors.white.withValues(alpha: 0.25),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: Column(
@@ -147,9 +147,7 @@ class SpecificGenre extends StatelessWidget {
   }
 
   List<Widget> _getSongs(BuildContext context, Genre selectedGenre) {
-    return SongProvider.songs
-        .where((song) => song.genre == selectedGenre)
-        .map((song) {
+    return SongProvider.songs.where((song) => song.genre == selectedGenre).map((song) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: SongCard(

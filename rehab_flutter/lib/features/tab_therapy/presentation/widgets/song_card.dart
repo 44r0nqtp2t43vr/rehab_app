@@ -13,7 +13,7 @@ class SongCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      shadowColor: Colors.transparent,
+      // shadowColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       color: Colors.transparent,
       child: InkWell(

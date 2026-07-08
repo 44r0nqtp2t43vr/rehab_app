@@ -167,7 +167,7 @@ class ActuatorTherapyState extends State<ActuatorTherapy> {
             ),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.30),
+                color: Colors.white.withValues(alpha: 0.30),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(

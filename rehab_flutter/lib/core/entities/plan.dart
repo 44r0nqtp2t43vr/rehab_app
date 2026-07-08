@@ -5,8 +5,6 @@ class Plan {
   final String planName;
   final DateTime startDate;
   final DateTime endDate;
-  final bool isActive;
-  final int sessionCount;
   final List<Session> sessions;
 
   Plan({
@@ -15,8 +13,6 @@ class Plan {
     required this.startDate,
     required this.endDate,
     required this.sessions,
-    this.isActive = false,
-    this.sessionCount = 0,
   });
 
   static Plan empty() {
@@ -45,7 +41,7 @@ class Plan {
     final DateTime today = DateTime.now();
 
     final Session currentSession = sessions.firstWhere(
-      (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+      (session) => session.endDate.isAfter(today),
       orElse: () => Session.empty(),
     );
     return currentSession.sessionId.isEmpty ? null : currentSession;
@@ -54,7 +50,7 @@ class Plan {
   int getIndexOfCurrentSession() {
     final DateTime today = DateTime.now();
     final int indexOfCurrentSession = sessions.indexWhere(
-      (session) => session.date.year == today.year && session.date.month == today.month && session.date.day == today.day,
+      (session) => session.endDate.isAfter(today),
     );
     return indexOfCurrentSession;
   }

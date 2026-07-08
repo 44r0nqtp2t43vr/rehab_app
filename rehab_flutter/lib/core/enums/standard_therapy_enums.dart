@@ -1,18 +1,18 @@
-enum StandardTherapy { pianoTiles, musicVisualizer, actuatorTherapy, patternTherapy, textureTherapy }
+enum StandardTherapy { bms, ims, pod, ptd, ttd }
 
 StandardTherapy stringToStandardTherapyEnum(String name) {
   switch (name) {
-    case "pianoTiles":
-      return StandardTherapy.pianoTiles;
-    case "musicVisualizer":
-      return StandardTherapy.musicVisualizer;
-    case "actuatorTherapy":
-      return StandardTherapy.actuatorTherapy;
-    case "patternTherapy":
-      return StandardTherapy.patternTherapy;
-    case "textureTherapy":
-      return StandardTherapy.textureTherapy;
+    case "bms":
+      return StandardTherapy.bms;
+    case "ims":
+      return StandardTherapy.ims;
+    case "pod":
+      return StandardTherapy.pod;
+    case "ptd":
+      return StandardTherapy.ptd;
+    case "ttd":
+      return StandardTherapy.ttd;
     default:
-      return StandardTherapy.actuatorTherapy;
+      return StandardTherapy.pod;
   }
 }

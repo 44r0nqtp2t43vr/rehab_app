@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:rehab_flutter/config/theme/app_themes.dart';
 import 'package:rehab_flutter/core/entities/patient_plan.dart';
-import 'package:rehab_flutter/core/entities/user.dart';
-import 'package:rehab_flutter/features/patients_manager/domain/enums/patient_sorting_type.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_bloc.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/bloc/viewed_therapist_patient_plan_sessions_list/viewed_therapist_patient_plan_sessions_list_state.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/widgets/patients_therapy_completion_rate.dart';
@@ -22,16 +20,6 @@ class PatientPlanDetails extends StatefulWidget {
 }
 
 class _PatientPlanDetailsState extends State<PatientPlanDetails> {
-  final List<String> availableTypes = availableSortingTypes;
-  late List<AppUser> sortedPatients;
-  late String currentType;
-
-  @override
-  void initState() {
-    currentType = availableSortingTypes[0];
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

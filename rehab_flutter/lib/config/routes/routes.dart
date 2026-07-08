@@ -15,6 +15,7 @@ import 'package:rehab_flutter/features/login_register/presentation/pages/onboard
 import 'package:rehab_flutter/features/login_register/presentation/pages/register/register_screen.dart';
 import 'package:rehab_flutter/features/login_register/presentation/pages/register_therapist/register_therapist.dart';
 import 'package:rehab_flutter/features/logs_screen/presentation/logs_screen.dart';
+import 'package:rehab_flutter/features/music_tactalizer/screens/home_screen.dart';
 import 'package:rehab_flutter/features/passive_therapy/domain/models/passive_therapy_data.dart';
 import 'package:rehab_flutter/features/passive_therapy/presenation/passive_therapy_screen.dart';
 import 'package:rehab_flutter/features/patients_manager/presentation/pages/assign_patients/assign_patients.dart';
@@ -133,7 +134,10 @@ class AppRoutes {
         return _materialRoute(const AdminTherapistPage());
 
       case '/TestAnalytics':
-        return _materialRoute(const TestAnalytics());
+        return _materialRoute(TestAnalytics(testingItems: settings.arguments as List<String>));
+
+      case '/MusicTactalizer':
+        return _materialRoute(const MusicTactalizer());
 
       default:
         return _materialRoute(const OnboardingScreen());

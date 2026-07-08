@@ -18,7 +18,7 @@ class DailyProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double percentCompletion = todaySession.sessionId.isEmpty ? 0 : todaySession.getSessionPercentCompletion();
+    double percentCompletion = todaySession.sessionId.isEmpty ? 0 : todaySession.getTodayActivitiesPercentCompletion();
 
     return Container(
       height: 240,
@@ -60,7 +60,7 @@ class DailyProgressCard extends StatelessWidget {
           const Spacer(),
           GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Material(
               borderRadius: BorderRadius.circular(10),
               color: Colors.transparent,
@@ -99,7 +99,7 @@ class DailyProgressCard extends StatelessWidget {
             backgroundColor: Colors.transparent,
             content: GlassContainer(
               blur: 10,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -168,7 +168,7 @@ class DailyProgressCard extends StatelessWidget {
         },
       );
     } else {
-      final List<bool> conditions = session.getSessionConditions();
+      final List<bool> conditions = session.getTodayActivitiesConditions();
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -179,7 +179,7 @@ class DailyProgressCard extends StatelessWidget {
             backgroundColor: Colors.transparent,
             content: GlassContainer(
               blur: 10,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -236,7 +236,7 @@ class DailyProgressCard extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                            "Completed Pre-test",
+                            "Completed 1st Standard Session",
                             style: darkTextTheme().headlineSmall,
                           ),
                         ),
@@ -255,7 +255,7 @@ class DailyProgressCard extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                            "Completed 1st Standard Session",
+                            "Completed Passive Session",
                             style: darkTextTheme().headlineSmall,
                           ),
                         ),
@@ -274,45 +274,7 @@ class DailyProgressCard extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                            "Completed Passive Session",
-                            style: darkTextTheme().headlineSmall,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Radio(
-                          value: conditions[3],
-                          groupValue: true,
-                          onChanged: (value) {},
-                          fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                            return conditions[3] ? const Color(0xff01FF99) : Colors.white;
-                          }),
-                        ),
-                        Expanded(
-                          child: Text(
                             "Completed 2nd Standard Session",
-                            style: darkTextTheme().headlineSmall,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Radio(
-                          value: conditions[4],
-                          groupValue: true,
-                          onChanged: (value) {},
-                          fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                            return conditions[4] ? const Color(0xff01FF99) : Colors.white;
-                          }),
-                        ),
-                        Expanded(
-                          child: Text(
-                            "Completed Post-test",
                             style: darkTextTheme().headlineSmall,
                           ),
                         ),

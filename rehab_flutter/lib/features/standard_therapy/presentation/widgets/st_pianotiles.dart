@@ -52,6 +52,8 @@ class _STPianoTilesState extends State<STPianoTiles> {
   double currentPositionSec = 0.0;
   double currentPositionMil = 0.0;
 
+  String lastSentPattern = '';
+
   void _pauseAnimation() {
     audioPlayer.pause();
     setState(() {
@@ -103,11 +105,23 @@ class _STPianoTilesState extends State<STPianoTiles> {
           data = "<000000000000000000000000000000>";
       }
 
-      sl<BluetoothBloc>().add(WriteDataEvent(data));
-      await Future.delayed(const Duration(milliseconds: 40));
-      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      if (lastSentPattern == data) {
+        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+        await Future.delayed(const Duration(milliseconds: 20));
+        sl<BluetoothBloc>().add(WriteDataEvent(data));
+        setState(() {
+          lastSentPattern = data;
+        });
+      } else {
+        sl<BluetoothBloc>().add(WriteDataEvent(data));
+        setState(() {
+          lastSentPattern = data;
+        });
+      }
     } else {
-      sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      if (lastSentPattern != "<000000000000000000000000000000>") {
+        sl<BluetoothBloc>().add(const WriteDataEvent("<000000000000000000000000000000>"));
+      }
     }
   }
 
@@ -118,8 +132,10 @@ class _STPianoTilesState extends State<STPianoTiles> {
     audioPlayer = AudioPlayer();
     isPlaying = true;
 
+    // Start playing the audio
     fetchAndPlayAudio();
 
+    // Load blocks from the song's metadata
     loadBlocks(widget.song.metaDataUrl);
 
     positionSubscription = audioPlayer.onPositionChanged.listen((position) {
@@ -134,7 +150,10 @@ class _STPianoTilesState extends State<STPianoTiles> {
               currentIndex = i;
               currentPositionSec = position.inSeconds.toDouble();
               currentPositionMil = position.inMilliseconds.toDouble();
-              blocksToRender = blocks.sublist(currentIndex, currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6);
+              blocksToRender = blocks.sublist(
+                currentIndex,
+                currentIndex + 6 > blocks.length - 1 ? blocks.length - 1 : currentIndex + 6,
+              );
             });
 
             break;
@@ -142,43 +161,39 @@ class _STPianoTilesState extends State<STPianoTiles> {
         }
       }
     });
-
-    audioPlayer.onPlayerComplete.listen((event) => widget.submitCallback());
   }
 
   Future<void> fetchAndPlayAudio() async {
-    int retries = 3;
+    final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
+    final audioUrl = await firebaseRepository.getAudioUrl(widget.song.audioSource);
 
-    while (retries > 0) {
-      try {
-        final firebaseRepository = FirebaseRepositoryImpl(FirebaseFirestore.instance, FirebaseStorage.instance);
-        final audioUrl = await firebaseRepository.getAudioUrl(widget.song.audioSource);
+    try {
+      await audioPlayer.setSource(UrlSource(audioUrl));
+      await audioPlayer.seek(const Duration(seconds: 0));
+      await audioPlayer.resume();
 
-        audioPlayer.setSource(UrlSource(widget.song.audioSource)).then((_) {
-          audioPlayer.seek(const Duration(seconds: 0));
-          audioPlayer.resume();
-        });
+      // Audio has successfully started playing
+      _listenToPlayerCompletion();
 
-        await audioPlayer.play(UrlSource(audioUrl), position: const Duration(seconds: 0));
-
-        if (!mounted) return;
-        setState(() {
-          isLoading = false;
-        });
-        return;
-      } catch (e) {
-        print('Error: $e');
-        retries--;
-        if (retries == 0) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Failed to load audio. Please try again."),
-            ),
-          );
-        }
-      }
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to load audio. Please try again."),
+        ),
+      );
     }
+  }
+
+  void _listenToPlayerCompletion() {
+    // Listen to when the audio completes only if it was successfully played
+    audioPlayer.onPlayerComplete.listen((event) {
+      widget.submitCallback();
+    });
   }
 
   @override
@@ -326,7 +341,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.shuffle,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -334,7 +349,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.backward_end_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -350,7 +365,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.forward_end_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),
@@ -358,7 +373,7 @@ class _STPianoTilesState extends State<STPianoTiles> {
                           icon: Icon(
                             CupertinoIcons.square_list_fill,
                             size: 24,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                           onPressed: () {},
                         ),

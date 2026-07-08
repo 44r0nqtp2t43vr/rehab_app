@@ -13,7 +13,7 @@ class GenreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      shadowColor: Colors.transparent,
+      // shadowColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       color: const Color(0xff128BED),
       child: ClipRRect(
@@ -34,7 +34,7 @@ class GenreCard extends StatelessWidget {
               ),
             ),
             Container(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
             ),
             InkWell(
               onTap: onTap,

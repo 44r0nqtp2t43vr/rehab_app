@@ -225,9 +225,9 @@ class _EditProfileState extends State<EditProfile> {
                       GlassContainer(
                         width: double.infinity,
                         shadowStrength: 2,
-                        shadowColor: Colors.black,
+                        // shadowColor: Colors.black,
                         blur: 4,
-                        color: Colors.white.withOpacity(0.25),
+                        color: Colors.white.withValues(alpha: 0.25),
                         child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
@@ -398,7 +398,7 @@ class _EditProfileState extends State<EditProfile> {
                                 borderRadius: BorderRadius.circular(10),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: 0.05),
                                     spreadRadius: 10,
                                     blurRadius: 20,
                                     offset: const Offset(1, 1),
@@ -417,7 +417,7 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                   backgroundColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   elevation: WidgetStateProperty.all<double>(0),
-                                  shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                                  // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                                   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                     RoundedRectangleBorder(

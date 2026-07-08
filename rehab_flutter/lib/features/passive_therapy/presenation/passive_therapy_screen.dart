@@ -317,7 +317,7 @@ class _PassiveTherapyScreenState extends State<PassiveTherapyScreen> with Ticker
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Padding(

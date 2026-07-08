@@ -144,7 +144,7 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
               ),
             ),
             Container(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
             ),
             _buildBody(),
           ],
@@ -196,19 +196,16 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
     return BlocConsumer<TherapistBloc, TherapistState>(
       listener: (context, state) {
         if (state is TherapistNone && state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
         if (state is TherapistDone) {
-          BlocProvider.of<TherapistBloc>(context)
-              .add(const ResetTherapistEvent());
+          BlocProvider.of<TherapistBloc>(context).add(const ResetTherapistEvent());
           Navigator.of(context).pop();
         }
       },
       builder: (context, state) {
         if (state is TherapistLoading) {
-          return const Center(
-              child: CupertinoActivityIndicator(color: Colors.white));
+          return const Center(child: CupertinoActivityIndicator(color: Colors.white));
         }
         if (state is TherapistNone || state is TherapistDone) {
           return SafeArea(
@@ -224,7 +221,7 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GlassContainer(
                           blur: 4,
-                          color: Colors.white.withOpacity(0.25),
+                          color: Colors.white.withValues(alpha: 0.25),
                           child: Padding(
                             padding: const EdgeInsets.all(24),
                             child: Column(
@@ -247,8 +244,7 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
                                       ),
                                       const SizedBox(height: 12),
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Theme(
                                             data: loginButtonTheme,
@@ -262,8 +258,7 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
                                             data: loginButtonTheme,
                                             child: IconButton(
                                               onPressed: () {},
-                                              icon: const Icon(
-                                                  Icons.one_x_mobiledata),
+                                              icon: const Icon(Icons.one_x_mobiledata),
                                             ),
                                           ),
                                           const SizedBox(width: 8),
@@ -392,8 +387,7 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
                 _currentGender = newValue!;
               });
             },
-            items:
-                _availableGenders.map<DropdownMenuItem<String>>((String value) {
+            items: _availableGenders.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -565,8 +559,7 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
 
   void _registerTherapist() {
     // Convert the birthdate from String to DateTime
-    DateTime? birthdate =
-        DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
+    DateTime? birthdate = DateFormat('yyyy-MM-dd').parseStrict(_birthdateController.text);
 
     // Create the RegisterData instance with all fields
     RegisterTherapistData registerData = RegisterTherapistData(
@@ -582,8 +575,7 @@ class _RegisterTherapistState extends State<RegisterTherapist> {
     );
 
     // Dispatch the event to the bloc
-    BlocProvider.of<TherapistBloc>(context)
-        .add(RegisterTherapistEvent(registerData));
+    BlocProvider.of<TherapistBloc>(context).add(RegisterTherapistEvent(registerData));
   }
 
   void _onLoginButtonPressed(BuildContext context) {

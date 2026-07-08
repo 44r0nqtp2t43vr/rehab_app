@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           GlassContainer(
                             blur: 4,
-                            color: Colors.white.withOpacity(0.25),
+                            color: Colors.white.withValues(alpha: 0.25),
                             child: Padding(
                               padding: const EdgeInsets.all(20),
                               child: Form(

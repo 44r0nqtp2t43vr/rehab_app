@@ -42,7 +42,7 @@ class EventCard extends StatelessWidget {
     return GlassContainer(
       height: 68,
       blur: 4,
-      color: Colors.white.withOpacity(0.25),
+      color: Colors.white.withValues(alpha: 0.25),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: Row(

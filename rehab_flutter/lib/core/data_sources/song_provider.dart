@@ -12,6 +12,15 @@ class SongProvider {
       duration: 242.10290249433106,
       metaDataUrl: 'assets/data/vivalavida.json',
     ),
+    // Song(
+    //   title: "漁舟唱晚",
+    //   artist: "關正傑",
+    //   audioSource: 'audio/漁舟唱晚.mp3',
+    //   genre: Genre.classical,
+    //   tempo: 135.99917763,
+    //   duration: 242.10290249433106,
+    //   metaDataUrl: 'assets/data/漁舟唱晚.json',
+    // ),
     Song(
       title: "Forest Of Blocks",
       artist: "Confei Wei",

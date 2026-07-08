@@ -130,7 +130,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
                               const Color(0xff01FF99),
                             ),
                             elevation: WidgetStateProperty.all<double>(0),
-                            shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                            // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                             overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                               RoundedRectangleBorder(
@@ -156,7 +156,8 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
                     : const SizedBox(),
 
                 ElevatedButton(
-                  onPressed: () => widget.onProceed(TestingState.textures),
+                  // onPressed: () => widget.onProceed(TestingState.textures),
+                  onPressed: () {},
                   style: ButtonStyle(
                     foregroundColor: WidgetStateProperty.all<Color>(
                       Colors.white,
@@ -165,7 +166,7 @@ class _TexturesIntroState extends State<TexturesIntro> with SingleTickerProvider
                       const Color(0XFF128BED),
                     ),
                     elevation: WidgetStateProperty.all<double>(0),
-                    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                    // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                     overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                     shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(

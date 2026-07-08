@@ -11,9 +11,9 @@ class PatientsNumberCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       shadowStrength: 2,
-      shadowColor: Colors.black,
+      // // shadowColor: Colors.black,
       blur: 4,
-      color: Colors.white.withOpacity(0.25),
+      color: Colors.white.withValues(alpha: 0.25),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(

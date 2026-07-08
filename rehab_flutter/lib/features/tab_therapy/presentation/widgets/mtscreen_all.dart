@@ -55,7 +55,7 @@ class MTScreenAll extends StatelessWidget {
             ),
             GlassContainer(
               blur: 4,
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Column(

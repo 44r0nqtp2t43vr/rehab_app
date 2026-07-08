@@ -15,7 +15,7 @@ import 'package:rehab_flutter/features/testing/presentation/widgets/test_label.d
 import 'package:rehab_flutter/injection_container.dart';
 
 class TexturesTester extends StatefulWidget {
-  final void Function(double, String) onResponse;
+  final void Function(String, String) onResponse;
   final ImageTexture currentImageTexture;
   final int currentItemNo;
   final int totalItemNo;
@@ -40,7 +40,7 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
     setState(() {
       isPlaying = false;
     });
-    widget.onResponse(value == widget.currentImageTexture.name ? 100 : 0, widget.currentImageTexture.name);
+    widget.onResponse(widget.currentImageTexture.name, value);
   }
 
   void _renderActuators(double imageSize) {
@@ -144,7 +144,7 @@ class _TexturesTesterState extends State<TexturesTester> with SingleTickerProvid
                       const Color(0xff128BED),
                     ),
                     elevation: WidgetStateProperty.all<double>(0),
-                    shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                    // shadowColor: WidgetStateProperty.all<Color>(Colors.transparent),
                     overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
                     shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(

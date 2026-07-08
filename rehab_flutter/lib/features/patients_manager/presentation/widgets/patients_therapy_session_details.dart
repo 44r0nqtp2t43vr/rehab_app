@@ -11,11 +11,11 @@ class PatientsTherapySessionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<bool> conditions = session.getSessionConditions();
+    List<bool> conditions = session.getDayActivitiesConditions("");
 
     return GlassContainer(
       blur: 10,
-      color: Colors.white.withOpacity(0.3),
+      color: Colors.white.withValues(alpha: 0.3),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         child: Column(
@@ -63,9 +63,9 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                     Expanded(
                                       child: GlassContainer(
                                         shadowStrength: 1,
-                                        shadowColor: Colors.black,
+                                        // shadowColor: Colors.black,
                                         blur: 4,
-                                        color: Colors.white.withOpacity(0.25),
+                                        color: Colors.white.withValues(alpha: 0.25),
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
@@ -75,7 +75,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                session.pretestScore!.toStringAsFixed(1),
+                                                // session.pretestScore!.toStringAsFixed(1),
+                                                "no score",
                                                 style: darkTextTheme().headlineLarge,
                                               ),
                                               Text(
@@ -92,9 +93,9 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                     Expanded(
                                       child: GlassContainer(
                                         shadowStrength: 1,
-                                        shadowColor: Colors.black,
+                                        // shadowColor: Colors.black,
                                         blur: 4,
-                                        color: Colors.white.withOpacity(0.25),
+                                        color: Colors.white.withValues(alpha: 0.25),
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
@@ -104,7 +105,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Text(
-                                                !conditions[4] ? '0' : session.posttestScore!.toStringAsFixed(1),
+                                                // !conditions[4] ? '0' : session.posttestScore!.toStringAsFixed(1),
+                                                "no score",
                                                 style: darkTextTheme().headlineLarge,
                                               ),
                                               Text(
@@ -130,9 +132,9 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                     const SizedBox(height: 4),
                                     GlassContainer(
                                       shadowStrength: 1,
-                                      shadowColor: Colors.black,
+                                      // shadowColor: Colors.black,
                                       blur: 4,
-                                      color: Colors.white.withOpacity(0.25),
+                                      color: Colors.white.withValues(alpha: 0.25),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -151,7 +153,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                     style: darkTextTheme().headlineSmall,
                                                   ),
                                                   Text(
-                                                    session.standardOneType,
+                                                    // session.standardOneType,
+                                                    "no type",
                                                     style: darkTextTheme().displaySmall,
                                                   ),
                                                 ],
@@ -164,7 +167,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    session.standardOneIntensity,
+                                                    // session.standardOneIntensity,
+                                                    "no intensity",
                                                     style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
@@ -191,9 +195,9 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                     const SizedBox(height: 4),
                                     GlassContainer(
                                       shadowStrength: 1,
-                                      shadowColor: Colors.black,
+                                      // shadowColor: Colors.black,
                                       blur: 4,
-                                      color: Colors.white.withOpacity(0.25),
+                                      color: Colors.white.withValues(alpha: 0.25),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -208,7 +212,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    session.passiveIntensity,
+                                                    // session.passiveIntensity,
+                                                    "no intensity",
                                                     style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(
@@ -235,9 +240,9 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                     const SizedBox(height: 4),
                                     GlassContainer(
                                       shadowStrength: 1,
-                                      shadowColor: Colors.black,
+                                      // shadowColor: Colors.black,
                                       blur: 4,
-                                      color: Colors.white.withOpacity(0.25),
+                                      color: Colors.white.withValues(alpha: 0.25),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,
@@ -256,7 +261,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                     style: darkTextTheme().headlineSmall,
                                                   ),
                                                   Text(
-                                                    session.standardTwoType,
+                                                    // session.standardTwoType,
+                                                    "no type",
                                                     style: darkTextTheme().displaySmall,
                                                   ),
                                                 ],
@@ -269,7 +275,8 @@ class PatientsTherapySessionDetails extends StatelessWidget {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    session.standardTwoIntensity,
+                                                    // session.standardTwoIntensity,
+                                                    "no intensity",
                                                     style: darkTextTheme().headlineLarge,
                                                   ),
                                                   Text(

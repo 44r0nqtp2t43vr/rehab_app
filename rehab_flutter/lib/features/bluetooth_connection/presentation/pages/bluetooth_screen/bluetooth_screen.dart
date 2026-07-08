@@ -51,7 +51,7 @@ class BluetoothScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
               ),
               _buildBody(),
             ],
@@ -75,7 +75,7 @@ class BluetoothScreen extends StatelessWidget {
         //       padding: const EdgeInsets.all(32),
         //       child: GlassContainer(
         //         blur: 4,
-        //         color: Colors.white.withOpacity(0.25),
+        //         color: Colors.white.withValues(alpha: 0.25),
         //         child: Padding(
         //           padding: const EdgeInsets.all(20),
         //           child: Column(
@@ -98,7 +98,7 @@ class BluetoothScreen extends StatelessWidget {
         //                     padding: const EdgeInsets.all(8),
         //                     child: GlassContainer(
         //                       blur: 4,
-        //                       color: Colors.white.withOpacity(0.25),
+        //                       color: Colors.white.withValues(alpha: 0.25),
         //                       child: ListTile(
         //                         leading: const Icon(
         //                           Icons.bluetooth,
@@ -153,7 +153,7 @@ class BluetoothScreen extends StatelessWidget {
                             Expanded(
                               child: GlassContainer(
                                 blur: 4,
-                                color: Colors.white.withOpacity(0.25),
+                                color: Colors.white.withValues(alpha: 0.25),
                                 child: Padding(
                                   padding: const EdgeInsets.all(20),
                                   child: Column(
@@ -178,7 +178,7 @@ class BluetoothScreen extends StatelessWidget {
                                               padding: const EdgeInsets.all(8),
                                               child: GlassContainer(
                                                 blur: 4,
-                                                color: Colors.white.withOpacity(0.25),
+                                                color: Colors.white.withValues(alpha: 0.25),
                                                 child: ListTile(
                                                   leading: const Icon(
                                                     Icons.bluetooth,

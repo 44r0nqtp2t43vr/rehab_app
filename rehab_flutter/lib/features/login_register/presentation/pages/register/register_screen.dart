@@ -118,7 +118,7 @@ class RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             Container(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
             ),
             _buildBody(),
           ],
@@ -200,7 +200,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: GlassContainer(
                           blur: 4,
-                          color: Colors.white.withOpacity(0.25),
+                          color: Colors.white.withValues(alpha: 0.25),
                           child: Padding(
                             padding: const EdgeInsets.all(24),
                             child: Column(

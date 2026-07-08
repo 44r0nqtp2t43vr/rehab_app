@@ -14,6 +14,7 @@ import 'package:rehab_flutter/core/enums/song_enums.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_bloc.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/bloc/patient_current_session/patient_current_session_state.dart';
 import 'package:rehab_flutter/features/tab_home/presentation/widgets/continue_card.dart';
+import 'package:rehab_flutter/features/tab_home/presentation/widgets/take_test_button.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/music_therapy/music_therapy.dart';
 import 'package:rehab_flutter/features/tab_therapy/presentation/pages/specific_genre/specific_genre.dart';
 import 'package:rehab_flutter/injection_container.dart';
@@ -67,9 +68,21 @@ class _TherapyScreenState extends State<TherapyScreen> {
                           }
 
                           if (state is PatientCurrentSessionDone) {
-                            return ContinueCard(
-                              user: patient,
-                              session: state.currentSession!,
+                            final currentSession = state.currentSession!;
+
+                            return Column(
+                              children: [
+                                currentSession.testingItems.isEmpty
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(bottom: 8.0),
+                                        child: TakeTestButton(),
+                                      )
+                                    : const SizedBox(),
+                                ContinueCard(
+                                  user: patient,
+                                  session: state.currentSession!,
+                                ),
+                              ],
                             );
                           }
 
@@ -163,7 +176,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -222,6 +235,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     svgPath: 'assets/images/intermediate.svg',
                   ),
                   const SizedBox(height: 20),
+                  cuButtonDialog(
+                    context: context,
+                    onPressed: () => _onComplexMTButtonPressed(context),
+                    title: 'Complex',
+                    svgPath: 'assets/images/intermediate.svg',
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -257,6 +277,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
     sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
   }
 
+  void _onComplexMTButtonPressed(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.pushNamed(context, '/MusicTactalizer');
+    // sl<SongController>().setMTType(MusicTherapy.intermediate);
+    // sl<SongController>().setSong(null);
+    // sl<NavigationController>().setTherapyTab(TabTherapyEnum.music);
+  }
+
   void _onCTButtonPressed() {
     showDialog(
       context: context,
@@ -268,7 +296,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           backgroundColor: Colors.transparent,
           content: GlassContainer(
             blur: 10,
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
